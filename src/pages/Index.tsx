@@ -13,16 +13,79 @@ import {
   Search,
   BarChart3
 } from "lucide-react";
+import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
+import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
+import { 
+  calculateProbabilityScores, 
+  generateMarketProjections, 
+  calculateOverallScore,
+  type ProbabilityScores,
+  type MarketData
+} from "@/lib/scoring";
+
+interface MoleculeProfile {
+  id: string;
+  name: string;
+  phase: string;
+  indication: string;
+  therapeuticArea: string;
+  scores: ProbabilityScores;
+  marketData: MarketData[];
+  overallScore: number;
+  company: string;
+  companyTrackRecord: 'fast' | 'average' | 'slow';
+}
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
 
-  // Mock data - will be replaced with real data
-  const mockMolecules = [
-    { id: "MOL-001", name: "Compound Alpha", phase: "Phase III", indication: "Oncology", score: 8.5, country: "US" },
-    { id: "MOL-002", name: "Compound Beta", phase: "Phase II", indication: "Cardiology", score: 7.2, country: "EU" },
-    { id: "MOL-003", name: "Compound Gamma", phase: "Phase III", indication: "Neurology", score: 8.8, country: "JP" },
+  // Generate comprehensive molecule profiles with real probability calculations
+  const mockMolecules: MoleculeProfile[] = [
+    {
+      id: "BQ-001",
+      name: "Zincotrexate",
+      phase: "Phase III",
+      indication: "Non-Small Cell Lung Cancer",
+      therapeuticArea: "Oncology",
+      company: "BioTech Innovations",
+      companyTrackRecord: 'fast',
+      scores: calculateProbabilityScores("Phase III", "Non-Small Cell Lung Cancer", "Oncology"),
+      marketData: generateMarketProjections("Zincotrexate", "Phase III", "Non-Small Cell Lung Cancer", 'fast'),
+      overallScore: 0,
+    },
+    {
+      id: "BQ-002",
+      name: "Cardiomax-R",
+      phase: "Phase II",
+      indication: "Heart Failure",
+      therapeuticArea: "Cardiology",
+      company: "Global Pharma Corp",
+      companyTrackRecord: 'average',
+      scores: calculateProbabilityScores("Phase II", "Heart Failure", "Cardiology"),
+      marketData: generateMarketProjections("Cardiomax-R", "Phase II", "Heart Failure", 'average'),
+      overallScore: 0,
+    },
+    {
+      id: "BQ-003",
+      name: "Neuroplastin",
+      phase: "Phase II",
+      indication: "Alzheimer's Disease",
+      therapeuticArea: "Neurology",
+      company: "NeuroScience Labs",
+      companyTrackRecord: 'slow',
+      scores: calculateProbabilityScores("Phase II", "Alzheimer's Disease", "Neurology"),
+      marketData: generateMarketProjections("Neuroplastin", "Phase II", "Alzheimer's Disease", 'slow'),
+      overallScore: 0,
+    },
   ];
+
+  // Calculate overall scores based on probabilities and market projections
+  mockMolecules.forEach(mol => {
+    mol.overallScore = calculateOverallScore(mol.scores, mol.marketData);
+  });
+
+  const activeMolecule = mockMolecules.find(m => m.id === selectedMolecule);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -120,42 +183,86 @@ const Index = () => {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pipeline Overview</CardTitle>
-                <CardDescription>High-priority molecules and approval predictions</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {mockMolecules.map((molecule) => (
-                    <div key={molecule.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-foreground">{molecule.name}</h3>
-                          <Badge variant="outline">{molecule.phase}</Badge>
-                          <Badge variant="secondary">{molecule.indication}</Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{molecule.id}</p>
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-primary">{molecule.score}</div>
-                          <div className="text-xs text-muted-foreground">Score</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-semibold text-foreground">{molecule.country}</div>
-                          <div className="text-xs text-muted-foreground">Market</div>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          <TrendingUp className="h-4 w-4 mr-2" />
-                          Analyze
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+            {!selectedMolecule ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-2xl font-semibold">High Priority Molecules</h2>
+                    <p className="text-sm text-muted-foreground">Comprehensive due diligence profiles for PE/M&A analysis</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+                {mockMolecules
+                  .sort((a, b) => b.overallScore - a.overallScore)
+                  .map((molecule) => (
+                    <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedMolecule(molecule.id)}>
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-1 flex-1">
+                            <div className="flex items-center gap-3">
+                              <h3 className="text-xl font-semibold">{molecule.name}</h3>
+                              <Badge variant="outline">{molecule.id}</Badge>
+                              <Badge variant="secondary">{molecule.company}</Badge>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <span>{molecule.phase}</span>
+                              <span>•</span>
+                              <span>{molecule.indication}</span>
+                              <span>•</span>
+                              <span>{molecule.therapeuticArea}</span>
+                            </div>
+                            <div className="grid grid-cols-4 gap-4 mt-4">
+                              <div>
+                                <p className="text-xs text-muted-foreground">Approval Probability</p>
+                                <p className="font-semibold">{(molecule.scores.approval * 100).toFixed(1)}%</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-muted-foreground">Next Phase Prob.</p>
+                                <p className="font-semibold">{(molecule.scores.nextPhase * 100).toFixed(1)}%</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-muted-foreground">Dropout Risk</p>
+                                <p className="font-semibold">{molecule.scores.dropoutRanking}/5</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-muted-foreground">Total Revenue (2Y)</p>
+                                <p className="font-semibold">
+                                  ${molecule.marketData.reduce((sum, m) => sum + m.revenueProjection.year1 + m.revenueProjection.year2, 0).toFixed(0)}M
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-right">
+                              <div className="text-sm text-muted-foreground">Overall Score</div>
+                              <div className="text-3xl font-bold text-primary">{molecule.overallScore}</div>
+                            </div>
+                            <Button onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
+                              Full Analysis
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
+            ) : activeMolecule ? (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-semibold">Comprehensive Due Diligence Report</h2>
+                  <Button variant="outline" onClick={() => setSelectedMolecule(null)}>
+                    ← Back to Overview
+                  </Button>
+                </div>
+                <MoleculeScoreCard
+                  moleculeName={activeMolecule.name}
+                  scores={activeMolecule.scores}
+                  phase={activeMolecule.phase}
+                  indication={activeMolecule.indication}
+                  overallScore={activeMolecule.overallScore}
+                />
+                <MarketAnalysisTable marketData={activeMolecule.marketData} />
+              </div>
+            ) : null}
           </TabsContent>
 
           {/* Molecules Tab */}
