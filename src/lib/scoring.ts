@@ -43,12 +43,33 @@ export const MARKETS = [
   { code: 'GULF', name: 'Gulf States', region: 'Middle East' },
 ];
 
+// Special handling for failed trials
+export function calculateFailedTrialScores(): ProbabilityScores {
+  return {
+    meetingEndpoints: 0,
+    nextPhase: 0,
+    dropoutRanking: 1, // Low dropout despite failure shows good trial execution
+    approval: 0,
+    regulatoryPathway: {
+      standard: 0,
+      accelerated: 0,
+      breakthrough: 0,
+      orphan: 0,
+    },
+  };
+}
+
 // Calculate probability scores based on historical data patterns
 export function calculateProbabilityScores(
   phase: string,
   indication: string,
-  therapeuticArea: string
+  therapeuticArea: string,
+  isFailed: boolean = false
 ): ProbabilityScores {
+  // Handle failed trials immediately
+  if (isFailed) {
+    return calculateFailedTrialScores();
+  }
   // Base probabilities vary by phase (historical industry averages)
   const phaseFactors = {
     'Phase I': { endpoints: 0.65, nextPhase: 0.52, approval: 0.095 },
@@ -90,13 +111,38 @@ function calculateDropoutRanking(phase: string, therapeuticArea: string): 1 | 2 
   return 1;
 }
 
+// Generate empty market projections for failed trials
+export function generateFailedTrialMarketProjections(): MarketData[] {
+  return MARKETS.map(market => ({
+    country: market.name,
+    countryCode: market.code,
+    estimatedLaunchDate: 'N/A - Trial Failed',
+    marketAccessStrategy: {
+      hta: 0,
+      valueBased: 0,
+      volumeBased: 0,
+      other: 0,
+    },
+    revenueProjection: {
+      year1: 0,
+      year2: 0,
+    },
+    regulatoryComplexity: 0,
+  }));
+}
+
 // Generate market-specific projections based on company track record and regulatory landscape
 export function generateMarketProjections(
   molecule: string,
   phase: string,
   indication: string,
-  companyTrackRecord: 'fast' | 'average' | 'slow' = 'average'
+  companyTrackRecord: 'fast' | 'average' | 'slow' = 'average',
+  isFailed: boolean = false
 ): MarketData[] {
+  // Handle failed trials immediately
+  if (isFailed) {
+    return generateFailedTrialMarketProjections();
+  }
   const baseDate = new Date();
   const phaseDelays = {
     'Pre-clinical': 48,

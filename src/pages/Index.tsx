@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
+import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
 import { 
   calculateProbabilityScores, 
   generateMarketProjections, 
@@ -34,6 +35,8 @@ interface MoleculeProfile {
   overallScore: number;
   company: string;
   companyTrackRecord: 'fast' | 'average' | 'slow';
+  isFailed?: boolean;
+  trialName?: string;
 }
 
 const Index = () => {
@@ -86,8 +89,10 @@ const Index = () => {
       therapeuticArea: "Neurology",
       company: "Novo Nordisk",
       companyTrackRecord: 'fast',
-      scores: calculateProbabilityScores("Phase III", "Alzheimer's Disease", "Neurology"),
-      marketData: generateMarketProjections("Semaglutide", "Phase III", "Alzheimer's Disease", 'fast'),
+      isFailed: true,
+      trialName: "EVOKE & EVOKE+",
+      scores: calculateProbabilityScores("Phase III", "Alzheimer's Disease", "Neurology", true),
+      marketData: generateMarketProjections("Semaglutide", "Phase III", "Alzheimer's Disease", 'fast', true),
       overallScore: 0,
     },
   ];
@@ -265,6 +270,15 @@ const Index = () => {
                     ← Back to Overview
                   </Button>
                 </div>
+                
+                {activeMolecule.isFailed && activeMolecule.trialName && (
+                  <TrialFailureAnalysis
+                    moleculeName={activeMolecule.name}
+                    trialName={activeMolecule.trialName}
+                    phase={activeMolecule.phase}
+                  />
+                )}
+                
                 <MoleculeScoreCard
                   moleculeName={activeMolecule.name}
                   scores={activeMolecule.scores}
