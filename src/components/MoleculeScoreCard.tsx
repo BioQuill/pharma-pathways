@@ -3,15 +3,18 @@ import { Badge } from "@/components/ui/badge";
 import { ProbabilityScores } from "@/lib/scoring";
 import { TrendingUp, TrendingDown, Activity, Target, Award, GitBranch } from "lucide-react";
 
+import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
+
 interface MoleculeScoreCardProps {
   moleculeName: string;
   scores: ProbabilityScores;
   phase: string;
   indication: string;
   overallScore: number;
+  nctId?: string;
 }
 
-export function MoleculeScoreCard({ moleculeName, scores, phase, indication, overallScore }: MoleculeScoreCardProps) {
+export function MoleculeScoreCard({ moleculeName, scores, phase, indication, overallScore, nctId }: MoleculeScoreCardProps) {
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
     if (ranking === 3) return "text-warning";
@@ -27,6 +30,16 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, ove
           <div>
             <CardTitle className="text-xl">{moleculeName}</CardTitle>
             <CardDescription>{indication} • {phase}</CardDescription>
+            {nctId && (
+              <a 
+                href={getClinicalTrialsUrl(nctId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-primary hover:underline mt-1 inline-block"
+              >
+                ClinicalTrials.gov: {nctId} →
+              </a>
+            )}
           </div>
           <Badge variant="default" className="text-lg font-bold px-4 py-2">
             Score: {overallScore}

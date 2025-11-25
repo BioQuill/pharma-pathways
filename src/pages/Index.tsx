@@ -37,6 +37,7 @@ interface MoleculeProfile {
   companyTrackRecord: 'fast' | 'average' | 'slow';
   isFailed?: boolean;
   trialName?: string;
+  nctId?: string;
 }
 
 const Index = () => {
@@ -91,6 +92,7 @@ const Index = () => {
       companyTrackRecord: 'fast',
       isFailed: true,
       trialName: "EVOKE & EVOKE+",
+      nctId: "NCT04777396",
       scores: calculateProbabilityScores("Phase III", "Alzheimer's Disease", "Neurology", true),
       marketData: generateMarketProjections("Semaglutide", "Phase III", "Alzheimer's Disease", 'fast', true),
       overallScore: 0,
@@ -285,6 +287,7 @@ const Index = () => {
                   phase={activeMolecule.phase}
                   indication={activeMolecule.indication}
                   overallScore={activeMolecule.overallScore}
+                  nctId={activeMolecule.nctId}
                 />
                 <MarketAnalysisTable marketData={activeMolecule.marketData} />
               </div>
