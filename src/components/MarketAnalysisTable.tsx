@@ -119,7 +119,7 @@ export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
           <div>
             <p className="text-sm text-muted-foreground">Growth Rate</p>
             <p className="text-xl font-bold text-success">
-              +{(((totalYear2 - totalYear1) / totalYear1) * 100).toFixed(0)}%
+              {totalYear1 > 0 ? `+${(((totalYear2 - totalYear1) / totalYear1) * 100).toFixed(0)}%` : 'N/A'}
             </p>
           </div>
         </div>
