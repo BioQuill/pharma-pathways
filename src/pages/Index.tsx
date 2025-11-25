@@ -78,6 +78,18 @@ const Index = () => {
       marketData: generateMarketProjections("Neuroplastin", "Phase II", "Alzheimer's Disease", 'slow'),
       overallScore: 0,
     },
+    {
+      id: "EVOKE-01",
+      name: "Semaglutide",
+      phase: "Phase III",
+      indication: "Alzheimer's Disease",
+      therapeuticArea: "Neurology",
+      company: "Novo Nordisk",
+      companyTrackRecord: 'fast',
+      scores: calculateProbabilityScores("Phase III", "Alzheimer's Disease", "Neurology"),
+      marketData: generateMarketProjections("Semaglutide", "Phase III", "Alzheimer's Disease", 'fast'),
+      overallScore: 0,
+    },
   ];
 
   // Calculate overall scores based on probabilities and market projections
