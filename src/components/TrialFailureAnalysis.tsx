@@ -30,28 +30,44 @@ export function TrialFailureAnalysis({ moleculeName, trialName, phase }: TrialFa
         <div className="space-y-3">
           <h3 className="font-semibold text-lg flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Key Trial Facts
+            Key Trial Facts (ClinicalTrials.gov: NCT04777396)
           </h3>
           <div className="grid gap-3 text-sm">
             <div className="flex justify-between p-3 bg-background rounded-lg">
-              <span className="text-muted-foreground">Trial Names:</span>
-              <span className="font-medium">EVOKE & EVOKE+</span>
+              <span className="text-muted-foreground">Official Title:</span>
+              <span className="font-medium text-right">EVOKE Trial - Oral Semaglutide in Early Alzheimer's Disease</span>
+            </div>
+            <div className="flex justify-between p-3 bg-background rounded-lg">
+              <span className="text-muted-foreground">NCT Number:</span>
+              <span className="font-medium">NCT04777396</span>
             </div>
             <div className="flex justify-between p-3 bg-background rounded-lg">
               <span className="text-muted-foreground">Phase:</span>
               <span className="font-medium">Phase III</span>
             </div>
             <div className="flex justify-between p-3 bg-background rounded-lg">
-              <span className="text-muted-foreground">Total Enrollment:</span>
-              <span className="font-medium">3,800+ patients</span>
+              <span className="text-muted-foreground">Enrollment:</span>
+              <span className="font-medium">1,840 patients (EVOKE) + ~2,000 (EVOKE+) = 3,800+ total</span>
+            </div>
+            <div className="flex justify-between p-3 bg-background rounded-lg">
+              <span className="text-muted-foreground">Study Period:</span>
+              <span className="font-medium">May 2021 - Sep 2025 (Primary completion)</span>
+            </div>
+            <div className="flex justify-between p-3 bg-background rounded-lg">
+              <span className="text-muted-foreground">Duration:</span>
+              <span className="font-medium">173 weeks (~3.3 years per patient)</span>
+            </div>
+            <div className="flex justify-between p-3 bg-background rounded-lg">
+              <span className="text-muted-foreground">Sites:</span>
+              <span className="font-medium">350 locations globally</span>
             </div>
             <div className="flex justify-between p-3 bg-background rounded-lg">
               <span className="text-muted-foreground">Patient Population:</span>
-              <span className="font-medium">Mild cognitive impairment / Early Alzheimer's</span>
+              <span className="font-medium">Early Alzheimer's Disease</span>
             </div>
             <div className="flex justify-between p-3 bg-background rounded-lg">
               <span className="text-muted-foreground">Formulation:</span>
-              <span className="font-medium">Oral semaglutide</span>
+              <span className="font-medium">Oral semaglutide (randomized, double-blind, placebo-controlled)</span>
             </div>
           </div>
         </div>
@@ -137,9 +153,17 @@ export function TrialFailureAnalysis({ moleculeName, trialName, phase }: TrialFa
           </div>
         </div>
 
-        {/* Source */}
-        <div className="pt-4 border-t text-xs text-muted-foreground">
-          <strong>Source:</strong> STAT News, Nov 24, 2025 - "Novo Nordisk's semaglutide fails to slow Alzheimer's progression"
+        {/* Sources */}
+        <div className="pt-4 border-t space-y-1">
+          <p className="text-xs text-muted-foreground">
+            <strong>Primary Source:</strong> STAT News, Nov 24, 2025 - "Novo Nordisk's semaglutide fails to slow Alzheimer's progression"
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <strong>Trial Registry:</strong> ClinicalTrials.gov - NCT04777396 (EVOKE Trial)
+          </p>
+          <p className="text-xs text-muted-foreground">
+            <strong>Sponsor:</strong> Novo Nordisk
+          </p>
         </div>
       </CardContent>
     </Card>
