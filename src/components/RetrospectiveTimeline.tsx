@@ -60,7 +60,7 @@ export function RetrospectiveTimeline({ moleculeName, indication, sponsor, phase
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground mt-2">
-          Scores calculated based on data available at each milestone, simulating real-time due diligence decisions.
+          Launch Probability calculated based on data available at each milestone, simulating real-time due diligence decisions.
         </p>
       </CardHeader>
       <CardContent>
@@ -118,10 +118,10 @@ export function RetrospectiveTimeline({ moleculeName, indication, sponsor, phase
                             <trend.icon className={`w-4 h-4 ${trend.color}`} />
                           )}
                           <span className={`text-2xl font-bold ${getScoreColor(phase.scoreAtTime)}`}>
-                            {phase.scoreAtTime}
+                            {phase.scoreAtTime}%
                           </span>
                         </div>
-                        <p className="text-xs text-muted-foreground">Score at time</p>
+                        <p className="text-xs text-muted-foreground">Launch Probability</p>
                       </div>
                     </div>
                     
