@@ -16,6 +16,7 @@ import {
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
 import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
+import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
 import { 
   calculateProbabilityScores, 
   generateMarketProjections, 
@@ -23,6 +24,18 @@ import {
   type ProbabilityScores,
   type MarketData
 } from "@/lib/scoring";
+
+interface TimelinePhase {
+  phase: string;
+  date: string;
+  trialName?: string;
+  nctIds?: string[];
+  outcome: 'success' | 'partial' | 'pending' | 'setback';
+  keyData: string[];
+  scoreAtTime: number;
+  rationale: string;
+  dataAvailableAtTime: string[];
+}
 
 interface MoleculeProfile {
   id: string;
@@ -38,6 +51,8 @@ interface MoleculeProfile {
   isFailed?: boolean;
   trialName?: string;
   nctId?: string;
+  hasRetrospective?: boolean;
+  retrospectivePhases?: TimelinePhase[];
 }
 
 const Index = () => {
@@ -96,6 +111,150 @@ const Index = () => {
       scores: calculateProbabilityScores("Phase III", "Alzheimer's Disease", "Neurology", true),
       marketData: generateMarketProjections("Semaglutide", "Phase III", "Alzheimer's Disease", 'fast', true),
       overallScore: 0,
+    },
+    {
+      id: "ICODEC-01",
+      name: "Insulin Icodec (Kyinsu/Awiqli)",
+      phase: "Approved (EU/CN)",
+      indication: "Type 2 Diabetes",
+      therapeuticArea: "Metabolic/Endocrinology",
+      company: "Novo Nordisk",
+      companyTrackRecord: 'fast',
+      nctId: "NCT03496519",
+      scores: calculateProbabilityScores("Phase III", "Type 2 Diabetes", "Metabolic"),
+      marketData: generateMarketProjections("Insulin Icodec", "Phase III", "Type 2 Diabetes", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      retrospectivePhases: [
+        {
+          phase: "Phase 1",
+          date: "Q4 2017",
+          trialName: "First-in-Human PK/PD Studies",
+          nctIds: ["NCT02964104"],
+          outcome: 'success',
+          keyData: [
+            "Half-life of ~196 hours confirmed (vs ~12h for glargine)",
+            "Once-weekly dosing feasibility established",
+            "Strong albumin binding mechanism validated",
+            "Favorable safety profile in healthy volunteers"
+          ],
+          scoreAtTime: 35,
+          rationale: "Early stage with novel mechanism. Base Phase I success rate ~63% for metabolic. Novo Nordisk strong track record in insulin development. Key innovation: strong albumin binding extends half-life. Risk: first-in-class weekly insulin, unproven therapeutic index.",
+          dataAvailableAtTime: ["PK/PD data", "Safety profile", "Mechanism validation", "Preclinical data"]
+        },
+        {
+          phase: "Phase 2",
+          date: "Q2 2020",
+          trialName: "Multiple Dose-Finding & Titration Studies",
+          nctIds: ["NCT03496519", "NCT03751657"],
+          outcome: 'success',
+          keyData: [
+            "HbA1c reduction comparable to daily insulin glargine U100",
+            "Non-inferior glycemic control demonstrated",
+            "Hypoglycemia rates acceptable vs comparator",
+            "Optimal dosing algorithm established",
+            "Patient adherence signal positive with weekly dosing"
+          ],
+          scoreAtTime: 52,
+          rationale: "Strong Phase 2 data with non-inferiority demonstrated. Historic Phase II→III success rate in metabolic ~68%. Clear differentiation: weekly vs daily dosing addresses adherence. Hypoglycemia profile acceptable. Commercial potential validated - large T2D market.",
+          dataAvailableAtTime: ["HbA1c efficacy", "Hypoglycemia rates", "Dose-response", "16-26 week data", "Titration algorithms"]
+        },
+        {
+          phase: "Phase 3a (ONWARDS 1 & 3)",
+          date: "Jul 2022",
+          trialName: "ONWARDS 1 & ONWARDS 3",
+          nctIds: ["NCT04460885", "NCT04795531"],
+          outcome: 'success',
+          keyData: [
+            "ONWARDS 1: Superior HbA1c reduction vs glargine U100 (-1.55% vs -1.35%, p<0.001)",
+            "ONWARDS 3: Superior vs degludec in insulin-naïve patients (-1.57% vs -1.36%)",
+            "Time in range improvements demonstrated",
+            "Hypoglycemia rates comparable to daily insulin",
+            "1,085 patients (ONWARDS 1), 588 patients (ONWARDS 3)"
+          ],
+          scoreAtTime: 71,
+          rationale: "Two pivotal Phase 3 trials showing SUPERIORITY (not just non-inferiority). Historic Phase III→Approval rate ~58% for metabolic, but superiority data significantly de-risks. Clear efficacy advantage with convenience benefit. Regulatory pathway looks favorable - unmet need for adherence solutions.",
+          dataAvailableAtTime: ["Pivotal efficacy", "52-week safety", "Superiority vs SOC", "Large patient cohorts", "Time-in-range data"]
+        },
+        {
+          phase: "Phase 3a (ONWARDS 5)",
+          date: "Oct 2022",
+          trialName: "ONWARDS 5 (with Dosing App)",
+          nctIds: ["NCT04848480"],
+          outcome: 'success',
+          keyData: [
+            "Superior HbA1c reduction with dosing guide app vs daily insulin",
+            "Digital health integration demonstrated",
+            "Real-world applicability enhanced",
+            "Patient-reported outcomes positive"
+          ],
+          scoreAtTime: 75,
+          rationale: "Third positive Phase 3 result. Digital companion app adds differentiation. Full ONWARDS program (6 trials) progressing well. Approval probability now high given consistent superiority across populations. EU filing expected.",
+          dataAvailableAtTime: ["ONWARDS 1-5 results", "Digital health data", "PRO data", "Safety database"]
+        },
+        {
+          phase: "Phase 3b (ONWARDS 6 - Type 1)",
+          date: "Q3 2023",
+          trialName: "ONWARDS 6 (Type 1 Diabetes)",
+          nctIds: ["NCT04848493"],
+          outcome: 'partial',
+          keyData: [
+            "Non-inferior HbA1c reduction in T1D",
+            "Higher hypoglycemia rates than daily insulin noted",
+            "T1D indication more complex than T2D",
+            "Weekly dosing less flexible for T1D insulin adjustments"
+          ],
+          scoreAtTime: 72,
+          rationale: "T1D results mixed - non-inferiority met but hypoglycemia signal. Score slight decrease as T1D indication less clean. T2D indication remains strong. Regulatory strategy likely to prioritize T2D first. Overall program still very positive.",
+          dataAvailableAtTime: ["Full ONWARDS 1-6", "T1D vs T2D comparison", "Complete safety database", "Regulatory submissions initiated"]
+        },
+        {
+          phase: "EU Approval",
+          date: "Apr 2024",
+          trialName: "EMA Approval (Awiqli)",
+          outcome: 'success',
+          keyData: [
+            "First once-weekly insulin approved globally",
+            "Approved for Type 2 Diabetes in EU",
+            "Commercial launch initiated in Europe",
+            "Positive CHMP opinion received"
+          ],
+          scoreAtTime: 88,
+          rationale: "EU approval achieved - major regulatory milestone. First-to-market globally for weekly insulin. Score reflects near-certain T2D approval pathway. US/FDA filing reviewed. China approval also expected. Commercial potential fully validated.",
+          dataAvailableAtTime: ["EU approval", "Commercial launch data", "Post-marketing commitments", "Pricing negotiations"]
+        },
+        {
+          phase: "FDA CRL",
+          date: "Jul 2024",
+          trialName: "FDA Complete Response Letter",
+          outcome: 'setback',
+          keyData: [
+            "CRL issued citing manufacturing process questions",
+            "T1D indication questions raised",
+            "No new clinical trials required",
+            "Resubmission pathway clear",
+            "NOT a safety or efficacy concern"
+          ],
+          scoreAtTime: 78,
+          rationale: "FDA CRL is setback but manageable. Manufacturing CMC issues, NOT efficacy/safety. T1D indication complexity noted. EU approval provides validation. Score reduced but US approval still likely with resubmission. Timeline delay ~12-18 months.",
+          dataAvailableAtTime: ["FDA CRL details", "Manufacturing concerns", "EU approval validation", "China approval (Kyinsu)", "Resubmission strategy"]
+        },
+        {
+          phase: "FDA Resubmission",
+          date: "Sep 2025",
+          trialName: "BLA Resubmission to FDA",
+          outcome: 'pending',
+          keyData: [
+            "Manufacturing process concerns addressed",
+            "T2D-only indication in resubmission",
+            "PDUFA date expected H1 2026",
+            "Real-world EU/China data available"
+          ],
+          scoreAtTime: 82,
+          rationale: "Resubmission filed with addressed CMC issues. T2D-focused approach simplifies review. Real-world data from EU/China supportive. High probability of US approval in 2026. Score reflects reduced regulatory risk with clear pathway forward.",
+          dataAvailableAtTime: ["Resubmission package", "CMC resolution", "Real-world evidence", "Competitor landscape", "2+ years commercial data (EU)"]
+        }
+      ]
     },
   ];
 
@@ -290,6 +449,15 @@ const Index = () => {
                   nctId={activeMolecule.nctId}
                 />
                 <MarketAnalysisTable marketData={activeMolecule.marketData} />
+                
+                {activeMolecule.hasRetrospective && activeMolecule.retrospectivePhases && (
+                  <RetrospectiveTimeline
+                    moleculeName={activeMolecule.name}
+                    indication={activeMolecule.indication}
+                    sponsor={activeMolecule.company}
+                    phases={activeMolecule.retrospectivePhases}
+                  />
+                )}
               </div>
             ) : null}
           </TabsContent>
