@@ -42,7 +42,7 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, ove
             )}
           </div>
           <Badge variant="default" className="text-lg font-bold px-4 py-2">
-            Score: {overallScore}
+            Launch Probability: {overallScore}%
           </Badge>
         </div>
       </CardHeader>

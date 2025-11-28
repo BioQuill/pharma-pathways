@@ -250,17 +250,21 @@ function calculateRegulatoryComplexity(countryCode: string): number {
   return complexity[countryCode as keyof typeof complexity] || 0.70;
 }
 
-// Calculate overall molecule score for ranking
+// Calculate Launch Probability Score (0-100%)
+// This represents the estimated probability of successful market launch
+// based on clinical trial success rates and regulatory approval likelihood
 export function calculateOverallScore(scores: ProbabilityScores, marketData: MarketData[]): number {
-  const probabilityScore = (
+  // Launch Probability is calculated as a weighted average of key success factors:
+  // - Meeting Endpoints (25%): Probability of achieving primary endpoints
+  // - Next Phase (20%): Probability of advancing to next development phase
+  // - Approval (40%): Overall probability of regulatory approval
+  // - Dropout Risk (15%): Inverse of dropout ranking (lower dropout = higher score)
+  const launchProbability = (
     scores.meetingEndpoints * 0.25 +
-    scores.nextPhase * 0.25 +
-    scores.approval * 0.30 +
-    (6 - scores.dropoutRanking) / 5 * 0.20 // Invert dropout ranking
+    scores.nextPhase * 0.20 +
+    scores.approval * 0.40 +
+    (6 - scores.dropoutRanking) / 5 * 0.15 // Invert dropout ranking
   );
 
-  const totalRevenue = marketData.reduce((sum, m) => sum + m.revenueProjection.year1 + m.revenueProjection.year2, 0);
-  const revenueScore = Math.min(1, totalRevenue / 5000); // Normalize against $5B total
-
-  return Math.round((probabilityScore * 0.70 + revenueScore * 0.30) * 100);
+  return Math.round(launchProbability * 100);
 }

@@ -429,8 +429,8 @@ const Index = () => {
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right">
-                              <div className="text-sm text-muted-foreground">Overall Score</div>
-                              <div className="text-3xl font-bold text-primary">{molecule.overallScore}</div>
+                              <div className="text-sm text-muted-foreground">Launch Probability</div>
+                              <div className="text-3xl font-bold text-primary">{molecule.overallScore}%</div>
                             </div>
                             <Button onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
                               Full Analysis
