@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,8 +11,10 @@ import {
   Database,
   FileText,
   Search,
-  BarChart3
+  BarChart3,
+  Download
 } from "lucide-react";
+import html2pdf from "html2pdf.js";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
 import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
@@ -58,6 +60,22 @@ interface MoleculeProfile {
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadPDF = () => {
+    if (!reportRef.current || !activeMolecule) return;
+    
+    const opt = {
+      margin: 10,
+      filename: `${activeMolecule.name.replace(/\s+/g, '_')}_Due_Diligence_Report.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+    
+    html2pdf().set(opt).from(reportRef.current).save();
+  };
 
   // Generate comprehensive molecule profiles with real probability calculations
   const mockMolecules: MoleculeProfile[] = [
@@ -424,9 +442,15 @@ const Index = () => {
                   ))}
               </div>
             ) : activeMolecule ? (
-              <div className="space-y-6">
+              <div className="space-y-6" ref={reportRef}>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-semibold">Comprehensive Due Diligence Report</h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-2xl font-semibold">Comprehensive Due Diligence Report</h2>
+                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </div>
                   <Button variant="outline" onClick={() => setSelectedMolecule(null)}>
                     ← Back to Overview
                   </Button>
