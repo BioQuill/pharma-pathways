@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ProbabilityScores } from "@/lib/scoring";
-import { TrendingUp, TrendingDown, Activity, Target, Award, GitBranch } from "lucide-react";
+import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore } from "@/lib/scoring";
+import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign } from "lucide-react";
 
 import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
 
@@ -12,9 +12,10 @@ interface MoleculeScoreCardProps {
   indication: string;
   overallScore: number;
   nctId?: string;
+  marketData?: MarketData[];
 }
 
-export function MoleculeScoreCard({ moleculeName, scores, phase, indication, overallScore, nctId }: MoleculeScoreCardProps) {
+export function MoleculeScoreCard({ moleculeName, scores, phase, indication, overallScore, nctId, marketData = [] }: MoleculeScoreCardProps) {
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
     if (ranking === 3) return "text-warning";
@@ -22,6 +23,16 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, ove
   };
 
   const formatPercent = (value: number) => `${(value * 100).toFixed(1)}%`;
+  
+  const timeToBlockbuster = calculateTimeToBlockbuster(marketData);
+  const revenueScore = calculateRevenueScore(marketData);
+  
+  const getBlockbusterColor = (years: number | null) => {
+    if (years === null) return "text-muted-foreground";
+    if (years <= 4) return "text-success";
+    if (years <= 8) return "text-warning";
+    return "text-destructive";
+  };
 
   return (
     <Card>
@@ -47,7 +58,7 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, ove
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Target className="w-4 h-4" />
@@ -83,6 +94,27 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, ove
               </p>
               <span className="text-xs text-muted-foreground">(5=highest)</span>
             </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className={`flex items-center gap-2 text-sm ${getBlockbusterColor(timeToBlockbuster)}`}>
+              <DollarSign className="w-4 h-4" />
+              <span>Time to Blockbuster</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <p className={`text-2xl font-semibold ${getBlockbusterColor(timeToBlockbuster)}`}>
+                {timeToBlockbuster !== null ? `${timeToBlockbuster}y` : 'N/A'}
+              </p>
+              <span className="text-xs text-muted-foreground">($1B sales)</span>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <TrendingUp className="w-4 h-4" />
+              <span>Revenue Score</span>
+            </div>
+            <p className="text-2xl font-semibold">{formatPercent(revenueScore)}</p>
           </div>
         </div>
 

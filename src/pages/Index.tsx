@@ -471,6 +471,7 @@ const Index = () => {
                   indication={activeMolecule.indication}
                   overallScore={activeMolecule.overallScore}
                   nctId={activeMolecule.nctId}
+                  marketData={activeMolecule.marketData}
                 />
                 <MarketAnalysisTable marketData={activeMolecule.marketData} />
                 

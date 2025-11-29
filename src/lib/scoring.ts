@@ -250,20 +250,78 @@ function calculateRegulatoryComplexity(countryCode: string): number {
   return complexity[countryCode as keyof typeof complexity] || 0.70;
 }
 
+// Calculate time to blockbuster ($1B cumulative sales) in years
+export function calculateTimeToBlockbuster(marketData: MarketData[]): number | null {
+  if (marketData.length === 0 || marketData[0].estimatedLaunchDate === 'N/A - Trial Failed') {
+    return null;
+  }
+  
+  const year1Total = marketData.reduce((sum, m) => sum + m.revenueProjection.year1, 0);
+  const year2Total = marketData.reduce((sum, m) => sum + m.revenueProjection.year2, 0);
+  
+  // Estimate annual growth rate from year1 to year2
+  const growthRate = year1Total > 0 ? (year2Total / year1Total) : 1.5;
+  
+  let cumulativeRevenue = 0;
+  let years = 0;
+  let annualRevenue = year1Total;
+  
+  // Project forward until we hit $1B (1000M)
+  while (cumulativeRevenue < 1000 && years < 20) {
+    years++;
+    if (years === 1) {
+      cumulativeRevenue += year1Total;
+    } else if (years === 2) {
+      cumulativeRevenue += year2Total;
+      annualRevenue = year2Total;
+    } else {
+      annualRevenue = annualRevenue * growthRate;
+      cumulativeRevenue += annualRevenue;
+    }
+  }
+  
+  return years < 20 ? years : null; // null if never reaches blockbuster
+}
+
+// Revenue score based on time to blockbuster (0-1)
+export function calculateRevenueScore(marketData: MarketData[]): number {
+  const timeToBlockbuster = calculateTimeToBlockbuster(marketData);
+  
+  if (timeToBlockbuster === null) return 0;
+  
+  // Score based on years to blockbuster:
+  // 1-2 years: 1.0 (excellent)
+  // 3-4 years: 0.8 (very good)
+  // 5-6 years: 0.6 (good)
+  // 7-10 years: 0.4 (moderate)
+  // 11-15 years: 0.2 (slow)
+  // 16+ years: 0.1 (very slow)
+  if (timeToBlockbuster <= 2) return 1.0;
+  if (timeToBlockbuster <= 4) return 0.8;
+  if (timeToBlockbuster <= 6) return 0.6;
+  if (timeToBlockbuster <= 10) return 0.4;
+  if (timeToBlockbuster <= 15) return 0.2;
+  return 0.1;
+}
+
 // Calculate Launch Probability Score (0-100%)
 // This represents the estimated probability of successful market launch
-// based on clinical trial success rates and regulatory approval likelihood
+// based on clinical trial success rates, regulatory approval likelihood, and revenue potential
 export function calculateOverallScore(scores: ProbabilityScores, marketData: MarketData[]): number {
   // Launch Probability is calculated as a weighted average of key success factors:
-  // - Meeting Endpoints (25%): Probability of achieving primary endpoints
-  // - Next Phase (20%): Probability of advancing to next development phase
-  // - Approval (40%): Overall probability of regulatory approval
-  // - Dropout Risk (15%): Inverse of dropout ranking (lower dropout = higher score)
+  // - Meeting Endpoints (20%): Probability of achieving primary endpoints
+  // - Next Phase (15%): Probability of advancing to next development phase
+  // - Approval (35%): Overall probability of regulatory approval
+  // - Dropout Risk (10%): Inverse of dropout ranking (lower dropout = higher score)
+  // - Revenue Potential (20%): Based on time to blockbuster status
+  const revenueScore = calculateRevenueScore(marketData);
+  
   const launchProbability = (
-    scores.meetingEndpoints * 0.25 +
-    scores.nextPhase * 0.20 +
-    scores.approval * 0.40 +
-    (6 - scores.dropoutRanking) / 5 * 0.15 // Invert dropout ranking
+    scores.meetingEndpoints * 0.20 +
+    scores.nextPhase * 0.15 +
+    scores.approval * 0.35 +
+    (6 - scores.dropoutRanking) / 5 * 0.10 +
+    revenueScore * 0.20
   );
 
   return Math.round(launchProbability * 100);
