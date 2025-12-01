@@ -19,6 +19,8 @@ import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
 import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
 import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
+import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
+import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/CompetitiveAnalysis";
 import { 
   calculateProbabilityScores, 
   generateMarketProjections, 
@@ -55,6 +57,9 @@ interface MoleculeProfile {
   nctId?: string;
   hasRetrospective?: boolean;
   retrospectivePhases?: TimelinePhase[];
+  patents?: PatentInfo[];
+  regulatoryExclusivity?: { type: string; endDate: string; }[];
+  competitiveLandscape?: CompetitiveLandscape;
 }
 
 const Index = () => {
@@ -80,6 +85,126 @@ const Index = () => {
   // Generate comprehensive molecule profiles with real probability calculations
   const mockMolecules: MoleculeProfile[] = [
     {
+      id: "RETA-01",
+      name: "Retatrutide (LY3437943)",
+      phase: "Phase III",
+      indication: "Obesity / Type 2 Diabetes",
+      therapeuticArea: "Metabolic/Endocrinology",
+      company: "Eli Lilly",
+      companyTrackRecord: 'fast',
+      nctId: "NCT05929066",
+      scores: calculateProbabilityScores("Phase III", "Obesity", "Metabolic"),
+      marketData: generateMarketProjections("Retatrutide", "Phase III", "Obesity", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US11,491,212", title: "GIP/GLP-1/Glucagon receptor agonist compositions", expirationDate: "2039", type: 'composition', status: 'active' },
+        { patentNumber: "US11,723,952", title: "Methods of treating obesity with triple agonist", expirationDate: "2040", type: 'method', status: 'active' },
+        { patentNumber: "US11,851,468", title: "Formulations of GIP/GLP-1/Glucagon agonists", expirationDate: "2041", type: 'formulation', status: 'active' },
+        { patentNumber: "WO2020/023451", title: "Triple hormone receptor agonist peptides", expirationDate: "2039", type: 'composition', status: 'active', notes: "Key composition of matter patent" },
+      ],
+      regulatoryExclusivity: [
+        { type: "NCE Exclusivity (projected)", endDate: "2031" },
+        { type: "Orphan Drug (potential)", endDate: "2034" },
+        { type: "Pediatric Extension", endDate: "2031.5" },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$130B+",
+        projectedGrowth: "25% CAGR",
+        keyPlayers: [
+          { name: "Tirzepatide (Mounjaro/Zepbound)", company: "Eli Lilly", phase: "Approved", mechanism: "GIP/GLP-1 dual agonist", keyDifferentiator: "Best-in-class efficacy, same company", efficacy: "22.5% weight loss", threat: 'medium' },
+          { name: "Semaglutide (Wegovy/Ozempic)", company: "Novo Nordisk", phase: "Approved", mechanism: "GLP-1 agonist", keyDifferentiator: "Market leader, brand recognition", efficacy: "15-17% weight loss", threat: 'medium' },
+          { name: "CagriSema", company: "Novo Nordisk", phase: "Phase III", mechanism: "GLP-1 + Amylin", keyDifferentiator: "Combination approach, strong efficacy", efficacy: "~25% weight loss (Ph2)", threat: 'high' },
+          { name: "Orforglipron", company: "Eli Lilly", phase: "Phase III", mechanism: "Oral GLP-1", keyDifferentiator: "Oral convenience", efficacy: "~15% weight loss", threat: 'low' },
+          { name: "Survodutide", company: "Boehringer/Zealand", phase: "Phase III", mechanism: "GLP-1/Glucagon dual", keyDifferentiator: "MASH indication focus", efficacy: "~19% weight loss", threat: 'medium' },
+        ],
+        competitiveAdvantages: [
+          "Best-in-class weight loss efficacy (~24% in Phase 2)",
+          "Triple mechanism (GIP/GLP-1/Glucagon) addresses multiple pathways",
+          "Eli Lilly manufacturing excellence and commercial reach",
+          "Strong metabolic benefits beyond weight loss",
+          "MASH indication potential (massive unmet need)"
+        ],
+        competitiveRisks: [
+          "Internal competition with tirzepatide (cannibalization)",
+          "CagriSema showing comparable efficacy",
+          "GI tolerability concerns with triple agonism",
+          "Pricing pressure in obesity market",
+          "Manufacturing complexity of triple agonist"
+        ],
+        marketPositioning: "Retatrutide is positioned as a potential best-in-class obesity treatment with unprecedented ~24% weight loss. The triple agonist mechanism (GIP/GLP-1/Glucagon) provides differentiation from dual agonists. Key positioning: premium efficacy for patients who need maximum weight loss or have failed other GLP-1 therapies."
+      },
+      retrospectivePhases: [
+        {
+          phase: "Phase 1",
+          date: "Q1 2021",
+          trialName: "First-in-Human Studies",
+          nctIds: ["NCT04143802"],
+          outcome: 'success',
+          keyData: [
+            "First triple agonist (GIP/GLP-1/Glucagon) in humans",
+            "Novel mechanism targeting three metabolic pathways",
+            "Acceptable safety profile established",
+            "Dose-dependent glucose and weight effects"
+          ],
+          scoreAtTime: 28,
+          rationale: "First-in-class triple agonist with unproven mechanism. High risk/high reward profile. Eli Lilly metabolic expertise reduces execution risk. Key question: can triple agonism deliver superior efficacy without tolerability issues?",
+          dataAvailableAtTime: ["PK/PD data", "Safety profile", "Mechanism validation", "Preclinical efficacy"]
+        },
+        {
+          phase: "Phase 2",
+          date: "Jun 2023",
+          trialName: "Phase 2 Obesity Study",
+          nctIds: ["NCT04881760"],
+          outcome: 'success',
+          keyData: [
+            "UNPRECEDENTED 24.2% weight loss at highest dose (48 weeks)",
+            "Dose-dependent efficacy: 17.5% (4mg) to 24.2% (12mg)",
+            "Superior to all approved obesity drugs",
+            "100% of participants on highest dose achieved ≥5% weight loss",
+            "63% achieved ≥20% weight loss",
+            "HbA1c reduction of 2.2% in T2D patients"
+          ],
+          scoreAtTime: 72,
+          rationale: "BREAKTHROUGH Phase 2 results - best-ever weight loss data. 24% weight loss exceeds tirzepatide (~22%). Validates triple agonist approach. Market opportunity massive. GI side effects manageable. Clear path to accelerated Phase 3.",
+          dataAvailableAtTime: ["48-week efficacy", "Weight loss data", "Glycemic control", "Safety/tolerability", "Dose-response", "Body composition"]
+        },
+        {
+          phase: "Phase 3 Initiation",
+          date: "Q3 2023",
+          trialName: "TRIUMPH Program Launch",
+          nctIds: ["NCT05929066", "NCT05929079", "NCT06059001"],
+          outcome: 'pending',
+          keyData: [
+            "TRIUMPH-1, TRIUMPH-2, TRIUMPH-3 initiated",
+            "Targeting obesity as primary indication",
+            "T2D studies also ongoing",
+            "~5,000+ patients planned",
+            "Cardiovascular outcomes trial planned"
+          ],
+          scoreAtTime: 75,
+          rationale: "Comprehensive Phase 3 program with obesity focus. Exceptional Phase 2 de-risks efficacy. Key focus on demonstrating tolerability at scale. MASH trials also planned. Lilly's tirzepatide success validates pathway. Approval likely 2026-2027.",
+          dataAvailableAtTime: ["Full Phase 2", "Trial designs", "MASH opportunity", "CV outcomes strategy"]
+        },
+        {
+          phase: "Current Status",
+          date: "Q4 2024",
+          trialName: "Phase 3 Ongoing",
+          outcome: 'pending',
+          keyData: [
+            "Phase 3 trials enrolling well",
+            "TRIUMPH program on track",
+            "MASH Phase 2 showing promise",
+            "No unexpected safety signals",
+            "Competitive with CagriSema for best-in-class"
+          ],
+          scoreAtTime: 74,
+          rationale: "Phase 3 progressing on schedule. Best-in-class efficacy profile maintained. MASH opportunity adds significant value (no approved therapies). Competition from CagriSema (Novo) intensifying. Filing expected 2026, approval 2027.",
+          dataAvailableAtTime: ["Enrollment progress", "Safety monitoring", "MASH data", "Competitive updates"]
+        }
+      ]
+    },
+    {
       id: "ORFO-01",
       name: "Orfoglipron (LY3502970)",
       phase: "Phase III",
@@ -92,6 +217,40 @@ const Index = () => {
       marketData: generateMarketProjections("Orfoglipron", "Phase III", "Type 2 Diabetes", 'fast'),
       overallScore: 0,
       hasRetrospective: true,
+      patents: [
+        { patentNumber: "US10,981,939", title: "Small molecule GLP-1 receptor agonist", expirationDate: "2038", type: 'composition', status: 'active' },
+        { patentNumber: "US11,414,432", title: "Methods of treatment using oral GLP-1 agonist", expirationDate: "2039", type: 'method', status: 'active' },
+        { patentNumber: "US11,667,634", title: "Oral formulations of GLP-1 agonists", expirationDate: "2040", type: 'formulation', status: 'active' },
+      ],
+      regulatoryExclusivity: [
+        { type: "NCE Exclusivity (projected)", endDate: "2031" },
+        { type: "Pediatric Extension", endDate: "2031.5" },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$100B+",
+        projectedGrowth: "20% CAGR",
+        keyPlayers: [
+          { name: "Rybelsus (oral semaglutide)", company: "Novo Nordisk", phase: "Approved", mechanism: "Oral GLP-1 peptide", keyDifferentiator: "First-to-market oral GLP-1", efficacy: "~4-5% weight loss", threat: 'high' },
+          { name: "Tirzepatide (Mounjaro)", company: "Eli Lilly", phase: "Approved", mechanism: "GIP/GLP-1 injectable", keyDifferentiator: "Superior efficacy, same company", efficacy: "22.5% weight loss", threat: 'low' },
+          { name: "Semaglutide (Ozempic)", company: "Novo Nordisk", phase: "Approved", mechanism: "Injectable GLP-1", keyDifferentiator: "Market leader injectable", efficacy: "15% weight loss", threat: 'medium' },
+          { name: "Danuglipron", company: "Pfizer", phase: "Discontinued", mechanism: "Oral GLP-1", keyDifferentiator: "Was competitor, now discontinued", threat: 'low' },
+        ],
+        competitiveAdvantages: [
+          "Small molecule - easier manufacturing than peptides",
+          "Once-daily dosing without food restrictions (vs Rybelsus)",
+          "~15% weight loss - competitive with injectable GLP-1s",
+          "Oral convenience addresses injection hesitancy",
+          "Eli Lilly manufacturing and commercial excellence"
+        ],
+        competitiveRisks: [
+          "Rybelsus has first-mover advantage in oral GLP-1",
+          "Lower efficacy than injectable tirzepatide/semaglutide",
+          "May cannibalize Mounjaro sales",
+          "GI tolerability still a concern",
+          "Pricing pressure in competitive market"
+        ],
+        marketPositioning: "Orfoglipron targets patients who prefer oral therapy over injections. Positioned as 'injectable-level efficacy in a pill' - addressing the ~50% of patients who refuse or discontinue injectable GLP-1s due to needle aversion."
+      },
       retrospectivePhases: [
         {
           phase: "Phase 1",
@@ -555,6 +714,22 @@ const Index = () => {
                   nctId={activeMolecule.nctId}
                   marketData={activeMolecule.marketData}
                 />
+                
+                {activeMolecule.patents && activeMolecule.patents.length > 0 && (
+                  <PatentTimeline
+                    moleculeName={activeMolecule.name}
+                    patents={activeMolecule.patents}
+                    regulatoryExclusivity={activeMolecule.regulatoryExclusivity}
+                  />
+                )}
+                
+                {activeMolecule.competitiveLandscape && (
+                  <CompetitiveAnalysis
+                    moleculeName={activeMolecule.name}
+                    landscape={activeMolecule.competitiveLandscape}
+                  />
+                )}
+                
                 <MarketAnalysisTable marketData={activeMolecule.marketData} />
                 
                 {activeMolecule.hasRetrospective && activeMolecule.retrospectivePhases && (
