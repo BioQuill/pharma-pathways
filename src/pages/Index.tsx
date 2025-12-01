@@ -80,6 +80,88 @@ const Index = () => {
   // Generate comprehensive molecule profiles with real probability calculations
   const mockMolecules: MoleculeProfile[] = [
     {
+      id: "ORFO-01",
+      name: "Orfoglipron (LY3502970)",
+      phase: "Phase III",
+      indication: "Type 2 Diabetes / Obesity",
+      therapeuticArea: "Metabolic/Endocrinology",
+      company: "Eli Lilly",
+      companyTrackRecord: 'fast',
+      nctId: "NCT05631327",
+      scores: calculateProbabilityScores("Phase III", "Type 2 Diabetes", "Metabolic"),
+      marketData: generateMarketProjections("Orfoglipron", "Phase III", "Type 2 Diabetes", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      retrospectivePhases: [
+        {
+          phase: "Phase 1",
+          date: "Q2 2020",
+          trialName: "First-in-Human Studies",
+          nctIds: ["NCT03954834"],
+          outcome: 'success',
+          keyData: [
+            "Novel oral small molecule GLP-1 receptor agonist",
+            "Favorable PK profile with once-daily dosing",
+            "Dose-dependent glucose lowering observed",
+            "Well-tolerated in healthy volunteers"
+          ],
+          scoreAtTime: 32,
+          rationale: "Early stage oral GLP-1 with novel mechanism. Small molecule approach differentiates from peptide-based competitors. Eli Lilly strong metabolic portfolio. Key risk: oral GLP-1 has historically faced bioavailability challenges.",
+          dataAvailableAtTime: ["PK/PD data", "Safety profile", "Mechanism validation"]
+        },
+        {
+          phase: "Phase 2",
+          date: "Jun 2023",
+          trialName: "ACHIEVE Program",
+          nctIds: ["NCT05051579", "NCT05048719"],
+          outcome: 'success',
+          keyData: [
+            "Up to 14.7% weight loss at 36 weeks (highest dose)",
+            "HbA1c reduction up to 2.1% in T2D patients",
+            "Comparable efficacy to injectable semaglutide",
+            "Once-daily oral dosing confirmed",
+            "GI side effects manageable, dose-dependent"
+          ],
+          scoreAtTime: 58,
+          rationale: "Exceptional Phase 2 results - weight loss competitive with injectable GLP-1s. Oral convenience is major differentiator vs Wegovy/Ozempic. Large obesity market opportunity ($100B+ projected). Clear path to Phase 3.",
+          dataAvailableAtTime: ["36-week efficacy", "Weight loss data", "HbA1c reduction", "Safety/tolerability", "Dose-response"]
+        },
+        {
+          phase: "Phase 3 Initiation",
+          date: "Q4 2023",
+          trialName: "ATTAIN Program Launch",
+          nctIds: ["NCT05631327", "NCT05631314", "NCT05631301"],
+          outcome: 'pending',
+          keyData: [
+            "ATTAIN-1, ATTAIN-2, ATTAIN-3 trials initiated",
+            "Targeting T2D and obesity indications",
+            "~3,000+ patients planned across program",
+            "Comparator arms include tirzepatide",
+            "Results expected 2025-2026"
+          ],
+          scoreAtTime: 65,
+          rationale: "Strong Phase 3 program design. Lilly's tirzepatide success (Mounjaro/Zepbound) validates metabolic expertise. Oral formulation addresses injection hesitancy. Key question: can it compete with tirzepatide's superior efficacy?",
+          dataAvailableAtTime: ["Phase 2 full data", "Trial designs", "Competitive landscape", "Market projections"]
+        },
+        {
+          phase: "Current Status",
+          date: "Q4 2024",
+          trialName: "Phase 3 Ongoing",
+          outcome: 'pending',
+          keyData: [
+            "Phase 3 trials enrolling/ongoing",
+            "No safety signals reported",
+            "Competitive pressure from oral semaglutide (Rybelsus)",
+            "Tirzepatide setting high efficacy bar",
+            "Potential first-line oral option for obesity"
+          ],
+          scoreAtTime: 68,
+          rationale: "Phase 3 progressing well. Market opportunity remains massive despite competition. Oral GLP-1 convenience could capture significant market share. Lilly well-positioned with manufacturing/commercial capabilities. Filing expected 2026.",
+          dataAvailableAtTime: ["Interim safety data", "Enrollment progress", "Competitive developments", "Market dynamics"]
+        }
+      ]
+    },
+    {
       id: "BQ-001",
       name: "Zincotrexate",
       phase: "Phase III",
