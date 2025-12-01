@@ -304,24 +304,41 @@ export function calculateRevenueScore(marketData: MarketData[]): number {
   return 0.1;
 }
 
+// Phase-specific success rates from industry analysis
+// Phase III: 30-40% success rate, 75% of development costs
+// Regulatory: 40% of delays
+// Manufacturing/Supply: 15% of delays
+// 100% of launches experience delays (45% internal, 40% regulatory, 15% supply chain)
+export const PHASE_SUCCESS_RATES: Record<string, number> = {
+  'Pre-clinical': 0.10,
+  'Phase I': 0.52,
+  'Phase II': 0.36,
+  'Phase III': 0.35, // 30-40% average
+  'NDA/BLA': 0.85
+};
+
 // Calculate Launch Probability Score (0-100%)
-// This represents the estimated probability of successful market launch
-// based on clinical trial success rates, regulatory approval likelihood, and revenue potential
-export function calculateOverallScore(scores: ProbabilityScores, marketData: MarketData[]): number {
-  // Launch Probability is calculated as a weighted average of key success factors:
-  // - Meeting Endpoints (20%): Probability of achieving primary endpoints
-  // - Next Phase (15%): Probability of advancing to next development phase
-  // - Approval (35%): Overall probability of regulatory approval
-  // - Dropout Risk (10%): Inverse of dropout ranking (lower dropout = higher score)
-  // - Revenue Potential (20%): Based on time to blockbuster status
+// Enhanced calculation incorporating ranked factor analysis and industry risk data
+export function calculateOverallScore(
+  scores: ProbabilityScores, 
+  marketData: MarketData[],
+  phase: string = 'Phase II'
+): number {
   const revenueScore = calculateRevenueScore(marketData);
+  const phaseSuccessRate = PHASE_SUCCESS_RATES[phase] || 0.36;
   
+  // Enhanced weighted calculation based on industry data:
+  // - Phase-specific success rate: 35% (most critical - Phase III has 30-40% success)
+  // - Approval probability: 25% (regulatory pathway)
+  // - Meeting Endpoints: 15% (efficacy validation)
+  // - Revenue Potential: 15% (market viability)
+  // - Dropout/Execution Risk: 10%
   const launchProbability = (
-    scores.meetingEndpoints * 0.20 +
-    scores.nextPhase * 0.15 +
-    scores.approval * 0.35 +
-    (6 - scores.dropoutRanking) / 5 * 0.10 +
-    revenueScore * 0.20
+    phaseSuccessRate * 0.35 +
+    scores.approval * 0.25 +
+    scores.meetingEndpoints * 0.15 +
+    revenueScore * 0.15 +
+    (6 - scores.dropoutRanking) / 5 * 0.10
   );
 
   return Math.round(launchProbability * 100);
