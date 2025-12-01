@@ -21,6 +21,7 @@ import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
 import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
 import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
 import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/CompetitiveAnalysis";
+import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
 import { 
   calculateProbabilityScores, 
   generateMarketProjections, 
@@ -28,6 +29,7 @@ import {
   type ProbabilityScores,
   type MarketData
 } from "@/lib/scoring";
+import { generateLaunchFactors, type LaunchFactors } from "@/lib/launchFactors";
 
 interface TimelinePhase {
   phase: string;
@@ -60,6 +62,7 @@ interface MoleculeProfile {
   patents?: PatentInfo[];
   regulatoryExclusivity?: { type: string; endDate: string; }[];
   competitiveLandscape?: CompetitiveLandscape;
+  launchFactors?: LaunchFactors;
 }
 
 const Index = () => {
@@ -517,9 +520,10 @@ const Index = () => {
     },
   ];
 
-  // Calculate overall scores based on probabilities and market projections
+  // Calculate overall scores and generate launch factors based on probabilities and market projections
   mockMolecules.forEach(mol => {
-    mol.overallScore = calculateOverallScore(mol.scores, mol.marketData);
+    mol.launchFactors = generateLaunchFactors(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
+    mol.overallScore = calculateOverallScore(mol.scores, mol.marketData, mol.phase);
   });
 
   const activeMolecule = mockMolecules.find(m => m.id === selectedMolecule);
@@ -714,6 +718,13 @@ const Index = () => {
                   nctId={activeMolecule.nctId}
                   marketData={activeMolecule.marketData}
                 />
+                
+                {activeMolecule.launchFactors && (
+                  <LaunchFactorsCard
+                    factors={activeMolecule.launchFactors}
+                    moleculeName={activeMolecule.name}
+                  />
+                )}
                 
                 {activeMolecule.patents && activeMolecule.patents.length > 0 && (
                   <PatentTimeline
