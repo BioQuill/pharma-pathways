@@ -323,41 +323,564 @@ const Index = () => {
         }
       ]
     },
+    // 1. ONCOLOGY/HEMATOLOGY
     {
-      id: "BQ-001",
-      name: "Zincotrexate",
+      id: "DATO-01",
+      name: "Datopotamab Deruxtecan (Dato-DXd)",
       phase: "Phase III",
-      indication: "Non-Small Cell Lung Cancer",
-      therapeuticArea: "Oncology",
-      company: "BioTech Innovations",
+      indication: "Non-Small Cell Lung Cancer / Triple-Negative Breast Cancer",
+      therapeuticArea: "Oncology/Hematology",
+      company: "AstraZeneca/Daiichi Sankyo",
       companyTrackRecord: 'fast',
+      nctId: "NCT04656652",
       scores: calculateProbabilityScores("Phase III", "Non-Small Cell Lung Cancer", "Oncology"),
-      marketData: generateMarketProjections("Zincotrexate", "Phase III", "Non-Small Cell Lung Cancer", 'fast'),
+      marketData: generateMarketProjections("Datopotamab Deruxtecan", "Phase III", "Non-Small Cell Lung Cancer", 'fast'),
       overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US10,973,924", title: "TROP2-targeting antibody-drug conjugate", expirationDate: "2038", type: 'composition', status: 'active' },
+        { patentNumber: "US11,364,303", title: "Methods of treating NSCLC with ADC", expirationDate: "2039", type: 'method', status: 'active' },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$25B+ (ADC market)",
+        projectedGrowth: "18% CAGR",
+        keyPlayers: [
+          { name: "Enhertu (T-DXd)", company: "AstraZeneca/Daiichi Sankyo", phase: "Approved", mechanism: "HER2 ADC", keyDifferentiator: "Same platform, different target", efficacy: "High response rates", threat: 'low' },
+          { name: "Trodelvy", company: "Gilead", phase: "Approved", mechanism: "TROP2 ADC", keyDifferentiator: "First-to-market TROP2", efficacy: "~35% ORR in TNBC", threat: 'high' },
+        ],
+        competitiveAdvantages: ["Novel TROP2 targeting", "Best-in-class payload technology", "Strong AZ/DSC partnership"],
+        competitiveRisks: ["Trodelvy has first-mover advantage", "Safety profile concerns with ADCs"],
+        marketPositioning: "Next-generation TROP2-targeting ADC with potentially improved safety profile."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 1", date: "Q2 2020", outcome: 'success', keyData: ["TROP2 targeting validated", "Manageable safety"], scoreAtTime: 35, rationale: "Novel ADC with strong platform", dataAvailableAtTime: ["Early efficacy signals"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["TROPION trials ongoing", "Competing with Trodelvy"], scoreAtTime: 58, rationale: "Phase 3 enrollment progressing", dataAvailableAtTime: ["Interim data positive"] }
+      ]
     },
+    // 2. CARDIOVASCULAR
     {
-      id: "BQ-002",
-      name: "Cardiomax-R",
-      phase: "Phase II",
-      indication: "Heart Failure",
-      therapeuticArea: "Cardiology",
-      company: "Global Pharma Corp",
+      id: "ZILE-01",
+      name: "Zilebesiran",
+      phase: "Phase III",
+      indication: "Hypertension",
+      therapeuticArea: "Cardiovascular",
+      company: "Alnylam Pharmaceuticals",
+      companyTrackRecord: 'fast',
+      nctId: "NCT05103332",
+      scores: calculateProbabilityScores("Phase III", "Hypertension", "Cardiology"),
+      marketData: generateMarketProjections("Zilebesiran", "Phase III", "Hypertension", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US11,174,472", title: "RNAi targeting angiotensinogen", expirationDate: "2040", type: 'composition', status: 'active' },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$30B+ (HTN market)",
+        projectedGrowth: "5% CAGR",
+        keyPlayers: [
+          { name: "ACE Inhibitors/ARBs", company: "Generic", phase: "Approved", mechanism: "RAAS inhibition", keyDifferentiator: "Cheap, proven", efficacy: "Standard care", threat: 'medium' },
+          { name: "Leqvio", company: "Novartis", phase: "Approved", mechanism: "siRNA PCSK9", keyDifferentiator: "First CV siRNA", efficacy: "50% LDL reduction", threat: 'low' },
+        ],
+        competitiveAdvantages: ["Twice-yearly dosing", "Novel mechanism (AGT silencing)", "Addresses non-adherence"],
+        competitiveRisks: ["Chronic daily pills are cheap", "New mechanism risk"],
+        marketPositioning: "Revolutionary twice-yearly injection for uncontrolled hypertension."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2", date: "Q1 2023", outcome: 'success', keyData: ["22 mmHg SBP reduction", "6-month durability"], scoreAtTime: 62, rationale: "Strong Phase 2 data", dataAvailableAtTime: ["KARDIA-1 results"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["KARDIA-3 ongoing", "CV outcomes trial"], scoreAtTime: 65, rationale: "Pivotal trials progressing", dataAvailableAtTime: ["Enrollment on track"] }
+      ]
+    },
+    // 3. PSYCHIATRY/MENTAL HEALTH
+    {
+      id: "EMRA-01",
+      name: "Emraclidine (CVL-231)",
+      phase: "Phase III",
+      indication: "Schizophrenia",
+      therapeuticArea: "Psychiatry/Mental Health",
+      company: "Bristol-Myers Squibb/Cerevel",
+      companyTrackRecord: 'fast',
+      nctId: "NCT06148129",
+      scores: calculateProbabilityScores("Phase III", "Schizophrenia", "Psychiatry"),
+      marketData: generateMarketProjections("Emraclidine", "Phase III", "Schizophrenia", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US11,312,714", title: "Muscarinic M4 receptor agonists", expirationDate: "2041", type: 'composition', status: 'active' },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$10B+ (schizophrenia)",
+        projectedGrowth: "4% CAGR",
+        keyPlayers: [
+          { name: "Cobenfy", company: "BMS/Karuna", phase: "Approved", mechanism: "M1/M4 agonist", keyDifferentiator: "First non-D2 mechanism", efficacy: "PANSS -21 points", threat: 'high' },
+          { name: "Typical/Atypical Antipsychotics", company: "Generic", phase: "Approved", mechanism: "D2 antagonism", keyDifferentiator: "Standard care", efficacy: "Variable", threat: 'medium' },
+        ],
+        competitiveAdvantages: ["Selective M4 agonist (cleaner profile)", "No metabolic side effects", "Novel mechanism"],
+        competitiveRisks: ["Cobenfy first-to-market", "Psychiatric trials high failure rate"],
+        marketPositioning: "Next-gen muscarinic agonist with potentially superior tolerability."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2", date: "Q3 2023", outcome: 'success', keyData: ["Significant PANSS reduction", "Good tolerability"], scoreAtTime: 55, rationale: "Positive Phase 2 efficacy", dataAvailableAtTime: ["EMPOWER results"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["EMPOWER-2 initiated", "BMS acquisition closed"], scoreAtTime: 58, rationale: "Pivotal trials underway", dataAvailableAtTime: ["Trial designs finalized"] }
+      ]
+    },
+    // 4. IMMUNOLOGY & INFLAMMATION
+    {
+      id: "RITLE-01",
+      name: "Ritlbexbart (SAR441566/ABBV-157)",
+      phase: "Phase III",
+      indication: "Ulcerative Colitis / Crohn's Disease",
+      therapeuticArea: "Immunology & Inflammation",
+      company: "Sanofi/AbbVie",
+      companyTrackRecord: 'fast',
+      nctId: "NCT05521503",
+      scores: calculateProbabilityScores("Phase III", "Ulcerative Colitis", "Immunology"),
+      marketData: generateMarketProjections("Ritlbexbart", "Phase III", "Ulcerative Colitis", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$25B+ (IBD market)",
+        projectedGrowth: "8% CAGR",
+        keyPlayers: [
+          { name: "Skyrizi", company: "AbbVie", phase: "Approved", mechanism: "IL-23 inhibitor", keyDifferentiator: "Best-in-class efficacy", efficacy: "50%+ remission", threat: 'high' },
+          { name: "Rinvoq", company: "AbbVie", phase: "Approved", mechanism: "JAK inhibitor", keyDifferentiator: "Oral option", efficacy: "40%+ remission", threat: 'high' },
+        ],
+        competitiveAdvantages: ["Dual TL1A targeting", "Novel mechanism", "Strong partnerships"],
+        competitiveRisks: ["Crowded IBD market", "AbbVie internal competition"],
+        marketPositioning: "First-in-class TL1A inhibitor for IBD with potential best-in-class efficacy."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2", date: "Q2 2023", outcome: 'success', keyData: ["Strong endoscopic improvement", "Novel TL1A mechanism"], scoreAtTime: 60, rationale: "Compelling Phase 2 data", dataAvailableAtTime: ["IBD efficacy signals"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["Multiple IBD trials ongoing"], scoreAtTime: 62, rationale: "Broad Phase 3 program", dataAvailableAtTime: ["Enrollment progressing"] }
+      ]
+    },
+    // 5. RHEUMATOLOGY
+    {
+      id: "NIPO-01",
+      name: "Nipocalimab",
+      phase: "Phase III",
+      indication: "Myasthenia Gravis / Rheumatoid Arthritis",
+      therapeuticArea: "Rheumatology",
+      company: "Johnson & Johnson",
+      companyTrackRecord: 'fast',
+      nctId: "NCT04951622",
+      scores: calculateProbabilityScores("Phase III", "Myasthenia Gravis", "Rheumatology"),
+      marketData: generateMarketProjections("Nipocalimab", "Phase III", "Myasthenia Gravis", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$5B+ (MG market projected)",
+        projectedGrowth: "15% CAGR",
+        keyPlayers: [
+          { name: "Vyvgart", company: "argenx", phase: "Approved", mechanism: "FcRn blocker", keyDifferentiator: "First FcRn approved", efficacy: "Significant MG improvement", threat: 'high' },
+          { name: "Rozanolixizumab", company: "UCB", phase: "Approved", mechanism: "FcRn blocker", keyDifferentiator: "SC administration", efficacy: "Similar to Vyvgart", threat: 'medium' },
+        ],
+        competitiveAdvantages: ["J&J commercial reach", "Multiple indications", "Convenient dosing"],
+        competitiveRisks: ["Late to FcRn market", "Vyvgart dominant"],
+        marketPositioning: "FcRn blocker with broad autoimmune disease potential."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2", date: "Q4 2022", outcome: 'success', keyData: ["IgG reduction >70%", "MG improvement"], scoreAtTime: 52, rationale: "FcRn mechanism validated", dataAvailableAtTime: ["Autoimmune efficacy"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["VIVACITY trials ongoing", "RA expansion"], scoreAtTime: 55, rationale: "Multiple pivotal trials", dataAvailableAtTime: ["Enrollment complete"] }
+      ]
+    },
+    // 6. INFECTIOUS DISEASES
+    {
+      id: "LENA-01",
+      name: "Lenacapavir (Sunlenca)",
+      phase: "Phase III",
+      indication: "HIV Prevention (PrEP)",
+      therapeuticArea: "Infectious Diseases",
+      company: "Gilead Sciences",
+      companyTrackRecord: 'fast',
+      nctId: "NCT04994509",
+      scores: calculateProbabilityScores("Phase III", "HIV Prevention", "Infectious Disease"),
+      marketData: generateMarketProjections("Lenacapavir", "Phase III", "HIV Prevention", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US11,028,110", title: "Capsid inhibitor compounds", expirationDate: "2039", type: 'composition', status: 'active' },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$8B+ (HIV prevention)",
+        projectedGrowth: "12% CAGR",
+        keyPlayers: [
+          { name: "Truvada/Descovy", company: "Gilead", phase: "Approved", mechanism: "Daily oral PrEP", keyDifferentiator: "Established standard", efficacy: "99% effective", threat: 'low' },
+          { name: "Apretude", company: "ViiV", phase: "Approved", mechanism: "Injectable q2m", keyDifferentiator: "Long-acting injectable", efficacy: "Similar to oral", threat: 'medium' },
+        ],
+        competitiveAdvantages: ["Twice-yearly dosing", "100% efficacy in PURPOSE trials", "Novel capsid mechanism"],
+        competitiveRisks: ["Pricing pressures", "Generic oral PrEP"],
+        marketPositioning: "Revolutionary twice-yearly HIV prevention with 100% efficacy."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 3 PURPOSE-1", date: "Jun 2024", outcome: 'success', keyData: ["100% efficacy in women", "Zero infections vs background rate"], scoreAtTime: 88, rationale: "Unprecedented efficacy", dataAvailableAtTime: ["PURPOSE-1 topline"] },
+        { phase: "Phase 3 PURPOSE-2", date: "Oct 2024", outcome: 'success', keyData: ["96% efficacy in MSM/TGW", "Superior to daily Truvada"], scoreAtTime: 92, rationale: "Confirmed across populations", dataAvailableAtTime: ["PURPOSE-2 results"] }
+      ]
+    },
+    // 7. RESPIRATORY/PULMONOLOGY
+    {
+      id: "DUPI-01",
+      name: "Dupilumab (Dupixent)",
+      phase: "Phase III",
+      indication: "COPD with Type 2 Inflammation",
+      therapeuticArea: "Respiratory/Pulmonology",
+      company: "Sanofi/Regeneron",
+      companyTrackRecord: 'fast',
+      nctId: "NCT03930732",
+      scores: calculateProbabilityScores("Phase III", "COPD", "Respiratory"),
+      marketData: generateMarketProjections("Dupilumab", "Phase III", "COPD", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$20B+ (COPD market)",
+        projectedGrowth: "6% CAGR",
+        keyPlayers: [
+          { name: "Trelegy/Breztri", company: "GSK/AZ", phase: "Approved", mechanism: "Triple inhaler", keyDifferentiator: "Standard COPD care", efficacy: "Modest improvement", threat: 'medium' },
+          { name: "Fasenra", company: "AstraZeneca", phase: "Approved", mechanism: "Anti-IL5", keyDifferentiator: "Eosinophilic COPD", efficacy: "Limited data", threat: 'low' },
+        ],
+        competitiveAdvantages: ["First biologic for COPD", "30% exacerbation reduction", "Large unmet need"],
+        competitiveRisks: ["Biomarker selection needed", "High cost vs inhalers"],
+        marketPositioning: "First-in-class biologic for Type 2 high COPD patients."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 3 BOREAS", date: "May 2023", outcome: 'success', keyData: ["30% exacerbation reduction", "FEV1 improvement"], scoreAtTime: 82, rationale: "First biologic to show COPD benefit", dataAvailableAtTime: ["BOREAS results"] },
+        { phase: "FDA Approval", date: "Sep 2024", outcome: 'success', keyData: ["Approved for COPD", "Type 2 inflammation indication"], scoreAtTime: 95, rationale: "Major label expansion", dataAvailableAtTime: ["Approval secured"] }
+      ]
+    },
+    // 8. GASTROENTEROLOGY & HEPATOLOGY
+    {
+      id: "EFRU-01",
+      name: "Efruxifermin (EFX)",
+      phase: "Phase III",
+      indication: "MASH (Metabolic-Associated Steatohepatitis)",
+      therapeuticArea: "Gastroenterology & Hepatology",
+      company: "Akero Therapeutics",
       companyTrackRecord: 'average',
-      scores: calculateProbabilityScores("Phase II", "Heart Failure", "Cardiology"),
-      marketData: generateMarketProjections("Cardiomax-R", "Phase II", "Heart Failure", 'average'),
+      nctId: "NCT06161558",
+      scores: calculateProbabilityScores("Phase III", "MASH", "Gastroenterology"),
+      marketData: generateMarketProjections("Efruxifermin", "Phase III", "MASH", 'average'),
       overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$40B+ (MASH projected)",
+        projectedGrowth: "40% CAGR",
+        keyPlayers: [
+          { name: "Rezdiffra (resmetirom)", company: "Madrigal", phase: "Approved", mechanism: "THR-β agonist", keyDifferentiator: "First MASH drug approved", efficacy: "26% MASH resolution", threat: 'high' },
+          { name: "Tirzepatide", company: "Eli Lilly", phase: "Phase III", mechanism: "GIP/GLP-1", keyDifferentiator: "Weight loss benefit", efficacy: "Strong MASH signals", threat: 'high' },
+        ],
+        competitiveAdvantages: ["Best-in-class efficacy (50%+ resolution)", "FGF21 mechanism", "Weekly dosing"],
+        competitiveRisks: ["Rezdiffra first-mover", "GLP-1s competition"],
+        marketPositioning: "Potentially best-in-class MASH therapy with superior histological response."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2b HARMONY", date: "Q1 2024", outcome: 'success', keyData: ["41% MASH resolution", "Fibrosis improvement"], scoreAtTime: 68, rationale: "Best Phase 2 MASH data", dataAvailableAtTime: ["HARMONY results"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["SYNCHRONY trials initiated", "F2-F3 fibrosis focus"], scoreAtTime: 65, rationale: "Pivotal program underway", dataAvailableAtTime: ["Trial designs"] }
+      ]
     },
+    // 9. NEPHROLOGY/RENAL
     {
-      id: "BQ-003",
-      name: "Neuroplastin",
-      phase: "Phase II",
-      indication: "Alzheimer's Disease",
-      therapeuticArea: "Neurology",
-      company: "NeuroScience Labs",
-      companyTrackRecord: 'slow',
-      scores: calculateProbabilityScores("Phase II", "Alzheimer's Disease", "Neurology"),
-      marketData: generateMarketProjections("Neuroplastin", "Phase II", "Alzheimer's Disease", 'slow'),
+      id: "ATRA-01",
+      name: "Atrasentan",
+      phase: "Phase III",
+      indication: "IgA Nephropathy",
+      therapeuticArea: "Nephrology/Renal",
+      company: "Chinook Therapeutics/Novartis",
+      companyTrackRecord: 'fast',
+      nctId: "NCT04573478",
+      scores: calculateProbabilityScores("Phase III", "IgA Nephropathy", "Nephrology"),
+      marketData: generateMarketProjections("Atrasentan", "Phase III", "IgA Nephropathy", 'fast'),
       overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$5B+ (IgAN projected)",
+        projectedGrowth: "25% CAGR",
+        keyPlayers: [
+          { name: "Filspari (sparsentan)", company: "Travere", phase: "Approved", mechanism: "Dual ERA/ARB", keyDifferentiator: "First IgAN drug approved", efficacy: "41% proteinuria reduction", threat: 'high' },
+          { name: "Tarpeyo", company: "Calliditas", phase: "Approved", mechanism: "Targeted release budesonide", keyDifferentiator: "Oral steroid", efficacy: "34% proteinuria reduction", threat: 'medium' },
+        ],
+        competitiveAdvantages: ["Superior proteinuria reduction (38%)", "Selective ERA", "Novartis backing"],
+        competitiveRisks: ["Filspari first-mover", "Edema management"],
+        marketPositioning: "Highly selective endothelin receptor antagonist for renal protection."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2 AFFINITY", date: "Q3 2023", outcome: 'success', keyData: ["38% proteinuria reduction", "eGFR stabilization"], scoreAtTime: 65, rationale: "Strong Phase 2 efficacy", dataAvailableAtTime: ["AFFINITY results"] },
+        { phase: "Phase 3 ALIGN", date: "Q4 2024", outcome: 'pending', keyData: ["ALIGN trial ongoing", "Primary endpoint: eGFR slope"], scoreAtTime: 62, rationale: "Pivotal trial progressing", dataAvailableAtTime: ["Enrollment updates"] }
+      ]
+    },
+    // 10. DERMATOLOGY
+    {
+      id: "NEMO-01",
+      name: "Nemolizumab",
+      phase: "Phase III",
+      indication: "Atopic Dermatitis / Prurigo Nodularis",
+      therapeuticArea: "Dermatology",
+      company: "Galderma",
+      companyTrackRecord: 'average',
+      nctId: "NCT05052983",
+      scores: calculateProbabilityScores("Phase III", "Atopic Dermatitis", "Dermatology"),
+      marketData: generateMarketProjections("Nemolizumab", "Phase III", "Atopic Dermatitis", 'average'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$15B+ (AD market)",
+        projectedGrowth: "10% CAGR",
+        keyPlayers: [
+          { name: "Dupixent", company: "Sanofi/Regeneron", phase: "Approved", mechanism: "IL-4/IL-13 blocker", keyDifferentiator: "Market leader", efficacy: "High response rates", threat: 'high' },
+          { name: "Rinvoq/Cibinqo", company: "AbbVie/Pfizer", phase: "Approved", mechanism: "JAK inhibitor", keyDifferentiator: "Oral option", efficacy: "Fast onset", threat: 'medium' },
+        ],
+        competitiveAdvantages: ["IL-31 mechanism (itch focus)", "Monthly dosing", "Prurigo nodularis first-mover"],
+        competitiveRisks: ["Dupixent dominant", "Late to AD market"],
+        marketPositioning: "First IL-31 blocker targeting itch at source, unique for prurigo nodularis."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 3 ARCADIA", date: "Q2 2024", outcome: 'success', keyData: ["Met primary endpoints", "Significant itch reduction"], scoreAtTime: 72, rationale: "Positive pivotal results", dataAvailableAtTime: ["ARCADIA 1&2 results"] },
+        { phase: "FDA Filing", date: "Q4 2024", outcome: 'pending', keyData: ["BLA submitted", "Priority review requested"], scoreAtTime: 78, rationale: "Approval expected 2025", dataAvailableAtTime: ["Regulatory submission"] }
+      ]
+    },
+    // 11. OPHTHALMOLOGY
+    {
+      id: "TARC-01",
+      name: "Tarcocimab Tedromer (OPT-302)",
+      phase: "Phase III",
+      indication: "Wet Age-Related Macular Degeneration",
+      therapeuticArea: "Ophthalmology",
+      company: "Opthea Limited",
+      companyTrackRecord: 'average',
+      nctId: "NCT04757610",
+      scores: calculateProbabilityScores("Phase III", "Wet AMD", "Ophthalmology"),
+      marketData: generateMarketProjections("Tarcocimab", "Phase III", "Wet AMD", 'average'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$12B+ (wet AMD)",
+        projectedGrowth: "5% CAGR",
+        keyPlayers: [
+          { name: "Eylea", company: "Regeneron", phase: "Approved", mechanism: "VEGF-A/PlGF trap", keyDifferentiator: "Market leader", efficacy: "Gold standard", threat: 'high' },
+          { name: "Vabysmo", company: "Roche", phase: "Approved", mechanism: "VEGF-A/Ang-2 bispecific", keyDifferentiator: "Extended dosing", efficacy: "Non-inferior to Eylea", threat: 'high' },
+        ],
+        competitiveAdvantages: ["VEGF-C/D targeting (novel)", "Combination with anti-VEGF-A", "Addresses resistance"],
+        competitiveRisks: ["Add-on therapy model", "Injection burden"],
+        marketPositioning: "First VEGF-C/D blocker to combine with standard anti-VEGF for superior outcomes."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2b", date: "Q2 2021", outcome: 'success', keyData: ["+3.4 letter gain vs monotherapy", "Combination benefit proven"], scoreAtTime: 55, rationale: "Combination approach validated", dataAvailableAtTime: ["Phase 2b results"] },
+        { phase: "Phase 3 ShORe", date: "Q4 2024", outcome: 'pending', keyData: ["ShORe/COAST trials ongoing", "Primary: BCVA at 52 weeks"], scoreAtTime: 52, rationale: "Pivotal trials in progress", dataAvailableAtTime: ["Enrollment status"] }
+      ]
+    },
+    // 12. RARE DISEASES/ORPHAN DRUGS
+    {
+      id: "CASG-01",
+      name: "Casgevy (Exagamglogene autotemcel)",
+      phase: "Approved/Phase III Expansion",
+      indication: "Sickle Cell Disease / Beta Thalassemia",
+      therapeuticArea: "Rare Diseases/Orphan Drugs",
+      company: "Vertex/CRISPR Therapeutics",
+      companyTrackRecord: 'fast',
+      nctId: "NCT03745287",
+      scores: calculateProbabilityScores("Phase III", "Sickle Cell Disease", "Rare Disease"),
+      marketData: generateMarketProjections("Casgevy", "Phase III", "Sickle Cell Disease", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US10,266,850", title: "CRISPR-Cas9 gene editing compositions", expirationDate: "2037", type: 'composition', status: 'active' },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$10B+ (SCD/thalassemia)",
+        projectedGrowth: "20% CAGR",
+        keyPlayers: [
+          { name: "Lyfgenia", company: "bluebird bio", phase: "Approved", mechanism: "Lentiviral gene therapy", keyDifferentiator: "First SCD gene therapy", efficacy: "High VOC-free rates", threat: 'medium' },
+          { name: "Oxbryta", company: "Pfizer/GBT", phase: "Approved", mechanism: "HbS polymerization inhibitor", keyDifferentiator: "Oral chronic therapy", efficacy: "Modest benefit", threat: 'low' },
+        ],
+        competitiveAdvantages: ["First CRISPR therapy approved", "One-time curative potential", "95%+ VOC-free"],
+        competitiveRisks: ["$2.2M price point", "Manufacturing complexity", "Bone marrow conditioning required"],
+        marketPositioning: "First CRISPR gene-editing therapy offering potential functional cure."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 1/2/3", date: "Q4 2023", outcome: 'success', keyData: ["95% VOC-free (SCD)", "Transfusion-independent (thalassemia)"], scoreAtTime: 85, rationale: "Breakthrough efficacy", dataAvailableAtTime: ["Pivotal data"] },
+        { phase: "FDA/EMA Approval", date: "Dec 2023", outcome: 'success', keyData: ["First CRISPR therapy approved globally", "Historic regulatory milestone"], scoreAtTime: 95, rationale: "Approval achieved", dataAvailableAtTime: ["Commercial launch"] }
+      ]
+    },
+    // 13. VACCINES & VIROLOGY
+    {
+      id: "MRNA-01",
+      name: "mRNA-1083 (Flu/COVID Combo)",
+      phase: "Phase III",
+      indication: "Influenza + COVID-19 Prevention",
+      therapeuticArea: "Vaccines & Virology",
+      company: "Moderna",
+      companyTrackRecord: 'fast',
+      nctId: "NCT06097273",
+      scores: calculateProbabilityScores("Phase III", "Influenza Vaccine", "Vaccines"),
+      marketData: generateMarketProjections("mRNA-1083", "Phase III", "Influenza Vaccine", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$15B+ (flu + COVID vaccines)",
+        projectedGrowth: "8% CAGR",
+        keyPlayers: [
+          { name: "Fluzone/Flublok", company: "Sanofi", phase: "Approved", mechanism: "Traditional flu vaccine", keyDifferentiator: "Established market", efficacy: "40-60% typical", threat: 'medium' },
+          { name: "Comirnaty", company: "Pfizer/BioNTech", phase: "Approved", mechanism: "mRNA COVID", keyDifferentiator: "COVID leader", efficacy: "High against severe disease", threat: 'medium' },
+        ],
+        competitiveAdvantages: ["Single shot for two diseases", "mRNA platform flexibility", "Convenience"],
+        competitiveRisks: ["Vaccine fatigue", "Pricing pressure", "Annual reformulation needed"],
+        marketPositioning: "First combination mRNA vaccine for simplified annual respiratory protection."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 1/2", date: "Q2 2023", outcome: 'success', keyData: ["Strong immunogenicity", "Non-inferior to separate vaccines"], scoreAtTime: 62, rationale: "Combo approach validated", dataAvailableAtTime: ["Immunogenicity data"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["Large efficacy trial ongoing", "2025/26 flu season target"], scoreAtTime: 65, rationale: "Pivotal efficacy study", dataAvailableAtTime: ["Enrollment complete"] }
+      ]
+    },
+    // 14. WOMEN'S HEALTH
+    {
+      id: "FEZO-01",
+      name: "Fezolinetant (Veozah)",
+      phase: "Approved/Phase III Expansion",
+      indication: "Vasomotor Symptoms (Menopause)",
+      therapeuticArea: "Women's Health",
+      company: "Astellas Pharma",
+      companyTrackRecord: 'average',
+      nctId: "NCT04003142",
+      scores: calculateProbabilityScores("Phase III", "Menopause", "Women's Health"),
+      marketData: generateMarketProjections("Fezolinetant", "Phase III", "Menopause", 'average'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$15B+ (menopause)",
+        projectedGrowth: "10% CAGR",
+        keyPlayers: [
+          { name: "Hormone Therapy", company: "Various", phase: "Approved", mechanism: "Estrogen/Progestin", keyDifferentiator: "Gold standard efficacy", efficacy: "70-80% reduction", threat: 'medium' },
+          { name: "Brisdelle", company: "Noven", phase: "Approved", mechanism: "SSRI (paroxetine)", keyDifferentiator: "Non-hormonal option", efficacy: "Modest benefit", threat: 'low' },
+        ],
+        competitiveAdvantages: ["First NK3 receptor antagonist", "Non-hormonal", "Rapid onset"],
+        competitiveRisks: ["HRT more effective", "New mechanism long-term safety"],
+        marketPositioning: "First-in-class non-hormonal option for women who can't/won't take HRT."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 3 SKYLIGHT", date: "Q1 2023", outcome: 'success', keyData: ["Significant hot flash reduction", "Rapid onset within 1 week"], scoreAtTime: 78, rationale: "Positive pivotal results", dataAvailableAtTime: ["SKYLIGHT 1-4 data"] },
+        { phase: "FDA Approval", date: "May 2023", outcome: 'success', keyData: ["First NK3R antagonist approved", "Non-hormonal breakthrough"], scoreAtTime: 92, rationale: "Approval secured", dataAvailableAtTime: ["Commercial launch"] }
+      ]
+    },
+    // 15. UROLOGY
+    {
+      id: "TALA-01",
+      name: "Talazoparib + Enzalutamide",
+      phase: "Phase III",
+      indication: "Metastatic Castration-Resistant Prostate Cancer",
+      therapeuticArea: "Urology",
+      company: "Pfizer",
+      companyTrackRecord: 'fast',
+      nctId: "NCT04821622",
+      scores: calculateProbabilityScores("Phase III", "Prostate Cancer", "Urology"),
+      marketData: generateMarketProjections("Talazoparib Combo", "Phase III", "Prostate Cancer", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$20B+ (prostate cancer)",
+        projectedGrowth: "8% CAGR",
+        keyPlayers: [
+          { name: "Lynparza", company: "AstraZeneca", phase: "Approved", mechanism: "PARP inhibitor", keyDifferentiator: "First PARP in prostate", efficacy: "HRR+ patients", threat: 'high' },
+          { name: "Xtandi", company: "Pfizer/Astellas", phase: "Approved", mechanism: "AR inhibitor", keyDifferentiator: "Standard of care", efficacy: "Broad mCRPC use", threat: 'low' },
+        ],
+        competitiveAdvantages: ["PARP + AR combo", "All-comer population", "Strong Phase 3 data"],
+        competitiveRisks: ["Toxicity management", "HRR-negative benefit questioned"],
+        marketPositioning: "First-line PARP combination expanding benefit beyond HRR+ patients."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 3 TALAPRO-2", date: "Q2 2023", outcome: 'success', keyData: ["37% reduction in progression", "Benefit in all-comers"], scoreAtTime: 75, rationale: "Positive primary endpoint", dataAvailableAtTime: ["TALAPRO-2 results"] },
+        { phase: "FDA Approval", date: "Jun 2023", outcome: 'success', keyData: ["Approved for mCRPC", "All-comer indication"], scoreAtTime: 90, rationale: "Approval achieved", dataAvailableAtTime: ["Label secured"] }
+      ]
+    },
+    // 16. PAIN MANAGEMENT/ANESTHESIA
+    {
+      id: "SUZE-01",
+      name: "Suzetrigine (VX-548)",
+      phase: "Phase III",
+      indication: "Acute Pain (Post-surgical)",
+      therapeuticArea: "Pain Management/Anesthesia",
+      company: "Vertex Pharmaceuticals",
+      companyTrackRecord: 'fast',
+      nctId: "NCT05660941",
+      scores: calculateProbabilityScores("Phase III", "Acute Pain", "Pain Management"),
+      marketData: generateMarketProjections("Suzetrigine", "Phase III", "Acute Pain", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US11,174,244", title: "Nav1.8 inhibitor compounds", expirationDate: "2040", type: 'composition', status: 'active' },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$10B+ (acute pain)",
+        projectedGrowth: "6% CAGR",
+        keyPlayers: [
+          { name: "Opioids", company: "Generic", phase: "Approved", mechanism: "Opioid receptor", keyDifferentiator: "Highly effective", efficacy: "Gold standard", threat: 'medium' },
+          { name: "NSAIDs", company: "Generic", phase: "Approved", mechanism: "COX inhibition", keyDifferentiator: "Safe, mild-moderate pain", efficacy: "Limited", threat: 'low' },
+        ],
+        competitiveAdvantages: ["Non-opioid mechanism", "No addiction potential", "Nav1.8 selective"],
+        competitiveRisks: ["Mixed Phase 2 results", "May not match opioid efficacy"],
+        marketPositioning: "First non-opioid option for moderate-severe acute pain."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 2", date: "Q1 2023", outcome: 'partial', keyData: ["Abdominoplasty: significant benefit", "Bunionectomy: missed endpoint"], scoreAtTime: 45, rationale: "Mixed Phase 2 results", dataAvailableAtTime: ["Two Phase 2 trials"] },
+        { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["REEF-1 ongoing", "Acute pain focus"], scoreAtTime: 52, rationale: "Pivotal program continues", dataAvailableAtTime: ["Ongoing enrollment"] }
+      ]
+    },
+    // 17. TRANSPLANTATION & CELL/GENE THERAPY
+    {
+      id: "LOVO-01",
+      name: "Lovotibeglogene autotemcel (Lovo-cel)",
+      phase: "Phase III",
+      indication: "Sickle Cell Disease",
+      therapeuticArea: "Transplantation & Cell/Gene Therapy",
+      company: "bluebird bio",
+      companyTrackRecord: 'average',
+      nctId: "NCT04293185",
+      scores: calculateProbabilityScores("Phase III", "Sickle Cell Disease", "Gene Therapy"),
+      marketData: generateMarketProjections("Lovo-cel", "Phase III", "Sickle Cell Disease", 'average'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$10B+ (SCD gene therapy)",
+        projectedGrowth: "25% CAGR",
+        keyPlayers: [
+          { name: "Casgevy", company: "Vertex/CRISPR", phase: "Approved", mechanism: "CRISPR gene editing", keyDifferentiator: "First CRISPR therapy", efficacy: "95%+ VOC-free", threat: 'high' },
+          { name: "Oxbryta", company: "Pfizer", phase: "Approved", mechanism: "Anti-sickling agent", keyDifferentiator: "Oral option", efficacy: "Modest benefit", threat: 'low' },
+        ],
+        competitiveAdvantages: ["One-time curative", "Different mechanism than Casgevy", "88% VOC-free"],
+        competitiveRisks: ["Casgevy competition", "Manufacturing challenges", "AML concerns (resolved)"],
+        marketPositioning: "Lentiviral gene addition therapy as alternative to gene editing approach."
+      },
+      retrospectivePhases: [
+        { phase: "Phase 1/2", date: "Q3 2022", outcome: 'success', keyData: ["88% VOC-free", "Sustained HbAT87Q expression"], scoreAtTime: 72, rationale: "Strong efficacy data", dataAvailableAtTime: ["Long-term follow-up"] },
+        { phase: "FDA Approval (Lyfgenia)", date: "Dec 2023", outcome: 'success', keyData: ["Approved as Lyfgenia", "Same day as Casgevy"], scoreAtTime: 88, rationale: "Approval achieved", dataAvailableAtTime: ["Commercial launch"] }
+      ]
+    },
+    // 18. PEDIATRICS (Cross-cutting)
+    {
+      id: "VILT-01",
+      name: "Viltolarsen (Viltepso)",
+      phase: "Phase III",
+      indication: "Duchenne Muscular Dystrophy (Exon 53)",
+      therapeuticArea: "Pediatrics",
+      company: "NS Pharma/Nippon Shinyaku",
+      companyTrackRecord: 'average',
+      nctId: "NCT04060199",
+      scores: calculateProbabilityScores("Phase III", "Duchenne Muscular Dystrophy", "Rare Disease"),
+      marketData: generateMarketProjections("Viltolarsen", "Phase III", "Duchenne Muscular Dystrophy", 'average'),
+      overallScore: 0,
+      hasRetrospective: true,
+      competitiveLandscape: {
+        totalMarketSize: "$3B+ (DMD)",
+        projectedGrowth: "15% CAGR",
+        keyPlayers: [
+          { name: "Elevidys", company: "Sarepta", phase: "Approved", mechanism: "Gene therapy", keyDifferentiator: "One-time treatment", efficacy: "Micro-dystrophin expression", threat: 'high' },
+          { name: "Exondys 51", company: "Sarepta", phase: "Approved", mechanism: "Exon 51 skipping", keyDifferentiator: "First ASO for DMD", efficacy: "Dystrophin increase", threat: 'medium' },
+        ],
+        competitiveAdvantages: ["Higher exon skipping efficiency", "Weekly IV dosing", "Japanese heritage advantage"],
+        competitiveRisks: ["Elevidys gene therapy competition", "Limited long-term data"],
+        marketPositioning: "Best-in-class exon 53 skipping antisense therapy for DMD."
+      },
+      retrospectivePhases: [
+        { phase: "Accelerated Approval", date: "Aug 2020", outcome: 'success', keyData: ["Dystrophin production increase", "Accelerated approval granted"], scoreAtTime: 65, rationale: "Early approval pathway", dataAvailableAtTime: ["Phase 2 data"] },
+        { phase: "Confirmatory Phase 3 RACER53", date: "Q4 2024", outcome: 'pending', keyData: ["Functional endpoints study", "North Star Ambulatory Assessment"], scoreAtTime: 68, rationale: "Confirmatory trial ongoing", dataAvailableAtTime: ["Enrollment complete"] }
+      ]
     },
     {
       id: "EVOKE-01",
