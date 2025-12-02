@@ -518,6 +518,145 @@ const Index = () => {
         }
       ]
     },
+    {
+      id: "TRONT-01",
+      name: "Trontinemab (RO7126209)",
+      phase: "Phase III",
+      indication: "Alzheimer's Disease",
+      therapeuticArea: "Neurology/CNS",
+      company: "Hoffmann-La Roche",
+      companyTrackRecord: 'fast',
+      nctId: "NCT04639050",
+      scores: calculateProbabilityScores("Phase III", "Alzheimer's Disease", "Neurology"),
+      marketData: generateMarketProjections("Trontinemab", "Phase III", "Alzheimer's Disease", 'fast'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US10,562,973", title: "Brain shuttle anti-amyloid antibody constructs", expirationDate: "2037", type: 'composition', status: 'active', notes: "Core brain shuttle technology" },
+        { patentNumber: "US11,267,878", title: "Transferrin receptor binding for CNS delivery", expirationDate: "2038", type: 'method', status: 'active' },
+        { patentNumber: "US11,498,960", title: "Anti-amyloid beta antibody formulations for CNS", expirationDate: "2039", type: 'formulation', status: 'active' },
+        { patentNumber: "EP3271391", title: "Bispecific antibodies with brain shuttle module", expirationDate: "2036", type: 'composition', status: 'active' },
+      ],
+      regulatoryExclusivity: [
+        { type: "Biologic Exclusivity (projected)", endDate: "2038" },
+        { type: "Orphan Drug (potential - early AD)", endDate: "2039" },
+        { type: "Breakthrough Therapy (potential)", endDate: "N/A" },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$15B+ (projected 2030)",
+        projectedGrowth: "35% CAGR",
+        keyPlayers: [
+          { name: "Lecanemab (Leqembi)", company: "Eisai/Biogen", phase: "Approved", mechanism: "Anti-amyloid antibody", keyDifferentiator: "First-to-market with cognitive benefit", efficacy: "27% slowing of decline", threat: 'high' },
+          { name: "Donanemab (Kisunla)", company: "Eli Lilly", phase: "Approved", mechanism: "Anti-amyloid antibody", keyDifferentiator: "Treatment completion possible, faster clearance", efficacy: "35% slowing of decline", threat: 'high' },
+          { name: "Gantenerumab", company: "Roche", phase: "Discontinued", mechanism: "Anti-amyloid antibody", keyDifferentiator: "Failed Phase 3 - parent molecule of trontinemab", efficacy: "N/A", threat: 'low' },
+          { name: "Remternetug", company: "Eli Lilly", phase: "Phase III", mechanism: "Anti-pyroglutamate amyloid", keyDifferentiator: "Monthly dosing, lower ARIA", efficacy: "TBD", threat: 'medium' },
+          { name: "ALZ-801", company: "Alzheon", phase: "Phase III", mechanism: "Oral anti-amyloid", keyDifferentiator: "Oral administration, APOE4 focus", efficacy: "TBD", threat: 'low' },
+        ],
+        competitiveAdvantages: [
+          "Brain Shuttle™ technology - 10x higher brain penetration",
+          "91% amyloid PET negativity (vs 68% lecanemab, 84% donanemab)",
+          "ARIA-E <5% (vs 12.6% lecanemab, 24% donanemab) - major safety advantage",
+          "Potential for lower dose/less frequent dosing due to brain shuttle",
+          "Rapid amyloid clearance in 7 months",
+          "Roche diagnostics synergy for patient identification"
+        ],
+        competitiveRisks: [
+          "Late to market - lecanemab/donanemab already approved",
+          "Parent molecule gantenerumab failed Phase 3",
+          "Alzheimer's market has high Phase 3 failure rate",
+          "Reimbursement challenges in AD space",
+          "Cognitive benefit data still pending (Phase 3)",
+          "Complex manufacturing of bispecific antibody"
+        ],
+        marketPositioning: "Trontinemab is positioned as a next-generation anti-amyloid antibody with superior brain penetration via Brain Shuttle™ technology. Key differentiator: potentially best-in-class safety profile with ARIA-E <5% while achieving faster/more complete amyloid clearance. Target patients: those concerned about ARIA risk, especially APOE4 carriers who face highest ARIA risk with current therapies."
+      },
+      retrospectivePhases: [
+        {
+          phase: "Preclinical/Phase 1a",
+          date: "Q4 2020",
+          trialName: "First-in-Human Brain Shuttle Studies",
+          nctIds: ["NCT04639050"],
+          outcome: 'success',
+          keyData: [
+            "Brain Shuttle™ technology validated in humans",
+            "10-fold higher brain exposure vs conventional antibodies",
+            "Transferrin receptor-mediated transcytosis confirmed",
+            "Favorable safety profile established",
+            "Dose-dependent amyloid reduction observed"
+          ],
+          scoreAtTime: 22,
+          rationale: "Novel platform technology with first-in-human validation. Parent molecule gantenerumab failed, but brain shuttle approach addresses key limitation (brain penetration). High risk given AD field's 99% failure rate. Roche commitment significant despite gantenerumab failure.",
+          dataAvailableAtTime: ["PK/PD data", "Brain penetration confirmation", "Preclinical amyloid clearance", "Safety profile"]
+        },
+        {
+          phase: "Phase 1b/2a",
+          date: "Q3 2023",
+          trialName: "BrainShuttle AD Study (Multiple Ascending Dose)",
+          nctIds: ["NCT04639050"],
+          outcome: 'success',
+          keyData: [
+            "76% amyloid PET negative at interim (12 months)",
+            "ARIA-E incidence remarkably low (<5%)",
+            "Dose-dependent amyloid clearance",
+            "Brain shuttle mechanism validated at scale",
+            "Favorable tolerability vs competitors"
+          ],
+          scoreAtTime: 38,
+          rationale: "Exceptional Phase 1b/2a data - 76% amyloid clearance with only 5% ARIA-E is BEST-IN-CLASS safety. Lecanemab has 12.6% ARIA-E, donanemab ~24%. This addresses biggest barrier to AD immunotherapy adoption. Score increased significantly despite AD field challenges.",
+          dataAvailableAtTime: ["Amyloid PET data", "ARIA incidence", "Safety/tolerability", "Dose selection"]
+        },
+        {
+          phase: "Phase 1b/2a Update",
+          date: "Jul 2024",
+          trialName: "BrainShuttle AD - Extended Follow-up",
+          nctIds: ["NCT04639050"],
+          outcome: 'success',
+          keyData: [
+            "91% amyloid PET negativity achieved",
+            "ARIA-E maintained at <5%",
+            "Rapid clearance - most patients negative by 7 months",
+            "Biomarker improvements (pTau, NfL) observed",
+            "Cognitive outcomes data collection ongoing"
+          ],
+          scoreAtTime: 48,
+          rationale: "91% amyloid clearance with <5% ARIA-E is remarkable. Faster clearance than competitors with dramatically better safety. Key question remains: will biomarker benefits translate to cognitive improvement? Phase 3 design critical. Score reflects best-in-class biomarker profile.",
+          dataAvailableAtTime: ["18-month biomarker data", "Complete ARIA profile", "pTau/NfL trends", "Competitive landscape updates"]
+        },
+        {
+          phase: "Phase 3 Initiation",
+          date: "Q3 2025",
+          trialName: "TRONTIER Program Launch",
+          nctIds: ["NCT07170150"],
+          outcome: 'pending',
+          keyData: [
+            "TRONTIER 1 & TRONTIER 2 Phase 3 studies initiated",
+            "Targeting early symptomatic Alzheimer's disease",
+            "Primary endpoint: clinical (cognitive) outcomes",
+            "~2,000+ patients planned across program",
+            "Results expected 2027-2028"
+          ],
+          scoreAtTime: 52,
+          rationale: "Phase 3 initiation with best-in-class safety/biomarker profile. Key risk: must demonstrate cognitive benefit (gantenerumab failed this). ARIA advantage significant for APOE4 carriers. Competitive timing - 3rd/4th to market if approved. Differentiated safety profile could capture significant share.",
+          dataAvailableAtTime: ["Full Phase 2 biomarkers", "Phase 3 designs", "Competitive approvals", "ARIA comparison data", "Patient selection criteria"]
+        },
+        {
+          phase: "Current Status",
+          date: "Q4 2024",
+          trialName: "TRONTIER Phase 3 Enrolling",
+          outcome: 'pending',
+          keyData: [
+            "Phase 3 enrollment initiated",
+            "Brain Shuttle platform validated",
+            "Best-in-class safety profile maintained",
+            "Roche committed to AD despite past failures",
+            "Diagnostics integration for patient selection"
+          ],
+          scoreAtTime: 52,
+          rationale: "Strong biomarker and safety data support Phase 3. Key uncertainty: cognitive efficacy in Phase 3 (AD field has 99% failure rate). ARIA safety advantage significant - could enable treatment of high-risk APOE4 patients excluded from competitors. Filing projected 2028, approval 2029 if successful.",
+          dataAvailableAtTime: ["Enrollment progress", "Safety monitoring", "Competitive developments", "Diagnostic biomarker integration"]
+        }
+      ]
+    },
   ];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
