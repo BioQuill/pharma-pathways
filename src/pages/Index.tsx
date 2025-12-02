@@ -714,6 +714,7 @@ const Index = () => {
                   scores={activeMolecule.scores}
                   phase={activeMolecule.phase}
                   indication={activeMolecule.indication}
+                  therapeuticArea={activeMolecule.therapeuticArea}
                   overallScore={activeMolecule.overallScore}
                   nctId={activeMolecule.nctId}
                   marketData={activeMolecule.marketData}

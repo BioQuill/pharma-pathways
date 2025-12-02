@@ -10,12 +10,13 @@ interface MoleculeScoreCardProps {
   scores: ProbabilityScores;
   phase: string;
   indication: string;
+  therapeuticArea: string;
   overallScore: number;
   nctId?: string;
   marketData?: MarketData[];
 }
 
-export function MoleculeScoreCard({ moleculeName, scores, phase, indication, overallScore, nctId, marketData = [] }: MoleculeScoreCardProps) {
+export function MoleculeScoreCard({ moleculeName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [] }: MoleculeScoreCardProps) {
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
     if (ranking === 3) return "text-warning";
@@ -40,7 +41,7 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, ove
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-xl">{moleculeName}</CardTitle>
-            <CardDescription>{indication} • {phase}</CardDescription>
+            <CardDescription>{indication} • {therapeuticArea} • {phase}</CardDescription>
             {nctId && (
               <a 
                 href={getClinicalTrialsUrl(nctId)}
