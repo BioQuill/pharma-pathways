@@ -1192,24 +1192,24 @@ const Index = () => {
   const activeMolecule = mockMolecules.find(m => m.id === selectedMolecule);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
+    <div className="min-h-screen bg-background">
+      {/* Header with Yellow Bar */}
+      <header className="sticky top-0 z-10 bg-[#F5D547] w-full">
+        <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={bioquillLogo} alt="BiOQUILL" className="h-12 w-auto" />
+              <img src={bioquillLogo} alt="BiOQUILL" className="h-36 w-auto object-contain" style={{ aspectRatio: '2/1' }} />
             </div>
             <nav className="flex items-center gap-4">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
                 <Database className="h-4 w-4 mr-2" />
                 Database
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
                 <FileText className="h-4 w-4 mr-2" />
                 Reports
               </Button>
-              <Button variant="default" size="sm">
+              <Button size="sm" className="bg-gray-800 text-white hover:bg-gray-700">
                 <Search className="h-4 w-4 mr-2" />
                 Search Trials
               </Button>
