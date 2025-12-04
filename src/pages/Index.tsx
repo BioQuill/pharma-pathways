@@ -1260,6 +1260,43 @@ const Index = () => {
           </Card>
         </div>
 
+        {/* Data Sources */}
+        <Card className="mb-8 border-l-4 border-l-primary">
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <Database className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Data Sources:</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <a 
+                    href="https://clinicaltrials.gov" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇺🇸</span>
+                    <span>ClinicalTrials.gov</span>
+                    <Badge variant="secondary" className="text-xs">Primary</Badge>
+                  </a>
+                  <a 
+                    href="https://trialsearch.who.int" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🌐</span>
+                    <span>WHO ICTRP</span>
+                    <Badge variant="outline" className="text-xs">12 Registries</Badge>
+                  </a>
+                </div>
+              </div>
+              <span className="text-xs text-muted-foreground">Last sync: Dec 4, 2025</span>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-card border">
