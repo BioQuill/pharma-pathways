@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { 
-  FlaskConical, 
   Calendar, 
   Globe, 
   TrendingUp, 
@@ -12,8 +11,10 @@ import {
   FileText,
   Search,
   BarChart3,
-  Download
+  Download,
+  Pill
 } from "lucide-react";
+import bioquillLogo from "@/assets/bioquill-logo.jpg";
 import html2pdf from "html2pdf.js";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
@@ -1197,11 +1198,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <FlaskConical className="h-8 w-8 text-primary" />
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">BioQuill</h1>
-                <p className="text-sm text-muted-foreground">Pharmaceutical Intelligence Platform</p>
-              </div>
+              <img src={bioquillLogo} alt="BiOQUILL" className="h-12 w-auto" />
             </div>
             <nav className="flex items-center gap-4">
               <Button variant="ghost" size="sm">
@@ -1271,7 +1268,7 @@ const Index = () => {
               Overview
             </TabsTrigger>
             <TabsTrigger value="molecules" className="gap-2">
-              <FlaskConical className="h-4 w-4" />
+              <Pill className="h-4 w-4" />
               Molecules
             </TabsTrigger>
             <TabsTrigger value="timelines" className="gap-2">
@@ -1427,7 +1424,7 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12 text-muted-foreground">
-                  <FlaskConical className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <Pill className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>Molecule profiling interface will be displayed here</p>
                   <p className="text-sm mt-2">Integration with trials.gov and clinical databases</p>
                 </div>
