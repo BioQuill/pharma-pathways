@@ -1198,7 +1198,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={bioquillLogo} alt="BiOQUILL" className="h-24 w-auto object-contain" />
+              <img src={bioquillLogo} alt="BiOQUILL" className="h-72 w-auto object-contain" />
             </div>
             <nav className="flex items-center gap-4">
               <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
