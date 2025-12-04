@@ -14,7 +14,7 @@ import {
   Download,
   Pill
 } from "lucide-react";
-import bioquillLogo from "@/assets/bioquill-logo.jpg";
+import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 import html2pdf from "html2pdf.js";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
@@ -1194,11 +1194,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar */}
-      <header className="sticky top-0 z-10 bg-[#F5D547] w-full">
-        <div className="container mx-auto px-4 py-3">
+      <header className="sticky top-0 z-10 bg-background w-full">
+        <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src={bioquillLogo} alt="BiOQUILL" className="h-72 w-auto object-contain" />
+              <img src={bioquillLogo} alt="BiOQUILL" className="h-16 w-auto object-contain" />
             </div>
             <nav className="flex items-center gap-4">
               <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
