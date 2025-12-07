@@ -1,10 +1,17 @@
 /**
- * Clinical Trials Integration Module
+ * Clinical Trials & Regulatory Integration Module
  * 
  * This module provides utilities for fetching and parsing clinical trial data
- * from multiple sources:
+ * and regulatory approval information from multiple sources:
+ * 
+ * CLINICAL TRIAL SOURCES:
  * - ClinicalTrials.gov (https://clinicaltrials.gov/) - Primary source
  * - WHO ICTRP (https://trialsearch.who.int/) - Secondary/supplementary source
+ * 
+ * REGULATORY APPROVAL SOURCES:
+ * - FDA NDA/BLA Approvals (https://www.fda.gov/drugs/nda-and-bla-approvals/nda-and-bla-calendar-year-approvals)
+ * - EMA National Registers (https://www.ema.europa.eu/en/medicines/national-registers-authorised-medicines)
+ * - EU Community Register (https://ec.europa.eu/health/documents/community-register/html/reg_hum_act.htm)
  * 
  * Key features:
  * - Fetch trial details by NCT number or ICTRP ID
@@ -12,9 +19,10 @@
  * - Parse trial status, phases, enrollment
  * - Extract outcome measures and results
  * - Track trial timeline and completion dates
+ * - Monitor regulatory approvals across jurisdictions
  */
 
-export type DataSource = 'clinicaltrials.gov' | 'who-ictrp';
+export type DataSource = 'clinicaltrials.gov' | 'who-ictrp' | 'fda-approvals' | 'ema-register' | 'eu-community-register';
 
 export interface ClinicalTrialData {
   nctId: string;
@@ -262,21 +270,115 @@ export function calculateEnrollmentRate(enrollment: number, startDate: string, c
 }
 
 /**
+ * Regulatory Data Sources
+ */
+export interface RegulatoryDataSource {
+  id: DataSource;
+  name: string;
+  shortName: string;
+  url: string;
+  icon: string;
+  description: string;
+  type: 'trial' | 'regulatory';
+  region: string;
+}
+
+export const REGULATORY_DATA_SOURCES: RegulatoryDataSource[] = [
+  {
+    id: 'clinicaltrials.gov',
+    name: 'ClinicalTrials.gov',
+    shortName: 'ClinicalTrials.gov',
+    url: 'https://clinicaltrials.gov',
+    icon: '🇺🇸',
+    description: 'US National Library of Medicine clinical trials database',
+    type: 'trial',
+    region: 'USA'
+  },
+  {
+    id: 'who-ictrp',
+    name: 'WHO International Clinical Trials Registry Platform',
+    shortName: 'WHO ICTRP',
+    url: 'https://trialsearch.who.int',
+    icon: '🌐',
+    description: 'Global clinical trials registry network with 12 contributing registries',
+    type: 'trial',
+    region: 'Global'
+  },
+  {
+    id: 'fda-approvals',
+    name: 'FDA NDA and BLA Approvals',
+    shortName: 'FDA Approvals',
+    url: 'https://www.fda.gov/drugs/nda-and-bla-approvals/nda-and-bla-calendar-year-approvals',
+    icon: '🇺🇸',
+    description: 'Calendar year drug approval data from US FDA',
+    type: 'regulatory',
+    region: 'USA'
+  },
+  {
+    id: 'ema-register',
+    name: 'EMA National Registers of Authorised Medicines',
+    shortName: 'EMA Registers',
+    url: 'https://www.ema.europa.eu/en/medicines/national-registers-authorised-medicines#human-medicines-13110',
+    icon: '🇪🇺',
+    description: 'European Medicines Agency national authorization registers',
+    type: 'regulatory',
+    region: 'EU'
+  },
+  {
+    id: 'eu-community-register',
+    name: 'EU Community Register of Medicinal Products',
+    shortName: 'EU Community Register',
+    url: 'https://ec.europa.eu/health/documents/community-register/html/reg_hum_act.htm?sort=a',
+    icon: '🇪🇺',
+    description: 'Official register of EU-authorized human medicines',
+    type: 'regulatory',
+    region: 'EU'
+  }
+];
+
+/**
  * Get data source display info
  */
 export function getDataSourceInfo(source: DataSource): { name: string; url: string; icon: string } {
-  switch (source) {
-    case 'clinicaltrials.gov':
-      return {
-        name: 'ClinicalTrials.gov',
-        url: 'https://clinicaltrials.gov',
-        icon: '🇺🇸'
-      };
-    case 'who-ictrp':
-      return {
-        name: 'WHO ICTRP',
-        url: 'https://trialsearch.who.int',
-        icon: '🌐'
-      };
+  const sourceInfo = REGULATORY_DATA_SOURCES.find(s => s.id === source);
+  if (sourceInfo) {
+    return {
+      name: sourceInfo.shortName,
+      url: sourceInfo.url,
+      icon: sourceInfo.icon
+    };
   }
+  return {
+    name: 'Unknown',
+    url: '#',
+    icon: '❓'
+  };
+}
+
+/**
+ * Get all data sources by type
+ */
+export function getDataSourcesByType(type: 'trial' | 'regulatory'): RegulatoryDataSource[] {
+  return REGULATORY_DATA_SOURCES.filter(s => s.type === type);
+}
+
+/**
+ * Generate FDA approval search URL
+ */
+export function getFDAApprovalUrl(drugName: string): string {
+  return `https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=&DrugName=${encodeURIComponent(drugName)}`;
+}
+
+/**
+ * Generate EMA product search URL
+ */
+export function getEMAProductUrl(productName: string): string {
+  return `https://www.ema.europa.eu/en/medicines/search-results?search_api_fulltext=${encodeURIComponent(productName)}`;
+}
+
+/**
+ * Generate EU Community Register search URL
+ */
+export function getEUCommunityRegisterUrl(): string {
+  return 'https://ec.europa.eu/health/documents/community-register/html/reg_hum_act.htm?sort=a';
 }
