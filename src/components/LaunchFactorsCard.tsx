@@ -11,7 +11,9 @@ import {
   Factory,
   FileCheck,
   DollarSign,
-  Building2
+  Building2,
+  Shield,
+  Zap
 } from "lucide-react";
 import { useState } from "react";
 import { type LaunchFactors } from "@/lib/launchFactors";
@@ -28,6 +30,8 @@ const factorIcons: Record<string, React.ReactNode> = {
   'Regulatory Review Timeline': <Clock className="h-4 w-4" />,
   'Cost-Effectiveness Strength': <DollarSign className="h-4 w-4" />,
   'National Reimbursement Rules': <Building2 className="h-4 w-4" />,
+  'Safety Margin': <Shield className="h-4 w-4" />,
+  'Response Speed to Regulators': <Zap className="h-4 w-4" />,
 };
 
 function getScoreColor(score: number): string {
@@ -42,9 +46,22 @@ function getProgressBgClass(score: number): string {
   return "[&>div]:bg-red-500";
 }
 
+function getRankLabel(rank: 2 | 3 | 4 | 5): string {
+  const labels: Record<number, string> = {
+    2: 'Rank 2 (Impact 4)',
+    3: 'Rank 3 (Impact 3)',
+    4: 'Rank 4 (Impact 2)',
+    5: 'Rank 5 (Impact 1)',
+  };
+  return labels[rank];
+}
+
 export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardProps) {
   const [isCompositeOpen, setIsCompositeOpen] = useState(false);
   const { rank1Factors, compositeIndex, phaseRiskMetrics } = factors;
+
+  // Calculate total adjusted weight for Rank 1 factors
+  const rank1TotalWeight = rank1Factors.reduce((sum, f) => sum + f.adjustedWeight, 0);
 
   return (
     <Card className="border-border/50 bg-card/50 backdrop-blur">
@@ -54,7 +71,7 @@ export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardPr
           Launch Probability Factors
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Key drivers based on ranked factor analysis
+          Key drivers based on TA-weighted factor analysis
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -93,6 +110,9 @@ export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardPr
           <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
             Primary Launch Drivers (Rank 1)
+            <Badge variant="secondary" className="text-xs ml-auto">
+              Total Weight: {rank1TotalWeight.toFixed(1)}%
+            </Badge>
           </h4>
           <div className="space-y-3">
             {rank1Factors.map((factor) => (
@@ -101,6 +121,11 @@ export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardPr
                   <div className="flex items-center gap-2 text-sm">
                     {factorIcons[factor.name] || <Target className="h-4 w-4" />}
                     <span>{factor.name}</span>
+                    {factor.adjustedWeight !== factor.baseWeight && (
+                      <Badge variant="outline" className="text-xs text-primary border-primary/50">
+                        {factor.adjustedWeight.toFixed(2)}% (TA adj)
+                      </Badge>
+                    )}
                   </div>
                   <span className={`text-sm font-bold ${getScoreColor(factor.score)}`}>
                     {factor.score}%
@@ -116,7 +141,7 @@ export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardPr
           </div>
         </div>
 
-        {/* Composite Index - Rank 2-4 Factors */}
+        {/* Composite Index - Rank 2-5 Factors */}
         <Collapsible open={isCompositeOpen} onOpenChange={setIsCompositeOpen}>
           <div className="p-4 rounded-lg bg-muted/20 border border-border/30">
             <CollapsibleTrigger className="w-full">
@@ -142,44 +167,37 @@ export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardPr
             
             <CollapsibleContent>
               <div className="mt-4 space-y-4">
-                {/* Rank 2 */}
-                <div>
-                  <div className="text-xs text-muted-foreground mb-2 font-medium">Rank 2 (Weight: 50%)</div>
-                  <div className="grid gap-2">
-                    {compositeIndex.factors.filter(f => f.rank === 2).map((factor) => (
-                      <div key={factor.name} className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">{factor.name}</span>
-                        <span className={getScoreColor(factor.score)}>{factor.score}%</span>
+                {/* Group by rank */}
+                {([2, 3, 4, 5] as const).map(rank => {
+                  const rankFactors = compositeIndex.factors.filter(f => f.rank === rank);
+                  if (rankFactors.length === 0) return null;
+                  
+                  const rankTotalWeight = rankFactors.reduce((sum, f) => sum + f.adjustedWeight, 0);
+                  
+                  return (
+                    <div key={rank}>
+                      <div className="text-xs text-muted-foreground mb-2 font-medium flex items-center justify-between">
+                        <span>{getRankLabel(rank)}</span>
+                        <span>Weight: {rankTotalWeight.toFixed(1)}%</span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Rank 3 */}
-                <div>
-                  <div className="text-xs text-muted-foreground mb-2 font-medium">Rank 3 (Weight: 30%)</div>
-                  <div className="grid gap-2">
-                    {compositeIndex.factors.filter(f => f.rank === 3).map((factor) => (
-                      <div key={factor.name} className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">{factor.name}</span>
-                        <span className={getScoreColor(factor.score)}>{factor.score}%</span>
+                      <div className="grid gap-2">
+                        {rankFactors.map((factor) => (
+                          <div key={factor.name} className="flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">{factor.name}</span>
+                              {factor.adjustedWeight !== factor.baseWeight && (
+                                <span className="text-primary text-[10px]">
+                                  ({factor.adjustedWeight.toFixed(2)}%)
+                                </span>
+                              )}
+                            </div>
+                            <span className={getScoreColor(factor.score)}>{factor.score}%</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Rank 4 */}
-                <div>
-                  <div className="text-xs text-muted-foreground mb-2 font-medium">Rank 4 (Weight: 20%)</div>
-                  <div className="grid gap-2">
-                    {compositeIndex.factors.filter(f => f.rank === 4).map((factor) => (
-                      <div key={factor.name} className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">{factor.name}</span>
-                        <span className={getScoreColor(factor.score)}>{factor.score}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                    </div>
+                  );
+                })}
               </div>
             </CollapsibleContent>
           </div>
