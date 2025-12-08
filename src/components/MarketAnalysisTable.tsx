@@ -8,18 +8,21 @@ interface MarketAnalysisTableProps {
   marketData: MarketData[];
 }
 
-// Country flag emojis mapped by country code
-const COUNTRY_FLAGS: Record<string, string> = {
-  US: '🇺🇸',
-  CN: '🇨🇳',
-  DE: '🇩🇪',
-  JP: '🇯🇵',
-  FR: '🇫🇷',
-  IT: '🇮🇹',
-  UK: '🇬🇧',
-  ES: '🇪🇸',
-  CA: '🇨🇦',
-  BR: '🇧🇷',
+// Country flag URLs using flagcdn
+const getFlagUrl = (code: string) => {
+  const countryMap: Record<string, string> = {
+    US: 'us',
+    CN: 'cn',
+    DE: 'de',
+    JP: 'jp',
+    FR: 'fr',
+    IT: 'it',
+    UK: 'gb',
+    ES: 'es',
+    CA: 'ca',
+    BR: 'br',
+  };
+  return `https://flagcdn.com/24x18/${countryMap[code] || 'xx'}.png`;
 };
 
 export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
@@ -76,7 +79,12 @@ export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
                   <TableRow key={market.countryCode}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
-                        <span className="text-xl">{COUNTRY_FLAGS[market.countryCode] || '🌐'}</span>
+                        <img 
+                          src={getFlagUrl(market.countryCode)} 
+                          alt={market.countryCode}
+                          className="w-6 h-4 object-cover rounded-sm"
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                        />
                         <Badge variant="outline">{market.countryCode}</Badge>
                         {market.country}
                       </div>

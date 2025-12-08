@@ -6,18 +6,23 @@ import { Clock, Zap, FileCheck } from "lucide-react";
 interface RegulatoryAgency {
   code: string;
   name: string;
-  flag: string;
+  flagCode: string;
   standardReview: number; // months
   priorityReview: number; // months
   acceleratedReview: number; // months
   description: string;
 }
 
+// Country flag URLs using flagcdn
+const getFlagUrl = (code: string) => {
+  return `https://flagcdn.com/24x18/${code}.png`;
+};
+
 const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'FDA',
     name: 'US FDA',
-    flag: '🇺🇸',
+    flagCode: 'us',
     standardReview: 12,
     priorityReview: 6,
     acceleratedReview: 4,
@@ -26,7 +31,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'EMA',
     name: 'EU EMA',
-    flag: '🇪🇺',
+    flagCode: 'eu',
     standardReview: 15,
     priorityReview: 9,
     acceleratedReview: 6,
@@ -35,7 +40,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'NMPA',
     name: 'China NMPA',
-    flag: '🇨🇳',
+    flagCode: 'cn',
     standardReview: 18,
     priorityReview: 10,
     acceleratedReview: 6,
@@ -44,7 +49,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'PMDA',
     name: 'Japan PMDA',
-    flag: '🇯🇵',
+    flagCode: 'jp',
     standardReview: 12,
     priorityReview: 9,
     acceleratedReview: 6,
@@ -53,7 +58,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'MHRA',
     name: 'UK MHRA',
-    flag: '🇬🇧',
+    flagCode: 'gb',
     standardReview: 10,
     priorityReview: 6,
     acceleratedReview: 4,
@@ -62,7 +67,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'HC',
     name: 'Health Canada',
-    flag: '🇨🇦',
+    flagCode: 'ca',
     standardReview: 12,
     priorityReview: 6,
     acceleratedReview: 4,
@@ -71,7 +76,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'ANVISA',
     name: 'Brazil ANVISA',
-    flag: '🇧🇷',
+    flagCode: 'br',
     standardReview: 24,
     priorityReview: 12,
     acceleratedReview: 8,
@@ -80,7 +85,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
   {
     code: 'TGA',
     name: 'Australia TGA',
-    flag: '🇦🇺',
+    flagCode: 'au',
     standardReview: 11,
     priorityReview: 6,
     acceleratedReview: 4,
@@ -91,7 +96,7 @@ const REGULATORY_AGENCIES: RegulatoryAgency[] = [
 const chartData = REGULATORY_AGENCIES.map(agency => ({
   name: agency.code,
   fullName: agency.name,
-  flag: agency.flag,
+  flagCode: agency.flagCode,
   standard: agency.standardReview,
   priority: agency.priorityReview,
   accelerated: agency.acceleratedReview,
@@ -103,7 +108,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="bg-popover border rounded-lg shadow-lg p-3 text-sm">
         <p className="font-bold flex items-center gap-2">
-          <span>{agency?.flag}</span>
+          <img 
+            src={getFlagUrl(agency?.flagCode || 'us')} 
+            alt={agency?.code}
+            className="w-5 h-4 object-cover rounded-sm"
+          />
           {agency?.name}
         </p>
         <p className="text-xs text-muted-foreground mb-2">{agency?.description}</p>
@@ -214,7 +223,11 @@ export function RegulatoryTimelineChart() {
                 key={agency.code}
                 className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
               >
-                <span className="text-2xl">{agency.flag}</span>
+                <img 
+                  src={getFlagUrl(agency.flagCode)} 
+                  alt={agency.code}
+                  className="w-8 h-6 object-cover rounded-sm"
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">{agency.code}</p>
                   <p className="text-xs text-muted-foreground truncate">{agency.name}</p>

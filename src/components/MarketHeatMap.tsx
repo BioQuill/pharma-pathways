@@ -50,17 +50,21 @@ const COUNTRY_PATHS: Record<string, { path: string; cx: number; cy: number }> = 
   },
 };
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  US: '🇺🇸',
-  CN: '🇨🇳',
-  DE: '🇩🇪',
-  JP: '🇯🇵',
-  FR: '🇫🇷',
-  IT: '🇮🇹',
-  UK: '🇬🇧',
-  ES: '🇪🇸',
-  CA: '🇨🇦',
-  BR: '🇧🇷',
+// Country flag URLs using flagcdn
+const getFlagUrl = (code: string) => {
+  const countryMap: Record<string, string> = {
+    US: 'us',
+    CN: 'cn',
+    DE: 'de',
+    JP: 'jp',
+    FR: 'fr',
+    IT: 'it',
+    UK: 'gb',
+    ES: 'es',
+    CA: 'ca',
+    BR: 'br',
+  };
+  return `https://flagcdn.com/24x18/${countryMap[code] || 'xx'}.png`;
 };
 
 export function MarketHeatMap({ marketData }: MarketHeatMapProps) {
@@ -200,7 +204,12 @@ export function MarketHeatMap({ marketData }: MarketHeatMapProps) {
                 key={market.countryCode}
                 className="flex items-center gap-2 p-2 rounded-lg bg-muted/50"
               >
-                <span className="text-lg">{COUNTRY_FLAGS[market.countryCode] || '🌐'}</span>
+                <img 
+                  src={getFlagUrl(market.countryCode)} 
+                  alt={market.countryCode}
+                  className="w-6 h-4 object-cover rounded-sm"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium truncate">{market.countryCode}</p>
                   <p className="text-sm font-bold flex items-center gap-1">
