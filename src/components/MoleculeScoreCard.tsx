@@ -7,6 +7,7 @@ import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
 
 interface MoleculeScoreCardProps {
   moleculeName: string;
+  trialName?: string;
   scores: ProbabilityScores;
   phase: string;
   indication: string;
@@ -17,7 +18,7 @@ interface MoleculeScoreCardProps {
   companyTrackRecord?: 'fast' | 'average' | 'slow';
 }
 
-export function MoleculeScoreCard({ moleculeName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [], companyTrackRecord = 'average' }: MoleculeScoreCardProps) {
+export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [], companyTrackRecord = 'average' }: MoleculeScoreCardProps) {
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
     if (ranking === 3) return "text-warning";
@@ -51,6 +52,9 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, the
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-xl">{moleculeName}</CardTitle>
+            {trialName && (
+              <p className="text-sm font-medium text-primary mt-0.5">{trialName}</p>
+            )}
             <CardDescription>{indication} • {therapeuticArea} • {phase}</CardDescription>
             {nctId && (
               <a 
@@ -89,9 +93,10 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, the
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Award className="w-4 h-4" />
-              <span>Approval Probability</span>
+              <span>On Time Approval Prob.</span>
             </div>
             <p className="text-2xl font-semibold">{formatPercent(scores.approval)}</p>
+            <span className="text-xs text-muted-foreground">(vs TA avg)</span>
           </div>
 
           <div className="space-y-1">
