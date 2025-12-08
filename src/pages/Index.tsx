@@ -1913,6 +1913,8 @@ const Index = () => {
                               {(() => {
                                 const lpi3 = calculateLPI3ForMolecule(molecule);
                                 const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
+                                const ciLower = Math.round(lpi3.confidenceInterval.lower * 100);
+                                const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
                                 return (
                                   <div className="text-right">
                                     <div className="text-xs text-muted-foreground">LPI-3</div>
@@ -1923,6 +1925,7 @@ const Index = () => {
                                           ? 'text-[hsl(45,93%,47%)]' 
                                           : 'text-[hsl(0,72%,51%)]'
                                     }`}>{lpi3Score}%</div>
+                                    <div className="text-[10px] text-muted-foreground">CI: {ciLower}–{ciUpper}%</div>
                                   </div>
                                 );
                               })()}
@@ -2141,8 +2144,14 @@ const Index = () => {
                         <Badge variant="outline">{mol.phase}</Badge>
                         {(() => {
                           const lpi3 = calculateLPI3ForMolecule(mol);
+                          const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
+                          const ciLower = Math.round(lpi3.confidenceInterval.lower * 100);
+                          const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
                           return (
-                            <Badge className="bg-blue-500 text-white">LPI-3 {Math.round(lpi3.calibratedProbability * 100)}%</Badge>
+                            <div className="flex items-center gap-2">
+                              <Badge className="bg-blue-500 text-white">LPI-3 {lpi3Score}%</Badge>
+                              <span className="text-[10px] text-muted-foreground">CI: {ciLower}–{ciUpper}%</span>
+                            </div>
                           );
                         })()}
                       </div>
