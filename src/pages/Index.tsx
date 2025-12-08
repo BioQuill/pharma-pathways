@@ -1753,9 +1753,17 @@ const Index = () => {
                 <Globe className="h-4 w-4" />
                 TA Risk Index
               </TabsTrigger>
-              <TabsTrigger value="lpi" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+              <TabsTrigger value="lpi-1" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <TrendingUp className="h-4 w-4" />
-                LPI
+                LPI-1
+              </TabsTrigger>
+              <TabsTrigger value="lpi-2" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <TrendingUp className="h-4 w-4" />
+                LPI-2
+              </TabsTrigger>
+              <TabsTrigger value="lpi-3" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <TrendingUp className="h-4 w-4" />
+                LPI-3
               </TabsTrigger>
             </TabsList>
           </div>
@@ -2155,8 +2163,34 @@ const Index = () => {
             <TACompositeIndexDashboard />
           </TabsContent>
 
-          {/* LPI Tab - Current Model */}
-          <TabsContent value="lpi" className="space-y-6">
+          {/* LPI-1 Tab - Placeholder */}
+          <TabsContent value="lpi-1" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>LPI-1 Model</CardTitle>
+                <CardDescription>Basic weighted factor model for launch probability estimation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">LPI-1 model content coming soon.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* LPI-2 Tab - Placeholder */}
+          <TabsContent value="lpi-2" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>LPI-2 Model</CardTitle>
+                <CardDescription>Enhanced weighted factor model with TA-specific adjustments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">LPI-2 model content coming soon.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* LPI-3 Tab - ML Model */}
+          <TabsContent value="lpi-3" className="space-y-6">
             <LPI3Dashboard molecules={mockMolecules} />
           </TabsContent>
         </Tabs>
