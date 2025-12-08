@@ -1686,22 +1686,24 @@ const Index = () => {
                             <div className="flex items-center gap-3">
                               <h3 className="text-xl font-semibold">{molecule.name}</h3>
                               <Badge variant="outline">{molecule.id}</Badge>
-                              <Badge variant="secondary">{molecule.company}</Badge>
-                              {(() => {
-                                const mfg = getManufacturingCapability(molecule.company);
-                                return mfg?.ticker ? (
-                                  <a
-                                    href={`https://finance.yahoo.com/quote/${mfg.ticker}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
-                                    onClick={(e) => e.stopPropagation()}
-                                    title="View on Yahoo Finance"
-                                  >
-                                    ({mfg.ticker})
-                                  </a>
-                                ) : null;
-                              })()}
+                              <Badge variant="secondary" className="flex items-center gap-1.5">
+                                <span>{molecule.company}</span>
+                                {(() => {
+                                  const mfg = getManufacturingCapability(molecule.company);
+                                  return mfg?.ticker ? (
+                                    <a
+                                      href={`https://finance.yahoo.com/quote/${mfg.ticker}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                                      onClick={(e) => e.stopPropagation()}
+                                      title="View on Yahoo Finance"
+                                    >
+                                      {mfg.ticker}
+                                    </a>
+                                  ) : null;
+                                })()}
+                              </Badge>
                             </div>
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
                               <span>{molecule.phase}</span>
