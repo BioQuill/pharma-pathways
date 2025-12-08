@@ -3,36 +3,18 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   AlertTriangle, 
-  CheckCircle2, 
   Clock, 
-  ChevronDown,
-  ChevronUp,
-  Target,
-  Factory,
   FileCheck,
-  DollarSign,
-  Building2,
-  Shield,
-  Zap
+  FileText
 } from "lucide-react";
-import { useState } from "react";
 import { type LaunchFactors } from "@/lib/launchFactors";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { generateTACompositeIndex, type TACompositeIndex } from "@/lib/taCompositeIndex";
 
 interface LaunchFactorsCardProps {
   factors: LaunchFactors;
   moleculeName: string;
+  therapeuticArea: string;
 }
-
-const factorIcons: Record<string, React.ReactNode> = {
-  'Scientific Target Validation': <Target className="h-4 w-4" />,
-  'CMC Readiness': <Factory className="h-4 w-4" />,
-  'Regulatory Review Timeline': <Clock className="h-4 w-4" />,
-  'Cost-Effectiveness Strength': <DollarSign className="h-4 w-4" />,
-  'National Reimbursement Rules': <Building2 className="h-4 w-4" />,
-  'Safety Margin': <Shield className="h-4 w-4" />,
-  'Response Speed to Regulators': <Zap className="h-4 w-4" />,
-};
 
 function getScoreColor(score: number): string {
   if (score >= 75) return "text-emerald-400";
@@ -46,22 +28,17 @@ function getProgressBgClass(score: number): string {
   return "[&>div]:bg-red-500";
 }
 
-function getRankLabel(rank: 2 | 3 | 4 | 5): string {
-  const labels: Record<number, string> = {
-    2: 'Rank 2 (Impact 4)',
-    3: 'Rank 3 (Impact 3)',
-    4: 'Rank 4 (Impact 2)',
-    5: 'Rank 5 (Impact 1)',
-  };
-  return labels[rank];
+function getScoreBadgeClass(score: number): string {
+  if (score >= 70) return "bg-emerald-500 text-white";
+  if (score >= 55) return "bg-amber-500 text-white";
+  return "bg-red-500 text-white";
 }
 
-export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardProps) {
-  const [isCompositeOpen, setIsCompositeOpen] = useState(false);
-  const { rank1Factors, compositeIndex, phaseRiskMetrics } = factors;
-
-  // Calculate total adjusted weight for Rank 1 factors
-  const rank1TotalWeight = rank1Factors.reduce((sum, f) => sum + f.adjustedWeight, 0);
+export function LaunchFactorsCard({ factors, moleculeName, therapeuticArea }: LaunchFactorsCardProps) {
+  const { phaseRiskMetrics } = factors;
+  
+  // Get the TA-specific composite index for this molecule
+  const taIndex: TACompositeIndex = generateTACompositeIndex(therapeuticArea);
 
   return (
     <Card className="border-border/50 bg-card/50 backdrop-blur">
@@ -75,10 +52,50 @@ export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardPr
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Phase Risk Metrics */}
+        {/* TA Composite Index Display */}
+        <div className="p-4 rounded-lg bg-background border border-border/50">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              <span className="font-semibold text-base">{taIndex.ta}</span>
+            </div>
+            <Badge className={`text-lg font-bold px-3 py-1 ${getScoreBadgeClass(taIndex.compositeScore)}`}>
+              {taIndex.compositeScore}%
+            </Badge>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>Composite Score</span>
+              <span>{taIndex.compositeScore}%</span>
+            </div>
+            <div className="relative h-2 w-full rounded-full overflow-hidden">
+              {/* Gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-cyan-400 to-teal-400" />
+              {/* Progress indicator */}
+              <div 
+                className="absolute inset-y-0 right-0 bg-muted"
+                style={{ width: `${100 - taIndex.compositeScore}%` }}
+              />
+            </div>
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-4 text-xs">
+            <div className="flex items-center gap-2">
+              <Clock className="h-3 w-3 text-muted-foreground" />
+              <span className="text-muted-foreground">FDA Avg:</span>
+              <span className="font-medium">{taIndex.avgApprovalTimeFDA} months</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-3 w-3 text-muted-foreground" />
+              <span className="text-muted-foreground">EMA Avg:</span>
+              <span className="font-medium">{taIndex.avgApprovalTimeEMA} months</span>
+            </div>
+          </div>
+        </div>
+
+        {/* General Industry Impact per Life Cycle Phase */}
         <div className="p-4 rounded-lg bg-muted/30 border border-border/30">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium">Phase Success Rate</span>
+            <span className="text-sm font-medium">General Industry Impact per Life Cycle Phase</span>
             <Badge variant="outline" className={getScoreColor(phaseRiskMetrics.phaseSuccessRate * 100)}>
               {Math.round(phaseRiskMetrics.phaseSuccessRate * 100)}%
             </Badge>
@@ -104,104 +121,6 @@ export function LaunchFactorsCard({ factors, moleculeName }: LaunchFactorsCardPr
             </div>
           )}
         </div>
-
-        {/* Rank 1 Factors - Primary Drivers */}
-        <div>
-          <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            Primary Launch Drivers (Rank 1)
-            <Badge variant="secondary" className="text-xs ml-auto">
-              Total Weight: {rank1TotalWeight.toFixed(1)}%
-            </Badge>
-          </h4>
-          <div className="space-y-3">
-            {rank1Factors.map((factor) => (
-              <div key={factor.name} className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm">
-                    {factorIcons[factor.name] || <Target className="h-4 w-4" />}
-                    <span>{factor.name}</span>
-                    {factor.adjustedWeight !== factor.baseWeight && (
-                      <Badge variant="outline" className="text-xs text-primary border-primary/50">
-                        {factor.adjustedWeight.toFixed(2)}% (TA adj)
-                      </Badge>
-                    )}
-                  </div>
-                  <span className={`text-sm font-bold ${getScoreColor(factor.score)}`}>
-                    {factor.score}%
-                  </span>
-                </div>
-                <Progress 
-                  value={factor.score} 
-                  className={`h-1.5 ${getProgressBgClass(factor.score)}`}
-                />
-                <p className="text-xs text-muted-foreground">{factor.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Composite Index - Rank 2-5 Factors */}
-        <Collapsible open={isCompositeOpen} onOpenChange={setIsCompositeOpen}>
-          <div className="p-4 rounded-lg bg-muted/20 border border-border/30">
-            <CollapsibleTrigger className="w-full">
-              <div className="flex items-center justify-between cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-semibold">Other Factors Composite Index</h4>
-                  <Badge variant="secondary" className="text-xs">
-                    {compositeIndex.factors.length} factors
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-lg font-bold ${getScoreColor(compositeIndex.score)}`}>
-                    {compositeIndex.score}%
-                  </span>
-                  {isCompositeOpen ? (
-                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </div>
-              </div>
-            </CollapsibleTrigger>
-            
-            <CollapsibleContent>
-              <div className="mt-4 space-y-4">
-                {/* Group by rank */}
-                {([2, 3, 4, 5] as const).map(rank => {
-                  const rankFactors = compositeIndex.factors.filter(f => f.rank === rank);
-                  if (rankFactors.length === 0) return null;
-                  
-                  const rankTotalWeight = rankFactors.reduce((sum, f) => sum + f.adjustedWeight, 0);
-                  
-                  return (
-                    <div key={rank}>
-                      <div className="text-xs text-muted-foreground mb-2 font-medium flex items-center justify-between">
-                        <span>{getRankLabel(rank)}</span>
-                        <span>Weight: {rankTotalWeight.toFixed(1)}%</span>
-                      </div>
-                      <div className="grid gap-2">
-                        {rankFactors.map((factor) => (
-                          <div key={factor.name} className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">{factor.name}</span>
-                              {factor.adjustedWeight !== factor.baseWeight && (
-                                <span className="text-primary text-[10px]">
-                                  ({factor.adjustedWeight.toFixed(2)}%)
-                                </span>
-                              )}
-                            </div>
-                            <span className={getScoreColor(factor.score)}>{factor.score}%</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CollapsibleContent>
-          </div>
-        </Collapsible>
 
         {/* Key Failure Points */}
         {phaseRiskMetrics.failurePoints.length > 0 && (
