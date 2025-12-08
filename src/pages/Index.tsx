@@ -1951,7 +1951,7 @@ const Index = () => {
               <div className="space-y-6" ref={reportRef}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-semibold">Comprehensive Due Diligence Report</h2>
+                    <h2 className="text-2xl font-semibold">Full Due Diligence Report</h2>
                     <Button variant="secondary" size="sm" onClick={handleDownloadPDF}>
                       <Download className="h-4 w-4 mr-2" />
                       Download PDF
