@@ -1,9 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore, calculateTTMPercent } from "@/lib/scoring";
-import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign, Clock } from "lucide-react";
-
+import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign, Clock, ExternalLink } from "lucide-react";
 import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
+import { getManufacturingCapability } from "@/lib/manufacturingCapability";
 
 interface MoleculeScoreCardProps {
   moleculeName: string;
@@ -16,9 +16,12 @@ interface MoleculeScoreCardProps {
   nctId?: string;
   marketData?: MarketData[];
   companyTrackRecord?: 'fast' | 'average' | 'slow';
+  company?: string;
 }
 
-export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [], companyTrackRecord = 'average' }: MoleculeScoreCardProps) {
+export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [], companyTrackRecord = 'average', company }: MoleculeScoreCardProps) {
+  const mfgCapability = company ? getManufacturingCapability(company) : null;
+  
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
     if (ranking === 3) return "text-warning";
@@ -51,7 +54,21 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-xl">{moleculeName}</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-xl">{moleculeName}</CardTitle>
+              {mfgCapability?.ticker && (
+                <a
+                  href={`https://finance.yahoo.com/quote/${mfgCapability.ticker}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-xs font-mono bg-muted px-2 py-0.5 rounded hover:bg-muted/80 transition-colors"
+                  title="View on Yahoo Finance"
+                >
+                  {mfgCapability.ticker}
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
             {trialName && (
               <p className="text-sm font-medium text-primary mt-0.5">{trialName}</p>
             )}

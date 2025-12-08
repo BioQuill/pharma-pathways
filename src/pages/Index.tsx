@@ -1756,6 +1756,7 @@ const Index = () => {
                   nctId={activeMolecule.nctId}
                   marketData={activeMolecule.marketData}
                   companyTrackRecord={activeMolecule.companyTrackRecord}
+                  company={activeMolecule.company}
                 />
                 
                 {activeMolecule.launchFactors && (
@@ -1763,6 +1764,7 @@ const Index = () => {
                     factors={activeMolecule.launchFactors}
                     moleculeName={activeMolecule.name}
                     therapeuticArea={activeMolecule.therapeuticArea}
+                    company={activeMolecule.company}
                   />
                 )}
                 
