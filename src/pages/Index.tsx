@@ -1637,24 +1637,26 @@ const Index = () => {
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="w-full justify-start bg-[#000080] border-0">
-            <TabsTrigger value="overview" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-              <BarChart3 className="h-4 w-4" />
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="molecules" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-              <Pill className="h-4 w-4" />
-              Molecules
-            </TabsTrigger>
-            <TabsTrigger value="timelines" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-              <Calendar className="h-4 w-4" />
-              Timelines
-            </TabsTrigger>
-            <TabsTrigger value="regulatory" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-              <Globe className="h-4 w-4" />
-              Regulatory
-            </TabsTrigger>
-          </TabsList>
+          <div className="-mx-4 px-0">
+            <TabsList className="w-full justify-start bg-[#000080] border-0 rounded-none h-12 px-4">
+              <TabsTrigger value="overview" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <BarChart3 className="h-4 w-4" />
+                Overview
+              </TabsTrigger>
+              <TabsTrigger value="molecules" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Pill className="h-4 w-4" />
+                Molecules
+              </TabsTrigger>
+              <TabsTrigger value="timelines" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Calendar className="h-4 w-4" />
+                Timelines
+              </TabsTrigger>
+              <TabsTrigger value="regulatory" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Globe className="h-4 w-4" />
+                TA Risk Index
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
