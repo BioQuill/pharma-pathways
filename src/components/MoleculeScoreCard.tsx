@@ -57,25 +57,26 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             <div className="flex items-center gap-2">
               <CardTitle className="text-xl">{moleculeName}</CardTitle>
             </div>
-            {company && (
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm text-muted-foreground">{company}</span>
-                {mfgCapability?.ticker && (
-                  <a
-                    href={`https://finance.yahoo.com/quote/${mfgCapability.ticker}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-sm font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
-                    title="View on Yahoo Finance"
-                  >
-                    ({mfgCapability.ticker})
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                )}
-              </div>
-            )}
             {trialName && (
               <p className="text-sm font-medium text-primary mt-0.5">{trialName}</p>
+            )}
+            {company && (
+              <div className="flex items-center gap-2 mt-1">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm bg-[hsl(50,100%,85%)] text-foreground">
+                  <span>{company}</span>
+                  {mfgCapability?.ticker && (
+                    <a
+                      href={`https://finance.yahoo.com/quote/${mfgCapability.ticker}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                      title="View on Yahoo Finance"
+                    >
+                      {mfgCapability.ticker}
+                    </a>
+                  )}
+                </span>
+              </div>
             )}
             <CardDescription>{indication} • {therapeuticArea} • {phase}</CardDescription>
             {nctId && (
