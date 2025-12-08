@@ -35,6 +35,16 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const ttmPercent = calculateTTMPercent(phase, therapeuticArea, companyTrackRecord, marketData);
   const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
   
+  // Calculate composite score: weighted average of LPI (60%) and normalized TTM (40%)
+  // TTM is normalized: lower months = higher score (inverted scale, max 60 months assumed)
+  const calculateCompositeScore = () => {
+    if (ttmMonths === null) return overallScore; // Fall back to LPI if no TTM
+    const normalizedTTM = Math.max(0, 100 - (ttmMonths / 60) * 100); // 0 months = 100, 60+ months = 0
+    const composite = (overallScore * 0.6) + (normalizedTTM * 0.4);
+    return Math.round(composite);
+  };
+  const compositeScore = calculateCompositeScore();
+  
   const getBlockbusterColor = (years: number | null) => {
     if (years === null) return "text-muted-foreground";
     if (years <= 4) return "text-success";
@@ -91,13 +101,24 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               </a>
             )}
           </div>
-          <div className="flex flex-col gap-2">
-            <Badge variant="default" className="text-lg font-bold px-4 py-2">
-              LPI%: {overallScore}%
-            </Badge>
-            <Badge variant="default" className="text-lg font-bold px-4 py-2">
-              TTM: {ttmMonths !== null ? `${ttmMonths} months` : 'N/A'}
-            </Badge>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-2">
+              <Badge variant="default" className="text-lg font-bold px-4 py-2">
+                LPI%: {overallScore}%
+              </Badge>
+              <Badge variant="default" className="text-lg font-bold px-4 py-2">
+                TTM: {ttmMonths !== null ? `${ttmMonths} months` : 'N/A'}
+              </Badge>
+            </div>
+            <div 
+              className="flex items-center justify-center w-20 h-20 rounded-full bg-[hsl(142,76%,36%)] text-white"
+              title="Composite Score: Weighted average of LPI (60%) and TTM (40%)"
+            >
+              <div className="text-center">
+                <div className="text-2xl font-bold">{compositeScore}</div>
+                <div className="text-xs opacity-90">Score</div>
+              </div>
+            </div>
           </div>
         </div>
       </CardHeader>
