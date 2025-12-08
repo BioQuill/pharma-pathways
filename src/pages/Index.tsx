@@ -1354,6 +1354,56 @@ const Index = () => {
                       <span>EU Community Register</span>
                       <Badge variant="outline" className="text-xs">Human Medicines</Badge>
                     </a>
+                    <a 
+                      href="https://www.nmpa.gov.cn/yaopin/index.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <span className="text-base">🇨🇳</span>
+                      <span>NMPA China</span>
+                      <Badge variant="outline" className="text-xs">Drug Registry</Badge>
+                    </a>
+                    <a 
+                      href="https://www.pmda.go.jp/english/review-services/reviews/approved-information/drugs/0002.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <span className="text-base">🇯🇵</span>
+                      <span>PMDA Japan</span>
+                      <Badge variant="outline" className="text-xs">Approvals</Badge>
+                    </a>
+                    <a 
+                      href="https://products.mhra.gov.uk/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <span className="text-base">🇬🇧</span>
+                      <span>MHRA UK</span>
+                      <Badge variant="outline" className="text-xs">Products</Badge>
+                    </a>
+                    <a 
+                      href="https://health-products.canada.ca/dpd-bdpp/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <span className="text-base">🇨🇦</span>
+                      <span>Health Canada</span>
+                      <Badge variant="outline" className="text-xs">DPD</Badge>
+                    </a>
+                    <a 
+                      href="https://consultas.anvisa.gov.br/#/medicamentos/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <span className="text-base">🇧🇷</span>
+                      <span>ANVISA Brazil</span>
+                      <Badge variant="outline" className="text-xs">Registry</Badge>
+                    </a>
                   </div>
                 </div>
                 <span className="text-xs text-muted-foreground">Last sync: Dec 7, 2025</span>

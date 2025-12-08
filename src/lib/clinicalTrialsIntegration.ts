@@ -22,7 +22,7 @@
  * - Monitor regulatory approvals across jurisdictions
  */
 
-export type DataSource = 'clinicaltrials.gov' | 'who-ictrp' | 'fda-approvals' | 'ema-register' | 'eu-community-register';
+export type DataSource = 'clinicaltrials.gov' | 'who-ictrp' | 'fda-approvals' | 'ema-register' | 'eu-community-register' | 'nmpa-china' | 'pmda-japan' | 'anvisa-brazil' | 'mhra-uk' | 'health-canada';
 
 export interface ClinicalTrialData {
   nctId: string;
@@ -333,6 +333,56 @@ export const REGULATORY_DATA_SOURCES: RegulatoryDataSource[] = [
     description: 'Official register of EU-authorized human medicines',
     type: 'regulatory',
     region: 'EU'
+  },
+  {
+    id: 'nmpa-china',
+    name: 'China National Medical Products Administration',
+    shortName: 'NMPA China',
+    url: 'https://www.nmpa.gov.cn/yaopin/index.html',
+    icon: '🇨🇳',
+    description: 'Chinese drug registration and approval database',
+    type: 'regulatory',
+    region: 'China'
+  },
+  {
+    id: 'pmda-japan',
+    name: 'Pharmaceuticals and Medical Devices Agency',
+    shortName: 'PMDA Japan',
+    url: 'https://www.pmda.go.jp/english/review-services/reviews/approved-information/drugs/0002.html',
+    icon: '🇯🇵',
+    description: 'Japanese drug approval and safety information',
+    type: 'regulatory',
+    region: 'Japan'
+  },
+  {
+    id: 'anvisa-brazil',
+    name: 'Agência Nacional de Vigilância Sanitária',
+    shortName: 'ANVISA Brazil',
+    url: 'https://consultas.anvisa.gov.br/#/medicamentos/',
+    icon: '🇧🇷',
+    description: 'Brazilian health regulatory agency drug registry',
+    type: 'regulatory',
+    region: 'Brazil'
+  },
+  {
+    id: 'mhra-uk',
+    name: 'Medicines and Healthcare products Regulatory Agency',
+    shortName: 'MHRA UK',
+    url: 'https://products.mhra.gov.uk/',
+    icon: '🇬🇧',
+    description: 'UK medicines and medical devices regulator',
+    type: 'regulatory',
+    region: 'UK'
+  },
+  {
+    id: 'health-canada',
+    name: 'Health Canada Drug Product Database',
+    shortName: 'Health Canada',
+    url: 'https://health-products.canada.ca/dpd-bdpp/',
+    icon: '🇨🇦',
+    description: 'Canadian drug product approvals and information',
+    type: 'regulatory',
+    region: 'Canada'
   }
 ];
 
