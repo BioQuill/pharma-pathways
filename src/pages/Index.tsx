@@ -1738,16 +1738,33 @@ const Index = () => {
                             <div className="flex items-center gap-6">
                               <div className="text-right">
                                 <div className="text-sm text-muted-foreground">LPI%</div>
-                                <div className="text-3xl font-bold text-primary">{molecule.overallScore}%</div>
+                                <div className={`text-3xl font-bold ${
+                                  molecule.overallScore >= 67 
+                                    ? 'text-[hsl(142,76%,36%)]' 
+                                    : molecule.overallScore >= 34 
+                                      ? 'text-[hsl(45,93%,47%)]' 
+                                      : 'text-[hsl(0,72%,51%)]'
+                                }`}>{molecule.overallScore}%</div>
                               </div>
                               <div className="text-right">
                                 <div className="text-sm text-muted-foreground">TTM</div>
-                                <div className="text-3xl font-bold text-primary">
-                                  {(() => {
-                                    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
-                                    return ttm !== null ? `${ttm}m` : 'N/A';
-                                  })()}
-                                </div>
+                                {(() => {
+                                  const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
+                                  // TTM efficiency: 1 month = 100, 100 months = 0
+                                  const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : null;
+                                  const ttmColor = ttmEfficiency !== null 
+                                    ? ttmEfficiency >= 67 
+                                      ? 'text-[hsl(142,76%,36%)]' 
+                                      : ttmEfficiency >= 34 
+                                        ? 'text-[hsl(45,93%,47%)]' 
+                                        : 'text-[hsl(0,72%,51%)]'
+                                    : 'text-primary';
+                                  return (
+                                    <div className={`text-3xl font-bold ${ttmColor}`}>
+                                      {ttm !== null ? `${ttm}m` : 'N/A'}
+                                    </div>
+                                  );
+                                })()}
                               </div>
                             </div>
                             <Button onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
@@ -1836,6 +1853,50 @@ const Index = () => {
                     phases={activeMolecule.retrospectivePhases}
                   />
                 )}
+
+                {/* Metric Definitions */}
+                <Card className="mt-8 border-t-4 border-t-muted">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Metric Definitions</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-primary">LPI% (Launch Probability Index)</h4>
+                        <p className="text-sm text-muted-foreground">
+                          The probability (0-100%) of a molecule successfully reaching market launch. Calculated using weighted factors: 
+                          TA Composite Score (20%), Phase-specific success rates (25%), Approval probability (15%), Meeting endpoints (10%), 
+                          Revenue potential (10%), Manufacturing/Scale-Up Capability (15%), and Dropout/Execution risk (5%).
+                        </p>
+                        <div className="flex items-center gap-4 text-xs mt-2">
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> 67-100: Strong</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 34-66: Moderate</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> 0-33: High Risk</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-primary">TTM (Time To Market)</h4>
+                        <p className="text-sm text-muted-foreground">
+                          The expected number of months from the current development stage to first regulatory approval. 
+                          Calculated using therapeutic area-specific factors and company track record data. Lower TTM values indicate 
+                          faster commercialization timelines and are considered more favorable for investment decisions.
+                        </p>
+                        <div className="flex items-center gap-4 text-xs mt-2">
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Fast (low months)</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> Average</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Slow (high months)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pt-4 border-t">
+                      <h4 className="font-semibold text-primary mb-2">Composite Score</h4>
+                      <p className="text-sm text-muted-foreground">
+                        A weighted aggregate of LPI% (60%) and TTM efficiency (40%), where TTM efficiency normalizes 1 month as 100 (best) and 100 months as 0 (worst). 
+                        This metric provides a single holistic assessment balancing probability of success and timeline efficiency for PE/M&A decision-making.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             ) : null}
           </TabsContent>
