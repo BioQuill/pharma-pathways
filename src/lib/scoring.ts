@@ -277,6 +277,28 @@ export function calculateTTMPercent(
   return Math.max(0, Math.min(100, Math.round(ttmPercent)));
 }
 
+// Calculate TTM in months - expected months from current stage to first regulatory approval
+export function calculateTTMMonths(
+  phase: string,
+  therapeuticArea: string,
+  companyTrackRecord: 'fast' | 'average' | 'slow',
+  marketData: MarketData[]
+): number | null {
+  if (marketData.length === 0 || marketData[0].estimatedLaunchDate === 'N/A - Trial Failed') {
+    return null;
+  }
+  
+  // Get US launch date as primary reference (first approval)
+  const usMarket = marketData.find(m => m.countryCode === 'US');
+  if (!usMarket) return null;
+  
+  const launchDate = new Date(usMarket.estimatedLaunchDate);
+  const now = new Date();
+  const monthsRemaining = Math.round((launchDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 30));
+  
+  return Math.max(0, monthsRemaining);
+}
+
 export { normalizeTherapeuticArea };
 
 // Generate empty market projections for failed trials

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore, calculateTTMPercent } from "@/lib/scoring";
+import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore, calculateTTMPercent, calculateTTMMonths } from "@/lib/scoring";
 import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign, Clock, ExternalLink } from "lucide-react";
 import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
@@ -33,6 +33,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const timeToBlockbuster = calculateTimeToBlockbuster(marketData);
   const revenueScore = calculateRevenueScore(marketData);
   const ttmPercent = calculateTTMPercent(phase, therapeuticArea, companyTrackRecord, marketData);
+  const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
   
   const getBlockbusterColor = (years: number | null) => {
     if (years === null) return "text-muted-foreground";
@@ -90,9 +91,14 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               </a>
             )}
           </div>
-          <Badge variant="default" className="text-lg font-bold px-4 py-2">
-            Launch Probability: {overallScore}%
-          </Badge>
+          <div className="flex flex-col gap-2">
+            <Badge variant="default" className="text-lg font-bold px-4 py-2">
+              NPI%: {overallScore}%
+            </Badge>
+            <Badge variant="default" className="text-lg font-bold px-4 py-2">
+              TTM: {ttmMonths !== null ? `${ttmMonths} months` : 'N/A'}
+            </Badge>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
