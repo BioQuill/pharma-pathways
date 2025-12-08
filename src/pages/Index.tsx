@@ -91,6 +91,7 @@ const Index = () => {
     {
       id: "RETA-01",
       name: "Retatrutide (LY3437943)",
+      trialName: "TRIUMPH",
       phase: "Phase III",
       indication: "Obesity / Type 2 Diabetes",
       therapeuticArea: "Metabolic/Endocrinology",
@@ -211,6 +212,7 @@ const Index = () => {
     {
       id: "ORFO-01",
       name: "Orfoglipron (LY3502970)",
+      trialName: "ATTAIN",
       phase: "Phase III",
       indication: "Type 2 Diabetes / Obesity",
       therapeuticArea: "Metabolic/Endocrinology",
@@ -328,6 +330,7 @@ const Index = () => {
     {
       id: "DATO-01",
       name: "Datopotamab Deruxtecan (Dato-DXd)",
+      trialName: "TROPION",
       phase: "Phase III",
       indication: "Non-Small Cell Lung Cancer / Triple-Negative Breast Cancer",
       therapeuticArea: "Oncology/Hematology",
@@ -362,6 +365,7 @@ const Index = () => {
     {
       id: "ZILE-01",
       name: "Zilebesiran",
+      trialName: "KARDIA",
       phase: "Phase III",
       indication: "Hypertension",
       therapeuticArea: "Cardiovascular",
@@ -395,6 +399,7 @@ const Index = () => {
     {
       id: "EMRA-01",
       name: "Emraclidine (CVL-231)",
+      trialName: "EMPOWER",
       phase: "Phase III",
       indication: "Schizophrenia",
       therapeuticArea: "Psychiatry/Mental Health",
@@ -428,6 +433,7 @@ const Index = () => {
     {
       id: "RITLE-01",
       name: "Ritlbexbart (SAR441566/ABBV-157)",
+      trialName: "TL1A-IBD",
       phase: "Phase III",
       indication: "Ulcerative Colitis / Crohn's Disease",
       therapeuticArea: "Immunology & Inflammation",
@@ -458,6 +464,7 @@ const Index = () => {
     {
       id: "NIPO-01",
       name: "Nipocalimab",
+      trialName: "VIVACITY",
       phase: "Phase III",
       indication: "Myasthenia Gravis / Rheumatoid Arthritis",
       therapeuticArea: "Rheumatology",
@@ -488,6 +495,7 @@ const Index = () => {
     {
       id: "LENA-01",
       name: "Lenacapavir (Sunlenca)",
+      trialName: "PURPOSE",
       phase: "Phase III",
       indication: "HIV Prevention (PrEP)",
       therapeuticArea: "Infectious Diseases",
@@ -521,6 +529,7 @@ const Index = () => {
     {
       id: "DUPI-01",
       name: "Dupilumab (Dupixent)",
+      trialName: "BOREAS",
       phase: "Phase III",
       indication: "COPD with Type 2 Inflammation",
       therapeuticArea: "Respiratory/Pulmonology",
@@ -551,6 +560,7 @@ const Index = () => {
     {
       id: "EFRU-01",
       name: "Efruxifermin (EFX)",
+      trialName: "SYNCHRONY",
       phase: "Phase III",
       indication: "MASH (Metabolic-Associated Steatohepatitis)",
       therapeuticArea: "Gastroenterology & Hepatology",
@@ -581,6 +591,7 @@ const Index = () => {
     {
       id: "ATRA-01",
       name: "Atrasentan",
+      trialName: "ALIGN",
       phase: "Phase III",
       indication: "IgA Nephropathy",
       therapeuticArea: "Nephrology/Renal",
@@ -611,6 +622,7 @@ const Index = () => {
     {
       id: "NEMO-01",
       name: "Nemolizumab",
+      trialName: "ARCADIA",
       phase: "Phase III",
       indication: "Atopic Dermatitis / Prurigo Nodularis",
       therapeuticArea: "Dermatology",
@@ -641,6 +653,7 @@ const Index = () => {
     {
       id: "TARC-01",
       name: "Tarcocimab Tedromer (OPT-302)",
+      trialName: "ShORe",
       phase: "Phase III",
       indication: "Wet Age-Related Macular Degeneration",
       therapeuticArea: "Ophthalmology",
@@ -671,6 +684,7 @@ const Index = () => {
     {
       id: "CASG-01",
       name: "Casgevy (Exagamglogene autotemcel)",
+      trialName: "CLIMB",
       phase: "Approved/Phase III Expansion",
       indication: "Sickle Cell Disease / Beta Thalassemia",
       therapeuticArea: "Rare Diseases/Orphan Drugs",
@@ -704,6 +718,7 @@ const Index = () => {
     {
       id: "MRNA-01",
       name: "mRNA-1083 (Flu/COVID Combo)",
+      trialName: "FLUENT",
       phase: "Phase III",
       indication: "Influenza + COVID-19 Prevention",
       therapeuticArea: "Vaccines & Virology",
@@ -734,6 +749,7 @@ const Index = () => {
     {
       id: "FEZO-01",
       name: "Fezolinetant (Veozah)",
+      trialName: "SKYLIGHT",
       phase: "Approved/Phase III Expansion",
       indication: "Vasomotor Symptoms (Menopause)",
       therapeuticArea: "Women's Health",
@@ -764,6 +780,7 @@ const Index = () => {
     {
       id: "TALA-01",
       name: "Talazoparib + Enzalutamide",
+      trialName: "TALAPRO-2",
       phase: "Phase III",
       indication: "Metastatic Castration-Resistant Prostate Cancer",
       therapeuticArea: "Urology",
@@ -794,6 +811,7 @@ const Index = () => {
     {
       id: "SUZE-01",
       name: "Suzetrigine (VX-548)",
+      trialName: "REEF",
       phase: "Phase III",
       indication: "Acute Pain (Post-surgical)",
       therapeuticArea: "Pain Management/Anesthesia",
@@ -827,6 +845,7 @@ const Index = () => {
     {
       id: "LOVO-01",
       name: "Lovotibeglogene autotemcel (Lovo-cel)",
+      trialName: "HGB-206",
       phase: "Phase III",
       indication: "Sickle Cell Disease",
       therapeuticArea: "Transplantation & Cell/Gene Therapy",
@@ -1452,6 +1471,7 @@ const Index = () => {
                 
                 <MoleculeScoreCard
                   moleculeName={activeMolecule.name}
+                  trialName={activeMolecule.trialName}
                   scores={activeMolecule.scores}
                   phase={activeMolecule.phase}
                   indication={activeMolecule.indication}
