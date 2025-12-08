@@ -1762,6 +1762,7 @@ const Index = () => {
                   <LaunchFactorsCard
                     factors={activeMolecule.launchFactors}
                     moleculeName={activeMolecule.name}
+                    therapeuticArea={activeMolecule.therapeuticArea}
                   />
                 )}
                 
