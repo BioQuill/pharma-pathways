@@ -1926,7 +1926,7 @@ const Index = () => {
                                           ? 'text-[hsl(45,93%,47%)]' 
                                           : 'text-[hsl(0,72%,51%)]'
                                     }`}>{lpi3Score}%</div>
-                                    <div className="text-[10px] text-muted-foreground">CI: {ciLower}–{ciUpper}%</div>
+                                    <div className="text-[10px] text-muted-foreground cursor-help" title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data.">CI: {ciLower}–{ciUpper}%</div>
                                   </div>
                                 );
                               })()}
