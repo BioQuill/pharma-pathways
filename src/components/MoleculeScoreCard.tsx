@@ -35,12 +35,13 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const ttmPercent = calculateTTMPercent(phase, therapeuticArea, companyTrackRecord, marketData);
   const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
   
-  // Calculate composite score: weighted average of LPI (60%) and normalized TTM (40%)
-  // TTM is normalized: lower months = higher score (inverted scale, max 60 months assumed)
+  // Calculate composite score: high LPI + low TTM = best score
+  // TTM efficiency: 1 month = 100 (best), 100+ months = 0 (worst)
   const calculateCompositeScore = () => {
     if (ttmMonths === null) return overallScore; // Fall back to LPI if no TTM
-    const normalizedTTM = Math.max(0, 100 - (ttmMonths / 60) * 100); // 0 months = 100, 60+ months = 0
-    const composite = (overallScore * 0.6) + (normalizedTTM * 0.4);
+    const maxTTM = 100; // Maximum TTM in months for scaling
+    const ttmEfficiency = Math.max(0, 100 * (1 - (ttmMonths - 1) / (maxTTM - 1))); // 1 month = 100, 100 months = 0
+    const composite = (overallScore * 0.6) + (ttmEfficiency * 0.4);
     return Math.round(composite);
   };
   const compositeScore = calculateCompositeScore();
