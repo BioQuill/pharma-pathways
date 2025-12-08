@@ -32,6 +32,7 @@ import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
 import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
 import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
+import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { 
@@ -2185,17 +2186,9 @@ const Index = () => {
             </Card>
           </TabsContent>
 
-          {/* LPI-2 Tab - Placeholder */}
+          {/* LPI-2 Tab - 5-Factor Investment Model */}
           <TabsContent value="lpi-2" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>LPI-2 Model</CardTitle>
-                <CardDescription>Enhanced weighted factor model with TA-specific adjustments</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">LPI-2 model content coming soon.</p>
-              </CardContent>
-            </Card>
+            <LPI2Dashboard molecules={mockMolecules} />
           </TabsContent>
 
           {/* LPI-3 Tab - ML Model */}
