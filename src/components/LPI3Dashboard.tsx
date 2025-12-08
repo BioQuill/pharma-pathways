@@ -144,7 +144,7 @@ const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProf
           <div className="text-right">
             <Badge variant="outline" className="mb-1">{molecule.phase}</Badge>
             <div className={`text-3xl font-bold ${prediction.calibratedProbability >= 0.5 ? 'text-green-600' : prediction.calibratedProbability >= 0.3 ? 'text-yellow-600' : 'text-red-600'}`}>
-              {(prediction.calibratedProbability * 100).toFixed(1)}%
+              {Math.round(prediction.calibratedProbability * 100)}%
             </div>
             <div className="text-xs text-muted-foreground">
               CI: {(prediction.confidenceInterval.lower * 100).toFixed(0)}% - {(prediction.confidenceInterval.upper * 100).toFixed(0)}%
@@ -268,7 +268,7 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
               <div className="text-xs text-muted-foreground">Molecules Analyzed</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold text-primary">{(avgProbability * 100).toFixed(1)}%</div>
+              <div className="text-2xl font-bold text-primary">{Math.round(avgProbability * 100)}%</div>
               <div className="text-xs text-muted-foreground">Avg Launch Probability</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">
@@ -521,7 +521,7 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
                     <div className="text-xs text-muted-foreground">{molecule.company} • {molecule.phase}</div>
                   </div>
                   <Badge className={getScoreColor(prediction.calibratedProbability)}>
-                    {(prediction.calibratedProbability * 100).toFixed(1)}%
+                    {Math.round(prediction.calibratedProbability * 100)}%
                   </Badge>
                 </div>
               </div>
