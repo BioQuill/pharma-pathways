@@ -89,6 +89,21 @@ const Index = () => {
   const handleDownloadPDF = () => {
     if (!reportRef.current || !activeMolecule) return;
     
+    // Clone the element to modify it for PDF
+    const element = reportRef.current.cloneNode(true) as HTMLElement;
+    
+    // Show PDF header
+    const pdfHeader = element.querySelector('.pdf-header');
+    if (pdfHeader) {
+      (pdfHeader as HTMLElement).style.display = 'block';
+    }
+    
+    // Hide action buttons
+    const hideButtons = element.querySelectorAll('.pdf-hide');
+    hideButtons.forEach(btn => {
+      (btn as HTMLElement).style.display = 'none';
+    });
+    
     const opt = {
       margin: 10,
       filename: `${activeMolecule.name.replace(/\s+/g, '_')}_Due_Diligence_Report.pdf`,
@@ -98,7 +113,7 @@ const Index = () => {
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
     
-    html2pdf().set(opt).from(reportRef.current).save();
+    html2pdf().set(opt).from(element).save();
   };
 
   // Generate comprehensive molecule profiles with real probability calculations
@@ -1952,15 +1967,23 @@ const Index = () => {
               </div>
             ) : activeMolecule ? (
               <div className="space-y-6" ref={reportRef}>
-                <div className="flex items-center justify-between">
+                {/* PDF-only header - hidden on screen, shown in PDF */}
+                <div className="hidden print:block pdf-header bg-[#F5D547] py-2 px-4 -mx-4 mb-4">
+                  <div className="flex items-center">
+                    <img src={bioquillLogo} alt="BiOQUILL" className="h-8 w-auto object-contain" />
+                  </div>
+                </div>
+                
+                {/* Action buttons - visible on screen, hidden in PDF */}
+                <div className="flex items-center justify-between pdf-hide-buttons">
                   <div className="flex items-center gap-3">
                     <h2 className="text-2xl font-semibold">Full Due Diligence Report</h2>
-                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF}>
+                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF} className="pdf-hide">
                       <Download className="h-4 w-4 mr-2" />
                       Download PDF
                     </Button>
                   </div>
-                  <Button variant="outline" onClick={() => setSelectedMolecule(null)}>
+                  <Button variant="outline" onClick={() => setSelectedMolecule(null)} className="pdf-hide">
                     ← Back to Overview
                   </Button>
                 </div>
