@@ -18,6 +18,7 @@ import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 import html2pdf from "html2pdf.js";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
+import { MarketHeatMap } from "@/components/MarketHeatMap";
 import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
 import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
 import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
@@ -1503,6 +1504,8 @@ const Index = () => {
                     landscape={activeMolecule.competitiveLandscape}
                   />
                 )}
+                
+                <MarketHeatMap marketData={activeMolecule.marketData} />
                 
                 <MarketAnalysisTable marketData={activeMolecule.marketData} />
                 
