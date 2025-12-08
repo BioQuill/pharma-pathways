@@ -2075,14 +2075,35 @@ const Index = () => {
           <TabsContent value="molecules" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Molecule Database</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Molecule Database</span>
+                  <Badge variant="secondary" className="text-lg px-3 py-1">{mockMolecules.length.toLocaleString()} Molecules</Badge>
+                </CardTitle>
                 <CardDescription>Browse and analyze clinical trial molecules</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Pill className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Molecule profiling interface will be displayed here</p>
-                  <p className="text-sm mt-2">Integration with trials.gov and clinical databases</p>
+                <div className="grid gap-4">
+                  {mockMolecules.map((mol) => (
+                    <div 
+                      key={mol.id} 
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => {
+                        setSelectedMolecule(mol.id);
+                        setActiveTab("overview");
+                      }}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <div className="font-semibold">{mol.name}</div>
+                          <div className="text-sm text-muted-foreground">{mol.company} • {mol.therapeuticArea}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline">{mol.phase}</Badge>
+                        <Badge className="bg-blue-500 text-white">LPI {mol.overallScore}%</Badge>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
