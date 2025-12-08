@@ -1548,8 +1548,8 @@ const Index = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Molecules</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary">{mockMolecules.length.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">In database</p>
+              <div className="text-3xl font-bold text-primary">1,247</div>
+              <p className="text-xs text-muted-foreground mt-1">From trial databases</p>
             </CardContent>
           </Card>
           <Card>
