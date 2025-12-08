@@ -1588,7 +1588,8 @@ const Index = () => {
               {/* Trial Databases Row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                  <div className="flex items-center justify-center w-32 h-8 rounded-full bg-[#E8C84A]">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#E8C84A]"></div>
                     <span className="text-sm font-medium text-foreground">Trial Databases:</span>
                   </div>
                   <div className="flex items-center gap-4">
@@ -1619,7 +1620,8 @@ const Index = () => {
               {/* Regulatory Databases Row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                  <div className="flex items-center justify-center w-40 h-8 rounded-full bg-[#E8C84A]">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#E8C84A]"></div>
                     <span className="text-sm font-medium text-foreground">Regulatory Sources:</span>
                   </div>
                   <div className="flex items-center gap-4 flex-wrap">
