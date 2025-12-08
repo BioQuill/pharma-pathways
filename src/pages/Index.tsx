@@ -1587,20 +1587,24 @@ const Index = () => {
             <div className="flex gap-6">
               {/* Left side - Stacked dots with labels */}
               <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#E8C84A] flex-shrink-0"></div>
-                  <span className="text-sm font-semibold text-foreground whitespace-nowrap">Trial Databases:</span>
+                <div className="w-20 h-20 rounded-full bg-[#E8C84A] flex-shrink-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-xs font-semibold text-foreground">Trial</div>
+                    <div className="text-xs font-semibold text-foreground">Databases</div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#E8C84A] flex-shrink-0"></div>
-                  <span className="text-sm font-semibold text-foreground whitespace-nowrap">Regulatory Sources:</span>
+                <div className="w-20 h-20 rounded-full bg-[#E8C84A] flex-shrink-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-xs font-semibold text-foreground">Regulatory</div>
+                    <div className="text-xs font-semibold text-foreground">Sources</div>
+                  </div>
                 </div>
               </div>
               
               {/* Right side - Data sources content */}
               <div className="flex-1 space-y-3">
                 {/* Trial Databases Row */}
-                <div className="flex items-center gap-4 min-h-[40px]">
+                <div className="flex items-center gap-4 min-h-[80px]">
                   <a 
                     href="https://clinicaltrials.gov" 
                     target="_blank" 
@@ -1624,7 +1628,7 @@ const Index = () => {
                 </div>
                 
                 {/* Regulatory Sources Row */}
-                <div className="flex items-center gap-4 flex-wrap min-h-[40px]">
+                <div className="flex items-center gap-4 flex-wrap min-h-[80px]">
                   <a 
                     href="https://www.fda.gov/drugs/nda-and-bla-approvals/nda-and-bla-calendar-year-approvals" 
                     target="_blank" 
