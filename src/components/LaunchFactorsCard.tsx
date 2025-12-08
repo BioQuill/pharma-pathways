@@ -1,19 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { 
   AlertTriangle, 
   Clock, 
   FileCheck,
-  FileText
+  FileText,
+  Factory,
+  ExternalLink
 } from "lucide-react";
 import { type LaunchFactors } from "@/lib/launchFactors";
 import { generateTACompositeIndex, type TACompositeIndex } from "@/lib/taCompositeIndex";
+import { 
+  getManufacturingCapability, 
+  getScaleUpColor, 
+  getScaleUpLabel, 
+  formatCapex,
+  type ManufacturingCapability 
+} from "@/lib/manufacturingCapability";
 
 interface LaunchFactorsCardProps {
   factors: LaunchFactors;
   moleculeName: string;
   therapeuticArea: string;
+  company: string;
 }
 
 function getScoreColor(score: number): string {
@@ -34,11 +43,14 @@ function getScoreBadgeClass(score: number): string {
   return "bg-red-500 text-white";
 }
 
-export function LaunchFactorsCard({ factors, moleculeName, therapeuticArea }: LaunchFactorsCardProps) {
+export function LaunchFactorsCard({ factors, moleculeName, therapeuticArea, company }: LaunchFactorsCardProps) {
   const { phaseRiskMetrics } = factors;
   
   // Get the TA-specific composite index for this molecule
   const taIndex: TACompositeIndex = generateTACompositeIndex(therapeuticArea);
+  
+  // Get manufacturing capability assessment
+  const mfgCapability: ManufacturingCapability = getManufacturingCapability(company);
 
   return (
     <Card className="border-border/50 bg-card/50 backdrop-blur">
@@ -89,6 +101,102 @@ export function LaunchFactorsCard({ factors, moleculeName, therapeuticArea }: La
               <span className="text-muted-foreground">EMA Avg:</span>
               <span className="font-medium">{taIndex.avgApprovalTimeEMA} months</span>
             </div>
+          </div>
+        </div>
+
+        {/* Scale-Up & Manufacturing Capability */}
+        <div className="p-4 rounded-lg bg-background border border-border/50">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Factory className="h-5 w-5 text-primary" />
+              <span className="font-semibold text-base">Scale-Up & Manufacturing</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge className={`text-lg font-bold px-3 py-1 ${
+                mfgCapability.scaleUpIndex >= 4 ? 'bg-emerald-500 text-white' :
+                mfgCapability.scaleUpIndex >= 3 ? 'bg-amber-500 text-white' :
+                'bg-red-500 text-white'
+              }`}>
+                {mfgCapability.scaleUpIndex}/5
+              </Badge>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Scale-Up Probability Index</span>
+              <span className={`font-medium ${getScaleUpColor(mfgCapability.scaleUpIndex)}`}>
+                {getScaleUpLabel(mfgCapability.scaleUpIndex)}
+              </span>
+            </div>
+            
+            {/* Progress bar for scale-up index */}
+            <div className="relative h-2 w-full rounded-full overflow-hidden bg-muted">
+              <div 
+                className={`absolute inset-y-0 left-0 rounded-full ${
+                  mfgCapability.scaleUpIndex >= 4 ? 'bg-emerald-500' :
+                  mfgCapability.scaleUpIndex >= 3 ? 'bg-amber-500' :
+                  'bg-red-500'
+                }`}
+                style={{ width: `${(mfgCapability.scaleUpIndex / 5) * 100}%` }}
+              />
+            </div>
+            
+            {/* CAPEX Information */}
+            {mfgCapability.capexCurrentYear && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  CAPEX ({mfgCapability.capexYear})
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-foreground">
+                    {formatCapex(mfgCapability.capexCurrentYear)}
+                  </span>
+                  {mfgCapability.yahooFinanceUrl && (
+                    <a 
+                      href={mfgCapability.yahooFinanceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 transition-colors"
+                      title="View financials on Yahoo Finance"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* Ticker Symbol */}
+            {mfgCapability.ticker && (
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Source: Yahoo Finance Cash Flow Statement</span>
+                <span className="font-mono">{mfgCapability.ticker}</span>
+              </div>
+            )}
+            
+            {/* Rationale */}
+            <p className="text-xs text-muted-foreground mt-2">
+              {mfgCapability.rationale}
+            </p>
+            
+            {/* Impact Events */}
+            {mfgCapability.impactEvents && mfgCapability.impactEvents.length > 0 && (
+              <div className="mt-2">
+                <div className="flex items-center gap-2 text-xs text-amber-400 mb-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  <span className="font-medium">Capacity Impact Events</span>
+                </div>
+                <ul className="space-y-1">
+                  {mfgCapability.impactEvents.map((event, idx) => (
+                    <li key={idx} className="text-xs text-muted-foreground flex items-center gap-2">
+                      <span className="h-1 w-1 bg-amber-400 rounded-full" />
+                      {event}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
 
