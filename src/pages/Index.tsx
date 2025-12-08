@@ -77,6 +77,8 @@ const Index = () => {
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta'>('lpi');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadPDF = () => {
@@ -1673,45 +1675,93 @@ const Index = () => {
           <TabsContent value="overview" className="space-y-6">
             {!selectedMolecule ? (
               <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h2 className="text-2xl font-semibold">High Priority Molecules</h2>
-                    <p className="text-sm text-muted-foreground">Comprehensive due diligence profiles for PE/M&A analysis</p>
+                {/* Search and Filters */}
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-semibold">High Priority Molecules</h2>
+                      <p className="text-sm text-muted-foreground">Comprehensive due diligence profiles for PE/M&A analysis</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Sort by:</span>
+                      <div className="flex items-center gap-1">
+                        {[
+                          { key: 'lpi', label: 'LPI%' },
+                          { key: 'ttm', label: 'TTM' },
+                          { key: 'composite', label: 'Score' },
+                          { key: 'company', label: 'Company' },
+                          { key: 'ta', label: 'TA' },
+                        ].map(({ key, label }) => (
+                          <Button
+                            key={key}
+                            variant={sortBy === key ? 'default' : 'outline'}
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => {
+                              if (sortBy === key) {
+                                setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                              } else {
+                                setSortBy(key as typeof sortBy);
+                                setSortOrder(key === 'company' || key === 'ta' ? 'asc' : 'desc');
+                              }
+                            }}
+                          >
+                            {label}
+                            {sortBy === key && (
+                              <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                            )}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Sort by:</span>
-                    <div className="flex items-center gap-1">
-                      {[
-                        { key: 'lpi', label: 'LPI%' },
-                        { key: 'ttm', label: 'TTM' },
-                        { key: 'composite', label: 'Score' },
-                        { key: 'company', label: 'Company' },
-                        { key: 'ta', label: 'TA' },
-                      ].map(({ key, label }) => (
-                        <Button
-                          key={key}
-                          variant={sortBy === key ? 'default' : 'outline'}
-                          size="sm"
-                          className="h-7 px-2 text-xs"
-                          onClick={() => {
-                            if (sortBy === key) {
-                              setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-                            } else {
-                              setSortBy(key as typeof sortBy);
-                              setSortOrder(key === 'company' || key === 'ta' ? 'asc' : 'desc');
-                            }
-                          }}
-                        >
-                          {label}
-                          {sortBy === key && (
-                            <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
-                          )}
-                        </Button>
-                      ))}
+                  
+                  {/* Search and Phase Filter Row */}
+                  <div className="flex items-center gap-4">
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <input
+                        type="text"
+                        placeholder="Search by molecule, company, or therapeutic area..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Phase:</span>
+                      <div className="flex items-center gap-1">
+                        {['all', 'Phase I', 'Phase II', 'Phase III', 'Approved'].map((phase) => (
+                          <Button
+                            key={phase}
+                            variant={phaseFilter === phase ? 'default' : 'outline'}
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => setPhaseFilter(phase)}
+                          >
+                            {phase === 'all' ? 'All' : phase.replace('Phase ', 'P')}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
+
                 {mockMolecules
+                  .filter((mol) => {
+                    // Search filter
+                    const query = searchQuery.toLowerCase();
+                    const matchesSearch = !query || 
+                      mol.name.toLowerCase().includes(query) ||
+                      mol.company.toLowerCase().includes(query) ||
+                      mol.therapeuticArea.toLowerCase().includes(query) ||
+                      mol.indication.toLowerCase().includes(query);
+                    
+                    // Phase filter
+                    const matchesPhase = phaseFilter === 'all' || mol.phase.includes(phaseFilter);
+                    
+                    return matchesSearch && matchesPhase;
+                  })
                   .slice()
                   .sort((a, b) => {
                     const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.marketData) ?? 999;
@@ -1727,7 +1777,7 @@ const Index = () => {
                         comparison = b.overallScore - a.overallScore;
                         break;
                       case 'ttm':
-                        comparison = getTTM(a) - getTTM(b); // Lower TTM is better
+                        comparison = getTTM(a) - getTTM(b);
                         break;
                       case 'composite':
                         comparison = getComposite(b) - getComposite(a);
