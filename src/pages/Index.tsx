@@ -1459,6 +1459,7 @@ const Index = () => {
                   overallScore={activeMolecule.overallScore}
                   nctId={activeMolecule.nctId}
                   marketData={activeMolecule.marketData}
+                  companyTrackRecord={activeMolecule.companyTrackRecord}
                 />
                 
                 {activeMolecule.launchFactors && (

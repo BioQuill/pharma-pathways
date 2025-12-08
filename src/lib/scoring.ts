@@ -59,6 +59,124 @@ export function calculateFailedTrialScores(): ProbabilityScores {
   };
 }
 
+// TA-specific success rate modifiers based on historical industry data
+const TA_SUCCESS_MODIFIERS: Record<string, { endpoints: number; nextPhase: number; approval: number; dropoutBase: number }> = {
+  'ONCOLOGY/HEMATOLOGY': { endpoints: 0.82, nextPhase: 0.78, approval: 0.75, dropoutBase: 4 },
+  'NEUROLOGY/CNS': { endpoints: 0.72, nextPhase: 0.65, approval: 0.60, dropoutBase: 4 },
+  'PSYCHIATRY/MENTAL HEALTH': { endpoints: 0.70, nextPhase: 0.62, approval: 0.58, dropoutBase: 4 },
+  'CARDIOVASCULAR': { endpoints: 0.88, nextPhase: 0.85, approval: 0.82, dropoutBase: 2 },
+  'ENDOCRINOLOGY & METABOLISM': { endpoints: 0.92, nextPhase: 0.88, approval: 0.85, dropoutBase: 2 },
+  'IMMUNOLOGY & INFLAMMATION': { endpoints: 0.85, nextPhase: 0.80, approval: 0.78, dropoutBase: 3 },
+  'RHEUMATOLOGY': { endpoints: 0.84, nextPhase: 0.79, approval: 0.76, dropoutBase: 3 },
+  'INFECTIOUS DISEASES': { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
+  'RESPIRATORY/PULMONOLOGY': { endpoints: 0.85, nextPhase: 0.81, approval: 0.78, dropoutBase: 3 },
+  'GASTROENTEROLOGY & HEPATOLOGY': { endpoints: 0.83, nextPhase: 0.78, approval: 0.75, dropoutBase: 3 },
+  'NEPHROLOGY/RENAL': { endpoints: 0.80, nextPhase: 0.75, approval: 0.72, dropoutBase: 3 },
+  'DERMATOLOGY': { endpoints: 0.88, nextPhase: 0.85, approval: 0.82, dropoutBase: 2 },
+  'OPHTHALMOLOGY': { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
+  'RARE DISEASES/ORPHAN': { endpoints: 0.78, nextPhase: 0.72, approval: 0.68, dropoutBase: 3 },
+  'VACCINES & VIROLOGY': { endpoints: 0.80, nextPhase: 0.75, approval: 0.72, dropoutBase: 3 },
+  'WOMEN\'S HEALTH': { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
+  'UROLOGY': { endpoints: 0.85, nextPhase: 0.81, approval: 0.78, dropoutBase: 2 },
+  'PAIN MANAGEMENT/ANESTHESIA': { endpoints: 0.82, nextPhase: 0.77, approval: 0.74, dropoutBase: 3 },
+  'TRANSPLANT/CELL-GENE': { endpoints: 0.68, nextPhase: 0.60, approval: 0.55, dropoutBase: 4 },
+  'PEDIATRICS': { endpoints: 0.84, nextPhase: 0.80, approval: 0.78, dropoutBase: 2 },
+  'GENERAL': { endpoints: 0.85, nextPhase: 0.80, approval: 0.78, dropoutBase: 3 },
+};
+
+// Average TTM (time to market) in months by therapeutic area from Phase III start
+export const TA_AVERAGE_TTM: Record<string, number> = {
+  'ONCOLOGY/HEMATOLOGY': 42,
+  'NEUROLOGY/CNS': 60,
+  'PSYCHIATRY/MENTAL HEALTH': 54,
+  'CARDIOVASCULAR': 48,
+  'ENDOCRINOLOGY & METABOLISM': 36,
+  'IMMUNOLOGY & INFLAMMATION': 45,
+  'RHEUMATOLOGY': 48,
+  'INFECTIOUS DISEASES': 36,
+  'RESPIRATORY/PULMONOLOGY': 42,
+  'GASTROENTEROLOGY & HEPATOLOGY': 45,
+  'NEPHROLOGY/RENAL': 48,
+  'DERMATOLOGY': 36,
+  'OPHTHALMOLOGY': 42,
+  'RARE DISEASES/ORPHAN': 48,
+  'VACCINES & VIROLOGY': 54,
+  'WOMEN\'S HEALTH': 42,
+  'UROLOGY': 42,
+  'PAIN MANAGEMENT/ANESTHESIA': 45,
+  'TRANSPLANT/CELL-GENE': 60,
+  'PEDIATRICS': 48,
+  'GENERAL': 45,
+};
+
+// Normalize therapeutic area string to key
+function normalizeTherapeuticArea(ta: string): string {
+  const taLower = ta.toLowerCase();
+  
+  if (taLower.includes('oncology') || taLower.includes('hematology') || taLower.includes('cancer')) {
+    return 'ONCOLOGY/HEMATOLOGY';
+  }
+  if (taLower.includes('cardio') || taLower.includes('heart')) {
+    return 'CARDIOVASCULAR';
+  }
+  if (taLower.includes('neuro') || taLower.includes('cns') || taLower.includes('alzheimer')) {
+    return 'NEUROLOGY/CNS';
+  }
+  if (taLower.includes('psych') || taLower.includes('mental')) {
+    return 'PSYCHIATRY/MENTAL HEALTH';
+  }
+  if (taLower.includes('immun') || taLower.includes('inflam')) {
+    return 'IMMUNOLOGY & INFLAMMATION';
+  }
+  if (taLower.includes('rheum') || taLower.includes('arthritis')) {
+    return 'RHEUMATOLOGY';
+  }
+  if (taLower.includes('infect') || taLower.includes('virus') || taLower.includes('bacter')) {
+    return 'INFECTIOUS DISEASES';
+  }
+  if (taLower.includes('respir') || taLower.includes('pulmon') || taLower.includes('lung')) {
+    return 'RESPIRATORY/PULMONOLOGY';
+  }
+  if (taLower.includes('gastro') || taLower.includes('hepat') || taLower.includes('liver')) {
+    return 'GASTROENTEROLOGY & HEPATOLOGY';
+  }
+  if (taLower.includes('nephro') || taLower.includes('renal') || taLower.includes('kidney')) {
+    return 'NEPHROLOGY/RENAL';
+  }
+  if (taLower.includes('derma') || taLower.includes('skin')) {
+    return 'DERMATOLOGY';
+  }
+  if (taLower.includes('ophthal') || taLower.includes('eye')) {
+    return 'OPHTHALMOLOGY';
+  }
+  if (taLower.includes('rare') || taLower.includes('orphan')) {
+    return 'RARE DISEASES/ORPHAN';
+  }
+  if (taLower.includes('vaccin') || taLower.includes('virol')) {
+    return 'VACCINES & VIROLOGY';
+  }
+  if (taLower.includes('women') || taLower.includes('gynec') || taLower.includes('obstet')) {
+    return 'WOMEN\'S HEALTH';
+  }
+  if (taLower.includes('urol') || taLower.includes('prostat')) {
+    return 'UROLOGY';
+  }
+  if (taLower.includes('pain') || taLower.includes('anesth')) {
+    return 'PAIN MANAGEMENT/ANESTHESIA';
+  }
+  if (taLower.includes('transplant') || taLower.includes('cell') || taLower.includes('gene')) {
+    return 'TRANSPLANT/CELL-GENE';
+  }
+  if (taLower.includes('pediatr') || taLower.includes('child')) {
+    return 'PEDIATRICS';
+  }
+  if (taLower.includes('metabol') || taLower.includes('diabet') || taLower.includes('endocrin') || taLower.includes('obesity')) {
+    return 'ENDOCRINOLOGY & METABOLISM';
+  }
+  
+  return 'GENERAL';
+}
+
 // Calculate probability scores based on historical data patterns
 export function calculateProbabilityScores(
   phase: string,
@@ -70,6 +188,7 @@ export function calculateProbabilityScores(
   if (isFailed) {
     return calculateFailedTrialScores();
   }
+  
   // Base probabilities vary by phase (historical industry averages)
   const phaseFactors = {
     'Phase I': { endpoints: 0.65, nextPhase: 0.52, approval: 0.095 },
@@ -80,36 +199,85 @@ export function calculateProbabilityScores(
 
   const base = phaseFactors[phase as keyof typeof phaseFactors] || phaseFactors['Phase II'];
   
-  // Therapeutic area modifiers (oncology has different success rates than cardiology)
-  const therapeuticModifier = therapeuticArea.toLowerCase().includes('oncology') ? 0.85 : 1.1;
+  // Get TA-specific modifiers
+  const normalizedTA = normalizeTherapeuticArea(therapeuticArea);
+  const taModifiers = TA_SUCCESS_MODIFIERS[normalizedTA] || TA_SUCCESS_MODIFIERS['GENERAL'];
   
   // Dropout ranking based on phase and therapeutic area complexity
-  const dropoutRanking = calculateDropoutRanking(phase, therapeuticArea);
+  const dropoutRanking = calculateDropoutRanking(phase, therapeuticArea, taModifiers.dropoutBase);
+
+  // Calculate regulatory pathway probabilities based on TA
+  const regulatoryPathway = calculateRegulatoryPathwayProbabilities(normalizedTA, phase);
 
   return {
-    meetingEndpoints: Math.min(0.95, base.endpoints * therapeuticModifier),
-    nextPhase: Math.min(0.95, base.nextPhase * therapeuticModifier),
+    meetingEndpoints: Math.min(0.95, base.endpoints * taModifiers.endpoints),
+    nextPhase: Math.min(0.95, base.nextPhase * taModifiers.nextPhase),
     dropoutRanking,
-    approval: Math.min(0.95, base.approval * therapeuticModifier),
-    regulatoryPathway: {
-      standard: 0.60,
-      accelerated: 0.25,
-      breakthrough: 0.10,
-      orphan: 0.05,
-    },
+    approval: Math.min(0.95, base.approval * taModifiers.approval),
+    regulatoryPathway,
   };
 }
 
-function calculateDropoutRanking(phase: string, therapeuticArea: string): 1 | 2 | 3 | 4 | 5 {
-  // Higher dropout rates for earlier phases and complex therapeutic areas
-  if (phase === 'Pre-clinical') return 4;
-  if (phase === 'Phase I') return 3;
-  if (phase === 'Phase II') {
-    return therapeuticArea.toLowerCase().includes('oncology') ? 4 : 3;
-  }
-  if (phase === 'Phase III') return 2;
-  return 1;
+function calculateDropoutRanking(phase: string, therapeuticArea: string, taDropoutBase: number): 1 | 2 | 3 | 4 | 5 {
+  // Phase modifier
+  const phaseModifier: Record<string, number> = {
+    'Pre-clinical': 1,
+    'Phase I': 0,
+    'Phase II': -1,
+    'Phase III': -2,
+    'NDA/BLA': -3,
+  };
+  
+  const pMod = phaseModifier[phase] ?? 0;
+  const raw = taDropoutBase + pMod;
+  
+  // Clamp to 1-5 range
+  return Math.max(1, Math.min(5, raw)) as 1 | 2 | 3 | 4 | 5;
 }
+
+function calculateRegulatoryPathwayProbabilities(normalizedTA: string, phase: string): ProbabilityScores['regulatoryPathway'] {
+  // TA-specific regulatory pathway probabilities
+  const taPathways: Record<string, { standard: number; accelerated: number; breakthrough: number; orphan: number }> = {
+    'ONCOLOGY/HEMATOLOGY': { standard: 0.35, accelerated: 0.35, breakthrough: 0.20, orphan: 0.10 },
+    'RARE DISEASES/ORPHAN': { standard: 0.20, accelerated: 0.25, breakthrough: 0.15, orphan: 0.40 },
+    'INFECTIOUS DISEASES': { standard: 0.50, accelerated: 0.30, breakthrough: 0.15, orphan: 0.05 },
+    'NEUROLOGY/CNS': { standard: 0.55, accelerated: 0.25, breakthrough: 0.15, orphan: 0.05 },
+    'TRANSPLANT/CELL-GENE': { standard: 0.30, accelerated: 0.30, breakthrough: 0.25, orphan: 0.15 },
+    'GENERAL': { standard: 0.60, accelerated: 0.25, breakthrough: 0.10, orphan: 0.05 },
+  };
+  
+  return taPathways[normalizedTA] || taPathways['GENERAL'];
+}
+
+// Calculate TTM% - time remaining as percentage of average TTM for similar molecules
+export function calculateTTMPercent(
+  phase: string,
+  therapeuticArea: string,
+  companyTrackRecord: 'fast' | 'average' | 'slow',
+  marketData: MarketData[]
+): number | null {
+  if (marketData.length === 0 || marketData[0].estimatedLaunchDate === 'N/A - Trial Failed') {
+    return null;
+  }
+  
+  const normalizedTA = normalizeTherapeuticArea(therapeuticArea);
+  const averageTTM = TA_AVERAGE_TTM[normalizedTA] || TA_AVERAGE_TTM['GENERAL'];
+  
+  // Get US launch date as primary reference
+  const usMarket = marketData.find(m => m.countryCode === 'US');
+  if (!usMarket) return null;
+  
+  const launchDate = new Date(usMarket.estimatedLaunchDate);
+  const now = new Date();
+  const monthsRemaining = (launchDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 30);
+  
+  // TTM% = (remaining time / average TTM) * 100
+  const ttmPercent = (monthsRemaining / averageTTM) * 100;
+  
+  return Math.max(0, Math.min(100, Math.round(ttmPercent)));
+}
+
+export { normalizeTherapeuticArea };
 
 // Generate empty market projections for failed trials
 export function generateFailedTrialMarketProjections(): MarketData[] {

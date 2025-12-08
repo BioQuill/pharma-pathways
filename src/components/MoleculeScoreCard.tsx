@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore } from "@/lib/scoring";
-import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign } from "lucide-react";
+import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore, calculateTTMPercent } from "@/lib/scoring";
+import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign, Clock } from "lucide-react";
 
 import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
 
@@ -14,9 +14,10 @@ interface MoleculeScoreCardProps {
   overallScore: number;
   nctId?: string;
   marketData?: MarketData[];
+  companyTrackRecord?: 'fast' | 'average' | 'slow';
 }
 
-export function MoleculeScoreCard({ moleculeName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [] }: MoleculeScoreCardProps) {
+export function MoleculeScoreCard({ moleculeName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [], companyTrackRecord = 'average' }: MoleculeScoreCardProps) {
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
     if (ranking === 3) return "text-warning";
@@ -27,11 +28,20 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, the
   
   const timeToBlockbuster = calculateTimeToBlockbuster(marketData);
   const revenueScore = calculateRevenueScore(marketData);
+  const ttmPercent = calculateTTMPercent(phase, therapeuticArea, companyTrackRecord, marketData);
   
   const getBlockbusterColor = (years: number | null) => {
     if (years === null) return "text-muted-foreground";
     if (years <= 4) return "text-success";
     if (years <= 8) return "text-warning";
+    return "text-destructive";
+  };
+
+  const getTTMColor = (percent: number | null) => {
+    if (percent === null) return "text-muted-foreground";
+    if (percent <= 25) return "text-success";
+    if (percent <= 50) return "text-chart-4";
+    if (percent <= 75) return "text-warning";
     return "text-destructive";
   };
 
@@ -59,7 +69,7 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, the
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Target className="w-4 h-4" />
@@ -82,6 +92,19 @@ export function MoleculeScoreCard({ moleculeName, scores, phase, indication, the
               <span>Approval Probability</span>
             </div>
             <p className="text-2xl font-semibold">{formatPercent(scores.approval)}</p>
+          </div>
+
+          <div className="space-y-1">
+            <div className={`flex items-center gap-2 text-sm ${getTTMColor(ttmPercent)}`}>
+              <Clock className="w-4 h-4" />
+              <span>TTM%</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <p className={`text-2xl font-semibold ${getTTMColor(ttmPercent)}`}>
+                {ttmPercent !== null ? `${ttmPercent}%` : 'N/A'}
+              </p>
+              <span className="text-xs text-muted-foreground">(vs avg)</span>
+            </div>
           </div>
 
           <div className="space-y-1">
