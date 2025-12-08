@@ -93,7 +93,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
           </div>
           <div className="flex flex-col gap-2">
             <Badge variant="default" className="text-lg font-bold px-4 py-2">
-              NPI%: {overallScore}%
+              LPI%: {overallScore}%
             </Badge>
             <Badge variant="default" className="text-lg font-bold px-4 py-2">
               TTM: {ttmMonths !== null ? `${ttmMonths} months` : 'N/A'}
