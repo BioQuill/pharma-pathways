@@ -32,8 +32,10 @@ import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
 import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
 import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
+import { LPI3ReportCard } from "@/components/LPI3ReportCard";
+import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { 
-  calculateProbabilityScores, 
+  calculateProbabilityScores,
   generateMarketProjections, 
   calculateOverallScore,
   calculateTTMMonths,
@@ -1751,17 +1753,9 @@ const Index = () => {
                 <Globe className="h-4 w-4" />
                 TA Risk Index
               </TabsTrigger>
-              <TabsTrigger value="lpi-1" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+              <TabsTrigger value="lpi" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <TrendingUp className="h-4 w-4" />
-                LPI-1
-              </TabsTrigger>
-              <TabsTrigger value="lpi-2" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <TrendingUp className="h-4 w-4" />
-                LPI-2
-              </TabsTrigger>
-              <TabsTrigger value="lpi-3" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <TrendingUp className="h-4 w-4" />
-                LPI-3
+                LPI
               </TabsTrigger>
             </TabsList>
           </div>
@@ -1907,16 +1901,23 @@ const Index = () => {
                           </div>
                           <div className="flex flex-col items-end gap-3">
                             <div className="flex items-center gap-4">
-                              <div className="text-right">
-                                <div className="text-xs text-muted-foreground">LPI%</div>
-                                <div className={`text-2xl font-bold ${
-                                  molecule.overallScore >= 67 
-                                    ? 'text-[hsl(142,76%,36%)]' 
-                                    : molecule.overallScore >= 34 
-                                      ? 'text-[hsl(45,93%,47%)]' 
-                                      : 'text-[hsl(0,72%,51%)]'
-                                }`}>{molecule.overallScore}%</div>
-                              </div>
+                              {/* LPI-3 Score */}
+                              {(() => {
+                                const lpi3 = calculateLPI3ForMolecule(molecule);
+                                const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
+                                return (
+                                  <div className="text-right">
+                                    <div className="text-xs text-muted-foreground">LPI-3</div>
+                                    <div className={`text-2xl font-bold ${
+                                      lpi3Score >= 67 
+                                        ? 'text-[hsl(142,76%,36%)]' 
+                                        : lpi3Score >= 34 
+                                          ? 'text-[hsl(45,93%,47%)]' 
+                                          : 'text-[hsl(0,72%,51%)]'
+                                    }`}>{lpi3Score}%</div>
+                                  </div>
+                                );
+                              })()}
                               <div className="text-right">
                                 <div className="text-xs text-muted-foreground">TTM</div>
                                 {(() => {
@@ -2009,6 +2010,9 @@ const Index = () => {
                   companyTrackRecord={activeMolecule.companyTrackRecord}
                   company={activeMolecule.company}
                 />
+                
+                {/* LPI-3 Analysis Card */}
+                <LPI3ReportCard molecule={activeMolecule} />
                 
                 {activeMolecule.launchFactors && (
                   <LaunchFactorsCard
@@ -2127,7 +2131,12 @@ const Index = () => {
                       </div>
                       <div className="flex items-center gap-3">
                         <Badge variant="outline">{mol.phase}</Badge>
-                        <Badge className="bg-blue-500 text-white">LPI {mol.overallScore}%</Badge>
+                        {(() => {
+                          const lpi3 = calculateLPI3ForMolecule(mol);
+                          return (
+                            <Badge className="bg-blue-500 text-white">LPI-3 {Math.round(lpi3.calibratedProbability * 100)}%</Badge>
+                          );
+                        })()}
                       </div>
                     </div>
                   ))}
@@ -2146,32 +2155,8 @@ const Index = () => {
             <TACompositeIndexDashboard />
           </TabsContent>
 
-          {/* LPI Model Tabs */}
-          <TabsContent value="lpi-1" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>LPI Model 1</CardTitle>
-                <CardDescription>Launch Probability Index - Model 1 evaluation</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Model 1 configuration and results will be displayed here.</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="lpi-2" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>LPI Model 2</CardTitle>
-                <CardDescription>Launch Probability Index - Model 2 evaluation</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Model 2 configuration and results will be displayed here.</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="lpi-3" className="space-y-6">
+          {/* LPI Tab - Current Model */}
+          <TabsContent value="lpi" className="space-y-6">
             <LPI3Dashboard molecules={mockMolecules} />
           </TabsContent>
         </Tabs>
