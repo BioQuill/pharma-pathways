@@ -30,6 +30,7 @@ import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
 import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/CompetitiveAnalysis";
 import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
 import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
+import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { 
   calculateProbabilityScores, 
   generateMarketProjections, 
@@ -1723,9 +1724,9 @@ const Index = () => {
                 <Pill className="h-4 w-4" />
                 Molecules
               </TabsTrigger>
-              <TabsTrigger value="timelines" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+              <TabsTrigger value="ttm" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Calendar className="h-4 w-4" />
-                Timelines
+                TTM
               </TabsTrigger>
               <TabsTrigger value="regulatory" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Globe className="h-4 w-4" />
@@ -2075,21 +2076,9 @@ const Index = () => {
             </Card>
           </TabsContent>
 
-          {/* Timelines Tab */}
-          <TabsContent value="timelines" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Approval Timeline Analysis</CardTitle>
-                <CardDescription>Multi-scenario approval predictions by country and authority</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Timeline calculation and visualization tools</p>
-                  <p className="text-sm mt-2">Country-specific regulatory pathways and projections</p>
-                </div>
-              </CardContent>
-            </Card>
+          {/* TTM Tab */}
+          <TabsContent value="ttm" className="space-y-6">
+            <TTMBreakdownChart />
           </TabsContent>
 
           {/* Regulatory Tab */}
