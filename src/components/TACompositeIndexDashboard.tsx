@@ -2,8 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAllTACompositeIndexes, TACompositeIndex, LaunchFactor } from "@/lib/taCompositeIndex";
-import { TrendingUp, Clock, Target, AlertTriangle, CheckCircle, Beaker } from "lucide-react";
+import { TrendingUp, Clock, Target, AlertTriangle, CheckCircle, Beaker, BarChart3, Grid3X3 } from "lucide-react";
+import { TAComparisonChart, TAApprovalTimeChart } from "./TAComparisonChart";
+import { TARiskFactorHeatmap, TAFactorSummaryTable } from "./TARiskFactorHeatmap";
 
 const getScoreColor = (score: number): string => {
   if (score >= 70) return "text-green-600";
@@ -208,6 +211,40 @@ export function TACompositeIndexDashboard() {
           </Badge>
         </div>
       </div>
+
+      {/* Charts and Heatmap Tabs */}
+      <Tabs defaultValue="comparison" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="comparison" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Success Rates
+          </TabsTrigger>
+          <TabsTrigger value="timeline" className="flex items-center gap-2">
+            <Clock className="h-4 w-4" />
+            Approval Times
+          </TabsTrigger>
+          <TabsTrigger value="heatmap" className="flex items-center gap-2">
+            <Grid3X3 className="h-4 w-4" />
+            Factor Heatmap
+          </TabsTrigger>
+          <TabsTrigger value="summary" className="flex items-center gap-2">
+            <Target className="h-4 w-4" />
+            Factor Summary
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="comparison" className="mt-4">
+          <TAComparisonChart />
+        </TabsContent>
+        <TabsContent value="timeline" className="mt-4">
+          <TAApprovalTimeChart />
+        </TabsContent>
+        <TabsContent value="heatmap" className="mt-4">
+          <TARiskFactorHeatmap />
+        </TabsContent>
+        <TabsContent value="summary" className="mt-4">
+          <TAFactorSummaryTable />
+        </TabsContent>
+      </Tabs>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
