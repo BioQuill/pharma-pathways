@@ -13,9 +13,9 @@ interface RegulatoryAgency {
   description: string;
 }
 
-// Country flag URLs using flagcdn
+// Country flag URLs using flagcdn (round format)
 const getFlagUrl = (code: string) => {
-  return `https://flagcdn.com/24x18/${code}.png`;
+  return `https://flagcdn.com/w40/${code}.png`;
 };
 
 const REGULATORY_AGENCIES: RegulatoryAgency[] = [
@@ -111,7 +111,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <img 
             src={getFlagUrl(agency?.flagCode || 'us')} 
             alt={agency?.code}
-            className="w-5 h-4 object-cover rounded-sm"
+            className="w-3 h-3 object-cover rounded-full"
           />
           {agency?.name}
         </p>
@@ -226,7 +226,7 @@ export function RegulatoryTimelineChart() {
                 <img 
                   src={getFlagUrl(agency.flagCode)} 
                   alt={agency.code}
-                  className="w-8 h-6 object-cover rounded-sm"
+                  className="w-3 h-3 object-cover rounded-full"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">{agency.code}</p>

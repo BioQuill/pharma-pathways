@@ -100,10 +100,10 @@ const REGULATORY_OPTIONS: RegulatoryOption[] = [
   },
 ];
 
-// Flag images using country code
+// Flag images using country code (round format)
 const getFlagUrl = (code: string) => {
   const countryCode = code === 'EU' ? 'eu' : code.toLowerCase();
-  return `https://flagcdn.com/24x18/${countryCode}.png`;
+  return `https://flagcdn.com/w40/${countryCode}.png`;
 };
 
 type ReviewType = 'standard' | 'priority' | 'accelerated';
@@ -308,7 +308,7 @@ export function RegulatoryPathwayCalculator() {
                   <img 
                     src={getFlagUrl(option.flag)} 
                     alt={option.code}
-                    className="w-6 h-4 object-cover rounded-sm"
+                    className="w-3 h-3 object-cover rounded-full"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                     }}
@@ -374,7 +374,7 @@ export function RegulatoryPathwayCalculator() {
                     <img 
                       src={getFlagUrl(item.flag)} 
                       alt={item.code}
-                      className="w-5 h-4 object-cover rounded-sm"
+                      className="w-3 h-3 object-cover rounded-full"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
                       }}

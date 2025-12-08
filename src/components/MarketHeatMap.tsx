@@ -50,7 +50,7 @@ const COUNTRY_PATHS: Record<string, { path: string; cx: number; cy: number }> = 
   },
 };
 
-// Country flag URLs using flagcdn
+// Country flag URLs using flagcdn (round format)
 const getFlagUrl = (code: string) => {
   const countryMap: Record<string, string> = {
     US: 'us',
@@ -64,7 +64,7 @@ const getFlagUrl = (code: string) => {
     CA: 'ca',
     BR: 'br',
   };
-  return `https://flagcdn.com/24x18/${countryMap[code] || 'xx'}.png`;
+  return `https://flagcdn.com/w40/${countryMap[code] || 'xx'}.png`;
 };
 
 export function MarketHeatMap({ marketData }: MarketHeatMapProps) {
@@ -207,7 +207,7 @@ export function MarketHeatMap({ marketData }: MarketHeatMapProps) {
                 <img 
                   src={getFlagUrl(market.countryCode)} 
                   alt={market.countryCode}
-                  className="w-6 h-4 object-cover rounded-sm"
+                  className="w-3 h-3 object-cover rounded-full"
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
                 <div className="flex-1 min-w-0">
