@@ -212,6 +212,226 @@ const Index = () => {
         }
       ]
     },
+    // VK2735 VENTURE (Injectable)
+    {
+      id: "VK27-01",
+      name: "VK2735 (Injectable)",
+      trialName: "VENTURE",
+      phase: "Phase III",
+      indication: "Obesity",
+      therapeuticArea: "Metabolic/Endocrinology",
+      company: "Viking Therapeutics",
+      companyTrackRecord: 'average',
+      nctId: "NCT06068946",
+      scores: calculateProbabilityScores("Phase III", "Obesity", "Metabolic"),
+      marketData: generateMarketProjections("VK2735 Injectable", "Phase III", "Obesity", 'average'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US11,692,018", title: "Dual GLP-1/GIP receptor agonist peptides", expirationDate: "2042", type: 'composition', status: 'active' },
+        { patentNumber: "US11,845,789", title: "Methods of treating obesity with dual agonists", expirationDate: "2043", type: 'method', status: 'active' },
+        { patentNumber: "WO2023/076541", title: "Formulations of GLP-1/GIP dual agonists", expirationDate: "2043", type: 'formulation', status: 'active' },
+      ],
+      regulatoryExclusivity: [
+        { type: "NCE Exclusivity (projected)", endDate: "2032" },
+        { type: "Pediatric Extension (potential)", endDate: "2032.5" },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$130B+",
+        projectedGrowth: "25% CAGR",
+        keyPlayers: [
+          { name: "Tirzepatide (Zepbound)", company: "Eli Lilly", phase: "Approved", mechanism: "GIP/GLP-1 dual agonist", keyDifferentiator: "Best-in-class approved", efficacy: "22.5% weight loss", threat: 'high' },
+          { name: "Semaglutide (Wegovy)", company: "Novo Nordisk", phase: "Approved", mechanism: "GLP-1 agonist", keyDifferentiator: "Market leader", efficacy: "15-17% weight loss", threat: 'high' },
+          { name: "Retatrutide", company: "Eli Lilly", phase: "Phase III", mechanism: "GIP/GLP-1/Glucagon triple", keyDifferentiator: "Triple agonist, superior efficacy", efficacy: "~24% weight loss", threat: 'high' },
+          { name: "CagriSema", company: "Novo Nordisk", phase: "Phase III", mechanism: "GLP-1 + Amylin", keyDifferentiator: "Combination approach", efficacy: "~25% weight loss", threat: 'high' },
+          { name: "Survodutide", company: "Boehringer/Zealand", phase: "Phase III", mechanism: "GLP-1/Glucagon dual", keyDifferentiator: "MASH focus", efficacy: "~19% weight loss", threat: 'medium' },
+        ],
+        competitiveAdvantages: [
+          "Strong 14.7% weight loss at 13 weeks (Phase 2)",
+          "Competitive GIP/GLP-1 dual agonist mechanism",
+          "Smaller biotech - potential acquisition target",
+          "Both injectable and oral formulations in development",
+          "Clean safety profile in Phase 2"
+        ],
+        competitiveRisks: [
+          "Competition from Eli Lilly (tirzepatide, retatrutide)",
+          "Novo Nordisk dominant market presence",
+          "Limited manufacturing scale vs. big pharma",
+          "No CV outcomes data yet",
+          "Smaller company commercial reach"
+        ],
+        marketPositioning: "VK2735 is positioned as a competitive dual GLP-1/GIP agonist with strong Phase 2 efficacy. Viking's smaller size makes it an attractive M&A target for larger pharma seeking obesity pipeline assets. The parallel oral development adds strategic value."
+      },
+      retrospectivePhases: [
+        {
+          phase: "Phase 1",
+          date: "Q2 2022",
+          trialName: "First-in-Human Studies",
+          nctIds: ["NCT05291468"],
+          outcome: 'success',
+          keyData: [
+            "Dual GLP-1/GIP mechanism validated",
+            "Favorable PK profile established",
+            "Dose-dependent effects observed",
+            "Well-tolerated in healthy volunteers"
+          ],
+          scoreAtTime: 28,
+          rationale: "Early stage dual agonist from small biotech. Novel mechanism with strong preclinical data. Key risk: Viking lacks commercial infrastructure. Potential M&A target if Phase 2 succeeds.",
+          dataAvailableAtTime: ["PK/PD data", "Safety profile", "Mechanism validation"]
+        },
+        {
+          phase: "Phase 2",
+          date: "Feb 2024",
+          trialName: "VENTURE",
+          nctIds: ["NCT06068946"],
+          outcome: 'success',
+          keyData: [
+            "14.7% mean weight loss at highest dose (13 weeks)",
+            "All doses showed significant weight reduction",
+            "88% achieved ≥5% weight loss at highest dose",
+            "56% achieved ≥10% weight loss",
+            "GI side effects consistent with class",
+            "No serious adverse events related to treatment"
+          ],
+          scoreAtTime: 62,
+          rationale: "STRONG Phase 2 results - weight loss competitive with tirzepatide at similar timepoint. Viking stock surged on data. Clear de-risking of efficacy. M&A speculation intensified. Phase 3 VANQUISH program announced.",
+          dataAvailableAtTime: ["13-week efficacy", "Weight loss by dose", "Safety/tolerability", "Responder rates"]
+        },
+        {
+          phase: "Phase 3 Initiation",
+          date: "Q4 2024",
+          trialName: "VANQUISH Program Launch",
+          nctIds: ["NCT06625840", "NCT06625853"],
+          outcome: 'pending',
+          keyData: [
+            "VANQUISH-1 and VANQUISH-2 initiated",
+            "Targeting obesity as primary indication",
+            "~2,000+ patients planned",
+            "Results expected 2026",
+            "Parallel oral development ongoing"
+          ],
+          scoreAtTime: 65,
+          rationale: "Pivotal Phase 3 program underway with strong Phase 2 foundation. Viking well-capitalized post-data. Key question: can small biotech execute large Phase 3? M&A remains likely outcome. Competitive with big pharma programs.",
+          dataAvailableAtTime: ["Full Phase 2", "Trial designs", "Competitive positioning", "Manufacturing plans"]
+        },
+        {
+          phase: "Current Status",
+          date: "Q4 2024",
+          trialName: "Phase 3 Ongoing",
+          outcome: 'pending',
+          keyData: [
+            "VANQUISH trials enrolling",
+            "No unexpected safety signals",
+            "Oral formulation Phase 2 ongoing",
+            "M&A speculation continues",
+            "Strong investor interest"
+          ],
+          scoreAtTime: 64,
+          rationale: "Phase 3 in early stages. Viking's dual approach (injectable + oral) increases strategic value. Competition fierce but market large enough for multiple players. Filing projected 2027, approval 2028.",
+          dataAvailableAtTime: ["Enrollment progress", "Safety monitoring", "Oral trial updates"]
+        }
+      ]
+    },
+    // VK2735 VENTURE-Oral
+    {
+      id: "VK27-02",
+      name: "VK2735 (Oral)",
+      trialName: "VENTURE-Oral",
+      phase: "Phase II",
+      indication: "Obesity",
+      therapeuticArea: "Metabolic/Endocrinology",
+      company: "Viking Therapeutics",
+      companyTrackRecord: 'average',
+      nctId: "NCT06828055",
+      scores: calculateProbabilityScores("Phase II", "Obesity", "Metabolic"),
+      marketData: generateMarketProjections("VK2735 Oral", "Phase II", "Obesity", 'average'),
+      overallScore: 0,
+      hasRetrospective: true,
+      patents: [
+        { patentNumber: "US11,692,018", title: "Dual GLP-1/GIP receptor agonist peptides", expirationDate: "2042", type: 'composition', status: 'active' },
+        { patentNumber: "US11,912,445", title: "Oral formulations of GLP-1/GIP agonists", expirationDate: "2044", type: 'formulation', status: 'active' },
+      ],
+      regulatoryExclusivity: [
+        { type: "NCE Exclusivity (projected)", endDate: "2033" },
+      ],
+      competitiveLandscape: {
+        totalMarketSize: "$100B+ (oral GLP-1 segment)",
+        projectedGrowth: "30% CAGR",
+        keyPlayers: [
+          { name: "Rybelsus (oral semaglutide)", company: "Novo Nordisk", phase: "Approved", mechanism: "Oral GLP-1 peptide", keyDifferentiator: "First oral GLP-1", efficacy: "~5% weight loss", threat: 'medium' },
+          { name: "Orforglipron", company: "Eli Lilly", phase: "Phase III", mechanism: "Oral small molecule GLP-1", keyDifferentiator: "No food restrictions", efficacy: "~15% weight loss", threat: 'high' },
+          { name: "Danuglipron", company: "Pfizer", phase: "Discontinued", mechanism: "Oral GLP-1", keyDifferentiator: "Was competitor", threat: 'low' },
+          { name: "Amycretin", company: "Novo Nordisk", phase: "Phase II", mechanism: "Oral GLP-1/Amylin", keyDifferentiator: "Combination oral", efficacy: "~13% at 12 weeks", threat: 'high' },
+        ],
+        competitiveAdvantages: [
+          "12.2% weight loss at 13 weeks - best oral Phase 2 data",
+          "Dual GLP-1/GIP mechanism in oral form",
+          "Strong responder rates (up to 8.8% achieved ≥15% loss)",
+          "Successful down-titration maintenance strategy",
+          "Viking's parallel injectable success de-risks program"
+        ],
+        competitiveRisks: [
+          "Orforglipron ahead in development (Phase 3)",
+          "Rybelsus has first-mover advantage",
+          "Higher discontinuation rate vs placebo",
+          "Limited long-term data",
+          "Manufacturing/formulation complexity"
+        ],
+        marketPositioning: "VK2735 oral is positioned as a potentially best-in-class oral GLP-1/GIP dual agonist. The 12.2% weight loss at 13 weeks exceeds Rybelsus and approaches injectable-level efficacy. Addresses massive market of patients preferring oral to injectable therapy."
+      },
+      retrospectivePhases: [
+        {
+          phase: "Phase 1",
+          date: "Q3 2023",
+          trialName: "Oral Formulation SAD/MAD",
+          nctIds: ["NCT05982639"],
+          outcome: 'success',
+          keyData: [
+            "Oral bioavailability established",
+            "Once-daily dosing confirmed feasible",
+            "Dose-dependent exposure achieved",
+            "Acceptable tolerability profile"
+          ],
+          scoreAtTime: 25,
+          rationale: "Early oral formulation with unproven bioavailability. High-risk given oral GLP-1 challenges (Pfizer's danuglipron failed). Viking's injectable success provides some de-risking. Potential game-changer if oral efficacy matches injectable.",
+          dataAvailableAtTime: ["PK data", "Oral bioavailability", "Safety"]
+        },
+        {
+          phase: "Phase 2",
+          date: "Aug 2025",
+          trialName: "VENTURE-Oral Dosing",
+          nctIds: ["NCT06828055"],
+          outcome: 'success',
+          keyData: [
+            "12.2% mean weight loss at highest dose (13 weeks)",
+            "Dose-dependent response: 6.8% (30mg) to 12.2% (90mg)",
+            "Strong responder rates across all doses",
+            "Exploratory cohort showed maintenance with down-titration",
+            "Generally well tolerated",
+            "Higher discontinuation rate than placebo"
+          ],
+          scoreAtTime: 55,
+          rationale: "EXCELLENT oral results - approaching injectable efficacy. 12.2% at 13 weeks is best oral GLP-1 Phase 2 data. Down-titration maintenance strategy adds value. Competitive with orforglipron. Phase 3 VANQUISH-Oral likely.",
+          dataAvailableAtTime: ["13-week efficacy", "Dose-response", "Maintenance data", "Safety/tolerability"]
+        },
+        {
+          phase: "Current Status",
+          date: "Q4 2024",
+          trialName: "Phase 2 Complete / Phase 3 Planning",
+          outcome: 'pending',
+          keyData: [
+            "Phase 2 successfully completed",
+            "Phase 3 VANQUISH-Oral program in planning",
+            "Regulatory discussions ongoing",
+            "Manufacturing scale-up underway",
+            "Strong strategic interest from larger pharma"
+          ],
+          scoreAtTime: 52,
+          rationale: "Oral program de-risked with positive Phase 2. Behind injectable in timeline but adds significant portfolio value. Dual formulation strategy enhances M&A attractiveness. Key execution risk: can Viking run two Phase 3 programs simultaneously?",
+          dataAvailableAtTime: ["Full Phase 2 data", "Phase 3 planning", "Competitive dynamics"]
+        }
+      ]
+    },
     {
       id: "ORFO-01",
       name: "Orfoglipron (LY3502970)",
