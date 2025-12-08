@@ -20,6 +20,7 @@ import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
 import { MarketHeatMap } from "@/components/MarketHeatMap";
 import { RegulatoryTimelineChart } from "@/components/RegulatoryTimelineChart";
+import { RegulatoryPathwayCalculator } from "@/components/RegulatoryPathwayCalculator";
 import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
 import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
 import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
@@ -1561,6 +1562,8 @@ const Index = () => {
                 <MarketAnalysisTable marketData={activeMolecule.marketData} />
                 
                 <RegulatoryTimelineChart />
+                
+                <RegulatoryPathwayCalculator />
                 
                 {activeMolecule.hasRetrospective && activeMolecule.retrospectivePhases && (
                   <RetrospectiveTimeline
