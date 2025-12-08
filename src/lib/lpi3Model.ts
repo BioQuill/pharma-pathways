@@ -554,6 +554,23 @@ export function calculateLPI3(input: MoleculeInput): LPI3Prediction {
 // HELPER FOR MOLECULE PROFILES
 // ========================================
 
+// Simple hash function for deterministic pseudo-random values
+function hashCode(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
+// Deterministic pseudo-random based on seed
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
 export function calculateLPI3ForMolecule(
   molecule: {
     id: string;
@@ -567,6 +584,10 @@ export function calculateLPI3ForMolecule(
   // Map company to sponsor type
   const sponsorType = getSponsorType(molecule.company);
   
+  // Use molecule id for deterministic random values
+  const seed = hashCode(molecule.id);
+  const hasBreakthroughSeed = seededRandom(seed);
+  
   const input: MoleculeInput = {
     phase: molecule.phase,
     therapeuticArea: molecule.therapeuticArea,
@@ -574,7 +595,7 @@ export function calculateLPI3ForMolecule(
     companyTrackRecord: molecule.companyTrackRecord || 'average',
     // These would come from real data in production
     hasBiomarker: molecule.therapeuticArea.toLowerCase().includes('oncology'),
-    hasBreakthroughDesignation: molecule.phase === 'Phase III' && Math.random() > 0.6,
+    hasBreakthroughDesignation: molecule.phase === 'Phase III' && hasBreakthroughSeed > 0.6,
     hasOrphanDesignation: molecule.therapeuticArea.toLowerCase().includes('rare'),
     cmcComplexity: molecule.therapeuticArea.toLowerCase().includes('gene') ? 4 : 
                    molecule.therapeuticArea.toLowerCase().includes('cell') ? 4 : 2,
