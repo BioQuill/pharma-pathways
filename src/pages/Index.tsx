@@ -26,6 +26,7 @@ import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
 import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
 import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/CompetitiveAnalysis";
 import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
+import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
 import { 
   calculateProbabilityScores, 
   generateMarketProjections, 
@@ -1833,19 +1834,7 @@ const Index = () => {
 
           {/* Regulatory Tab */}
           <TabsContent value="regulatory" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Regulatory Intelligence</CardTitle>
-                <CardDescription>Country-specific legal landscapes and pharma company benchmarks</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-muted-foreground">
-                  <Globe className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Regulatory landscape mapping and analysis</p>
-                  <p className="text-sm mt-2">Market entry strategies and average launch timelines</p>
-                </div>
-              </CardContent>
-            </Card>
+            <TACompositeIndexDashboard />
           </TabsContent>
         </Tabs>
       </main>
