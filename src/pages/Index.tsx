@@ -31,6 +31,7 @@ import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/Com
 import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
 import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
 import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
+import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { 
   calculateProbabilityScores, 
   generateMarketProjections, 
@@ -2145,15 +2146,7 @@ const Index = () => {
           </TabsContent>
 
           <TabsContent value="lpi-3" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>LPI Model 3</CardTitle>
-                <CardDescription>Launch Probability Index - Model 3 evaluation</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Model 3 configuration and results will be displayed here.</p>
-              </CardContent>
-            </Card>
+            <LPI3Dashboard molecules={mockMolecules} />
           </TabsContent>
         </Tabs>
       </main>
