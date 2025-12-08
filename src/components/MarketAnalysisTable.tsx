@@ -8,6 +8,20 @@ interface MarketAnalysisTableProps {
   marketData: MarketData[];
 }
 
+// Country flag emojis mapped by country code
+const COUNTRY_FLAGS: Record<string, string> = {
+  US: '🇺🇸',
+  CN: '🇨🇳',
+  DE: '🇩🇪',
+  JP: '🇯🇵',
+  FR: '🇫🇷',
+  IT: '🇮🇹',
+  UK: '🇬🇧',
+  ES: '🇪🇸',
+  CA: '🇨🇦',
+  BR: '🇧🇷',
+};
+
 export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
   const formatCurrency = (value: number) => `$${value.toFixed(0)}M`;
   const formatPercent = (value: number) => `${(value * 100).toFixed(0)}%`;
@@ -62,6 +76,7 @@ export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
                   <TableRow key={market.countryCode}>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
+                        <span className="text-xl">{COUNTRY_FLAGS[market.countryCode] || '🌐'}</span>
                         <Badge variant="outline">{market.countryCode}</Badge>
                         {market.country}
                       </div>
