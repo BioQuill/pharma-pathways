@@ -35,6 +35,7 @@ import {
   type MarketData
 } from "@/lib/scoring";
 import { generateLaunchFactors, type LaunchFactors } from "@/lib/launchFactors";
+import { getManufacturingCapability } from "@/lib/manufacturingCapability";
 
 interface TimelinePhase {
   phase: string;
@@ -1429,7 +1430,14 @@ const Index = () => {
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   mockMolecules.forEach(mol => {
     mol.launchFactors = generateLaunchFactors(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
-    mol.overallScore = calculateOverallScore(mol.scores, mol.marketData, mol.phase);
+    const manufacturingCapability = getManufacturingCapability(mol.company);
+    mol.overallScore = calculateOverallScore(
+      mol.scores, 
+      mol.marketData, 
+      mol.phase, 
+      mol.therapeuticArea, 
+      manufacturingCapability.scaleUpIndex
+    );
   });
 
   const activeMolecule = mockMolecules.find(m => m.id === selectedMolecule);

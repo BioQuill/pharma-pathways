@@ -486,27 +486,64 @@ export const PHASE_SUCCESS_RATES: Record<string, number> = {
 };
 
 // Calculate Launch Probability Score (0-100%)
-// Enhanced calculation incorporating ranked factor analysis and industry risk data
+// Enhanced calculation incorporating TA Composite Index, Manufacturing Capability,
+// ranked factor analysis and industry risk data
 export function calculateOverallScore(
   scores: ProbabilityScores, 
   marketData: MarketData[],
-  phase: string = 'Phase II'
+  phase: string = 'Phase II',
+  therapeuticArea: string = 'GENERAL',
+  scaleUpIndex: 1 | 2 | 3 | 4 | 5 = 3
 ): number {
   const revenueScore = calculateRevenueScore(marketData);
   const phaseSuccessRate = PHASE_SUCCESS_RATES[phase] || 0.36;
   
-  // Enhanced weighted calculation based on industry data:
-  // - Phase-specific success rate: 35% (most critical - Phase III has 30-40% success)
-  // - Approval probability: 25% (regulatory pathway)
-  // - Meeting Endpoints: 15% (efficacy validation)
-  // - Revenue Potential: 15% (market viability)
-  // - Dropout/Execution Risk: 10%
+  // Get TA Composite Score (0-100) and normalize to 0-1
+  const normalizedTA = normalizeTherapeuticArea(therapeuticArea);
+  const taBaselineScores: Record<string, number> = {
+    'ONCOLOGY/HEMATOLOGY': 68,
+    'CARDIOVASCULAR': 72,
+    'NEUROLOGY/CNS': 52,
+    'PSYCHIATRY/MENTAL HEALTH': 48,
+    'IMMUNOLOGY & INFLAMMATION': 65,
+    'RHEUMATOLOGY': 64,
+    'INFECTIOUS DISEASES': 70,
+    'RESPIRATORY/PULMONOLOGY': 66,
+    'GASTROENTEROLOGY & HEPATOLOGY': 62,
+    'NEPHROLOGY/RENAL': 58,
+    'DERMATOLOGY': 74,
+    'OPHTHALMOLOGY': 70,
+    'RARE DISEASES/ORPHAN': 55,
+    'VACCINES & VIROLOGY': 68,
+    'WOMEN\'S HEALTH': 72,
+    'UROLOGY': 70,
+    'PAIN MANAGEMENT/ANESTHESIA': 60,
+    'TRANSPLANT/CELL-GENE': 45,
+    'PEDIATRICS': 66,
+    'ENDOCRINOLOGY & METABOLISM': 76,
+    'GENERAL': 65,
+  };
+  const taCompositeScore = (taBaselineScores[normalizedTA] || 65) / 100;
+  
+  // Normalize Scale-Up Index (1-5) to 0-1
+  const scaleUpScore = (scaleUpIndex - 1) / 4;
+  
+  // Enhanced weighted calculation incorporating all key factors:
+  // - Phase-specific success rate: 25% (most critical - Phase III has 30-40% success)
+  // - TA Composite Index: 20% (TA-specific risk profile)
+  // - Approval probability: 15% (regulatory pathway)
+  // - Manufacturing/Scale-Up Capability: 15% (production readiness)
+  // - Meeting Endpoints: 10% (efficacy validation)
+  // - Revenue Potential: 10% (market viability)
+  // - Dropout/Execution Risk: 5%
   const launchProbability = (
-    phaseSuccessRate * 0.35 +
-    scores.approval * 0.25 +
-    scores.meetingEndpoints * 0.15 +
-    revenueScore * 0.15 +
-    (6 - scores.dropoutRanking) / 5 * 0.10
+    phaseSuccessRate * 0.25 +
+    taCompositeScore * 0.20 +
+    scores.approval * 0.15 +
+    scaleUpScore * 0.15 +
+    scores.meetingEndpoints * 0.10 +
+    revenueScore * 0.10 +
+    (6 - scores.dropoutRanking) / 5 * 0.05
   );
 
   return Math.round(launchProbability * 100);
