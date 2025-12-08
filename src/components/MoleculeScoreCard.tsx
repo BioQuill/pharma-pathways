@@ -105,7 +105,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
           <div className="flex items-center gap-4">
             <div className="flex flex-col gap-2">
               <Badge variant="default" className="text-lg font-bold px-4 py-2 flex items-center justify-center" style={{ lineHeight: '1.2', display: 'flex', alignItems: 'center' }}>
-                LPI%: {overallScore}%
+                LPI-3: {overallScore}%
               </Badge>
               <Badge variant="default" className="text-lg font-bold px-4 py-2 flex items-center justify-center" style={{ lineHeight: '1.2', display: 'flex', alignItems: 'center' }}>
                 TTM: {ttmMonths !== null ? `${ttmMonths} months` : 'N/A'}
