@@ -1732,6 +1732,18 @@ const Index = () => {
                 <Globe className="h-4 w-4" />
                 TA Risk Index
               </TabsTrigger>
+              <TabsTrigger value="lpi-1" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <TrendingUp className="h-4 w-4" />
+                LPI-1
+              </TabsTrigger>
+              <TabsTrigger value="lpi-2" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <TrendingUp className="h-4 w-4" />
+                LPI-2
+              </TabsTrigger>
+              <TabsTrigger value="lpi-3" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <TrendingUp className="h-4 w-4" />
+                LPI-3
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -2084,6 +2096,43 @@ const Index = () => {
           {/* Regulatory Tab */}
           <TabsContent value="regulatory" className="space-y-6">
             <TACompositeIndexDashboard />
+          </TabsContent>
+
+          {/* LPI Model Tabs */}
+          <TabsContent value="lpi-1" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>LPI Model 1</CardTitle>
+                <CardDescription>Launch Probability Index - Model 1 evaluation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Model 1 configuration and results will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="lpi-2" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>LPI Model 2</CardTitle>
+                <CardDescription>Launch Probability Index - Model 2 evaluation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Model 2 configuration and results will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="lpi-3" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>LPI Model 3</CardTitle>
+                <CardDescription>Launch Probability Index - Model 3 evaluation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">Model 3 configuration and results will be displayed here.</p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>
