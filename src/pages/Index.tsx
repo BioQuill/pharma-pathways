@@ -1713,32 +1713,30 @@ const Index = () => {
                               <span>•</span>
                               <span>{molecule.therapeuticArea}</span>
                             </div>
-                            <div className="grid grid-cols-4 gap-4 mt-4">
-                              <div>
-                                <p className="text-xs text-muted-foreground">Approval Probability</p>
-                                <p className="font-semibold">{(molecule.scores.approval * 100).toFixed(1)}%</p>
+                            <div className="flex items-center gap-6 mt-3">
+                              <div className="text-xs">
+                                <span className="text-muted-foreground">Approval: </span>
+                                <span className="font-semibold">{(molecule.scores.approval * 100).toFixed(0)}%</span>
                               </div>
-                              <div>
-                                <p className="text-xs text-muted-foreground">Next Phase Prob.</p>
-                                <p className="font-semibold">{(molecule.scores.nextPhase * 100).toFixed(1)}%</p>
+                              <div className="text-xs">
+                                <span className="text-muted-foreground">Next Phase: </span>
+                                <span className="font-semibold">{(molecule.scores.nextPhase * 100).toFixed(0)}%</span>
                               </div>
-                              <div>
-                                <p className="text-xs text-muted-foreground">Dropout Risk</p>
-                                <p className="font-semibold">{molecule.scores.dropoutRanking}/5</p>
+                              <div className="text-xs">
+                                <span className="text-muted-foreground">Dropout: </span>
+                                <span className="font-semibold">{molecule.scores.dropoutRanking}/5</span>
                               </div>
-                              <div>
-                                <p className="text-xs text-muted-foreground">Total Revenue (2Y)</p>
-                                <p className="font-semibold">
-                                  ${molecule.marketData.reduce((sum, m) => sum + m.revenueProjection.year1 + m.revenueProjection.year2, 0).toFixed(0)}M
-                                </p>
+                              <div className="text-xs">
+                                <span className="text-muted-foreground">Revenue (2Y): </span>
+                                <span className="font-semibold">${molecule.marketData.reduce((sum, m) => sum + m.revenueProjection.year1 + m.revenueProjection.year2, 0).toFixed(0)}M</span>
                               </div>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end gap-2">
-                            <div className="flex items-center gap-6">
+                          <div className="flex flex-col items-end gap-3">
+                            <div className="flex items-center gap-4">
                               <div className="text-right">
-                                <div className="text-sm text-muted-foreground">LPI%</div>
-                                <div className={`text-3xl font-bold ${
+                                <div className="text-xs text-muted-foreground">LPI%</div>
+                                <div className={`text-2xl font-bold ${
                                   molecule.overallScore >= 67 
                                     ? 'text-[hsl(142,76%,36%)]' 
                                     : molecule.overallScore >= 34 
@@ -1747,10 +1745,9 @@ const Index = () => {
                                 }`}>{molecule.overallScore}%</div>
                               </div>
                               <div className="text-right">
-                                <div className="text-sm text-muted-foreground">TTM</div>
+                                <div className="text-xs text-muted-foreground">TTM</div>
                                 {(() => {
                                   const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
-                                  // TTM efficiency: 1 month = 100, 100 months = 0
                                   const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : null;
                                   const ttmColor = ttmEfficiency !== null 
                                     ? ttmEfficiency >= 67 
@@ -1760,14 +1757,33 @@ const Index = () => {
                                         : 'text-[hsl(0,72%,51%)]'
                                     : 'text-primary';
                                   return (
-                                    <div className={`text-3xl font-bold ${ttmColor}`}>
+                                    <div className={`text-2xl font-bold ${ttmColor}`}>
                                       {ttm !== null ? `${ttm}m` : 'N/A'}
                                     </div>
                                   );
                                 })()}
                               </div>
+                              {/* Composite Score Badge */}
+                              {(() => {
+                                const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
+                                const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
+                                const compositeScore = Math.round(molecule.overallScore * 0.6 + ttmEfficiency * 0.4);
+                                const bgColor = compositeScore >= 67 
+                                  ? 'bg-[hsl(142,76%,36%)]' 
+                                  : compositeScore >= 34 
+                                    ? 'bg-[hsl(45,93%,47%)]' 
+                                    : 'bg-[hsl(0,72%,51%)]';
+                                return (
+                                  <div 
+                                    className={`flex items-center justify-center w-12 h-12 rounded-full ${bgColor} text-white`}
+                                    title="Composite Score: 60% LPI + 40% TTM efficiency"
+                                  >
+                                    <span className="text-sm font-bold">{compositeScore}</span>
+                                  </div>
+                                );
+                              })()}
                             </div>
-                            <Button onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
+                            <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
                               Full Analysis
                             </Button>
                           </div>
