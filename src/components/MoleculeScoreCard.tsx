@@ -112,8 +112,14 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               </Badge>
             </div>
             <div 
-              className="flex items-center justify-center w-20 h-20 rounded-full bg-[hsl(142,76%,36%)] text-white"
-              title="Composite Score: Weighted average of LPI (60%) and TTM (40%)"
+              className={`flex items-center justify-center w-20 h-20 rounded-full text-white ${
+                compositeScore >= 67 
+                  ? 'bg-[hsl(142,76%,36%)]' // Green - top 33%
+                  : compositeScore >= 34 
+                    ? 'bg-[hsl(45,93%,47%)]' // Yellow - middle 33%
+                    : 'bg-[hsl(0,72%,51%)]' // Red - bottom 33%
+              }`}
+              title="Composite Score: Weighted average of LPI (60%) and TTM efficiency (40%)"
             >
               <div className="text-center">
                 <div className="text-2xl font-bold">{compositeScore}</div>
