@@ -84,29 +84,30 @@ const TA_SUCCESS_MODIFIERS: Record<string, { endpoints: number; nextPhase: numbe
   'GENERAL': { endpoints: 0.85, nextPhase: 0.80, approval: 0.78, dropoutBase: 3 },
 };
 
-// Average TTM (time to market) in months by therapeutic area from Phase III start
+// Average TTM (time to market) in MONTHS by therapeutic area - Full development lifecycle
+// Based on weighted contributions: Discovery 27%, Clinical 50%, Regulatory 8%, Market Access 8%, Launch 7%
 export const TA_AVERAGE_TTM: Record<string, number> = {
-  'ONCOLOGY/HEMATOLOGY': 42,
-  'NEUROLOGY/CNS': 60,
-  'PSYCHIATRY/MENTAL HEALTH': 54,
-  'CARDIOVASCULAR': 48,
-  'ENDOCRINOLOGY & METABOLISM': 36,
-  'IMMUNOLOGY & INFLAMMATION': 45,
-  'RHEUMATOLOGY': 48,
-  'INFECTIOUS DISEASES': 36,
-  'RESPIRATORY/PULMONOLOGY': 42,
-  'GASTROENTEROLOGY & HEPATOLOGY': 45,
-  'NEPHROLOGY/RENAL': 48,
-  'DERMATOLOGY': 36,
-  'OPHTHALMOLOGY': 42,
-  'RARE DISEASES/ORPHAN': 48,
-  'VACCINES & VIROLOGY': 54,
-  'WOMEN\'S HEALTH': 42,
-  'UROLOGY': 42,
-  'PAIN MANAGEMENT/ANESTHESIA': 45,
-  'TRANSPLANT/CELL-GENE': 60,
-  'PEDIATRICS': 48,
-  'GENERAL': 45,
+  'ONCOLOGY/HEMATOLOGY': 132,        // 11 years
+  'CARDIOVASCULAR': 162,             // 13.5 years
+  'NEUROLOGY/CNS': 180,              // 15 years
+  'PSYCHIATRY/MENTAL HEALTH': 126,   // 10.5 years
+  'ENDOCRINOLOGY & METABOLISM': 156, // 13 years
+  'IMMUNOLOGY & INFLAMMATION': 138,  // 11.5 years
+  'RHEUMATOLOGY': 126,               // 10.5 years
+  'INFECTIOUS DISEASES': 108,        // 9 years
+  'RESPIRATORY/PULMONOLOGY': 132,    // 11 years
+  'GASTROENTEROLOGY & HEPATOLOGY': 150, // 12.5 years
+  'NEPHROLOGY/RENAL': 150,           // 12.5 years
+  'DERMATOLOGY': 108,                // 9 years
+  'OPHTHALMOLOGY': 138,              // 11.5 years
+  'RARE DISEASES/ORPHAN': 96,        // 8 years
+  'VACCINES & VIROLOGY': 90,         // 7.5 years
+  'WOMEN\'S HEALTH': 126,            // 10.5 years
+  'UROLOGY': 120,                    // 10 years
+  'PAIN MANAGEMENT/ANESTHESIA': 108, // 9 years
+  'TRANSPLANT/CELL-GENE': 120,       // 10 years
+  'PEDIATRICS': 156,                 // 13 years
+  'GENERAL': 132,                    // 11 years (average)
 };
 
 // Normalize therapeutic area string to key
