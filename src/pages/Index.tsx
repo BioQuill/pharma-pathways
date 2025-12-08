@@ -1194,26 +1194,26 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar */}
-      <header className="sticky top-0 z-10 bg-background w-full">
+      <header className="sticky top-0 z-10 bg-[#F5D547] w-full">
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 bg-[#F5D547] px-4 py-2 -ml-4 rounded-r-lg">
+            <div className="flex items-center gap-3">
               <img src={bioquillLogo} alt="BiOQUILL" className="h-16 w-auto object-contain" />
-              <nav className="flex items-center gap-4 ml-4">
-                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
-                  <Database className="h-4 w-4 mr-2" />
-                  Database
-                </Button>
-                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Reports
-                </Button>
-                <Button size="sm" className="bg-gray-800 text-white hover:bg-gray-700">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search Trials
-                </Button>
-              </nav>
             </div>
+            <nav className="flex items-center gap-4">
+              <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                <Database className="h-4 w-4 mr-2" />
+                Database
+              </Button>
+              <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                <FileText className="h-4 w-4 mr-2" />
+                Reports
+              </Button>
+              <Button size="sm" className="bg-gray-800 text-white hover:bg-gray-700">
+                <Search className="h-4 w-4 mr-2" />
+                Search Trials
+              </Button>
+            </nav>
           </div>
         </div>
       </header>
