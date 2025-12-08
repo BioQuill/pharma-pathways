@@ -75,6 +75,8 @@ interface MoleculeProfile {
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta'>('lpi');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const reportRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadPDF = () => {
@@ -1676,9 +1678,69 @@ const Index = () => {
                     <h2 className="text-2xl font-semibold">High Priority Molecules</h2>
                     <p className="text-sm text-muted-foreground">Comprehensive due diligence profiles for PE/M&A analysis</p>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Sort by:</span>
+                    <div className="flex items-center gap-1">
+                      {[
+                        { key: 'lpi', label: 'LPI%' },
+                        { key: 'ttm', label: 'TTM' },
+                        { key: 'composite', label: 'Score' },
+                        { key: 'company', label: 'Company' },
+                        { key: 'ta', label: 'TA' },
+                      ].map(({ key, label }) => (
+                        <Button
+                          key={key}
+                          variant={sortBy === key ? 'default' : 'outline'}
+                          size="sm"
+                          className="h-7 px-2 text-xs"
+                          onClick={() => {
+                            if (sortBy === key) {
+                              setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                            } else {
+                              setSortBy(key as typeof sortBy);
+                              setSortOrder(key === 'company' || key === 'ta' ? 'asc' : 'desc');
+                            }
+                          }}
+                        >
+                          {label}
+                          {sortBy === key && (
+                            <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 {mockMolecules
-                  .sort((a, b) => b.overallScore - a.overallScore)
+                  .slice()
+                  .sort((a, b) => {
+                    const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.marketData) ?? 999;
+                    const getComposite = (mol: typeof a) => {
+                      const ttm = getTTM(mol);
+                      const ttmEfficiency = Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99))));
+                      return Math.round(mol.overallScore * 0.6 + ttmEfficiency * 0.4);
+                    };
+                    
+                    let comparison = 0;
+                    switch (sortBy) {
+                      case 'lpi':
+                        comparison = b.overallScore - a.overallScore;
+                        break;
+                      case 'ttm':
+                        comparison = getTTM(a) - getTTM(b); // Lower TTM is better
+                        break;
+                      case 'composite':
+                        comparison = getComposite(b) - getComposite(a);
+                        break;
+                      case 'company':
+                        comparison = a.company.localeCompare(b.company);
+                        break;
+                      case 'ta':
+                        comparison = a.therapeuticArea.localeCompare(b.therapeuticArea);
+                        break;
+                    }
+                    return sortOrder === 'asc' ? -comparison : comparison;
+                  })
                   .map((molecule) => (
                     <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedMolecule(molecule.id)}>
                       <CardContent className="p-6">
