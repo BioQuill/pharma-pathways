@@ -104,26 +104,27 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
           </div>
           <div className="flex items-center gap-4">
             <div className="flex flex-col gap-2">
-              <Badge variant="default" className="text-lg font-bold px-4 py-2">
+              <Badge variant="default" className="text-lg font-bold px-4 py-2 flex items-center justify-center" style={{ lineHeight: '1.2', display: 'flex', alignItems: 'center' }}>
                 LPI%: {overallScore}%
               </Badge>
-              <Badge variant="default" className="text-lg font-bold px-4 py-2">
+              <Badge variant="default" className="text-lg font-bold px-4 py-2 flex items-center justify-center" style={{ lineHeight: '1.2', display: 'flex', alignItems: 'center' }}>
                 TTM: {ttmMonths !== null ? `${ttmMonths} months` : 'N/A'}
               </Badge>
             </div>
             <div 
-              className={`flex items-center justify-center w-20 h-20 rounded-full text-white ${
+              className={`w-20 h-20 rounded-full text-white ${
                 compositeScore >= 67 
                   ? 'bg-[hsl(142,76%,36%)]' // Green - top 33%
                   : compositeScore >= 34 
                     ? 'bg-[hsl(45,93%,47%)]' // Yellow - middle 33%
                     : 'bg-[hsl(0,72%,51%)]' // Red - bottom 33%
               }`}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               title="Composite Score: Weighted average of LPI (60%) and TTM efficiency (40%)"
             >
-              <div className="text-center">
-                <div className="text-2xl font-bold">{compositeScore}</div>
-                <div className="text-xs opacity-90">Score</div>
+              <div className="text-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="text-2xl font-bold" style={{ lineHeight: '1.2' }}>{compositeScore}</div>
+                <div className="text-xs opacity-90" style={{ lineHeight: '1.2' }}>Score</div>
               </div>
             </div>
           </div>
