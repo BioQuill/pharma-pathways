@@ -4,9 +4,10 @@ import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAllTACompositeIndexes, TACompositeIndex, LaunchFactor } from "@/lib/taCompositeIndex";
-import { TrendingUp, Clock, Target, AlertTriangle, CheckCircle, Beaker, BarChart3, Grid3X3 } from "lucide-react";
+import { TrendingUp, Clock, Target, AlertTriangle, CheckCircle, Beaker, BarChart3, Grid3X3, Radar } from "lucide-react";
 import { TAComparisonChart, TAApprovalTimeChart } from "./TAComparisonChart";
 import { TARiskFactorHeatmap, TAFactorSummaryTable } from "./TARiskFactorHeatmap";
+import TARadarComparison from "./TARadarComparison";
 
 const getScoreColor = (score: number): string => {
   if (score >= 70) return "text-green-600";
@@ -214,7 +215,7 @@ export function TACompositeIndexDashboard() {
 
       {/* Charts and Heatmap Tabs */}
       <Tabs defaultValue="comparison" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="comparison" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             Success Rates
@@ -222,6 +223,10 @@ export function TACompositeIndexDashboard() {
           <TabsTrigger value="timeline" className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
             Approval Times
+          </TabsTrigger>
+          <TabsTrigger value="radar" className="flex items-center gap-2">
+            <Radar className="h-4 w-4" />
+            Radar Compare
           </TabsTrigger>
           <TabsTrigger value="heatmap" className="flex items-center gap-2">
             <Grid3X3 className="h-4 w-4" />
@@ -237,6 +242,9 @@ export function TACompositeIndexDashboard() {
         </TabsContent>
         <TabsContent value="timeline" className="mt-4">
           <TAApprovalTimeChart />
+        </TabsContent>
+        <TabsContent value="radar" className="mt-4">
+          <TARadarComparison />
         </TabsContent>
         <TabsContent value="heatmap" className="mt-4">
           <TARiskFactorHeatmap />
