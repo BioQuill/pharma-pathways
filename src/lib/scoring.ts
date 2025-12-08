@@ -32,15 +32,15 @@ export interface MarketData {
 
 export const MARKETS = [
   { code: 'US', name: 'United States', region: 'North America' },
-  { code: 'CA', name: 'Canada', region: 'North America' },
-  { code: 'DE', name: 'Germany/EU', region: 'Europe' },
-  { code: 'UK', name: 'United Kingdom', region: 'Europe' },
-  { code: 'CH', name: 'Switzerland', region: 'Europe' },
-  { code: 'JP', name: 'Japan', region: 'Asia-Pacific' },
   { code: 'CN', name: 'China', region: 'Asia-Pacific' },
+  { code: 'DE', name: 'Germany/EU', region: 'Europe' },
+  { code: 'JP', name: 'Japan', region: 'Asia-Pacific' },
+  { code: 'FR', name: 'France', region: 'Europe' },
+  { code: 'IT', name: 'Italy', region: 'Europe' },
+  { code: 'UK', name: 'United Kingdom', region: 'Europe' },
+  { code: 'ES', name: 'Spain', region: 'Europe' },
+  { code: 'CA', name: 'Canada', region: 'North America' },
   { code: 'BR', name: 'Brazil', region: 'Latin America' },
-  { code: 'RU', name: 'Russia', region: 'Eastern Europe' },
-  { code: 'GULF', name: 'Gulf States', region: 'Middle East' },
 ];
 
 // Special handling for failed trials
@@ -332,15 +332,15 @@ export function generateMarketProjections(
     // Market-specific launch delays
     const marketDelays = {
       US: 0,
-      CA: 3,
-      DE: 6,
-      UK: 4,
-      CH: 5,
-      JP: 12,
       CN: 18,
+      DE: 6,
+      JP: 12,
+      FR: 8,
+      IT: 10,
+      UK: 4,
+      ES: 9,
+      CA: 3,
       BR: 24,
-      RU: 30,
-      GULF: 36,
     };
 
     const totalMonths = Math.round(
@@ -354,15 +354,15 @@ export function generateMarketProjections(
     // Revenue projections based on market size
     const marketSizeMultiplier = {
       US: 1.0,
-      CA: 0.08,
-      DE: 0.25,
-      UK: 0.15,
-      CH: 0.05,
-      JP: 0.30,
       CN: 0.45,
+      DE: 0.25,
+      JP: 0.30,
+      FR: 0.18,
+      IT: 0.14,
+      UK: 0.15,
+      ES: 0.12,
+      CA: 0.08,
       BR: 0.12,
-      RU: 0.08,
-      GULF: 0.10,
     };
 
     const baseRevenue = 250; // Base $250M for major market
@@ -386,15 +386,15 @@ function generateMarketAccessStrategy(countryCode: string): MarketData['marketAc
   // Market access strategies vary by healthcare system
   const strategies = {
     US: { hta: 0.15, valueBased: 0.50, volumeBased: 0.20, other: 0.15 },
-    CA: { hta: 0.75, valueBased: 0.15, volumeBased: 0.05, other: 0.05 },
-    DE: { hta: 0.80, valueBased: 0.10, volumeBased: 0.05, other: 0.05 },
-    UK: { hta: 0.85, valueBased: 0.08, volumeBased: 0.04, other: 0.03 },
-    CH: { hta: 0.70, valueBased: 0.20, volumeBased: 0.05, other: 0.05 },
-    JP: { hta: 0.60, valueBased: 0.20, volumeBased: 0.15, other: 0.05 },
     CN: { hta: 0.40, valueBased: 0.15, volumeBased: 0.35, other: 0.10 },
+    DE: { hta: 0.80, valueBased: 0.10, volumeBased: 0.05, other: 0.05 },
+    JP: { hta: 0.60, valueBased: 0.20, volumeBased: 0.15, other: 0.05 },
+    FR: { hta: 0.85, valueBased: 0.08, volumeBased: 0.04, other: 0.03 },
+    IT: { hta: 0.80, valueBased: 0.10, volumeBased: 0.06, other: 0.04 },
+    UK: { hta: 0.85, valueBased: 0.08, volumeBased: 0.04, other: 0.03 },
+    ES: { hta: 0.75, valueBased: 0.12, volumeBased: 0.08, other: 0.05 },
+    CA: { hta: 0.75, valueBased: 0.15, volumeBased: 0.05, other: 0.05 },
     BR: { hta: 0.45, valueBased: 0.20, volumeBased: 0.25, other: 0.10 },
-    RU: { hta: 0.30, valueBased: 0.20, volumeBased: 0.40, other: 0.10 },
-    GULF: { hta: 0.50, valueBased: 0.30, volumeBased: 0.15, other: 0.05 },
   };
 
   return strategies[countryCode as keyof typeof strategies] || strategies.US;
@@ -404,15 +404,15 @@ function calculateRegulatoryComplexity(countryCode: string): number {
   // 0 = simple, 1 = highly complex
   const complexity = {
     US: 0.70,
-    CA: 0.65,
-    DE: 0.75,
-    UK: 0.60,
-    CH: 0.55,
-    JP: 0.85,
     CN: 0.90,
+    DE: 0.75,
+    JP: 0.85,
+    FR: 0.72,
+    IT: 0.70,
+    UK: 0.60,
+    ES: 0.68,
+    CA: 0.65,
     BR: 0.80,
-    RU: 0.95,
-    GULF: 0.70,
   };
 
   return complexity[countryCode as keyof typeof complexity] || 0.70;
