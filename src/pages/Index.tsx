@@ -31,6 +31,7 @@ import {
   calculateProbabilityScores, 
   generateMarketProjections, 
   calculateOverallScore,
+  calculateTTMMonths,
   type ProbabilityScores,
   type MarketData
 } from "@/lib/scoring";
@@ -1733,10 +1734,21 @@ const Index = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <div className="text-right">
-                              <div className="text-sm text-muted-foreground">LPI%</div>
-                              <div className="text-3xl font-bold text-primary">{molecule.overallScore}%</div>
+                          <div className="flex flex-col items-end gap-2">
+                            <div className="flex items-center gap-6">
+                              <div className="text-right">
+                                <div className="text-sm text-muted-foreground">LPI%</div>
+                                <div className="text-3xl font-bold text-primary">{molecule.overallScore}%</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm text-muted-foreground">TTM</div>
+                                <div className="text-3xl font-bold text-primary">
+                                  {(() => {
+                                    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
+                                    return ttm !== null ? `${ttm}m` : 'N/A';
+                                  })()}
+                                </div>
+                              </div>
                             </div>
                             <Button onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
                               Full Analysis
