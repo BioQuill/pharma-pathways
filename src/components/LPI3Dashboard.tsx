@@ -146,7 +146,10 @@ const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProf
             <div className={`text-3xl font-bold ${prediction.calibratedProbability >= 0.5 ? 'text-green-600' : prediction.calibratedProbability >= 0.3 ? 'text-yellow-600' : 'text-red-600'}`}>
               {Math.round(prediction.calibratedProbability * 100)}%
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div 
+              className="text-xs text-muted-foreground cursor-help" 
+              title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data."
+            >
               CI: {(prediction.confidenceInterval.lower * 100).toFixed(0)}% - {(prediction.confidenceInterval.upper * 100).toFixed(0)}%
             </div>
           </div>

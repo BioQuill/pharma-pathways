@@ -69,7 +69,10 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
                 <div className="text-[10px] opacity-90" style={{ lineHeight: '1.2' }}>LPI-3</div>
               </div>
             </div>
-            <div className="text-xs text-muted-foreground mt-1">
+            <div 
+              className="text-xs text-muted-foreground mt-1 cursor-help" 
+              title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data."
+            >
               CI: {(prediction.confidenceInterval.lower * 100).toFixed(0)}%-{(prediction.confidenceInterval.upper * 100).toFixed(0)}%
             </div>
           </div>
