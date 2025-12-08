@@ -19,6 +19,7 @@ import html2pdf from "html2pdf.js";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
 import { MarketHeatMap } from "@/components/MarketHeatMap";
+import { RegulatoryTimelineChart } from "@/components/RegulatoryTimelineChart";
 import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
 import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
 import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
@@ -1558,6 +1559,8 @@ const Index = () => {
                 <MarketHeatMap marketData={activeMolecule.marketData} />
                 
                 <MarketAnalysisTable marketData={activeMolecule.marketData} />
+                
+                <RegulatoryTimelineChart />
                 
                 {activeMolecule.hasRetrospective && activeMolecule.retrospectivePhases && (
                   <RetrospectiveTimeline
