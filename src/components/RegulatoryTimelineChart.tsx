@@ -153,11 +153,11 @@ export function RegulatoryTimelineChart() {
             </div>
             <div className="text-center">
               <p className="text-xs text-muted-foreground">Avg Priority</p>
-              <Badge variant="outline" className="border-warning text-warning">{avgPriority}mo</Badge>
+              <Badge className="bg-[hsl(142,76%,26%)] text-white">{avgPriority}mo</Badge>
             </div>
             <div className="text-center">
               <p className="text-xs text-muted-foreground">Avg Accelerated</p>
-              <Badge variant="outline" className="border-success text-success">{avgAccelerated}mo</Badge>
+              <Badge className="bg-[hsl(15,72%,40%)] text-white">{avgAccelerated}mo</Badge>
             </div>
           </div>
         </div>
@@ -202,13 +202,13 @@ export function RegulatoryTimelineChart() {
               <Bar 
                 dataKey="priority" 
                 name="Priority" 
-                fill="hsl(var(--warning))"
+                fill="hsl(142, 76%, 26%)"
                 radius={[4, 4, 0, 0]}
               />
               <Bar 
                 dataKey="accelerated" 
                 name="Accelerated" 
-                fill="hsl(var(--success))"
+                fill="hsl(15, 72%, 40%)"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
@@ -237,8 +237,8 @@ export function RegulatoryTimelineChart() {
                       <span className="text-xs">{agency.standardReview}mo</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Zap className="w-3 h-3 text-success" />
-                      <span className="text-xs text-success">{agency.acceleratedReview}mo</span>
+                      <Zap className="w-3 h-3 text-[hsl(15,72%,40%)]" />
+                      <span className="text-xs text-[hsl(15,72%,40%)]">{agency.acceleratedReview}mo</span>
                     </div>
                   </div>
                 </div>
@@ -258,14 +258,14 @@ export function RegulatoryTimelineChart() {
               </div>
             </div>
             <div className="flex items-start gap-2">
-              <div className="w-3 h-3 rounded-full bg-warning mt-1" />
+              <div className="w-3 h-3 rounded-full bg-[hsl(142,76%,26%)] mt-1" />
               <div>
                 <p className="font-medium">Priority Review</p>
                 <p className="text-xs text-muted-foreground">For drugs addressing unmet medical needs</p>
               </div>
             </div>
             <div className="flex items-start gap-2">
-              <div className="w-3 h-3 rounded-full bg-success mt-1" />
+              <div className="w-3 h-3 rounded-full bg-[hsl(15,72%,40%)] mt-1" />
               <div>
                 <p className="font-medium">Accelerated/Breakthrough</p>
                 <p className="text-xs text-muted-foreground">For serious conditions with substantial improvement</p>
