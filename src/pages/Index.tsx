@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1488,6 +1489,12 @@ const Index = () => {
                 <FileText className="h-4 w-4 mr-2" />
                 Reports
               </Button>
+              <Link to="/pricing">
+                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  Pricing
+                </Button>
+              </Link>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button size="sm" className="bg-gray-800 text-white hover:bg-gray-700">
@@ -1598,141 +1605,6 @@ const Index = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Data Sources */}
-        <Card className="mb-8 border-l-4 border-l-primary bg-[#FFFFC5]">
-          <CardContent className="py-4">
-            <div className="flex gap-6">
-              {/* Left side - Stacked dots with labels */}
-              <div className="flex flex-col gap-3">
-                <div className="w-20 h-20 rounded-full bg-[#E8C84A] flex-shrink-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-xs font-semibold text-foreground">Trial</div>
-                    <div className="text-xs font-semibold text-foreground">Databases</div>
-                  </div>
-                </div>
-                <div className="w-20 h-20 rounded-full bg-[#E8C84A] flex-shrink-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-xs font-semibold text-foreground">Regulatory</div>
-                    <div className="text-xs font-semibold text-foreground">Sources</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Right side - Data sources content */}
-              <div className="flex-1 space-y-3">
-                {/* Trial Databases Row */}
-                <div className="flex items-center gap-4 min-h-[80px]">
-                  <a 
-                    href="https://clinicaltrials.gov" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇺🇸</span>
-                    <span>ClinicalTrials.gov</span>
-                    <Badge variant="secondary" className="text-xs">Primary</Badge>
-                  </a>
-                  <a 
-                    href="https://trialsearch.who.int" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🌐</span>
-                    <span>WHO ICTRP</span>
-                    <Badge variant="outline" className="text-xs">12 Registries</Badge>
-                  </a>
-                </div>
-                
-                {/* Regulatory Sources Row */}
-                <div className="flex items-center gap-4 flex-wrap min-h-[80px]">
-                  <a 
-                    href="https://www.fda.gov/drugs/nda-and-bla-approvals/nda-and-bla-calendar-year-approvals" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇺🇸</span>
-                    <span>FDA Approvals</span>
-                    <Badge variant="outline" className="text-xs">NDA/BLA</Badge>
-                  </a>
-                  <a 
-                    href="https://www.ema.europa.eu/en/medicines/national-registers-authorised-medicines#human-medicines-13110" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇪🇺</span>
-                    <span>EMA Registers</span>
-                    <Badge variant="outline" className="text-xs">National</Badge>
-                  </a>
-                  <a 
-                    href="https://ec.europa.eu/health/documents/community-register/html/reg_hum_act.htm?sort=a" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇪🇺</span>
-                    <span>EU Community Register</span>
-                    <Badge variant="outline" className="text-xs">Human Medicines</Badge>
-                  </a>
-                  <a 
-                    href="https://www.nmpa.gov.cn/yaopin/index.html" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇨🇳</span>
-                    <span>NMPA China</span>
-                    <Badge variant="outline" className="text-xs">Drug Registry</Badge>
-                  </a>
-                  <a 
-                    href="https://www.pmda.go.jp/english/review-services/reviews/approved-information/drugs/0002.html" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇯🇵</span>
-                    <span>PMDA Japan</span>
-                    <Badge variant="outline" className="text-xs">Approvals</Badge>
-                  </a>
-                  <a 
-                    href="https://products.mhra.gov.uk/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇬🇧</span>
-                    <span>MHRA UK</span>
-                    <Badge variant="outline" className="text-xs">Products</Badge>
-                  </a>
-                  <a 
-                    href="https://health-products.canada.ca/dpd-bdpp/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇨🇦</span>
-                    <span>Health Canada</span>
-                    <Badge variant="outline" className="text-xs">DPD</Badge>
-                  </a>
-                  <a 
-                    href="https://consultas.anvisa.gov.br/#/medicamentos/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <span className="text-base">🇧🇷</span>
-                    <span>ANVISA Brazil</span>
-                    <Badge variant="outline" className="text-xs">Registry</Badge>
-                  </a>
-                  <span className="text-xs text-muted-foreground ml-auto">Last sync: Dec 7, 2025</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -2196,6 +2068,141 @@ const Index = () => {
             <LPI3Dashboard molecules={mockMolecules} />
           </TabsContent>
         </Tabs>
+
+        {/* Data Sources - Bottom of page */}
+        <Card className="mt-8 border-l-4 border-l-primary bg-[#FFFFC5]">
+          <CardContent className="py-4">
+            <div className="flex gap-6">
+              {/* Left side - Stacked dots with labels */}
+              <div className="flex flex-col gap-3">
+                <div className="w-20 h-20 rounded-full bg-[#E8C84A] flex-shrink-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-xs font-semibold text-foreground">Trial</div>
+                    <div className="text-xs font-semibold text-foreground">Databases</div>
+                  </div>
+                </div>
+                <div className="w-20 h-20 rounded-full bg-[#E8C84A] flex-shrink-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-xs font-semibold text-foreground">Regulatory</div>
+                    <div className="text-xs font-semibold text-foreground">Sources</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right side - Data sources content */}
+              <div className="flex-1 space-y-3">
+                {/* Trial Databases Row */}
+                <div className="flex items-center gap-4 min-h-[80px]">
+                  <a 
+                    href="https://clinicaltrials.gov" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇺🇸</span>
+                    <span>ClinicalTrials.gov</span>
+                    <Badge variant="secondary" className="text-xs">Primary</Badge>
+                  </a>
+                  <a 
+                    href="https://trialsearch.who.int" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🌐</span>
+                    <span>WHO ICTRP</span>
+                    <Badge variant="outline" className="text-xs">12 Registries</Badge>
+                  </a>
+                </div>
+                
+                {/* Regulatory Sources Row */}
+                <div className="flex items-center gap-4 flex-wrap min-h-[80px]">
+                  <a 
+                    href="https://www.fda.gov/drugs/nda-and-bla-approvals/nda-and-bla-calendar-year-approvals" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇺🇸</span>
+                    <span>FDA Approvals</span>
+                    <Badge variant="outline" className="text-xs">NDA/BLA</Badge>
+                  </a>
+                  <a 
+                    href="https://www.ema.europa.eu/en/medicines/national-registers-authorised-medicines#human-medicines-13110" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇪🇺</span>
+                    <span>EMA Registers</span>
+                    <Badge variant="outline" className="text-xs">National</Badge>
+                  </a>
+                  <a 
+                    href="https://ec.europa.eu/health/documents/community-register/html/reg_hum_act.htm?sort=a" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇪🇺</span>
+                    <span>EU Community Register</span>
+                    <Badge variant="outline" className="text-xs">Human Medicines</Badge>
+                  </a>
+                  <a 
+                    href="https://www.nmpa.gov.cn/yaopin/index.html" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇨🇳</span>
+                    <span>NMPA China</span>
+                    <Badge variant="outline" className="text-xs">Drug Registry</Badge>
+                  </a>
+                  <a 
+                    href="https://www.pmda.go.jp/english/review-services/reviews/approved-information/drugs/0002.html" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇯🇵</span>
+                    <span>PMDA Japan</span>
+                    <Badge variant="outline" className="text-xs">Approvals</Badge>
+                  </a>
+                  <a 
+                    href="https://products.mhra.gov.uk/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇬🇧</span>
+                    <span>MHRA UK</span>
+                    <Badge variant="outline" className="text-xs">Products</Badge>
+                  </a>
+                  <a 
+                    href="https://health-products.canada.ca/dpd-bdpp/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇨🇦</span>
+                    <span>Health Canada</span>
+                    <Badge variant="outline" className="text-xs">DPD</Badge>
+                  </a>
+                  <a 
+                    href="https://consultas.anvisa.gov.br/#/medicamentos/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <span className="text-base">🇧🇷</span>
+                    <span>ANVISA Brazil</span>
+                    <Badge variant="outline" className="text-xs">Registry</Badge>
+                  </a>
+                  <span className="text-xs text-muted-foreground ml-auto">Last sync: Dec 7, 2025</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
