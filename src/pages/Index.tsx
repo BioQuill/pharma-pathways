@@ -15,7 +15,8 @@ import {
   Download,
   Pill,
   ArrowUpDown,
-  X
+  X,
+  Brain
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
@@ -1493,6 +1494,12 @@ const Index = () => {
                 <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   Pricing
+                </Button>
+              </Link>
+              <Link to="/methodology">
+                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                  <Brain className="h-4 w-4 mr-2" />
+                  Methodology
                 </Button>
               </Link>
               <Popover>
