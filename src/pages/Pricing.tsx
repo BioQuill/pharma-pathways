@@ -123,6 +123,11 @@ export default function Pricing() {
               <img src={bioquillLogo} alt="BiOQUILL" className="h-16 w-auto object-contain" />
             </Link>
             <nav className="flex items-center gap-4">
+              <Link to="/methodology">
+                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                  Methodology
+                </Button>
+              </Link>
               <Link to="/">
                 <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
                   <ArrowLeft className="h-4 w-4 mr-2" />
