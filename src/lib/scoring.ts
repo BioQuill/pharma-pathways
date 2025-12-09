@@ -84,9 +84,9 @@ const TA_SUCCESS_MODIFIERS: Record<string, { endpoints: number; nextPhase: numbe
   'GENERAL': { endpoints: 0.85, nextPhase: 0.80, approval: 0.78, dropoutBase: 3 },
 };
 
-// Average TTM (time to market) in MONTHS by therapeutic area - Full development lifecycle
-// Based on weighted contributions: Discovery 27%, Clinical 50%, Regulatory 8%, Market Access 8%, Launch 7%
-export const TA_AVERAGE_TTM: Record<string, number> = {
+// Maximum TTM (B_max) in MONTHS by therapeutic area for composite score calculation
+// These are the upper bounds used in the normalized composite score formula
+export const TA_MAX_TTM: Record<string, number> = {
   'ONCOLOGY/HEMATOLOGY': 132,        // 11 years
   'CARDIOVASCULAR': 162,             // 13.5 years
   'NEUROLOGY/CNS': 180,              // 15 years
@@ -109,6 +109,9 @@ export const TA_AVERAGE_TTM: Record<string, number> = {
   'PEDIATRICS': 156,                 // 13 years
   'GENERAL': 132,                    // 11 years (average)
 };
+
+// Alias for backward compatibility
+export const TA_AVERAGE_TTM = TA_MAX_TTM;
 
 // Normalize therapeutic area string to key
 function normalizeTherapeuticArea(ta: string): string {
@@ -493,6 +496,53 @@ export function calculateRevenueScore(marketData: MarketData[]): number {
   if (timeToBlockbuster <= 10) return 0.4;
   if (timeToBlockbuster <= 15) return 0.2;
   return 0.1;
+}
+
+/**
+ * Calculate Composite Score using TA-specific normalization formula
+ * 
+ * Formula:
+ * - A_norm = (A - 1) / 99  where A = LPI-3 score (1-100)
+ * - B_norm = (B - 1) / (B_max - 1)  where B = TTM in months, B_max = TA-specific maximum TTM
+ * - Score = 100 * (w_A * A_norm + w_B * (1 - B_norm))
+ * 
+ * Weights: w_A = 0.7 (LPI), w_B = 0.3 (TTM efficiency)
+ * 
+ * Higher LPI = better, Lower TTM = better
+ * Score ranges from ~49 (worst: A=50, B=50, low Bmax) to ~78 (best: A=100, B=100, high Bmax)
+ */
+export function calculateCompositeScore(
+  lpiScore: number,        // A: LPI-3 score (0-100)
+  ttmMonths: number | null, // B: TTM in months
+  therapeuticArea: string   // Used to get B_max
+): number {
+  // If no TTM data, return LPI with slight penalty
+  if (ttmMonths === null || ttmMonths <= 0) {
+    return Math.round(lpiScore * 0.7); // 70% of LPI when TTM unavailable
+  }
+  
+  const normalizedTA = normalizeTherapeuticArea(therapeuticArea);
+  const bMax = TA_MAX_TTM[normalizedTA] || TA_MAX_TTM['GENERAL'];
+  
+  // Clamp LPI to 1-100 range (avoid division issues)
+  const A = Math.max(1, Math.min(100, lpiScore));
+  // Clamp TTM to 1-Bmax range
+  const B = Math.max(1, Math.min(bMax, ttmMonths));
+  
+  // Normalize A: (A - 1) / 99
+  const aNorm = (A - 1) / 99;
+  
+  // Normalize B: (B - 1) / (B_max - 1)
+  const bNorm = (B - 1) / (bMax - 1);
+  
+  // Weights
+  const wA = 0.7; // LPI weight
+  const wB = 0.3; // TTM efficiency weight
+  
+  // Score = 100 * (w_A * A_norm + w_B * (1 - B_norm))
+  const score = 100 * (wA * aNorm + wB * (1 - bNorm));
+  
+  return Math.round(Math.max(0, Math.min(100, score)));
 }
 
 // Phase-specific success rates from industry analysis

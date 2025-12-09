@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore, calculateTTMPercent, calculateTTMMonths } from "@/lib/scoring";
+import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore, calculateTTMPercent, calculateTTMMonths, calculateCompositeScore } from "@/lib/scoring";
 import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign, Clock, ExternalLink } from "lucide-react";
 import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
@@ -35,16 +35,10 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const ttmPercent = calculateTTMPercent(phase, therapeuticArea, companyTrackRecord, marketData);
   const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
   
-  // Calculate composite score: high LPI + low TTM = best score
-  // TTM efficiency: 1 month = 100 (best), 100+ months = 0 (worst)
-  const calculateCompositeScore = () => {
-    if (ttmMonths === null) return overallScore; // Fall back to LPI if no TTM
-    const maxTTM = 100; // Maximum TTM in months for scaling
-    const ttmEfficiency = Math.max(0, 100 * (1 - (ttmMonths - 1) / (maxTTM - 1))); // 1 month = 100, 100 months = 0
-    const composite = (overallScore * 0.6) + (ttmEfficiency * 0.4);
-    return Math.round(composite);
-  };
-  const compositeScore = calculateCompositeScore();
+  // Calculate composite score using new TA-specific formula:
+  // A_norm = (LPI-1)/99, B_norm = (TTM-1)/(B_max-1)
+  // Score = 100 * (0.7 * A_norm + 0.3 * (1 - B_norm))
+  const compositeScore = calculateCompositeScore(overallScore, ttmMonths, therapeuticArea);
   
   const getBlockbusterColor = (years: number | null) => {
     if (years === null) return "text-muted-foreground";
