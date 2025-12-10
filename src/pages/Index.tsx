@@ -36,6 +36,7 @@ import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
+import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { 
   calculateProbabilityScores,
@@ -1694,6 +1695,9 @@ const Index = () => {
                     ))}
                   </div>
                 </div>
+
+                {/* Molecule Comparison */}
+                <MoleculeComparison molecules={allMolecules} />
 
                 {allMolecules
                   .filter((mol) => {
