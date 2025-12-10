@@ -47,6 +47,8 @@ import {
 } from "@/lib/scoring";
 import { generateLaunchFactors, type LaunchFactors } from "@/lib/launchFactors";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
+import { additionalMolecules } from "@/lib/moleculesData";
+import { endocrinologyMolecules } from "@/lib/endocrinologyMolecules";
 
 interface TimelinePhase {
   phase: string;
@@ -1457,8 +1459,11 @@ const Index = () => {
     },
   ];
 
+  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules (20 Endocrinology)
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules];
+
   // Calculate overall scores and generate launch factors based on probabilities and market projections
-  mockMolecules.forEach(mol => {
+  allMolecules.forEach(mol => {
     mol.launchFactors = generateLaunchFactors(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
     const manufacturingCapability = getManufacturingCapability(mol.company);
     mol.overallScore = calculateOverallScore(
@@ -1470,7 +1475,7 @@ const Index = () => {
     );
   });
 
-  const activeMolecule = mockMolecules.find(m => m.id === selectedMolecule);
+  const activeMolecule = allMolecules.find(m => m.id === selectedMolecule);
 
   return (
     <div className="min-h-screen bg-background">
@@ -1690,7 +1695,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                {mockMolecules
+                {allMolecules
                   .filter((mol) => {
                     // Search filter
                     const query = searchQuery.toLowerCase();
@@ -1999,13 +2004,13 @@ const Index = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Molecule Database</span>
-                  <Badge variant="secondary" className="text-lg px-3 py-1">{mockMolecules.length.toLocaleString()} Molecules</Badge>
+                  <Badge variant="secondary" className="text-lg px-3 py-1">{allMolecules.length.toLocaleString()} Molecules</Badge>
                 </CardTitle>
                 <CardDescription>Browse and analyze clinical trial molecules</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
-                  {mockMolecules.map((mol) => (
+                  {allMolecules.map((mol) => (
                     <div 
                       key={mol.id} 
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
@@ -2067,12 +2072,12 @@ const Index = () => {
 
           {/* LPI-2 Tab - 5-Factor Investment Model */}
           <TabsContent value="lpi-2" className="space-y-6">
-            <LPI2Dashboard molecules={mockMolecules} />
+            <LPI2Dashboard molecules={allMolecules} />
           </TabsContent>
 
           {/* LPI-3 Tab - ML Model */}
           <TabsContent value="lpi-3" className="space-y-6">
-            <LPI3Dashboard molecules={mockMolecules} />
+            <LPI3Dashboard molecules={allMolecules} />
           </TabsContent>
         </Tabs>
 
