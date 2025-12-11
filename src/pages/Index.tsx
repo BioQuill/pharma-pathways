@@ -16,7 +16,8 @@ import {
   X,
   Brain,
   Target,
-  ExternalLink
+  ExternalLink,
+  Info
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
@@ -84,6 +85,15 @@ interface MoleculeProfile {
   regulatoryExclusivity?: { type: string; endDate: string; }[];
   competitiveLandscape?: CompetitiveLandscape;
   launchFactors?: LaunchFactors;
+  drugInfo?: {
+    class: string;
+    administration: string;
+    keyAdvantage?: string;
+    discovery?: string;
+    license?: string;
+    development?: string;
+    additionalInfo?: string[];
+  };
 }
 
 const Index = () => {
@@ -467,123 +477,6 @@ const Index = () => {
           scoreAtTime: 52,
           rationale: "Oral program de-risked with positive Phase 2. Behind injectable in timeline but adds significant portfolio value. Dual formulation strategy enhances M&A attractiveness. Key execution risk: can Viking run two Phase 3 programs simultaneously?",
           dataAvailableAtTime: ["Full Phase 2 data", "Phase 3 planning", "Competitive dynamics"]
-        }
-      ]
-    },
-    {
-      id: "ORFO-01",
-      name: "Orfoglipron (LY3502970)",
-      trialName: "ATTAIN",
-      phase: "Phase III",
-      indication: "Type 2 Diabetes / Obesity",
-      therapeuticArea: "Metabolic/Endocrinology",
-      company: "Eli Lilly",
-      companyTrackRecord: 'fast',
-      nctId: "NCT05631327",
-      scores: calculateProbabilityScores("Phase III", "Type 2 Diabetes", "Metabolic"),
-      marketData: generateMarketProjections("Orfoglipron", "Phase III", "Type 2 Diabetes", 'fast'),
-      overallScore: 0,
-      hasRetrospective: true,
-      patents: [
-        { patentNumber: "US10,981,939", title: "Small molecule GLP-1 receptor agonist", expirationDate: "2038", type: 'composition', status: 'active' },
-        { patentNumber: "US11,414,432", title: "Methods of treatment using oral GLP-1 agonist", expirationDate: "2039", type: 'method', status: 'active' },
-        { patentNumber: "US11,667,634", title: "Oral formulations of GLP-1 agonists", expirationDate: "2040", type: 'formulation', status: 'active' },
-      ],
-      regulatoryExclusivity: [
-        { type: "NCE Exclusivity (projected)", endDate: "2031" },
-        { type: "Pediatric Extension", endDate: "2031.5" },
-      ],
-      competitiveLandscape: {
-        totalMarketSize: "$100B+",
-        projectedGrowth: "20% CAGR",
-        keyPlayers: [
-          { name: "Rybelsus (oral semaglutide)", company: "Novo Nordisk", phase: "Approved", mechanism: "Oral GLP-1 peptide", keyDifferentiator: "First-to-market oral GLP-1", efficacy: "~4-5% weight loss", threat: 'high' },
-          { name: "Tirzepatide (Mounjaro)", company: "Eli Lilly", phase: "Approved", mechanism: "GIP/GLP-1 injectable", keyDifferentiator: "Superior efficacy, same company", efficacy: "22.5% weight loss", threat: 'low' },
-          { name: "Semaglutide (Ozempic)", company: "Novo Nordisk", phase: "Approved", mechanism: "Injectable GLP-1", keyDifferentiator: "Market leader injectable", efficacy: "15% weight loss", threat: 'medium' },
-          { name: "Danuglipron", company: "Pfizer", phase: "Discontinued", mechanism: "Oral GLP-1", keyDifferentiator: "Was competitor, now discontinued", threat: 'low' },
-        ],
-        competitiveAdvantages: [
-          "Small molecule - easier manufacturing than peptides",
-          "Once-daily dosing without food restrictions (vs Rybelsus)",
-          "~15% weight loss - competitive with injectable GLP-1s",
-          "Oral convenience addresses injection hesitancy",
-          "Eli Lilly manufacturing and commercial excellence"
-        ],
-        competitiveRisks: [
-          "Rybelsus has first-mover advantage in oral GLP-1",
-          "Lower efficacy than injectable tirzepatide/semaglutide",
-          "May cannibalize Mounjaro sales",
-          "GI tolerability still a concern",
-          "Pricing pressure in competitive market"
-        ],
-        marketPositioning: "Orfoglipron targets patients who prefer oral therapy over injections. Positioned as 'injectable-level efficacy in a pill' - addressing the ~50% of patients who refuse or discontinue injectable GLP-1s due to needle aversion."
-      },
-      retrospectivePhases: [
-        {
-          phase: "Phase 1",
-          date: "Q2 2020",
-          trialName: "First-in-Human Studies",
-          nctIds: ["NCT03954834"],
-          outcome: 'success',
-          keyData: [
-            "Novel oral small molecule GLP-1 receptor agonist",
-            "Favorable PK profile with once-daily dosing",
-            "Dose-dependent glucose lowering observed",
-            "Well-tolerated in healthy volunteers"
-          ],
-          scoreAtTime: 32,
-          rationale: "Early stage oral GLP-1 with novel mechanism. Small molecule approach differentiates from peptide-based competitors. Eli Lilly strong metabolic portfolio. Key risk: oral GLP-1 has historically faced bioavailability challenges.",
-          dataAvailableAtTime: ["PK/PD data", "Safety profile", "Mechanism validation"]
-        },
-        {
-          phase: "Phase 2",
-          date: "Jun 2023",
-          trialName: "ACHIEVE Program",
-          nctIds: ["NCT05051579", "NCT05048719"],
-          outcome: 'success',
-          keyData: [
-            "Up to 14.7% weight loss at 36 weeks (highest dose)",
-            "HbA1c reduction up to 2.1% in T2D patients",
-            "Comparable efficacy to injectable semaglutide",
-            "Once-daily oral dosing confirmed",
-            "GI side effects manageable, dose-dependent"
-          ],
-          scoreAtTime: 58,
-          rationale: "Exceptional Phase 2 results - weight loss competitive with injectable GLP-1s. Oral convenience is major differentiator vs Wegovy/Ozempic. Large obesity market opportunity ($100B+ projected). Clear path to Phase 3.",
-          dataAvailableAtTime: ["36-week efficacy", "Weight loss data", "HbA1c reduction", "Safety/tolerability", "Dose-response"]
-        },
-        {
-          phase: "Phase 3 Initiation",
-          date: "Q4 2023",
-          trialName: "ATTAIN Program Launch",
-          nctIds: ["NCT05631327", "NCT05631314", "NCT05631301"],
-          outcome: 'pending',
-          keyData: [
-            "ATTAIN-1, ATTAIN-2, ATTAIN-3 trials initiated",
-            "Targeting T2D and obesity indications",
-            "~3,000+ patients planned across program",
-            "Comparator arms include tirzepatide",
-            "Results expected 2025-2026"
-          ],
-          scoreAtTime: 65,
-          rationale: "Strong Phase 3 program design. Lilly's tirzepatide success (Mounjaro/Zepbound) validates metabolic expertise. Oral formulation addresses injection hesitancy. Key question: can it compete with tirzepatide's superior efficacy?",
-          dataAvailableAtTime: ["Phase 2 full data", "Trial designs", "Competitive landscape", "Market projections"]
-        },
-        {
-          phase: "Current Status",
-          date: "Q4 2024",
-          trialName: "Phase 3 Ongoing",
-          outcome: 'pending',
-          keyData: [
-            "Phase 3 trials enrolling/ongoing",
-            "No safety signals reported",
-            "Competitive pressure from oral semaglutide (Rybelsus)",
-            "Tirzepatide setting high efficacy bar",
-            "Potential first-line oral option for obesity"
-          ],
-          scoreAtTime: 68,
-          rationale: "Phase 3 progressing well. Market opportunity remains massive despite competition. Oral GLP-1 convenience could capture significant market share. Lilly well-positioned with manufacturing/commercial capabilities. Filing expected 2026.",
-          dataAvailableAtTime: ["Interim safety data", "Enrollment progress", "Competitive developments", "Market dynamics"]
         }
       ]
     },
@@ -1934,6 +1827,80 @@ const Index = () => {
                   companyTrackRecord={activeMolecule.companyTrackRecord}
                   company={activeMolecule.company}
                 />
+
+                {/* Drug Information Section */}
+                <Card className="border-l-4 border-l-accent">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Info className="h-5 w-5" />
+                      Drug Information
+                    </CardTitle>
+                    <CardDescription>
+                      {activeMolecule.name}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {activeMolecule.drugInfo ? (
+                        <>
+                          <div className="space-y-3">
+                            <div>
+                              <span className="text-sm font-medium text-muted-foreground">Class:</span>
+                              <p className="text-sm">{activeMolecule.drugInfo.class}</p>
+                            </div>
+                            <div>
+                              <span className="text-sm font-medium text-muted-foreground">Administration:</span>
+                              <p className="text-sm">{activeMolecule.drugInfo.administration}</p>
+                            </div>
+                            {activeMolecule.drugInfo.keyAdvantage && (
+                              <div>
+                                <span className="text-sm font-medium text-muted-foreground">Key Advantage:</span>
+                                <p className="text-sm">{activeMolecule.drugInfo.keyAdvantage}</p>
+                              </div>
+                            )}
+                          </div>
+                          <div className="space-y-3">
+                            {activeMolecule.drugInfo.discovery && (
+                              <div>
+                                <span className="text-sm font-medium text-muted-foreground">Discovery:</span>
+                                <p className="text-sm">{activeMolecule.drugInfo.discovery}</p>
+                              </div>
+                            )}
+                            {activeMolecule.drugInfo.license && (
+                              <div>
+                                <span className="text-sm font-medium text-muted-foreground">License:</span>
+                                <p className="text-sm">{activeMolecule.drugInfo.license}</p>
+                              </div>
+                            )}
+                            {activeMolecule.drugInfo.development && (
+                              <div>
+                                <span className="text-sm font-medium text-muted-foreground">Development:</span>
+                                <p className="text-sm">{activeMolecule.drugInfo.development}</p>
+                              </div>
+                            )}
+                          </div>
+                          {activeMolecule.drugInfo.additionalInfo && activeMolecule.drugInfo.additionalInfo.length > 0 && (
+                            <div className="col-span-1 md:col-span-2">
+                              <span className="text-sm font-medium text-muted-foreground">Additional Information:</span>
+                              <ul className="list-disc list-inside text-sm mt-1 space-y-1">
+                                {activeMolecule.drugInfo.additionalInfo.map((info, idx) => (
+                                  <li key={idx}>{info}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="col-span-2 text-sm text-muted-foreground">
+                          <p><span className="font-medium">Therapeutic Area:</span> {activeMolecule.therapeuticArea}</p>
+                          <p><span className="font-medium">Indication:</span> {activeMolecule.indication}</p>
+                          <p><span className="font-medium">Phase:</span> {activeMolecule.phase}</p>
+                          <p><span className="font-medium">Sponsor:</span> {activeMolecule.company}</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Clinical Studies Summary Section */}
                 <Card className="border-l-4 border-l-primary">
