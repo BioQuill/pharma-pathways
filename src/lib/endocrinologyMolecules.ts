@@ -19,6 +19,7 @@ export const endocrinologyMolecules: MoleculeProfile[] = [
     company: "Eli Lilly",
     companyTrackRecord: 'fast',
     nctId: "NCT03954536",
+    clinicalTrialsSearchTerm: "tirzepatide",
     scores: calculateProbabilityScores("Approved", "Type 2 Diabetes", "Metabolic"),
     marketData: generateMarketProjections("Tirzepatide", "Approved", "Type 2 Diabetes", 'fast'),
     overallScore: 0,
@@ -61,19 +62,20 @@ export const endocrinologyMolecules: MoleculeProfile[] = [
     ]
   },
 
-  // 2. Orforglipron - Oral GLP-1 agonist
+  // 2. Orforglipron - Oral GLP-1 agonist (ATTAIN - Obesity)
   {
     id: "ORFO-01",
     name: "Orforglipron (LY3502970)",
     trialName: "ATTAIN",
     phase: "Phase III",
-    indication: "Type 2 Diabetes / Obesity",
+    indication: "Obesity",
     therapeuticArea: "Endocrinology & Metabolism",
     company: "Eli Lilly",
     companyTrackRecord: 'fast',
     nctId: "NCT05869903",
-    scores: calculateProbabilityScores("Phase III", "Type 2 Diabetes", "Metabolic"),
-    marketData: generateMarketProjections("Orforglipron", "Phase III", "Type 2 Diabetes", 'fast'),
+    clinicalTrialsSearchTerm: "orforglipron",
+    scores: calculateProbabilityScores("Phase III", "Obesity", "Metabolic"),
+    marketData: generateMarketProjections("Orforglipron", "Phase III", "Obesity", 'fast'),
     overallScore: 0,
     hasRetrospective: true,
     patents: [
@@ -95,11 +97,57 @@ export const endocrinologyMolecules: MoleculeProfile[] = [
         "Rybelsus already approved",
         "Injectable convenience improving"
       ],
-      marketPositioning: "Next-generation oral GLP-1 with superior efficacy and convenient dosing."
+      marketPositioning: "Next-generation oral GLP-1 with superior efficacy and convenient dosing for obesity."
     },
     retrospectivePhases: [
       { phase: "Phase 2", date: "Jun 2023", outcome: 'success', keyData: ["14.7% weight loss at 36 weeks", "Oral convenience validated"], scoreAtTime: 68, rationale: "Strong oral GLP-1 efficacy", dataAvailableAtTime: ["Phase 2 full results"] },
-      { phase: "Phase 3 ATTAIN", date: "Q4 2024", outcome: 'pending', keyData: ["ATTAIN-1, ATTAIN-2 enrolling", "T2D and obesity programs"], scoreAtTime: 72, rationale: "Pivotal trials underway", dataAvailableAtTime: ["Trial designs"] }
+      { phase: "Phase 3 ATTAIN", date: "Q4 2024", outcome: 'pending', keyData: ["ATTAIN-1, ATTAIN-2 enrolling", "Obesity-focused programs"], scoreAtTime: 72, rationale: "Pivotal trials underway", dataAvailableAtTime: ["Trial designs"] }
+    ]
+  },
+
+  // 2b. Orforglipron - Oral GLP-1 agonist (ACHIEVE - Diabetes)
+  {
+    id: "ORFO-02",
+    name: "Orforglipron (LY3502970)",
+    trialName: "ACHIEVE",
+    phase: "Phase III",
+    indication: "Type 2 Diabetes",
+    therapeuticArea: "Endocrinology & Metabolism",
+    company: "Eli Lilly",
+    companyTrackRecord: 'fast',
+    nctId: "NCT06108310",
+    clinicalTrialsSearchTerm: "orforglipron",
+    scores: calculateProbabilityScores("Phase III", "Type 2 Diabetes", "Metabolic"),
+    marketData: generateMarketProjections("Orforglipron", "Phase III", "Type 2 Diabetes", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    patents: [
+      { patentNumber: "US11,267,831", title: "Small molecule GLP-1 receptor agonists", expirationDate: "2041", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$80B+ (T2D market)",
+      projectedGrowth: "25% CAGR",
+      keyPlayers: [
+        { name: "Mounjaro (tirzepatide)", company: "Eli Lilly", phase: "Approved", mechanism: "GIP/GLP-1 dual agonist", keyDifferentiator: "Best-in-class efficacy", efficacy: "2.4% HbA1c reduction", threat: 'medium' },
+        { name: "Ozempic (semaglutide)", company: "Novo Nordisk", phase: "Approved", mechanism: "GLP-1 agonist", keyDifferentiator: "Market leader", efficacy: "1.5-2% HbA1c reduction", threat: 'high' },
+        { name: "Rybelsus (oral semaglutide)", company: "Novo Nordisk", phase: "Approved", mechanism: "Oral GLP-1", keyDifferentiator: "First oral GLP-1", efficacy: "1.4% HbA1c reduction", threat: 'high' },
+      ],
+      competitiveAdvantages: [
+        "Once-daily oral with potent HbA1c reduction",
+        "No food/water restrictions unlike Rybelsus",
+        "Lilly's diabetes franchise expertise",
+        "Superior to Rybelsus efficacy expected"
+      ],
+      competitiveRisks: [
+        "Rybelsus already approved oral GLP-1",
+        "Mounjaro injectable is more efficacious",
+        "Competitive T2D landscape"
+      ],
+      marketPositioning: "Next-generation oral GLP-1 for T2D with convenient dosing and strong glycemic control."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2", date: "Jun 2023", outcome: 'success', keyData: ["2.1% HbA1c reduction", "Strong glycemic efficacy"], scoreAtTime: 70, rationale: "Strong oral GLP-1 T2D efficacy", dataAvailableAtTime: ["Phase 2 full results"] },
+      { phase: "Phase 3 ACHIEVE", date: "Q4 2024", outcome: 'pending', keyData: ["ACHIEVE-1, ACHIEVE-2, ACHIEVE-3 enrolling", "T2D-focused programs"], scoreAtTime: 74, rationale: "Pivotal trials underway", dataAvailableAtTime: ["Trial designs"] }
     ]
   },
 
