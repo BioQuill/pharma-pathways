@@ -78,6 +78,19 @@ export const endocrinologyMolecules: MoleculeProfile[] = [
     marketData: generateMarketProjections("Orforglipron", "Phase III", "Obesity", 'fast'),
     overallScore: 0,
     hasRetrospective: true,
+    drugInfo: {
+      class: "First oral small molecule (non-peptide) GLP-1 receptor agonist",
+      administration: "Once-daily oral tablet",
+      keyAdvantage: "Can be taken any time of day without food or water restrictions",
+      discovery: "Chugai Pharmaceutical Co., Ltd.",
+      license: "Eli Lilly (2018)",
+      development: "Worldwide rights held by Eli Lilly",
+      additionalInfo: [
+        "No refrigeration required unlike peptide-based GLP-1 therapies",
+        "Small molecule structure allows for easier manufacturing",
+        "~15% weight loss demonstrated in Phase 2 trials"
+      ]
+    },
     patents: [
       { patentNumber: "US11,267,831", title: "Small molecule GLP-1 receptor agonists", expirationDate: "2041", type: 'composition', status: 'active' },
     ],
@@ -121,6 +134,19 @@ export const endocrinologyMolecules: MoleculeProfile[] = [
     marketData: generateMarketProjections("Orforglipron", "Phase III", "Type 2 Diabetes", 'fast'),
     overallScore: 0,
     hasRetrospective: true,
+    drugInfo: {
+      class: "First oral small molecule (non-peptide) GLP-1 receptor agonist",
+      administration: "Once-daily oral tablet",
+      keyAdvantage: "Can be taken any time of day without food or water restrictions",
+      discovery: "Chugai Pharmaceutical Co., Ltd.",
+      license: "Eli Lilly (2018)",
+      development: "Worldwide rights held by Eli Lilly",
+      additionalInfo: [
+        "No refrigeration required unlike peptide-based GLP-1 therapies",
+        "2.1% HbA1c reduction demonstrated in Phase 2 trials",
+        "Superior glycemic control vs oral semaglutide expected"
+      ]
+    },
     patents: [
       { patentNumber: "US11,267,831", title: "Small molecule GLP-1 receptor agonists", expirationDate: "2041", type: 'composition', status: 'active' },
     ],

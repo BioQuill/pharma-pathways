@@ -44,6 +44,15 @@ export interface MoleculeProfile {
   regulatoryExclusivity?: { type: string; endDate: string; }[];
   competitiveLandscape?: CompetitiveLandscape;
   launchFactors?: LaunchFactors;
+  drugInfo?: {
+    class: string;
+    administration: string;
+    keyAdvantage?: string;
+    discovery?: string;
+    license?: string;
+    development?: string;
+    additionalInfo?: string[];
+  };
 }
 
 // 20 NEW MOLECULES - One per Therapeutic Area with Full Analysis
