@@ -8,15 +8,15 @@ import {
   Calendar, 
   Globe, 
   TrendingUp, 
-  Database,
-  FileText,
   Search,
   BarChart3,
   Download,
   Pill,
   ArrowUpDown,
   X,
-  Brain
+  Brain,
+  Target,
+  ExternalLink
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
@@ -77,6 +77,7 @@ interface MoleculeProfile {
   isFailed?: boolean;
   trialName?: string;
   nctId?: string;
+  clinicalTrialsSearchTerm?: string;
   hasRetrospective?: boolean;
   retrospectivePhases?: TimelinePhase[];
   patents?: PatentInfo[];
@@ -136,6 +137,7 @@ const Index = () => {
       company: "Eli Lilly",
       companyTrackRecord: 'fast',
       nctId: "NCT05929066",
+      clinicalTrialsSearchTerm: "retatrutide",
       scores: calculateProbabilityScores("Phase III", "Obesity", "Metabolic"),
       marketData: generateMarketProjections("Retatrutide", "Phase III", "Obesity", 'fast'),
       overallScore: 0,
@@ -258,6 +260,7 @@ const Index = () => {
       company: "Viking Therapeutics",
       companyTrackRecord: 'average',
       nctId: "NCT06068946",
+      clinicalTrialsSearchTerm: "VK2735",
       scores: calculateProbabilityScores("Phase III", "Obesity", "Metabolic"),
       marketData: generateMarketProjections("VK2735 Injectable", "Phase III", "Obesity", 'average'),
       overallScore: 0,
@@ -1171,6 +1174,7 @@ const Index = () => {
       isFailed: true,
       trialName: "EVOKE & EVOKE+",
       nctId: "NCT04777396",
+      clinicalTrialsSearchTerm: "semaglutide alzheimer",
       scores: calculateProbabilityScores("Phase III", "Alzheimer's Disease", "Neurology", true),
       marketData: generateMarketProjections("Semaglutide", "Phase III", "Alzheimer's Disease", 'fast', true),
       overallScore: 0,
@@ -1178,12 +1182,14 @@ const Index = () => {
     {
       id: "ICODEC-01",
       name: "Insulin Icodec (Kyinsu/Awiqli)",
+      trialName: "ONWARDS",
       phase: "Approved (EU/CN)",
       indication: "Type 2 Diabetes",
       therapeuticArea: "Metabolic/Endocrinology",
       company: "Novo Nordisk",
       companyTrackRecord: 'fast',
       nctId: "NCT03496519",
+      clinicalTrialsSearchTerm: "insulin icodec",
       scores: calculateProbabilityScores("Phase III", "Type 2 Diabetes", "Metabolic"),
       marketData: generateMarketProjections("Insulin Icodec", "Phase III", "Type 2 Diabetes", 'fast'),
       overallScore: 0,
@@ -1488,14 +1494,18 @@ const Index = () => {
               <img src={bioquillLogo} alt="BiOQUILL" className="h-16 w-auto object-contain" />
             </div>
             <nav className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
-                <Database className="h-4 w-4 mr-2" />
-                Database
-              </Button>
-              <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
-                <FileText className="h-4 w-4 mr-2" />
-                Reports
-              </Button>
+              {/* Molecule Comparison Popover */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                    <Target className="h-4 w-4 mr-2" />
+                    Compare Molecules
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[800px] p-0" align="end">
+                  <MoleculeComparison molecules={allMolecules} />
+                </PopoverContent>
+              </Popover>
               <Link to="/pricing">
                 <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
                   <TrendingUp className="h-4 w-4 mr-2" />
@@ -1696,8 +1706,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                {/* Molecule Comparison */}
-                <MoleculeComparison molecules={allMolecules} />
+                {/* Molecule List */}
 
                 {allMolecules
                   .filter((mol) => {
@@ -1747,36 +1756,51 @@ const Index = () => {
                     <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedMolecule(molecule.id)}>
                       <CardContent className="p-6">
                         <div className="flex items-start justify-between">
-                          <div className="space-y-1 flex-1">
-                            <div className="flex items-center gap-3">
-                              <h3 className="text-xl font-semibold">{molecule.name}</h3>
-                              <Badge variant="outline">{molecule.id}</Badge>
-                              <Badge variant="secondary" className="flex items-center gap-1.5">
-                                <span>{molecule.company}</span>
-                                {(() => {
-                                  const mfg = getManufacturingCapability(molecule.company);
-                                  return mfg?.ticker ? (
-                                    <a
-                                      href={`https://finance.yahoo.com/quote/${mfg.ticker}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
-                                      onClick={(e) => e.stopPropagation()}
-                                      title="View on Yahoo Finance"
-                                    >
-                                      {mfg.ticker}
-                                    </a>
-                                  ) : null;
-                                })()}
-                              </Badge>
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center gap-3">
+                            <h3 className="text-xl font-semibold">{molecule.name}</h3>
+                            <Badge variant="outline">{molecule.id}</Badge>
+                            <Badge variant="secondary" className="flex items-center gap-1.5">
+                              <span>{molecule.company}</span>
+                              {(() => {
+                                const mfg = getManufacturingCapability(molecule.company);
+                                return mfg?.ticker ? (
+                                  <a
+                                    href={`https://finance.yahoo.com/quote/${mfg.ticker}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                                    onClick={(e) => e.stopPropagation()}
+                                    title="View on Yahoo Finance"
+                                  >
+                                    {mfg.ticker}
+                                  </a>
+                                ) : null;
+                              })()}
+                            </Badge>
+                          </div>
+                          {/* Trial Name with Clinical Trials Link */}
+                          {molecule.trialName && (
+                            <div className="flex items-center gap-2">
+                              <a
+                                href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(molecule.clinicalTrialsSearchTerm || molecule.name.split(' ')[0])}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {molecule.trialName} {molecule.phase}
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
                             </div>
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                              <span>{molecule.phase}</span>
-                              <span>•</span>
-                              <span>{molecule.indication}</span>
-                              <span>•</span>
-                              <span>{molecule.therapeuticArea}</span>
-                            </div>
+                          )}
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>{molecule.phase}</span>
+                            <span>•</span>
+                            <span>{molecule.indication}</span>
+                            <span>•</span>
+                            <span>{molecule.therapeuticArea}</span>
+                          </div>
                             <div className="flex items-center gap-6 mt-3">
                               <div className="text-xs">
                                 <span className="text-muted-foreground">Approval: </span>
@@ -1910,6 +1934,67 @@ const Index = () => {
                   companyTrackRecord={activeMolecule.companyTrackRecord}
                   company={activeMolecule.company}
                 />
+
+                {/* Clinical Studies Summary Section */}
+                <Card className="border-l-4 border-l-primary">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Search className="h-5 w-5" />
+                      Clinical Studies Summary
+                    </CardTitle>
+                    <CardDescription>
+                      View all registered clinical trials for {activeMolecule.name}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap gap-3">
+                        <a
+                          href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Table&limit=25&sort=StudyFirstPostDate`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          View All Trials Table
+                        </a>
+                        <a
+                          href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Map`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
+                        >
+                          <Globe className="h-4 w-4" />
+                          View Trials Map
+                        </a>
+                        <a
+                          href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted transition-colors"
+                        >
+                          <BarChart3 className="h-4 w-4" />
+                          View Results Analysis
+                        </a>
+                      </div>
+                      {activeMolecule.trialName && (
+                        <p className="text-sm text-muted-foreground">
+                          Primary trial program: <span className="font-semibold">{activeMolecule.trialName}</span>
+                          {activeMolecule.nctId && (
+                            <> • NCT ID: <a 
+                              href={`https://clinicaltrials.gov/study/${activeMolecule.nctId}`} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline"
+                            >
+                              {activeMolecule.nctId}
+                            </a></>
+                          )}
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
                 
                 {/* LPI-3 Analysis Card */}
                 <LPI3ReportCard molecule={activeMolecule} />

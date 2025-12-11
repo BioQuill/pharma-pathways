@@ -37,6 +37,7 @@ export interface MoleculeProfile {
   isFailed?: boolean;
   trialName?: string;
   nctId?: string;
+  clinicalTrialsSearchTerm?: string;
   hasRetrospective?: boolean;
   retrospectivePhases?: TimelinePhase[];
   patents?: PatentInfo[];
