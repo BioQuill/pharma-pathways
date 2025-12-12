@@ -108,7 +108,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 1", date: "Q2 2019", trialName: "NP30179", outcome: 'success', keyData: ["Strong ORR in R/R DLBCL", "Manageable CRS with step-up dosing"], scoreAtTime: 48, rationale: "Novel bispecific with early efficacy signals", dataAvailableAtTime: ["Phase 1 dose-escalation"] },
       { phase: "Phase 2 Pivotal", date: "Q4 2022", outcome: 'success', keyData: ["39% CR rate", "Durable responses at 12 months"], scoreAtTime: 78, rationale: "Strong pivotal data supports filing", dataAvailableAtTime: ["Pivotal cohort data"] },
       { phase: "FDA Approval", date: "Jun 2023", outcome: 'success', keyData: ["Accelerated approval granted", "First CD20xCD3 for DLBCL in US"], scoreAtTime: 95, rationale: "Approved - commercial launch underway", dataAvailableAtTime: ["Commercial data emerging"] }
-    ]
+    ],
+    drugInfo: {
+      class: "CD20xCD3 bispecific T-cell engaging antibody",
+      administration: "Intravenous infusion with step-up dosing",
+      keyAdvantage: "Off-the-shelf therapy with CAR-T-like efficacy without manufacturing delays",
+      discovery: "Roche/Genentech",
+      development: "Global rights held by Roche"
+    }
   },
 
   // 2. CARDIOVASCULAR - Novel Heart Failure Therapy
@@ -156,7 +163,15 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 2 COSMIC-HF", date: "Q2 2016", outcome: 'success', keyData: ["Improved stroke volume", "Dose-dependent effect"], scoreAtTime: 52, rationale: "Proof of mechanism established", dataAvailableAtTime: ["Hemodynamic data"] },
       { phase: "Phase 3 GALACTIC-HF", date: "Oct 2020", outcome: 'success', keyData: ["8% RRR in primary endpoint", "Benefit in low EF subset"], scoreAtTime: 62, rationale: "Met primary endpoint but modest effect", dataAvailableAtTime: ["Pivotal results"] },
       { phase: "FDA Filing/CRL", date: "Q4 2023", outcome: 'setback', keyData: ["Complete Response Letter received", "Additional data requested"], scoreAtTime: 45, rationale: "Regulatory setback, resubmission planned", dataAvailableAtTime: ["FDA feedback"] }
-    ]
+    ],
+    drugInfo: {
+      class: "First-in-class cardiac myosin activator",
+      administration: "Oral tablet twice daily",
+      keyAdvantage: "Novel mechanism that directly increases cardiac contractility without increasing intracellular calcium",
+      discovery: "Cytokinetics",
+      license: "Amgen collaboration (2006)",
+      development: "Co-developed by Cytokinetics and Amgen"
+    }
   },
 
   // 3. NEUROLOGY/CNS - Parkinson's Disease Modifier
@@ -202,7 +217,15 @@ export const additionalMolecules: MoleculeProfile[] = [
     retrospectivePhases: [
       { phase: "Phase 2 PASADENA", date: "Apr 2022", outcome: 'partial', keyData: ["Missed primary MDS-UPDRS endpoint", "Trend in motor progression slowing", "Subgroup benefit in rapid progressors"], scoreAtTime: 35, rationale: "Mixed results but signal in subgroups", dataAvailableAtTime: ["52-week primary data"] },
       { phase: "OLE Extension", date: "Q3 2023", outcome: 'success', keyData: ["Continued benefit in OLE", "Greater separation at 4 years", "PADOVA Phase 2b initiated"], scoreAtTime: 42, rationale: "Long-term data encouraging", dataAvailableAtTime: ["4-year OLE data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Anti-alpha-synuclein humanized monoclonal antibody",
+      administration: "Intravenous infusion every 4 weeks",
+      keyAdvantage: "Potential first disease-modifying therapy targeting aggregated alpha-synuclein in Parkinson's",
+      discovery: "Prothena Biosciences",
+      license: "Roche collaboration (2013)",
+      development: "Joint development by Roche and Prothena"
+    }
   },
 
   // 4. PSYCHIATRY/MENTAL HEALTH - Treatment-Resistant Depression
@@ -247,7 +270,14 @@ export const additionalMolecules: MoleculeProfile[] = [
     retrospectivePhases: [
       { phase: "Phase 3 GEMINI", date: "Q2 2020", outcome: 'success', keyData: ["Met primary endpoint", "MADRS reduction significant", "Rapid onset at Week 1"], scoreAtTime: 65, rationale: "Positive pivotal in TRD", dataAvailableAtTime: ["GEMINI results"] },
       { phase: "FDA Filing", date: "Q4 2024", outcome: 'pending', keyData: ["sNDA submitted for TRD", "Review underway"], scoreAtTime: 68, rationale: "Regulatory review ongoing", dataAvailableAtTime: ["Filing accepted"] }
-    ]
+    ],
+    drugInfo: {
+      class: "NMDA receptor antagonist + norepinephrine-dopamine reuptake inhibitor combination",
+      administration: "Oral tablet once daily",
+      keyAdvantage: "Rapid onset within 1 week, oral administration without REMS monitoring requirements",
+      discovery: "Axsome Therapeutics",
+      development: "Worldwide rights held by Axsome Therapeutics"
+    }
   },
 
   // 5. ENDOCRINOLOGY & METABOLISM - Growth Hormone
@@ -293,7 +323,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 REAL 1", date: "Q3 2019", outcome: 'success', keyData: ["Non-inferior to daily GH", "Weekly dosing validated"], scoreAtTime: 75, rationale: "Positive pivotal in adults", dataAvailableAtTime: ["Adult GHD data"] },
       { phase: "FDA Approval (Adult)", date: "Aug 2020", outcome: 'success', keyData: ["First Novo weekly GH approved", "Adult GHD indication"], scoreAtTime: 90, rationale: "Approval achieved", dataAvailableAtTime: ["Adult launch"] },
       { phase: "Pediatric Approval", date: "Dec 2023", outcome: 'success', keyData: ["Expanded to pediatric GHD", "Full franchise established"], scoreAtTime: 95, rationale: "Full lifecycle achieved", dataAvailableAtTime: ["Pediatric data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Long-acting growth hormone analog",
+      administration: "Subcutaneous injection once weekly",
+      keyAdvantage: "Weekly dosing convenience vs daily injections, non-inferior efficacy",
+      discovery: "Novo Nordisk",
+      development: "Worldwide rights held by Novo Nordisk"
+    }
   },
 
   // 6. IMMUNOLOGY & INFLAMMATION - Atopic Dermatitis JAK
@@ -340,7 +377,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 JADE MONO-1", date: "Q3 2019", outcome: 'success', keyData: ["IGA 0/1 achieved in 44%", "EASI-75 in 62%"], scoreAtTime: 72, rationale: "Strong monotherapy data", dataAvailableAtTime: ["JADE MONO-1 results"] },
       { phase: "Phase 3 JADE COMPARE", date: "Q2 2021", outcome: 'success', keyData: ["Superior to Dupixent at Week 2", "Faster onset than biologic"], scoreAtTime: 78, rationale: "Head-to-head win on speed", dataAvailableAtTime: ["Comparative data"] },
       { phase: "FDA Approval", date: "Jan 2022", outcome: 'success', keyData: ["Approved for moderate-severe AD", "Adults first, adolescents later"], scoreAtTime: 92, rationale: "Commercial launch successful", dataAvailableAtTime: ["Market data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Selective JAK1 inhibitor",
+      administration: "Oral tablet once daily (100mg or 200mg)",
+      keyAdvantage: "Oral convenience with rapid onset of action vs injectable biologics",
+      discovery: "Pfizer",
+      development: "Worldwide rights held by Pfizer"
+    }
   },
 
   // 7. RHEUMATOLOGY - Lupus Therapy
@@ -386,7 +430,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 TULIP-1", date: "Q3 2019", outcome: 'setback', keyData: ["Missed primary endpoint (SRI-4)", "BICLA showed benefit"], scoreAtTime: 40, rationale: "First pivotal missed but signal present", dataAvailableAtTime: ["TULIP-1 data"] },
       { phase: "Phase 3 TULIP-2", date: "Q1 2020", outcome: 'success', keyData: ["Met BICLA primary endpoint", "48% vs 31% response"], scoreAtTime: 70, rationale: "Second pivotal positive", dataAvailableAtTime: ["TULIP-2 data"] },
       { phase: "FDA Approval", date: "Aug 2021", outcome: 'success', keyData: ["First anti-IFNAR therapy approved", "New mechanism for SLE"], scoreAtTime: 88, rationale: "Approval achieved", dataAvailableAtTime: ["Commercial launch"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Anti-type I interferon receptor (IFNAR1) monoclonal antibody",
+      administration: "Intravenous infusion every 4 weeks",
+      keyAdvantage: "First therapy targeting type I interferon pathway in lupus, particularly effective in interferon-high patients",
+      discovery: "AstraZeneca/MedImmune",
+      development: "Worldwide rights held by AstraZeneca"
+    }
   },
 
   // 8. INFECTIOUS DISEASES - RSV Prevention
@@ -433,7 +484,15 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 2b", date: "Q3 2020", outcome: 'success', keyData: ["70% efficacy in healthy infants", "Single dose durability"], scoreAtTime: 72, rationale: "Strong proof of concept", dataAvailableAtTime: ["Phase 2b results"] },
       { phase: "Phase 3 MELODY", date: "Mar 2022", outcome: 'success', keyData: ["74.5% efficacy vs placebo", "Met primary endpoint"], scoreAtTime: 85, rationale: "Pivotal success", dataAvailableAtTime: ["MELODY results"] },
       { phase: "FDA/EMA Approval", date: "Jul 2023", outcome: 'success', keyData: ["Approved for all infants", "First RSV mAb for universal use"], scoreAtTime: 95, rationale: "Broad approval achieved", dataAvailableAtTime: ["First season data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Extended half-life anti-RSV F protein monoclonal antibody",
+      administration: "Single intramuscular injection per RSV season",
+      keyAdvantage: "Single dose provides full RSV season protection for all infants (not just high-risk)",
+      discovery: "AstraZeneca/MedImmune",
+      license: "Sanofi collaboration (2017)",
+      development: "Co-developed by Sanofi and AstraZeneca"
+    }
   },
 
   // 9. RESPIRATORY/PULMONOLOGY - Severe Asthma
@@ -480,7 +539,15 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 2b PATHWAY", date: "Q3 2017", outcome: 'success', keyData: ["62% exacerbation reduction", "Benefit across phenotypes"], scoreAtTime: 68, rationale: "Proof of broad efficacy", dataAvailableAtTime: ["PATHWAY results"] },
       { phase: "Phase 3 NAVIGATOR", date: "Q2 2021", outcome: 'success', keyData: ["56% exacerbation reduction", "Consistent across subgroups"], scoreAtTime: 82, rationale: "Pivotal success", dataAvailableAtTime: ["NAVIGATOR results"] },
       { phase: "FDA Approval", date: "Dec 2021", outcome: 'success', keyData: ["Broadest severe asthma indication", "No biomarker requirement"], scoreAtTime: 94, rationale: "First upstream biologic approved", dataAvailableAtTime: ["Launch data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Anti-thymic stromal lymphopoietin (TSLP) monoclonal antibody",
+      administration: "Subcutaneous injection every 4 weeks",
+      keyAdvantage: "First and only biologic for severe asthma regardless of phenotype (no biomarker requirement)",
+      discovery: "Amgen",
+      license: "AstraZeneca collaboration (2012)",
+      development: "Co-developed by AstraZeneca and Amgen"
+    }
   },
 
   // 10. GASTROENTEROLOGY & HEPATOLOGY - Crohn's Disease
@@ -526,7 +593,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 LUCENT", date: "Q2 2022", outcome: 'success', keyData: ["Clinical remission 24.2% vs 13.3%", "Endoscopic improvement 59% vs 26%"], scoreAtTime: 78, rationale: "Strong UC pivotal data", dataAvailableAtTime: ["LUCENT 1&2 results"] },
       { phase: "FDA Approval (UC)", date: "Oct 2023", outcome: 'success', keyData: ["Approved for UC", "Fourth IL-23 option"], scoreAtTime: 90, rationale: "UC approval achieved", dataAvailableAtTime: ["Commercial launch"] },
       { phase: "Phase 3 VIVID (CD)", date: "Q4 2024", outcome: 'pending', keyData: ["Crohn's disease trials ongoing", "Label expansion expected 2025"], scoreAtTime: 85, rationale: "CD approval pending", dataAvailableAtTime: ["Interim CD data positive"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Anti-IL-23p19 humanized monoclonal antibody",
+      administration: "IV induction (3 doses), then subcutaneous every 4 weeks",
+      keyAdvantage: "IV loading enables rapid response, followed by convenient SC maintenance",
+      discovery: "Eli Lilly",
+      development: "Worldwide rights held by Eli Lilly"
+    }
   },
 
   // 11. NEPHROLOGY/RENAL - Chronic Kidney Disease
@@ -573,7 +647,15 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 OLYMPUS", date: "Q2 2020", outcome: 'success', keyData: ["Non-inferior to ESAs", "Oral convenience proven"], scoreAtTime: 62, rationale: "Positive efficacy in NDD-CKD", dataAvailableAtTime: ["OLYMPUS results"] },
       { phase: "FDA CRL", date: "Aug 2021", outcome: 'setback', keyData: ["Complete Response Letter", "CV safety concerns cited", "MACE signal in DD-CKD"], scoreAtTime: 35, rationale: "US approval blocked", dataAvailableAtTime: ["FDA feedback"] },
       { phase: "EU/JP Launch", date: "Q4 2021", outcome: 'success', keyData: ["Approved in EU, Japan, China", "Commercial launch ex-US"], scoreAtTime: 55, rationale: "Regional approvals achieved", dataAvailableAtTime: ["Ex-US market data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "HIF-PHI (Hypoxia-inducible factor prolyl hydroxylase inhibitor)",
+      administration: "Oral tablet three times weekly",
+      keyAdvantage: "Oral alternative to injectable ESAs with lower iron requirements",
+      discovery: "FibroGen",
+      license: "AstraZeneca collaboration (2013)",
+      development: "Co-developed by FibroGen and AstraZeneca"
+    }
   },
 
   // 12. DERMATOLOGY - Vitiligo Treatment
@@ -618,7 +700,14 @@ export const additionalMolecules: MoleculeProfile[] = [
     retrospectivePhases: [
       { phase: "Phase 3 TRuE-V1&2", date: "Q1 2022", outcome: 'success', keyData: ["30% achieved F-VASI75 at Week 24", "Continued improvement at Week 52"], scoreAtTime: 75, rationale: "First drug to show vitiligo efficacy", dataAvailableAtTime: ["TRuE-V results"] },
       { phase: "FDA Approval (Vitiligo)", date: "Jul 2022", outcome: 'success', keyData: ["First vitiligo treatment approved", "Historic approval"], scoreAtTime: 92, rationale: "First-in-class for vitiligo", dataAvailableAtTime: ["Launch data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Topical JAK1/JAK2 inhibitor",
+      administration: "Topical cream applied twice daily",
+      keyAdvantage: "First and only FDA-approved treatment for vitiligo repigmentation",
+      discovery: "Incyte Corporation",
+      development: "Worldwide rights held by Incyte"
+    }
   },
 
   // 13. OPHTHALMOLOGY - Diabetic Macular Edema
@@ -663,7 +752,14 @@ export const additionalMolecules: MoleculeProfile[] = [
     retrospectivePhases: [
       { phase: "Phase 3 YOSEMITE/RHINE", date: "Q2 2021", outcome: 'success', keyData: ["Non-inferior to aflibercept q8w", "60%+ achieved Q16W dosing"], scoreAtTime: 82, rationale: "Extended dosing validated", dataAvailableAtTime: ["Pivotal DME data"] },
       { phase: "FDA Approval", date: "Jan 2022", outcome: 'success', keyData: ["Approved for wet AMD and DME", "First bispecific in ophthalmology"], scoreAtTime: 94, rationale: "Dual indication approval", dataAvailableAtTime: ["Commercial launch"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Bispecific VEGF-A and Angiopoietin-2 (Ang-2) antibody",
+      administration: "Intravitreal injection every 8-16 weeks after loading",
+      keyAdvantage: "First bispecific in retinal disease enabling up to 4-month dosing intervals",
+      discovery: "Roche/Genentech",
+      development: "Worldwide rights held by Roche"
+    }
   },
 
   // 14. RARE DISEASES/ORPHAN - Hereditary Angioedema
@@ -709,7 +805,14 @@ export const additionalMolecules: MoleculeProfile[] = [
     retrospectivePhases: [
       { phase: "Phase 2 RAPIDe-1", date: "Q2 2022", outcome: 'success', keyData: ["Rapid attack resolution", "Oral on-demand proof of concept"], scoreAtTime: 58, rationale: "On-demand efficacy shown", dataAvailableAtTime: ["Phase 2 results"] },
       { phase: "Phase 3 CHAPTER-1", date: "Q4 2024", outcome: 'pending', keyData: ["Prophylaxis study ongoing", "Topline expected 2025"], scoreAtTime: 55, rationale: "Pivotal prophylaxis trial", dataAvailableAtTime: ["Enrollment complete"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Oral bradykinin B2 receptor antagonist",
+      administration: "Oral tablet once daily (prophylaxis) or on-demand",
+      keyAdvantage: "Potential best-in-class oral efficacy with dual prophylaxis and on-demand treatment",
+      discovery: "Pharvaris",
+      development: "Worldwide rights held by Pharvaris"
+    }
   },
 
   // 15. VACCINES & VIROLOGY - CMV Vaccine
@@ -755,7 +858,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 1", date: "Q3 2019", outcome: 'success', keyData: ["Strong neutralizing antibody response", "Exceeds natural infection levels"], scoreAtTime: 45, rationale: "Immunogenicity established", dataAvailableAtTime: ["Phase 1 immune data"] },
       { phase: "Phase 2", date: "Q4 2021", outcome: 'success', keyData: ["Durable immune response", "Booster strategy validated"], scoreAtTime: 55, rationale: "Phase 2 supports advancement", dataAvailableAtTime: ["Extended immunogenicity"] },
       { phase: "Phase 3 CMVictory", date: "Q4 2024", outcome: 'pending', keyData: ["Women 16-40 years enrolled", "Primary: prevention of primary CMV infection"], scoreAtTime: 52, rationale: "Pivotal efficacy trial ongoing", dataAvailableAtTime: ["Enrollment progress"] }
-    ]
+    ],
+    drugInfo: {
+      class: "mRNA vaccine encoding 6 CMV antigens (pentamer + glycoprotein B)",
+      administration: "Intramuscular injection (3-dose series)",
+      keyAdvantage: "Potential first-ever CMV vaccine using proven mRNA platform technology",
+      discovery: "Moderna",
+      development: "Worldwide rights held by Moderna"
+    }
   },
 
   // 16. WOMEN'S HEALTH - Endometriosis
@@ -800,7 +910,15 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 LIBERTY (Fibroids)", date: "Q2 2020", outcome: 'success', keyData: ["73% menstrual blood loss reduction", "Met primary endpoint"], scoreAtTime: 78, rationale: "Strong fibroid data", dataAvailableAtTime: ["LIBERTY 1&2 results"] },
       { phase: "FDA Approval (Fibroids)", date: "May 2021", outcome: 'success', keyData: ["Approved for uterine fibroids", "First complete oral therapy"], scoreAtTime: 88, rationale: "Fibroid approval achieved", dataAvailableAtTime: ["Launch data"] },
       { phase: "Endometriosis Approval", date: "Aug 2022", outcome: 'success', keyData: ["Label expanded to endometriosis", "Dual indication achieved"], scoreAtTime: 92, rationale: "Full franchise established", dataAvailableAtTime: ["Commercial data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "GnRH receptor antagonist combination (relugolix + estradiol + norethindrone)",
+      administration: "Oral tablet once daily",
+      keyAdvantage: "Complete oral therapy with add-back hormones for bone protection and long-term use",
+      discovery: "Takeda (relugolix)",
+      license: "Myovant Sciences (2016)",
+      development: "Co-developed by Myovant and Pfizer"
+    }
   },
 
   // 17. UROLOGY - Overactive Bladder
@@ -846,7 +964,15 @@ export const additionalMolecules: MoleculeProfile[] = [
     retrospectivePhases: [
       { phase: "Phase 3 EMPOWUR", date: "Q3 2019", outcome: 'success', keyData: ["Significant reduction in daily micturitions", "Improved urgency episodes"], scoreAtTime: 72, rationale: "Positive pivotal results", dataAvailableAtTime: ["EMPOWUR data"] },
       { phase: "FDA Approval", date: "Dec 2020", outcome: 'success', keyData: ["Approved for OAB", "Second beta-3 agonist"], scoreAtTime: 88, rationale: "Approval achieved", dataAvailableAtTime: ["Commercial launch"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Selective beta-3 adrenergic receptor agonist",
+      administration: "Oral tablet once daily (75mg)",
+      keyAdvantage: "No food effect and favorable blood pressure profile vs competitor Myrbetriq",
+      discovery: "Kissei Pharmaceutical (Japan)",
+      license: "Urovant Sciences (2017)",
+      development: "Sumitomo Pharma (acquired Urovant 2020)"
+    }
   },
 
   // 18. PAIN MANAGEMENT - Migraine Prevention
@@ -892,7 +1018,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 ADVANCE (Episodic)", date: "Q3 2020", outcome: 'success', keyData: ["Significant reduction in monthly migraine days", "All doses met endpoints"], scoreAtTime: 75, rationale: "Episodic migraine success", dataAvailableAtTime: ["ADVANCE results"] },
       { phase: "FDA Approval (Episodic)", date: "Sep 2021", outcome: 'success', keyData: ["First oral CGRP for prevention", "Episodic migraine approval"], scoreAtTime: 88, rationale: "Initial approval achieved", dataAvailableAtTime: ["Launch data"] },
       { phase: "PROGRESS (Chronic) Approval", date: "Mar 2023", outcome: 'success', keyData: ["Expanded to chronic migraine", "Broadest oral CGRP indication"], scoreAtTime: 92, rationale: "Full migraine prevention franchise", dataAvailableAtTime: ["Chronic data"] }
-    ]
+    ],
+    drugInfo: {
+      class: "Oral CGRP receptor antagonist (gepant)",
+      administration: "Oral tablet once daily (10mg, 30mg, or 60mg)",
+      keyAdvantage: "Only oral CGRP antagonist specifically approved for migraine prevention (episodic and chronic)",
+      discovery: "Allergan (now AbbVie)",
+      development: "Worldwide rights held by AbbVie"
+    }
   },
 
   // 19. TRANSPLANTATION & CELL/GENE - Hemophilia A Gene Therapy
@@ -940,7 +1073,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 3 GENEr8-1", date: "Q3 2021", outcome: 'success', keyData: ["95% reduction in bleeds", "FVIII levels durable at 2 years"], scoreAtTime: 65, rationale: "Pivotal success but durability questions", dataAvailableAtTime: ["GENEr8-1 results"] },
       { phase: "EMA Approval", date: "Aug 2022", outcome: 'success', keyData: ["First hemophilia A gene therapy approved", "Conditional approval in EU"], scoreAtTime: 75, rationale: "EU approval achieved", dataAvailableAtTime: ["European launch"] },
       { phase: "FDA CRL/Withdrawal", date: "Q4 2023", outcome: 'setback', keyData: ["FDA requested additional data", "US marketing application withdrawn"], scoreAtTime: 50, rationale: "US path uncertain", dataAvailableAtTime: ["Regulatory strategy revision"] }
-    ]
+    ],
+    drugInfo: {
+      class: "AAV5-based gene therapy delivering Factor VIII gene",
+      administration: "Single intravenous infusion (one-time treatment)",
+      keyAdvantage: "One-time treatment potential for lifelong freedom from Factor VIII prophylaxis",
+      discovery: "BioMarin Pharmaceutical",
+      development: "Worldwide rights held by BioMarin"
+    }
   },
 
   // 20. PEDIATRICS - Spinal Muscular Atrophy
@@ -991,7 +1131,14 @@ export const additionalMolecules: MoleculeProfile[] = [
       { phase: "Phase 2/3 FIREFISH (Type 1)", date: "Q4 2019", outcome: 'success', keyData: ["41% sitting without support (historically 0%)", "Survival benefit vs natural history"], scoreAtTime: 85, rationale: "Breakthrough in Type 1 SMA", dataAvailableAtTime: ["FIREFISH Part 2"] },
       { phase: "Phase 2/3 SUNFISH (Types 2/3)", date: "Q3 2020", outcome: 'success', keyData: ["Significant MFM-32 improvement", "Benefit across ages"], scoreAtTime: 82, rationale: "Broad SMA efficacy", dataAvailableAtTime: ["SUNFISH Part 2"] },
       { phase: "FDA Approval", date: "Aug 2020", outcome: 'success', keyData: ["First oral SMA therapy approved", "All SMA types, all ages"], scoreAtTime: 95, rationale: "Broad approval achieved", dataAvailableAtTime: ["Commercial launch"] }
-    ]
+    ],
+    drugInfo: {
+      class: "SMN2 pre-mRNA splicing modifier (small molecule)",
+      administration: "Oral liquid once daily",
+      keyAdvantage: "First oral SMA treatment enabling convenient home-based therapy for all ages and SMA types",
+      discovery: "PTC Therapeutics/SMA Foundation/Roche",
+      development: "Worldwide commercial rights held by Roche"
+    }
   }
 ];
 
