@@ -51,6 +51,7 @@ import { generateLaunchFactors, type LaunchFactors } from "@/lib/launchFactors";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
 import { additionalMolecules } from "@/lib/moleculesData";
 import { endocrinologyMolecules } from "@/lib/endocrinologyMolecules";
+import { obesityMolecules } from "@/lib/obesityMolecules";
 
 interface TimelinePhase {
   phase: string;
@@ -1359,8 +1360,8 @@ const Index = () => {
     },
   ];
 
-  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules (20 Endocrinology)
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules];
+  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules (20 Endocrinology) + obesityMolecules (20 Obesity)
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
