@@ -38,6 +38,7 @@ import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
+import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { 
   calculateProbabilityScores,
@@ -1382,7 +1383,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar */}
       <header className="sticky top-0 z-10 w-full">
-        <div className="bg-[#C6A809] w-full">
+        <div className="bg-[#F5D547] w-full">
           <div className="container mx-auto px-4 py-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -1537,7 +1538,11 @@ const Index = () => {
             <TabsList className="w-full justify-start bg-[#000080] border-0 rounded-none h-12 px-4">
               <TabsTrigger value="overview" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <BarChart3 className="h-4 w-4" />
-                Overview
+                Molecules Overview
+              </TabsTrigger>
+              <TabsTrigger value="ta-market" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Globe className="h-4 w-4" />
+                TA Market Overview
               </TabsTrigger>
               <TabsTrigger value="molecules" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Pill className="h-4 w-4" />
@@ -2110,6 +2115,11 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* TA Market Overview Tab */}
+          <TabsContent value="ta-market" className="space-y-6">
+            <TAMarketOverview molecules={allMolecules} />
           </TabsContent>
 
           {/* TTM Tab */}
