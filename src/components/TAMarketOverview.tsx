@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Globe, TrendingUp, Building2, DollarSign } from "lucide-react";
+import { Globe, TrendingUp, Building2, DollarSign, Activity, Calendar } from "lucide-react";
 import { getAllTACompositeIndexes } from "@/lib/taCompositeIndex";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { calculateTTMMonths, type MarketData } from "@/lib/scoring";
@@ -49,6 +49,73 @@ const TA_NAME_MAP: Record<string, string> = {
   'Obesity': 'ENDOCRINOLOGY & METABOLISM',
 };
 
+// Market Dynamics content by TA
+const MARKET_DYNAMICS: Record<string, {
+  approvedDrugs?: { name: string; details: string }[];
+  pipelineRace?: { name: string; details: string }[];
+  marketSize?: { category: string; value: string }[];
+  keyTrends?: string[];
+  winnersLosers?: { category: string; items: { name: string; details: string }[] }[];
+  bottomLine?: string;
+  investmentThesis?: string;
+  lastUpdated: string;
+  nextCatalyst?: string;
+}> = {
+  'ENDOCRINOLOGY & METABOLISM': {
+    approvedDrugs: [
+      { name: 'Wegovy (semaglutide 2.4mg)', details: '~15% weight loss, once-weekly injection' },
+      { name: 'Zepbound (tirzepatide 15mg)', details: '~22.5% weight loss, once-weekly injection' },
+      { name: 'Rybelsus (oral semaglutide)', details: 'Modest weight loss, daily oral' },
+    ],
+    pipelineRace: [
+      { name: 'Orforglipron (Lilly)', details: 'First oral non-peptide GLP-1, 11-24% weight loss, filing 2025-26' },
+      { name: 'Retatrutide (Lilly)', details: '28.7% weight loss (highest to date), filing 2026-27' },
+      { name: 'CagriSema (Novo)', details: '22.7% weight loss, filing 2026-27' },
+      { name: 'Survodutide (Boehringer)', details: '16-20% weight loss + MASH leader, filing 2026-27' },
+      { name: 'Petrelintide (AstraZeneca)', details: 'Unknown efficacy, Phase 2b ongoing' },
+    ],
+    marketSize: [
+      { category: 'Global Obesity Market', value: '$25B in 2025, projected $100B+ by 2030' },
+      { category: 'Type 2 Diabetes Market', value: '$50B+ globally' },
+      { category: 'MASH Market', value: 'Emerging, $10-20B potential' },
+      { category: 'Combined Addressable Market', value: '$150B+ by 2030' },
+    ],
+    keyTrends: [
+      'Efficacy Arms Race: Market moving toward 25-30% weight loss as new standard',
+      'Oral Formulations: Orforglipron could revolutionize convenience',
+      'Multiple Indications: Drugs targeting obesity + T2D + MASH + CVD simultaneously',
+      'Tolerability Focus: As efficacy increases, GI side effects become key differentiator',
+      'Access & Pricing: Pressure to reduce costs and improve insurance coverage',
+    ],
+    winnersLosers: [
+      {
+        category: 'Clear Winners',
+        items: [
+          { name: 'Orforglipron', details: 'First oral GLP-1, superior to competitors, convenient, scalable' },
+          { name: 'Retatrutide', details: 'Highest efficacy (28.7%), multiple indications, Lilly\'s next pillar' },
+        ],
+      },
+      {
+        category: 'Strong Contenders',
+        items: [
+          { name: 'Survodutide', details: 'Best-in-class MASH, strong liver focus, niche leadership' },
+          { name: 'CagriSema', details: 'Solid efficacy, but needs differentiation vs. tirzepatide' },
+        ],
+      },
+      {
+        category: 'Uncertain',
+        items: [
+          { name: 'Petrelintide', details: 'Novel mechanism, but unproven efficacy and late to market' },
+        ],
+      },
+    ],
+    bottomLine: 'The endocrinology/metabolism space is experiencing a golden age of innovation. Multiple blockbuster drugs with >$1B potential are advancing through Phase 3, each offering unique benefits. The race for market share will be determined by: (1) Efficacy: 25-30% weight loss becoming the bar, (2) Convenience: Oral > injectable, (3) Safety/Tolerability: Manageable GI side effects critical, (4) Multi-indication: Drugs treating obesity + T2D + MASH + CV will dominate, (5) Time to Market: First movers have significant advantage.',
+    investmentThesis: 'Eli Lilly is best positioned with both orforglipron (oral convenience, 2026 launch) and retatrutide (highest efficacy, 2027 launch). Novo Nordisk\'s CagriSema faces tough competition but remains viable. Boehringer Ingelheim\'s survodutide could dominate MASH. AstraZeneca\'s petrelintide is high-risk/high-reward depending on Phase 2b results.',
+    lastUpdated: 'December 12, 2025',
+    nextCatalyst: 'Retatrutide additional Phase 3 results (7 trials in 2026)',
+  },
+};
+
 const getScoreColor = (score: number) => {
   if (score >= 67) return 'text-[hsl(142,76%,36%)]';
   if (score >= 34) return 'text-[hsl(45,93%,47%)]';
@@ -60,6 +127,148 @@ const getScoreBgColor = (score: number) => {
   if (score >= 34) return 'bg-[hsl(45,93%,47%)]';
   return 'bg-[hsl(0,72%,51%)]';
 };
+
+function MarketDynamicsSection({ taKey }: { taKey: string }) {
+  const dynamics = MARKET_DYNAMICS[taKey];
+  
+  if (!dynamics) {
+    return (
+      <Card className="border-l-4 border-l-muted col-span-full">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Current Market Dynamics
+            <Badge variant="outline" className="text-xs ml-2">Coming Soon</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">Market dynamics analysis will be available soon for this therapeutic area.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-l-4 border-l-[hsl(45,93%,47%)] col-span-full">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm flex items-center gap-2">
+          <Activity className="h-4 w-4" />
+          Current Market Dynamics
+          <Badge variant="outline" className="text-xs ml-2 flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            Updated Dec, 2025
+          </Badge>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Approved Drugs */}
+        {dynamics.approvedDrugs && (
+          <div>
+            <h4 className="font-semibold text-sm mb-2">Approved GLP-1 RAs for Obesity/Diabetes:</h4>
+            <div className="space-y-1">
+              {dynamics.approvedDrugs.map((drug, idx) => (
+                <div key={idx} className="text-sm flex gap-2">
+                  <span className="font-medium text-muted-foreground">{idx + 1}.</span>
+                  <span><strong>{drug.name}:</strong> {drug.details}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Pipeline Race */}
+        {dynamics.pipelineRace && (
+          <div>
+            <h4 className="font-semibold text-sm mb-2">Phase 3 Pipeline Race:</h4>
+            <div className="space-y-1">
+              {dynamics.pipelineRace.map((drug, idx) => (
+                <div key={idx} className="text-sm flex gap-2">
+                  <span className="font-medium text-muted-foreground">{idx + 1}.</span>
+                  <span><strong>{drug.name}:</strong> {drug.details}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Market Size */}
+        {dynamics.marketSize && (
+          <div>
+            <h4 className="font-semibold text-sm mb-2">Market Size & Growth:</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {dynamics.marketSize.map((item, idx) => (
+                <div key={idx} className="text-sm">
+                  <span className="text-muted-foreground">• {item.category}:</span>{' '}
+                  <span className="font-medium">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Key Trends */}
+        {dynamics.keyTrends && (
+          <div>
+            <h4 className="font-semibold text-sm mb-2">Key Trends:</h4>
+            <div className="space-y-1">
+              {dynamics.keyTrends.map((trend, idx) => (
+                <div key={idx} className="text-sm flex gap-2">
+                  <span className="font-medium text-muted-foreground">{idx + 1}.</span>
+                  <span>{trend}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Winners & Losers */}
+        {dynamics.winnersLosers && (
+          <div>
+            <h4 className="font-semibold text-sm mb-2">Winners & Losers (Projected):</h4>
+            <div className="space-y-2">
+              {dynamics.winnersLosers.map((group, idx) => (
+                <div key={idx}>
+                  <span className="text-sm font-medium text-primary">{group.category}:</span>
+                  <div className="ml-4 space-y-1">
+                    {group.items.map((item, i) => (
+                      <div key={i} className="text-sm">
+                        <strong>{item.name}:</strong> {item.details}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Line */}
+        {dynamics.bottomLine && (
+          <div className="bg-muted/50 rounded-lg p-3">
+            <h4 className="font-semibold text-sm mb-1">Bottom Line:</h4>
+            <p className="text-sm">{dynamics.bottomLine}</p>
+          </div>
+        )}
+
+        {/* Investment Thesis */}
+        {dynamics.investmentThesis && (
+          <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
+            <h4 className="font-semibold text-sm mb-1 text-primary">Investment Thesis:</h4>
+            <p className="text-sm">{dynamics.investmentThesis}</p>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="flex justify-between items-center pt-2 border-t text-xs text-muted-foreground">
+          <span>Last Updated: {dynamics.lastUpdated}</span>
+          {dynamics.nextCatalyst && (
+            <span>Next Major Catalyst: {dynamics.nextCatalyst}</span>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export function TAMarketOverview({ molecules }: TAMarketOverviewProps) {
   const taIndexes = getAllTACompositeIndexes();
@@ -248,6 +457,11 @@ export function TAMarketOverview({ molecules }: TAMarketOverviewProps) {
                         )}
                       </CardContent>
                     </Card>
+                  </div>
+
+                  {/* Current Market Dynamics Section */}
+                  <div className="mt-6">
+                    <MarketDynamicsSection taKey={group.taIndex.ta} />
                   </div>
                 </AccordionContent>
               </AccordionItem>
