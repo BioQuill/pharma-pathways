@@ -52,6 +52,7 @@ const TA_NAME_MAP: Record<string, string> = {
 // Market Dynamics content by TA
 const MARKET_DYNAMICS: Record<string, {
   approvedDrugs?: { name: string; details: string }[];
+  approvedDrugsTitle?: string;
   pipelineRace?: { name: string; details: string }[];
   marketSize?: { category: string; value: string }[];
   keyTrends?: string[];
@@ -62,6 +63,7 @@ const MARKET_DYNAMICS: Record<string, {
   nextCatalyst?: string;
 }> = {
   'ENDOCRINOLOGY & METABOLISM': {
+    approvedDrugsTitle: 'Approved GLP-1 RAs for Obesity/Diabetes:',
     approvedDrugs: [
       { name: 'Wegovy (semaglutide 2.4mg)', details: '~15% weight loss, once-weekly injection' },
       { name: 'Zepbound (tirzepatide 15mg)', details: '~22.5% weight loss, once-weekly injection' },
@@ -114,6 +116,60 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 12, 2025',
     nextCatalyst: 'Retatrutide additional Phase 3 results (7 trials in 2026)',
   },
+  'DERMATOLOGY': {
+    approvedDrugsTitle: 'Approved Biologics for Inflammatory Skin Conditions:',
+    approvedDrugs: [
+      { name: 'Dupixent (dupilumab)', details: '~65-75% clear/almost clear skin (EASI-75), every-2-weeks injection' },
+      { name: 'Skyrizi (risankizumab)', details: '~85-90% PASI-90 response, every-12-weeks injection' },
+      { name: 'Tremfya (guselkumab)', details: '~80-85% PASI-90 response, every-8-weeks injection' },
+    ],
+    pipelineRace: [
+      { name: 'Bimekizumab (UCB)', details: 'Dual IL-17A/F inhibitor, 85-90% PASI-100, approved EU/US 2023-24' },
+      { name: 'Nemolizumab (Galderma)', details: 'IL-31 inhibitor for prurigo nodularis/atopic dermatitis, filing 2024-25' },
+      { name: 'Lebrikizumab (Lilly)', details: 'IL-13 inhibitor, 40-50% clear skin, approved 2024' },
+      { name: 'Rocatinlimab (Pfizer)', details: 'OX40 inhibitor, novel MOA, Phase 3 ongoing' },
+      { name: 'Oral JAK inhibitors', details: 'Abrocitinib, Upadacitinib - oral convenience, safety monitoring required' },
+    ],
+    marketSize: [
+      { category: 'Global Atopic Dermatitis Market', value: '$12B in 2025, projected $25B+ by 2030' },
+      { category: 'Psoriasis Market', value: '$20B+ globally, projected $30B by 2030' },
+      { category: 'Hidradenitis Suppurativa Market', value: 'Emerging, $3-5B potential' },
+      { category: 'Combined Addressable Market', value: '$60B+ by 2030' },
+    ],
+    keyTrends: [
+      'Complete Clearance Race: Market moving toward PASI-100/IGA 0 as new efficacy standard',
+      'Oral Formulations: JAK inhibitors offering oral convenience vs. biologics',
+      'Faster Onset: IL-17 and IL-23 inhibitors showing rapid response within weeks',
+      'Safety Differentiation: Long-term safety profiles becoming key differentiator',
+      'Expansion to New Indications: AD drugs moving into prurigo nodularis, eczema variants',
+    ],
+    winnersLosers: [
+      {
+        category: 'Clear Winners',
+        items: [
+          { name: 'Bimekizumab', details: 'Highest PASI-100 rates, dual mechanism, rapid onset' },
+          { name: 'Skyrizi', details: 'Best-in-class IL-23, convenient quarterly dosing, excellent safety profile' },
+        ],
+      },
+      {
+        category: 'Strong Contenders',
+        items: [
+          { name: 'Nemolizumab', details: 'First IL-31 inhibitor, addresses unmet pruritus need' },
+          { name: 'Lebrikizumab', details: 'IL-13 focused, good safety, but crowded AD market' },
+        ],
+      },
+      {
+        category: 'Uncertain',
+        items: [
+          { name: 'Oral JAK inhibitors', details: 'Convenience advantage offset by FDA safety warnings, boxed labels' },
+        ],
+      },
+    ],
+    bottomLine: 'The dermatology market is maturing with multiple highly effective biologics achieving near-complete skin clearance. Competition is intensifying around: (1) Complete clearance rates (PASI-100/IGA 0), (2) Dosing convenience (quarterly dosing winning), (3) Safety profiles (long-term data critical), (4) Expansion into adjacent conditions, (5) Oral vs. injectable preference trade-offs.',
+    investmentThesis: 'UCB\'s bimekizumab leads with dual IL-17A/F mechanism achieving highest complete clearance. AbbVie\'s Skyrizi dominates IL-23 class with best-in-class efficacy and quarterly dosing. Galderma\'s nemolizumab could capture pruritus-focused niche. JAK inhibitors face headwinds from safety concerns but offer oral convenience for injection-averse patients.',
+    lastUpdated: 'December 14, 2025',
+    nextCatalyst: 'Nemolizumab Phase 3 atopic dermatitis results and regulatory submissions (2025-26)',
+  },
 };
 
 const getScoreColor = (score: number) => {
@@ -164,7 +220,7 @@ function MarketDynamicsSection({ taKey }: { taKey: string }) {
         {/* Approved Drugs */}
         {dynamics.approvedDrugs && (
           <div>
-            <h4 className="font-semibold text-sm mb-2">Approved GLP-1 RAs for Obesity/Diabetes:</h4>
+            <h4 className="font-semibold text-sm mb-2">{dynamics.approvedDrugsTitle || 'Approved Drugs:'}</h4>
             <div className="space-y-1">
               {dynamics.approvedDrugs.map((drug, idx) => (
                 <div key={idx} className="text-sm flex gap-2">
