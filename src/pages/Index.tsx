@@ -53,6 +53,8 @@ import { getManufacturingCapability } from "@/lib/manufacturingCapability";
 import { additionalMolecules } from "@/lib/moleculesData";
 import { endocrinologyMolecules } from "@/lib/endocrinologyMolecules";
 import { obesityMolecules } from "@/lib/obesityMolecules";
+import { diabetesMolecules } from "@/lib/diabetesMolecules";
+import { dermatologyMolecules } from "@/lib/dermatologyMolecules";
 
 interface TimelinePhase {
   phase: string;
@@ -1361,8 +1363,8 @@ const Index = () => {
     },
   ];
 
-  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules (20 Endocrinology) + obesityMolecules (20 Obesity)
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules];
+  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
@@ -1480,12 +1482,6 @@ const Index = () => {
                 </Popover>
               </nav>
             </div>
-          </div>
-        </div>
-        {/* Tagline Bar */}
-        <div className="bg-[#FFF8DC] w-full py-1">
-          <div className="container mx-auto px-4 text-center">
-            <span className="text-sm font-medium text-gray-800">Pharmaceutical Intelligence for Smart Decisions</span>
           </div>
         </div>
       </header>
