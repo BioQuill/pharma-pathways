@@ -160,7 +160,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               <p className={`text-2xl font-semibold ${getTTMColor(ttmPercent)}`}>
                 {ttmPercent !== null ? `${ttmPercent}%` : 'N/A'}
               </p>
-              <span className="text-xs text-muted-foreground">(vs avg)</span>
+              <span className="text-xs text-muted-foreground">(of total TA)</span>
             </div>
           </div>
 

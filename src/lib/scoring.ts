@@ -1,4 +1,5 @@
 // Probability and scoring calculations for pharmaceutical molecules
+import { getTTMMonthsForTA } from './ttmData';
 
 export interface ProbabilityScores {
   meetingEndpoints: number; // 0-1
@@ -253,7 +254,8 @@ function calculateRegulatoryPathwayProbabilities(normalizedTA: string, phase: st
   return taPathways[normalizedTA] || taPathways['GENERAL'];
 }
 
-// Calculate TTM% - time remaining as percentage of average TTM for similar molecules
+// Calculate TTM% - time remaining as percentage of total TTM for the therapeutic area
+// Uses TTM Breakdown data (TTM_BREAKDOWN_DATA.totalMonths) for TA-specific total development time
 export function calculateTTMPercent(
   phase: string,
   therapeuticArea: string,
@@ -264,8 +266,8 @@ export function calculateTTMPercent(
     return null;
   }
   
-  const normalizedTA = normalizeTherapeuticArea(therapeuticArea);
-  const averageTTM = TA_AVERAGE_TTM[normalizedTA] || TA_AVERAGE_TTM['GENERAL'];
+  // Get total TTM months for TA from TTM Breakdown chart data
+  const totalTTMMonths = getTTMMonthsForTA(therapeuticArea);
   
   // Get US launch date as primary reference
   const usMarket = marketData.find(m => m.countryCode === 'US');
@@ -275,8 +277,8 @@ export function calculateTTMPercent(
   const now = new Date();
   const monthsRemaining = (launchDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 30);
   
-  // TTM% = (remaining time / average TTM) * 100
-  const ttmPercent = (monthsRemaining / averageTTM) * 100;
+  // TTM% = (remaining time / total TTM for TA) * 100
+  const ttmPercent = (monthsRemaining / totalTTMMonths) * 100;
   
   return Math.max(0, Math.min(100, Math.round(ttmPercent)));
 }
