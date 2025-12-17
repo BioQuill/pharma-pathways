@@ -56,6 +56,8 @@ import { obesityMolecules } from "@/lib/obesityMolecules";
 import { diabetesMolecules } from "@/lib/diabetesMolecules";
 import { dermatologyMolecules } from "@/lib/dermatologyMolecules";
 import { oncologyMolecules } from "@/lib/oncologyMolecules";
+import { cardiovascularMolecules } from "@/lib/cardiovascularMolecules";
+import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
 interface TimelinePhase {
   phase: string;
@@ -1364,8 +1366,8 @@ const Index = () => {
     },
   ];
 
-  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules];
+  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules + cardiovascularMolecules
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
@@ -2076,6 +2078,11 @@ const Index = () => {
                 <CardDescription>Browse and analyze clinical trial molecules</CardDescription>
               </CardHeader>
               <CardContent>
+                {/* Molecule Distribution Pie Chart */}
+                <div className="mb-6 p-4 border rounded-lg bg-muted/30">
+                  <h3 className="text-sm font-semibold mb-3">Molecules by Therapeutic Area</h3>
+                  <MoleculeDistributionChart molecules={allMolecules} />
+                </div>
                 <div className="grid gap-4">
                   {allMolecules.map((mol) => (
                     <div 
