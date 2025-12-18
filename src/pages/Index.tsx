@@ -57,6 +57,7 @@ import { diabetesMolecules } from "@/lib/diabetesMolecules";
 import { dermatologyMolecules } from "@/lib/dermatologyMolecules";
 import { oncologyMolecules } from "@/lib/oncologyMolecules";
 import { cardiovascularMolecules } from "@/lib/cardiovascularMolecules";
+import { neurologyMolecules } from "@/lib/neurologyMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
 interface TimelinePhase {
@@ -1366,8 +1367,8 @@ const Index = () => {
     },
   ];
 
-  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules + cardiovascularMolecules
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules];
+  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules + cardiovascularMolecules + neurologyMolecules
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
