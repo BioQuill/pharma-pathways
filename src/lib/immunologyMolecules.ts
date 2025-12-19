@@ -1,1735 +1,961 @@
-// Immunology & Inflammation Therapeutic Area Molecules
+// Immunology & Inflammation Molecules - Full Analysis
+// Each molecule includes retrospective timeline, patents, competitive landscape, and market data
 
-export const immunologyMolecules = [
+import { 
+  calculateProbabilityScores,
+  generateMarketProjections, 
+} from './scoring';
+import { type MoleculeProfile } from './moleculesData';
+
+export const immunologyMolecules: MoleculeProfile[] = [
+  // 1. Spesolimab - Anti-IL-36R for GPP
   {
-    id: "imm-001",
-    name: "Spesolimab",
-    phase: "Phase 3",
-    sponsor: "Boehringer Ingelheim",
-    therapeuticArea: "Immunology & Inflammation",
+    id: "SPES-01",
+    name: "Spesolimab (Spevigo)",
+    trialName: "Effisayil",
+    phase: "Approved",
     indication: "Generalized Pustular Psoriasis",
-    mechanism: "Anti-IL-36R monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2037",
-    marketCap: "First-in-class IL-36R inhibitor for GPP",
-    primaryEndpoint: "GPPGA pustulation subscore of 0",
-    npv: 2800,
-    confidence: 92,
-    trialData: {
-      phase1: { enrolled: 38, completed: 38, successRate: 100 },
-      phase2: { enrolled: 53, completed: 53, successRate: 100 },
-      phase3: { enrolled: 218, completed: 218, successRate: 95 }
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Boehringer Ingelheim",
+    companyTrackRecord: 'fast',
+    nctId: "NCT03782792",
+    clinicalTrialsSearchTerm: "spesolimab",
+    scores: calculateProbabilityScores("Approved", "Psoriasis", "Immunology"),
+    marketData: generateMarketProjections("Spesolimab", "Approved", "Psoriasis", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-IL-36 receptor monoclonal antibody",
+      administration: "Intravenous infusion",
+      keyAdvantage: "First and only approved treatment specifically for GPP flares",
+      discovery: "Boehringer Ingelheim",
+      development: "Boehringer Ingelheim",
+      additionalInfo: [
+        "First-in-class IL-36R inhibitor",
+        "Rapid onset of action in GPP flares",
+        "Addresses life-threatening condition with unmet need"
+      ]
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2016-03",
-        outcome: "success" as const,
-        keyData: ["Novel IL-36R mechanism", "Strong preclinical efficacy"],
-        score: 45,
-        rationale: "First IL-36R inhibitor in clinical development for GPP",
-        availableData: "Preclinical data package"
-      },
-      {
-        phase: "Phase 1",
-        date: "2017-01",
-        outcome: "success" as const,
-        keyData: ["Favorable PK profile", "Dose-dependent IL-36 blockade"],
-        score: 55,
-        rationale: "Clean safety profile supports GPP development",
-        availableData: "Phase 1 SAD/MAD data"
-      },
-      {
-        phase: "Phase 2 (Effisayil 1)",
-        date: "2019-06",
-        outcome: "success" as const,
-        keyData: ["54% achieved GPPGA 0 at week 1", "Rapid onset of action"],
-        score: 78,
-        rationale: "Breakthrough efficacy in acute GPP flares",
-        availableData: "Pivotal Phase 2 results"
-      },
-      {
-        phase: "Phase 3 (Effisayil 2)",
-        date: "2022-08",
-        outcome: "success" as const,
-        keyData: ["84% flare-free at week 48", "Sustained efficacy"],
-        score: 92,
-        rationale: "Confirmed long-term prevention of GPP flares",
-        availableData: "Full Phase 3 dataset"
-      }
-    ],
     patents: [
-      {
-        patentNumber: "US10,479,836",
-        title: "Anti-IL-36R antibodies for treating pustular diseases",
-        expirationDate: "2037-03-15",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      },
-      {
-        patentNumber: "US11,203,647",
-        title: "Methods of treating GPP with IL-36R inhibitors",
-        expirationDate: "2038-09-22",
-        type: "Method of Use" as const,
-        status: "Active" as const
-      }
+      { patentNumber: "US10,479,836", title: "Anti-IL-36R antibodies for pustular diseases", expirationDate: "2037", type: 'composition', status: 'active' },
+      { patentNumber: "US11,203,647", title: "Methods of treating GPP with IL-36R inhibitors", expirationDate: "2038", type: 'method', status: 'active' },
     ],
-    competitiveLandscape: [
-      {
-        name: "Imsidolimab",
-        sponsor: "AnaptysBio",
-        phase: "Phase 3",
-        mechanism: "Anti-IL-36R",
-        differentiator: "Subcutaneous administration"
-      },
-      {
-        name: "Adalimumab",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "Anti-TNF",
-        differentiator: "Broad anti-inflammatory, not GPP-specific"
-      }
+    competitiveLandscape: {
+      totalMarketSize: "$2B+ (pustular psoriasis)",
+      projectedGrowth: "15% CAGR",
+      keyPlayers: [
+        { name: "Imsidolimab", company: "AnaptysBio", phase: "Phase III", mechanism: "Anti-IL-36R", keyDifferentiator: "Subcutaneous administration", efficacy: "Pending", threat: 'high' },
+        { name: "Adalimumab", company: "AbbVie", phase: "Approved", mechanism: "Anti-TNF", keyDifferentiator: "Broad anti-inflammatory", efficacy: "Limited GPP data", threat: 'low' },
+      ],
+      competitiveAdvantages: ["First-in-class approval", "Rapid onset of action", "Addresses unmet need"],
+      competitiveRisks: ["IV administration", "Rare disease market", "Competition emerging"],
+      marketPositioning: "First approved therapy specifically for GPP flares."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 1", date: "Q1 2017", outcome: 'success', keyData: ["Favorable PK profile", "Dose-dependent IL-36 blockade"], scoreAtTime: 55, rationale: "Clean safety profile supports development", dataAvailableAtTime: ["Phase 1 SAD/MAD data"] },
+      { phase: "Phase 2 Effisayil 1", date: "Q2 2019", outcome: 'success', keyData: ["54% achieved GPPGA 0 at week 1", "Rapid onset"], scoreAtTime: 78, rationale: "Breakthrough efficacy in acute flares", dataAvailableAtTime: ["Pivotal Phase 2 results"] },
+      { phase: "FDA Approval", date: "Sep 2022", outcome: 'success', keyData: ["First GPP treatment approved", "Breakthrough therapy designation"], scoreAtTime: 95, rationale: "Historic first-in-class approval", dataAvailableAtTime: ["Commercial launch"] }
     ]
   },
+
+  // 2. Bimekizumab - Dual IL-17A/F inhibitor
   {
-    id: "imm-002",
-    name: "Bimekizumab",
-    phase: "Phase 3",
-    sponsor: "UCB",
-    therapeuticArea: "Immunology & Inflammation",
+    id: "BIME-01",
+    name: "Bimekizumab (Bimzelx)",
+    trialName: "BE MOBILE",
+    phase: "Approved",
     indication: "Axial Spondyloarthritis",
-    mechanism: "Dual IL-17A/F inhibitor",
-    status: "Active",
-    patentExpiry: "2035",
-    marketCap: "First dual IL-17 inhibitor with superior efficacy",
-    primaryEndpoint: "ASAS40 response at week 16",
-    npv: 4500,
-    confidence: 89,
-    trialData: {
-      phase1: { enrolled: 42, completed: 42, successRate: 100 },
-      phase2: { enrolled: 214, completed: 208, successRate: 100 },
-      phase3: { enrolled: 586, completed: 570, successRate: 92 }
+    therapeuticArea: "Immunology & Inflammation",
+    company: "UCB",
+    companyTrackRecord: 'average',
+    nctId: "NCT03928704",
+    clinicalTrialsSearchTerm: "bimekizumab",
+    scores: calculateProbabilityScores("Approved", "Spondyloarthritis", "Immunology"),
+    marketData: generateMarketProjections("Bimekizumab", "Approved", "Spondyloarthritis", 'average'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Dual IL-17A and IL-17F inhibitor",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Superior efficacy through dual IL-17 blockade",
+      discovery: "UCB Pharma",
+      development: "UCB Pharma",
+      additionalInfo: [
+        "First dual IL-17A/F inhibitor",
+        "Superior skin clearance vs IL-17A alone",
+        "Rapid onset with durable responses"
+      ]
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2014-07",
-        outcome: "success" as const,
-        keyData: ["Dual IL-17A/F blockade rationale", "Superior preclinical efficacy"],
-        score: 48,
-        rationale: "Novel dual mechanism may exceed single IL-17 inhibitors",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2015-03",
-        outcome: "success" as const,
-        keyData: ["Linear PK", "Rapid IL-17 suppression"],
-        score: 56,
-        rationale: "Clean safety enables dose optimization",
-        availableData: "Phase 1 data"
-      },
-      {
-        phase: "Phase 2b (BE AGILE)",
-        date: "2018-11",
-        outcome: "success" as const,
-        keyData: ["47% ASAS40 at week 12", "Dose-response established"],
-        score: 74,
-        rationale: "Strong efficacy signal in axSpA",
-        availableData: "Phase 2b results"
-      },
-      {
-        phase: "Phase 3 (BE MOBILE 1/2)",
-        date: "2022-05",
-        outcome: "success" as const,
-        keyData: ["45-47% ASAS40 vs 22% placebo", "Sustained to week 52"],
-        score: 89,
-        rationale: "Robust efficacy supports regulatory filing",
-        availableData: "Full Phase 3 data"
-      }
-    ],
     patents: [
-      {
-        patentNumber: "US9,957,325",
-        title: "Bispecific IL-17A/F antibodies",
-        expirationDate: "2035-06-18",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      },
-      {
-        patentNumber: "US10,654,940",
-        title: "Treatment of spondyloarthritis with dual IL-17 inhibition",
-        expirationDate: "2036-11-03",
-        type: "Method of Use" as const,
-        status: "Active" as const
-      }
+      { patentNumber: "US9,957,325", title: "Bispecific IL-17A/F antibodies", expirationDate: "2035", type: 'composition', status: 'active' },
+      { patentNumber: "US10,654,940", title: "Treatment of spondyloarthritis with dual IL-17", expirationDate: "2036", type: 'method', status: 'active' },
     ],
-    competitiveLandscape: [
-      {
-        name: "Secukinumab",
-        sponsor: "Novartis",
-        phase: "Approved",
-        mechanism: "Anti-IL-17A",
-        differentiator: "Established market leader"
-      },
-      {
-        name: "Ixekizumab",
-        sponsor: "Eli Lilly",
-        phase: "Approved",
-        mechanism: "Anti-IL-17A",
-        differentiator: "Strong radiographic data"
-      },
-      {
-        name: "Upadacitinib",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "JAK1 inhibitor",
-        differentiator: "Oral administration"
-      }
+    competitiveLandscape: {
+      totalMarketSize: "$12B+ (axSpA and psoriasis)",
+      projectedGrowth: "8% CAGR",
+      keyPlayers: [
+        { name: "Secukinumab (Cosentyx)", company: "Novartis", phase: "Approved", mechanism: "Anti-IL-17A", keyDifferentiator: "Market leader", efficacy: "ASAS40 ~40%", threat: 'high' },
+        { name: "Ixekizumab (Taltz)", company: "Eli Lilly", phase: "Approved", mechanism: "Anti-IL-17A", keyDifferentiator: "Strong radiographic data", efficacy: "ASAS40 ~48%", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Dual IL-17 blockade", "Superior PASI responses", "Consistent efficacy"],
+      competitiveRisks: ["Candidiasis rates", "Competitive market", "Biosimilar pressure on class"],
+      marketPositioning: "Best-in-class IL-17 inhibitor with dual mechanism."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2b BE AGILE", date: "Q4 2018", outcome: 'success', keyData: ["47% ASAS40 at week 12", "Dose-response established"], scoreAtTime: 74, rationale: "Strong efficacy signal", dataAvailableAtTime: ["Phase 2b results"] },
+      { phase: "Phase 3 BE MOBILE", date: "Q2 2022", outcome: 'success', keyData: ["45-47% ASAS40 vs 22% placebo", "Sustained to week 52"], scoreAtTime: 89, rationale: "Robust efficacy supports approval", dataAvailableAtTime: ["Full Phase 3 data"] },
+      { phase: "FDA Approval", date: "Oct 2023", outcome: 'success', keyData: ["Approved for axSpA", "Third indication"], scoreAtTime: 95, rationale: "Broad label achieved", dataAvailableAtTime: ["Commercial expansion"] }
     ]
   },
+
+  // 3. Mirikizumab - Anti-IL-23p19 for UC
   {
-    id: "imm-003",
-    name: "Mirikizumab",
-    phase: "Phase 3",
-    sponsor: "Eli Lilly",
-    therapeuticArea: "Immunology & Inflammation",
+    id: "MIRI-01",
+    name: "Mirikizumab (Omvoh)",
+    trialName: "LUCENT",
+    phase: "Approved",
     indication: "Ulcerative Colitis",
-    mechanism: "Anti-IL-23p19 monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2036",
-    marketCap: "Next-gen IL-23 inhibitor for IBD",
-    primaryEndpoint: "Clinical remission at week 12",
-    npv: 5200,
-    confidence: 91,
-    trialData: {
-      phase1: { enrolled: 48, completed: 48, successRate: 100 },
-      phase2: { enrolled: 249, completed: 241, successRate: 100 },
-      phase3: { enrolled: 1281, completed: 1220, successRate: 94 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2015-02",
-        outcome: "success" as const,
-        keyData: ["Selective p19 targeting", "Tissue-specific IL-23 blockade"],
-        score: 46,
-        rationale: "IL-23 validated in IBD; selective p19 approach novel",
-        availableData: "IND package"
-      },
-      {
-        phase: "Phase 1",
-        date: "2016-01",
-        outcome: "success" as const,
-        keyData: ["Dose-proportional PK", "No immunogenicity signals"],
-        score: 54,
-        rationale: "Favorable profile enables UC development",
-        availableData: "Phase 1 results"
-      },
-      {
-        phase: "Phase 2 (AMAC)",
-        date: "2019-03",
-        outcome: "success" as const,
-        keyData: ["24.8% clinical remission vs 4.8% placebo", "Endoscopic improvement"],
-        score: 76,
-        rationale: "Strong differentiation from anti-TNFs in UC",
-        availableData: "Phase 2 efficacy data"
-      },
-      {
-        phase: "Phase 3 (LUCENT-1/2)",
-        date: "2022-11",
-        outcome: "success" as const,
-        keyData: ["24.2% clinical remission at week 12", "49.9% at week 52 maintenance"],
-        score: 91,
-        rationale: "Consistent efficacy across endpoints",
-        availableData: "Full Phase 3 dataset"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,100,116",
-        title: "Anti-IL-23p19 antibodies for inflammatory bowel disease",
-        expirationDate: "2036-02-28",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Ustekinumab",
-        sponsor: "Johnson & Johnson",
-        phase: "Approved",
-        mechanism: "Anti-IL-12/23",
-        differentiator: "Established, dual IL-12/23 blockade"
-      },
-      {
-        name: "Risankizumab",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "Anti-IL-23p19",
-        differentiator: "Approved for Crohn's, UC pending"
-      },
-      {
-        name: "Guselkumab",
-        sponsor: "Johnson & Johnson",
-        phase: "Phase 3",
-        mechanism: "Anti-IL-23p19",
-        differentiator: "Strong psoriasis data"
-      }
-    ]
-  },
-  {
-    id: "imm-004",
-    name: "Deucravacitinib",
-    phase: "Phase 3",
-    sponsor: "Bristol-Myers Squibb",
     therapeuticArea: "Immunology & Inflammation",
-    indication: "Systemic Lupus Erythematosus",
-    mechanism: "Allosteric TYK2 inhibitor",
-    status: "Active",
-    patentExpiry: "2038",
-    marketCap: "First-in-class selective TYK2 inhibitor for SLE",
-    primaryEndpoint: "SRI-4 response at week 48",
-    npv: 3800,
-    confidence: 72,
-    trialData: {
-      phase1: { enrolled: 36, completed: 36, successRate: 100 },
-      phase2: { enrolled: 363, completed: 348, successRate: 88 },
-      phase3: { enrolled: 650, completed: 0, successRate: 0 }
+    company: "Eli Lilly",
+    companyTrackRecord: 'fast',
+    nctId: "NCT03518086",
+    clinicalTrialsSearchTerm: "mirikizumab",
+    scores: calculateProbabilityScores("Approved", "Ulcerative Colitis", "Immunology"),
+    marketData: generateMarketProjections("Mirikizumab", "Approved", "Ulcerative Colitis", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-IL-23p19 monoclonal antibody",
+      administration: "IV induction, SC maintenance",
+      keyAdvantage: "High clinical remission and histologic-endoscopic mucosal improvement",
+      discovery: "Eli Lilly",
+      development: "Eli Lilly",
+      additionalInfo: [
+        "Selective IL-23p19 targeting",
+        "Novel endpoint of HEMI achieved",
+        "Favorable safety profile"
+      ]
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2017-06",
-        outcome: "success" as const,
-        keyData: ["Novel allosteric TYK2 mechanism", "Selectivity over JAK1/2/3"],
-        score: 52,
-        rationale: "Selective TYK2 may avoid JAK-class safety issues",
-        availableData: "Preclinical selectivity data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2018-02",
-        outcome: "success" as const,
-        keyData: ["Clean safety profile", "No hematologic effects"],
-        score: 58,
-        rationale: "Differentiated safety from pan-JAK inhibitors",
-        availableData: "Phase 1 safety data"
-      },
-      {
-        phase: "Phase 2 (PAISLEY)",
-        date: "2021-03",
-        outcome: "success" as const,
-        keyData: ["58% SRI-4 at 48 weeks vs 34% placebo", "Dose-response seen"],
-        score: 72,
-        rationale: "Strong efficacy signal in SLE supports Phase 3",
-        availableData: "Phase 2 topline results"
-      },
-      {
-        phase: "Phase 3 (POETYK SLE-1/2)",
-        date: "2024-06",
-        outcome: "pending" as const,
-        keyData: ["Enrollment complete", "Primary readout expected 2025"],
-        score: 72,
-        rationale: "Awaiting pivotal Phase 3 results",
-        availableData: "Study ongoing"
-      }
-    ],
     patents: [
-      {
-        patentNumber: "US10,301,305",
-        title: "Allosteric TYK2 inhibitor compounds",
-        expirationDate: "2038-06-12",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      },
-      {
-        patentNumber: "US10,934,297",
-        title: "Treatment of autoimmune disorders with TYK2 inhibition",
-        expirationDate: "2039-01-08",
-        type: "Method of Use" as const,
-        status: "Active" as const
-      }
+      { patentNumber: "US10,100,116", title: "Anti-IL-23p19 antibodies for IBD", expirationDate: "2036", type: 'composition', status: 'active' },
     ],
-    competitiveLandscape: [
-      {
-        name: "Anifrolumab",
-        sponsor: "AstraZeneca",
-        phase: "Approved",
-        mechanism: "Anti-IFNAR1",
-        differentiator: "First type I IFN inhibitor for SLE"
-      },
-      {
-        name: "Belimumab",
-        sponsor: "GSK",
-        phase: "Approved",
-        mechanism: "Anti-BLyS",
-        differentiator: "First SLE biologic approval"
-      },
-      {
-        name: "Voclosporin",
-        sponsor: "Aurinia",
-        phase: "Approved",
-        mechanism: "Calcineurin inhibitor",
-        differentiator: "Approved for lupus nephritis"
-      }
+    competitiveLandscape: {
+      totalMarketSize: "$18B+ (IBD market)",
+      projectedGrowth: "10% CAGR",
+      keyPlayers: [
+        { name: "Ustekinumab (Stelara)", company: "J&J", phase: "Approved", mechanism: "Anti-IL-12/23", keyDifferentiator: "Established, dual blockade", efficacy: "~15% remission", threat: 'high' },
+        { name: "Risankizumab (Skyrizi)", company: "AbbVie", phase: "Approved", mechanism: "Anti-IL-23p19", keyDifferentiator: "Strong CD data", efficacy: "~20% remission", threat: 'high' },
+      ],
+      competitiveAdvantages: ["High remission rates", "HEMI endpoint", "Clean safety"],
+      competitiveRisks: ["Competitive IL-23 market", "IV induction required", "Biosimilar ustekinumab"],
+      marketPositioning: "Next-generation IL-23 inhibitor for IBD."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2 AMAC", date: "Q1 2019", outcome: 'success', keyData: ["24.8% clinical remission vs 4.8% placebo"], scoreAtTime: 76, rationale: "Strong differentiation from anti-TNFs", dataAvailableAtTime: ["Phase 2 efficacy data"] },
+      { phase: "Phase 3 LUCENT", date: "Q4 2022", outcome: 'success', keyData: ["24.2% remission at week 12", "49.9% at week 52"], scoreAtTime: 91, rationale: "Consistent efficacy across endpoints", dataAvailableAtTime: ["Full Phase 3 dataset"] },
+      { phase: "FDA Approval", date: "Oct 2023", outcome: 'success', keyData: ["Approved for UC", "Crohn's studies ongoing"], scoreAtTime: 95, rationale: "Successful launch in UC", dataAvailableAtTime: ["Commercial launch"] }
     ]
   },
+
+  // 4. Deucravacitinib - TYK2 inhibitor for SLE
   {
-    id: "imm-005",
+    id: "DEUC-01",
+    name: "Deucravacitinib (Sotyktu)",
+    trialName: "POETYK SLE",
+    phase: "Phase III",
+    indication: "Systemic Lupus Erythematosus",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Bristol-Myers Squibb",
+    companyTrackRecord: 'average',
+    nctId: "NCT04728490",
+    clinicalTrialsSearchTerm: "deucravacitinib lupus",
+    scores: calculateProbabilityScores("Phase III", "Lupus", "Immunology"),
+    marketData: generateMarketProjections("Deucravacitinib", "Phase III", "Lupus", 'average'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Allosteric TYK2 inhibitor",
+      administration: "Once-daily oral tablet",
+      keyAdvantage: "Selective TYK2 inhibition without JAK-associated safety concerns",
+      discovery: "Bristol-Myers Squibb",
+      development: "Bristol-Myers Squibb",
+      additionalInfo: [
+        "First allosteric TYK2 inhibitor",
+        "Approved for psoriasis (Sotyktu)",
+        "Clean safety vs pan-JAK inhibitors"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,301,305", title: "Allosteric TYK2 inhibitor compounds", expirationDate: "2038", type: 'composition', status: 'active' },
+      { patentNumber: "US10,934,297", title: "Treatment of autoimmune disorders with TYK2", expirationDate: "2039", type: 'method', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$5B+ (SLE market)",
+      projectedGrowth: "12% CAGR",
+      keyPlayers: [
+        { name: "Anifrolumab (Saphnelo)", company: "AstraZeneca", phase: "Approved", mechanism: "Anti-IFNAR1", keyDifferentiator: "First type I IFN inhibitor", efficacy: "~48% BICLA", threat: 'high' },
+        { name: "Belimumab (Benlysta)", company: "GSK", phase: "Approved", mechanism: "Anti-BLyS", keyDifferentiator: "First SLE biologic", efficacy: "~43% SRI-4", threat: 'medium' },
+      ],
+      competitiveAdvantages: ["Oral administration", "Selective mechanism", "Differentiated safety"],
+      competitiveRisks: ["Phase 3 pending", "Competitive SLE market", "Efficacy bar high"],
+      marketPositioning: "First oral TYK2 inhibitor for systemic lupus erythematosus."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2 PAISLEY", date: "Q1 2021", outcome: 'success', keyData: ["58% SRI-4 at 48 weeks vs 34% placebo"], scoreAtTime: 72, rationale: "Strong efficacy signal supports Phase 3", dataAvailableAtTime: ["Phase 2 topline results"] },
+      { phase: "Phase 3 POETYK SLE", date: "Q2 2024", outcome: 'pending', keyData: ["Enrollment complete", "Readout expected 2025"], scoreAtTime: 72, rationale: "Awaiting pivotal results", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 5. Brazikumab - Anti-IL-23p19 for Crohn's
+  {
+    id: "BRAZ-01",
     name: "Brazikumab",
-    phase: "Phase 3",
-    sponsor: "AstraZeneca",
-    therapeuticArea: "Immunology & Inflammation",
+    trialName: "INTREPID",
+    phase: "Phase III",
     indication: "Crohn's Disease",
-    mechanism: "Anti-IL-23p19 monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2035",
-    marketCap: "IL-23 inhibitor for moderate-to-severe CD",
-    primaryEndpoint: "Clinical remission at week 12",
-    npv: 3200,
-    confidence: 78,
-    trialData: {
-      phase1: { enrolled: 32, completed: 32, successRate: 100 },
-      phase2: { enrolled: 246, completed: 238, successRate: 92 },
-      phase3: { enrolled: 900, completed: 0, successRate: 0 }
+    therapeuticArea: "Immunology & Inflammation",
+    company: "AstraZeneca",
+    companyTrackRecord: 'average',
+    nctId: "NCT04656444",
+    clinicalTrialsSearchTerm: "brazikumab",
+    scores: calculateProbabilityScores("Phase III", "Crohn's Disease", "Immunology"),
+    marketData: generateMarketProjections("Brazikumab", "Phase III", "Crohn's Disease", 'average'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-IL-23p19 monoclonal antibody",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Extended half-life allowing Q8W dosing",
+      discovery: "MedImmune/AstraZeneca",
+      development: "AstraZeneca",
+      additionalInfo: [
+        "High-affinity IL-23p19 binding",
+        "Convenient Q8W maintenance dosing",
+        "Strong Phase 2 efficacy signal"
+      ]
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2014-09",
-        outcome: "success" as const,
-        keyData: ["High-affinity IL-23p19 binding", "Extended half-life"],
-        score: 44,
-        rationale: "IL-23 pathway validated; differentiation through PK",
-        availableData: "IND submission"
-      },
-      {
-        phase: "Phase 1",
-        date: "2015-06",
-        outcome: "success" as const,
-        keyData: ["Q8W dosing feasible", "No safety signals"],
-        score: 52,
-        rationale: "PK supports convenient dosing regimen",
-        availableData: "Phase 1 PK/safety data"
-      },
-      {
-        phase: "Phase 2a",
-        date: "2018-10",
-        outcome: "success" as const,
-        keyData: ["49.2% clinical response vs 26.7% placebo", "Endoscopic improvement"],
-        score: 71,
-        rationale: "Efficacy comparable to approved IL-23 inhibitors",
-        availableData: "Phase 2a efficacy results"
-      },
-      {
-        phase: "Phase 3 (INTREPID)",
-        date: "2024-03",
-        outcome: "pending" as const,
-        keyData: ["Global Phase 3 initiated", "Induction and maintenance studies"],
-        score: 78,
-        rationale: "Large Phase 3 program underway",
-        availableData: "Study ongoing"
-      }
-    ],
     patents: [
-      {
-        patentNumber: "US9,683,045",
-        title: "Anti-IL-23 antibodies with enhanced stability",
-        expirationDate: "2035-09-14",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
+      { patentNumber: "US9,683,045", title: "Anti-IL-23 antibodies with enhanced stability", expirationDate: "2035", type: 'composition', status: 'active' },
     ],
-    competitiveLandscape: [
-      {
-        name: "Risankizumab",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "Anti-IL-23p19",
-        differentiator: "Market leader in CD"
-      },
-      {
-        name: "Ustekinumab",
-        sponsor: "Johnson & Johnson",
-        phase: "Approved",
-        mechanism: "Anti-IL-12/23",
-        differentiator: "Established efficacy"
-      },
-      {
-        name: "Mirikizumab",
-        sponsor: "Eli Lilly",
-        phase: "Phase 3",
-        mechanism: "Anti-IL-23p19",
-        differentiator: "Approved for UC"
-      }
+    competitiveLandscape: {
+      totalMarketSize: "$18B+ (IBD market)",
+      projectedGrowth: "10% CAGR",
+      keyPlayers: [
+        { name: "Risankizumab (Skyrizi)", company: "AbbVie", phase: "Approved", mechanism: "Anti-IL-23p19", keyDifferentiator: "Market leader in CD", efficacy: "~45% clinical remission", threat: 'high' },
+        { name: "Ustekinumab (Stelara)", company: "J&J", phase: "Approved", mechanism: "Anti-IL-12/23", keyDifferentiator: "Established efficacy", efficacy: "~35% clinical remission", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Extended dosing interval", "Strong Phase 2 data", "AstraZeneca backing"],
+      competitiveRisks: ["Late to market", "Competitive IL-23 space", "Biosimilar ustekinumab"],
+      marketPositioning: "Convenient dosing IL-23 inhibitor for Crohn's disease."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2a", date: "Q4 2018", outcome: 'success', keyData: ["49.2% clinical response vs 26.7% placebo"], scoreAtTime: 71, rationale: "Efficacy comparable to approved IL-23s", dataAvailableAtTime: ["Phase 2a efficacy results"] },
+      { phase: "Phase 3 INTREPID", date: "Q1 2024", outcome: 'pending', keyData: ["Global Phase 3 initiated", "Induction and maintenance"], scoreAtTime: 78, rationale: "Large Phase 3 program underway", dataAvailableAtTime: ["Study ongoing"] }
     ]
   },
+
+  // 6. Obexelimab - Bispecific for IgG4-RD
   {
-    id: "imm-006",
+    id: "OBEX-01",
     name: "Obexelimab",
-    phase: "Phase 2",
-    sponsor: "Zymeworks",
-    therapeuticArea: "Immunology & Inflammation",
+    trialName: "IgG4-RD Study",
+    phase: "Phase II",
     indication: "IgG4-Related Disease",
-    mechanism: "Bispecific CD19 x CD32B antibody",
-    status: "Active",
-    patentExpiry: "2039",
-    marketCap: "First targeted therapy for IgG4-RD",
-    primaryEndpoint: "IgG4-RD Responder Index at week 24",
-    npv: 1800,
-    confidence: 62,
-    trialData: {
-      phase1: { enrolled: 24, completed: 24, successRate: 100 },
-      phase2: { enrolled: 86, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2019-04",
-        outcome: "success" as const,
-        keyData: ["Novel bispecific format", "B-cell modulation without depletion"],
-        score: 38,
-        rationale: "Unique mechanism may offer differentiated safety",
-        availableData: "Preclinical package"
-      },
-      {
-        phase: "Phase 1",
-        date: "2020-01",
-        outcome: "success" as const,
-        keyData: ["B-cell silencing confirmed", "Acceptable tolerability"],
-        score: 48,
-        rationale: "POC for B-cell modulation in autoimmunity",
-        availableData: "Phase 1 data"
-      },
-      {
-        phase: "Phase 2 (GUARD)",
-        date: "2023-06",
-        outcome: "pending" as const,
-        keyData: ["Enrollment ongoing in IgG4-RD", "Novel patient population"],
-        score: 62,
-        rationale: "Unmet need in rare fibroinflammatory disease",
-        availableData: "Study in progress"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,800,851",
-        title: "Bispecific antibodies targeting CD19 and CD32B",
-        expirationDate: "2039-04-22",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Rituximab",
-        sponsor: "Roche",
-        phase: "Off-label",
-        mechanism: "Anti-CD20",
-        differentiator: "B-cell depletion, used off-label"
-      },
-      {
-        name: "Inebilizumab",
-        sponsor: "Horizon",
-        phase: "Phase 2",
-        mechanism: "Anti-CD19",
-        differentiator: "NMOSD-approved, exploring IgG4-RD"
-      }
-    ]
-  },
-  {
-    id: "imm-007",
-    name: "Remibrutinib",
-    phase: "Phase 3",
-    sponsor: "Novartis",
     therapeuticArea: "Immunology & Inflammation",
-    indication: "Chronic Spontaneous Urticaria",
-    mechanism: "Covalent BTK inhibitor",
-    status: "Active",
-    patentExpiry: "2037",
-    marketCap: "Oral BTK inhibitor for antihistamine-refractory CSU",
-    primaryEndpoint: "UAS7 change from baseline at week 12",
-    npv: 2600,
-    confidence: 85,
-    trialData: {
-      phase1: { enrolled: 56, completed: 56, successRate: 100 },
-      phase2: { enrolled: 311, completed: 298, successRate: 96 },
-      phase3: { enrolled: 800, completed: 0, successRate: 0 }
+    company: "Zymeworks/Paragon",
+    companyTrackRecord: 'slow',
+    nctId: "NCT04276545",
+    clinicalTrialsSearchTerm: "obexelimab",
+    scores: calculateProbabilityScores("Phase II", "Rare Disease", "Immunology"),
+    marketData: generateMarketProjections("Obexelimab", "Phase II", "Rare Disease", 'slow'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Bispecific CD19 x CD32B antibody",
+      administration: "Intravenous infusion",
+      keyAdvantage: "B-cell silencing without depletion",
+      discovery: "Zymeworks",
+      development: "Paragon Therapeutics",
+      additionalInfo: [
+        "Novel bispecific format",
+        "Modulates B-cells rather than depleting",
+        "First targeted therapy for IgG4-RD"
+      ]
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2017-08",
-        outcome: "success" as const,
-        keyData: ["Selective BTK inhibition", "Low systemic exposure design"],
-        score: 46,
-        rationale: "BTK validated in mast cell biology",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2018-04",
-        outcome: "success" as const,
-        keyData: [">95% BTK occupancy", "Favorable safety profile"],
-        score: 55,
-        rationale: "Strong target engagement supports CSU development",
-        availableData: "Phase 1 PK/PD data"
-      },
-      {
-        phase: "Phase 2b",
-        date: "2021-09",
-        outcome: "success" as const,
-        keyData: ["UAS7 reduction: -17.3 vs -7.6 placebo", "Rapid onset at week 2"],
-        score: 79,
-        rationale: "Compelling efficacy in H1-antihistamine refractory CSU",
-        availableData: "Phase 2b results"
-      },
-      {
-        phase: "Phase 3 (REMIX-1/2)",
-        date: "2024-01",
-        outcome: "pending" as const,
-        keyData: ["Two pivotal studies ongoing", "Primary endpoint Q1 2025"],
-        score: 85,
-        rationale: "Strong Phase 2 data supports positive Phase 3",
-        availableData: "Studies ongoing"
-      }
-    ],
     patents: [
-      {
-        patentNumber: "US10,160,761",
-        title: "BTK inhibitor compounds for treating allergic diseases",
-        expirationDate: "2037-08-15",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
+      { patentNumber: "US10,793,632", title: "Bispecific CD19/CD32B antibodies", expirationDate: "2039", type: 'composition', status: 'active' },
     ],
-    competitiveLandscape: [
-      {
-        name: "Omalizumab",
-        sponsor: "Novartis/Genentech",
-        phase: "Approved",
-        mechanism: "Anti-IgE",
-        differentiator: "Market leader, injectable"
-      },
-      {
-        name: "Ligelizumab",
-        sponsor: "Novartis",
-        phase: "Phase 3",
-        mechanism: "Anti-IgE",
-        differentiator: "Next-gen anti-IgE"
-      },
-      {
-        name: "Fenebrutinib",
-        sponsor: "Roche",
-        phase: "Phase 2",
-        mechanism: "BTK inhibitor",
-        differentiator: "Also in MS development"
-      }
+    competitiveLandscape: {
+      totalMarketSize: "$1B+ (IgG4-RD)",
+      projectedGrowth: "20% CAGR",
+      keyPlayers: [
+        { name: "Rituximab", company: "Roche", phase: "Off-label", mechanism: "Anti-CD20", keyDifferentiator: "B-cell depletion", efficacy: "Variable response", threat: 'medium' },
+        { name: "Inebilizumab", company: "Amgen/Viela", phase: "Phase III", mechanism: "Anti-CD19", keyDifferentiator: "B-cell depletion", efficacy: "Pending", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Non-depleting mechanism", "First-in-class bispecific", "Rare disease orphan potential"],
+      competitiveRisks: ["Early stage", "Small market", "Complex manufacturing"],
+      marketPositioning: "First targeted therapy specifically for IgG4-related disease."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 1", date: "Q1 2020", outcome: 'success', keyData: ["B-cell silencing confirmed", "Acceptable tolerability"], scoreAtTime: 48, rationale: "Proof of mechanism achieved", dataAvailableAtTime: ["Phase 1 PD data"] },
+      { phase: "Phase 2", date: "Q4 2023", outcome: 'pending', keyData: ["IgG4-RD study ongoing", "Early signals encouraging"], scoreAtTime: 55, rationale: "Awaiting Phase 2 readout", dataAvailableAtTime: ["Study ongoing"] }
     ]
   },
+
+  // 7. Nipocalimab - FcRn blocker for autoimmune
   {
-    id: "imm-008",
-    name: "Sonelokimab",
-    phase: "Phase 3",
-    sponsor: "MoonLake Immunotherapeutics",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Hidradenitis Suppurativa",
-    mechanism: "Nanobody targeting IL-17A/F",
-    status: "Active",
-    patentExpiry: "2038",
-    marketCap: "First nanobody for HS with dual IL-17 inhibition",
-    primaryEndpoint: "HiSCR75 at week 16",
-    npv: 2200,
-    confidence: 83,
-    trialData: {
-      phase1: { enrolled: 28, completed: 28, successRate: 100 },
-      phase2: { enrolled: 234, completed: 226, successRate: 96 },
-      phase3: { enrolled: 900, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2018-05",
-        outcome: "success" as const,
-        keyData: ["Nanobody format enables high tissue penetration", "Dual IL-17A/F blockade"],
-        score: 44,
-        rationale: "Novel format may improve efficacy in deep tissue HS",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2019-03",
-        outcome: "success" as const,
-        keyData: ["Subcutaneous administration validated", "Dose-proportional PK"],
-        score: 53,
-        rationale: "Convenient SC dosing for chronic HS",
-        availableData: "Phase 1 results"
-      },
-      {
-        phase: "Phase 2 (MIRA)",
-        date: "2022-06",
-        outcome: "success" as const,
-        keyData: ["64% HiSCR75 vs 24% placebo", "Rapid response at week 4"],
-        score: 79,
-        rationale: "Best-in-class efficacy signal in HS",
-        availableData: "Phase 2 data"
-      },
-      {
-        phase: "Phase 3 (VELA-1/2/3)",
-        date: "2024-04",
-        outcome: "pending" as const,
-        keyData: ["Three Phase 3 studies initiated", "Extensive HS program"],
-        score: 83,
-        rationale: "Robust Phase 2 efficacy supports pivotal trials",
-        availableData: "Studies ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,669,338",
-        title: "IL-17A/F targeting nanobodies",
-        expirationDate: "2038-05-10",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Adalimumab",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "Anti-TNF",
-        differentiator: "First approved for HS"
-      },
-      {
-        name: "Secukinumab",
-        sponsor: "Novartis",
-        phase: "Approved",
-        mechanism: "Anti-IL-17A",
-        differentiator: "Second approved for HS"
-      },
-      {
-        name: "Bimekizumab",
-        sponsor: "UCB",
-        phase: "Approved",
-        mechanism: "Dual IL-17A/F",
-        differentiator: "Approved 2024 for HS"
-      }
-    ]
-  },
-  {
-    id: "imm-009",
-    name: "Izokibep",
-    phase: "Phase 3",
-    sponsor: "Acelyrin",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Psoriatic Arthritis",
-    mechanism: "IL-17A inhibitor (engineered protein)",
-    status: "Active",
-    patentExpiry: "2039",
-    marketCap: "Novel IL-17A inhibitor with enhanced tissue penetration",
-    primaryEndpoint: "ACR50 at week 16",
-    npv: 2900,
-    confidence: 76,
-    trialData: {
-      phase1: { enrolled: 45, completed: 45, successRate: 100 },
-      phase2: { enrolled: 188, completed: 180, successRate: 95 },
-      phase3: { enrolled: 500, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2019-08",
-        outcome: "success" as const,
-        keyData: ["Affibody-albumin fusion format", "Extended half-life"],
-        score: 42,
-        rationale: "Novel format may enable less frequent dosing",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2020-04",
-        outcome: "success" as const,
-        keyData: ["Monthly dosing PK validated", "Low immunogenicity"],
-        score: 52,
-        rationale: "Favorable PK supports differentiation from mAbs",
-        availableData: "Phase 1 results"
-      },
-      {
-        phase: "Phase 2",
-        date: "2022-11",
-        outcome: "success" as const,
-        keyData: ["ACR50 52% vs 13% placebo", "Strong enthesitis resolution"],
-        score: 73,
-        rationale: "Robust efficacy across PsA domains",
-        availableData: "Phase 2 data"
-      },
-      {
-        phase: "Phase 3 (AFFIN-1/2)",
-        date: "2024-05",
-        outcome: "pending" as const,
-        keyData: ["Pivotal Phase 3 initiated", "PsA and AS programs"],
-        score: 76,
-        rationale: "Phase 2 data supports pivotal development",
-        availableData: "Studies ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,787,498",
-        title: "IL-17A binding affibody-albumin fusion proteins",
-        expirationDate: "2039-08-05",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Secukinumab",
-        sponsor: "Novartis",
-        phase: "Approved",
-        mechanism: "Anti-IL-17A mAb",
-        differentiator: "Market leader in PsA"
-      },
-      {
-        name: "Ixekizumab",
-        sponsor: "Eli Lilly",
-        phase: "Approved",
-        mechanism: "Anti-IL-17A mAb",
-        differentiator: "Strong skin clearance"
-      },
-      {
-        name: "Bimekizumab",
-        sponsor: "UCB",
-        phase: "Approved",
-        mechanism: "Dual IL-17A/F",
-        differentiator: "Dual mechanism"
-      }
-    ]
-  },
-  {
-    id: "imm-010",
+    id: "NIPO-01",
     name: "Nipocalimab",
-    phase: "Phase 3",
-    sponsor: "Johnson & Johnson",
+    trialName: "VIVACITY-MG3",
+    phase: "Phase III",
+    indication: "Myasthenia Gravis",
     therapeuticArea: "Immunology & Inflammation",
-    indication: "Generalized Myasthenia Gravis",
-    mechanism: "Anti-FcRn monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2037",
-    marketCap: "IgG-lowering therapy for autoantibody-mediated MG",
-    primaryEndpoint: "MG-ADL change from baseline",
-    npv: 3400,
-    confidence: 84,
-    trialData: {
-      phase1: { enrolled: 42, completed: 42, successRate: 100 },
-      phase2: { enrolled: 68, completed: 65, successRate: 95 },
-      phase3: { enrolled: 350, completed: 0, successRate: 0 }
+    company: "Johnson & Johnson",
+    companyTrackRecord: 'fast',
+    nctId: "NCT04951622",
+    clinicalTrialsSearchTerm: "nipocalimab",
+    scores: calculateProbabilityScores("Phase III", "Myasthenia Gravis", "Immunology"),
+    marketData: generateMarketProjections("Nipocalimab", "Phase III", "Myasthenia Gravis", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-FcRn monoclonal antibody",
+      administration: "Intravenous infusion",
+      keyAdvantage: "Rapid and sustained IgG reduction",
+      discovery: "Momenta (J&J acquisition)",
+      development: "Johnson & Johnson",
+      additionalInfo: [
+        "Complete IgG reduction achievable",
+        "Multiple autoimmune indications",
+        "HFND prevention program ongoing"
+      ]
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2017-02",
-        outcome: "success" as const,
-        keyData: ["High-affinity FcRn binding", "Rapid IgG reduction"],
-        score: 48,
-        rationale: "FcRn inhibition validated for IgG-mediated diseases",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2018-01",
-        outcome: "success" as const,
-        keyData: [">80% IgG reduction", "Predictable PK"],
-        score: 56,
-        rationale: "Rapid, deep IgG lowering achieved",
-        availableData: "Phase 1 PK/PD data"
-      },
-      {
-        phase: "Phase 2 (Vivacity-MG)",
-        date: "2021-08",
-        outcome: "success" as const,
-        keyData: ["4.3-point MG-ADL improvement vs placebo", "Rapid onset"],
-        score: 78,
-        rationale: "Clinically meaningful improvement in MG",
-        availableData: "Phase 2 efficacy results"
-      },
-      {
-        phase: "Phase 3 (VIVACITY-MG3)",
-        date: "2024-02",
-        outcome: "pending" as const,
-        keyData: ["Pivotal Phase 3 ongoing", "Both AChR+ and MuSK+ patients"],
-        score: 84,
-        rationale: "Broad MG population in Phase 3",
-        availableData: "Study ongoing"
-      }
-    ],
     patents: [
-      {
-        patentNumber: "US10,233,240",
-        title: "Anti-FcRn antibodies for treating autoimmune diseases",
-        expirationDate: "2037-02-18",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
+      { patentNumber: "US10,689,451", title: "Anti-FcRn antibodies", expirationDate: "2037", type: 'composition', status: 'active' },
     ],
-    competitiveLandscape: [
-      {
-        name: "Efgartigimod",
-        sponsor: "argenx",
-        phase: "Approved",
-        mechanism: "FcRn blocker",
-        differentiator: "First-to-market FcRn inhibitor"
-      },
-      {
-        name: "Rozanolixizumab",
-        sponsor: "UCB",
-        phase: "Approved",
-        mechanism: "Anti-FcRn",
-        differentiator: "SC administration"
-      },
-      {
-        name: "Batoclimab",
-        sponsor: "Harbour/Immunovant",
-        phase: "Phase 3",
-        mechanism: "Anti-FcRn",
-        differentiator: "SC, once weekly dosing"
-      }
-    ]
-  },
-  {
-    id: "imm-011",
-    name: "Dazodalibep",
-    phase: "Phase 3",
-    sponsor: "Horizon Therapeutics",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Sjögren's Syndrome",
-    mechanism: "CD40L pathway blocker (HSA-CD40L)",
-    status: "Active",
-    patentExpiry: "2038",
-    marketCap: "First-in-class for primary Sjögren's syndrome",
-    primaryEndpoint: "ESSDAI improvement at week 24",
-    npv: 2100,
-    confidence: 71,
-    trialData: {
-      phase1: { enrolled: 36, completed: 36, successRate: 100 },
-      phase2: { enrolled: 173, completed: 165, successRate: 92 },
-      phase3: { enrolled: 450, completed: 0, successRate: 0 }
+    competitiveLandscape: {
+      totalMarketSize: "$4B+ (MG and FcRn market)",
+      projectedGrowth: "25% CAGR",
+      keyPlayers: [
+        { name: "Efgartigimod (Vyvgart)", company: "argenx", phase: "Approved", mechanism: "FcRn blocker", keyDifferentiator: "First FcRn approval in MG", efficacy: "68% MG-ADL responders", threat: 'high' },
+        { name: "Rozanolixizumab", company: "UCB", phase: "Approved", mechanism: "FcRn blocker", keyDifferentiator: "SC administration", efficacy: "72% MG-ADL responders", threat: 'high' },
+      ],
+      competitiveAdvantages: ["J&J commercial strength", "Multiple indications", "HFND differentiation"],
+      competitiveRisks: ["Third to market in MG", "Competitive FcRn space", "IV administration"],
+      marketPositioning: "Broad FcRn inhibitor platform across autoimmune diseases."
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2018-03",
-        outcome: "success" as const,
-        keyData: ["Novel HSA-fusion format", "CD40L pathway modulation"],
-        score: 40,
-        rationale: "CD40L validated in autoimmunity; novel format avoids thromboembolic risk",
-        availableData: "Preclinical safety data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2019-01",
-        outcome: "success" as const,
-        keyData: ["No thromboembolic signals", "Extended half-life"],
-        score: 50,
-        rationale: "Overcomes historical CD40L safety concerns",
-        availableData: "Phase 1 safety data"
-      },
-      {
-        phase: "Phase 2",
-        date: "2022-03",
-        outcome: "success" as const,
-        keyData: ["ESSDAI improvement: -5.0 vs -0.7 placebo", "Salivary flow improvement"],
-        score: 68,
-        rationale: "First disease-modifying signal in Sjögren's",
-        availableData: "Phase 2 efficacy data"
-      },
-      {
-        phase: "Phase 3 (PHOENYCS-GO)",
-        date: "2024-01",
-        outcome: "pending" as const,
-        keyData: ["Global Phase 3 initiated", "Amgen acquired program"],
-        score: 71,
-        rationale: "Positive Phase 2 supports continued development",
-        availableData: "Study ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,544,221",
-        title: "CD40L antagonist HSA fusion proteins",
-        expirationDate: "2038-03-22",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Ianalumab",
-        sponsor: "Novartis",
-        phase: "Phase 3",
-        mechanism: "Anti-BAFF-R",
-        differentiator: "B-cell targeting approach"
-      },
-      {
-        name: "Telitacicept",
-        sponsor: "RemeGen",
-        phase: "Phase 3",
-        mechanism: "TACI-Fc (BLyS/APRIL)",
-        differentiator: "Dual cytokine targeting"
-      },
-      {
-        name: "Iscalimab",
-        sponsor: "Novartis",
-        phase: "Phase 2",
-        mechanism: "Anti-CD40",
-        differentiator: "CD40-targeted approach"
-      }
+    retrospectivePhases: [
+      { phase: "Phase 2 MG", date: "Q2 2021", outcome: 'success', keyData: ["Significant MG-ADL improvement", "Rapid onset"], scoreAtTime: 72, rationale: "Strong efficacy in competitive class", dataAvailableAtTime: ["Phase 2 MG data"] },
+      { phase: "Phase 3 VIVACITY", date: "Q4 2024", outcome: 'pending', keyData: ["Pivotal MG study ongoing", "Multiple indications in development"], scoreAtTime: 75, rationale: "Broad platform potential", dataAvailableAtTime: ["Study ongoing"] }
     ]
   },
+
+  // 8. Sonelokimab - Nanobody IL-17A/F
   {
-    id: "imm-012",
-    name: "Tulisokibart",
-    phase: "Phase 3",
-    sponsor: "Prometheus Biosciences",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Ulcerative Colitis",
-    mechanism: "Anti-TL1A monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2039",
-    marketCap: "Novel TL1A-targeted therapy for IBD",
-    primaryEndpoint: "Clinical remission at week 12",
-    npv: 4100,
-    confidence: 87,
-    trialData: {
-      phase1: { enrolled: 48, completed: 48, successRate: 100 },
-      phase2: { enrolled: 135, completed: 130, successRate: 96 },
-      phase3: { enrolled: 700, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2019-06",
-        outcome: "success" as const,
-        keyData: ["TL1A genetic validation in IBD", "High-affinity antibody"],
-        score: 48,
-        rationale: "Strong genetic rationale for TL1A in UC/CD",
-        availableData: "Genetic association data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2020-03",
-        outcome: "success" as const,
-        keyData: ["Dose-proportional PK", "No immunogenicity"],
-        score: 56,
-        rationale: "Favorable profile enables IBD development",
-        availableData: "Phase 1 data"
-      },
-      {
-        phase: "Phase 2 (ARTEMIS-UC)",
-        date: "2022-10",
-        outcome: "success" as const,
-        keyData: ["26.5% clinical remission vs 1.5% placebo", "Biomarker-selected population"],
-        score: 82,
-        rationale: "Unprecedented efficacy in biomarker-positive UC",
-        availableData: "Phase 2 results"
-      },
-      {
-        phase: "Phase 3 (ARTEMIS-1/2)",
-        date: "2024-03",
-        outcome: "pending" as const,
-        keyData: ["Merck acquired Prometheus", "Large Phase 3 program"],
-        score: 87,
-        rationale: "Strong Phase 2 data supports accelerated development",
-        availableData: "Studies ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,899,843",
-        title: "Anti-TL1A antibodies for inflammatory bowel disease",
-        expirationDate: "2039-06-15",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      },
-      {
-        patentNumber: "US11,149,086",
-        title: "Biomarker-guided TL1A therapy in IBD",
-        expirationDate: "2040-01-20",
-        type: "Method of Use" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "RVT-3101",
-        sponsor: "Roivant",
-        phase: "Phase 3",
-        mechanism: "Anti-TL1A",
-        differentiator: "Competing TL1A inhibitor"
-      },
-      {
-        name: "Vedolizumab",
-        sponsor: "Takeda",
-        phase: "Approved",
-        mechanism: "Anti-integrin",
-        differentiator: "Gut-selective, established safety"
-      },
-      {
-        name: "Upadacitinib",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "JAK1 inhibitor",
-        differentiator: "Oral, rapid onset"
-      }
-    ]
-  },
-  {
-    id: "imm-013",
-    name: "Povetacicept",
-    phase: "Phase 3",
-    sponsor: "Alpine Immune Sciences",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "IgA Nephropathy",
-    mechanism: "BAFF/APRIL dual inhibitor (TACI-Fc)",
-    status: "Active",
-    patentExpiry: "2038",
-    marketCap: "Dual cytokine blocker for IgAN",
-    primaryEndpoint: "Proteinuria reduction at week 36",
-    npv: 2800,
-    confidence: 79,
-    trialData: {
-      phase1: { enrolled: 56, completed: 56, successRate: 100 },
-      phase2: { enrolled: 82, completed: 78, successRate: 95 },
-      phase3: { enrolled: 450, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2019-02",
-        outcome: "success" as const,
-        keyData: ["TACI-Fc dual targeting of BAFF/APRIL", "IgA reduction mechanism"],
-        score: 45,
-        rationale: "BAFF/APRIL validated in IgA production",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2020-01",
-        outcome: "success" as const,
-        keyData: ["Robust Ig reduction", "Dose-dependent response"],
-        score: 54,
-        rationale: "Clear PD effect on pathogenic IgA",
-        availableData: "Phase 1 PK/PD data"
-      },
-      {
-        phase: "Phase 2 (IGAN Study)",
-        date: "2023-03",
-        outcome: "success" as const,
-        keyData: ["62% proteinuria reduction at week 36", "eGFR stabilization"],
-        score: 76,
-        rationale: "Best-in-class proteinuria reduction in IgAN",
-        availableData: "Phase 2 results"
-      },
-      {
-        phase: "Phase 3 (ENDEAVOR)",
-        date: "2024-04",
-        outcome: "pending" as const,
-        keyData: ["Pivotal Phase 3 initiated", "Global enrollment"],
-        score: 79,
-        rationale: "Strong Phase 2 supports pivotal development",
-        availableData: "Study ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,428,141",
-        title: "TACI-Fc fusion proteins with enhanced APRIL binding",
-        expirationDate: "2038-02-10",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Sparsentan",
-        sponsor: "Travere",
-        phase: "Approved",
-        mechanism: "ETAR/AT1R dual antagonist",
-        differentiator: "First approved for IgAN"
-      },
-      {
-        name: "Telitacicept",
-        sponsor: "RemeGen",
-        phase: "Phase 3",
-        mechanism: "TACI-Fc",
-        differentiator: "Similar mechanism, China focus"
-      },
-      {
-        name: "Atacicept",
-        sponsor: "Vera",
-        phase: "Phase 3",
-        mechanism: "TACI-Ig",
-        differentiator: "Different Fc fusion"
-      }
-    ]
-  },
-  {
-    id: "imm-014",
-    name: "Tofidence",
-    phase: "Phase 3",
-    sponsor: "Biogen",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Rheumatoid Arthritis",
-    mechanism: "Tocilizumab biosimilar (anti-IL-6R)",
-    status: "Active",
-    patentExpiry: "N/A (Biosimilar)",
-    marketCap: "High-quality tocilizumab biosimilar",
-    primaryEndpoint: "ACR20 at week 24",
-    npv: 1200,
-    confidence: 94,
-    trialData: {
-      phase1: { enrolled: 180, completed: 180, successRate: 100 },
-      phase3: { enrolled: 528, completed: 520, successRate: 98 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2019-04",
-        outcome: "success" as const,
-        keyData: ["Analytical similarity established", "Functional assay equivalence"],
-        score: 65,
-        rationale: "Strong analytical biosimilarity package",
-        availableData: "CMC data"
-      },
-      {
-        phase: "Phase 1 (PK Study)",
-        date: "2020-02",
-        outcome: "success" as const,
-        keyData: ["PK equivalence demonstrated", "90% CI within 80-125%"],
-        score: 78,
-        rationale: "PK biosimilarity confirmed",
-        availableData: "Phase 1 PK data"
-      },
-      {
-        phase: "Phase 3 (Confirmatory)",
-        date: "2022-08",
-        outcome: "success" as const,
-        keyData: ["ACR20 equivalent to reference", "Safety profile similar"],
-        score: 94,
-        rationale: "Clinical biosimilarity established",
-        availableData: "Full Phase 3 data"
-      }
-    ],
-    patents: [],
-    competitiveLandscape: [
-      {
-        name: "Actemra",
-        sponsor: "Roche",
-        phase: "Approved",
-        mechanism: "Anti-IL-6R",
-        differentiator: "Reference product"
-      },
-      {
-        name: "Tyenne",
-        sponsor: "Fresenius Kabi",
-        phase: "Approved",
-        mechanism: "Anti-IL-6R biosimilar",
-        differentiator: "First tocilizumab biosimilar"
-      }
-    ]
-  },
-  {
-    id: "imm-015",
-    name: "Duvakitug",
-    phase: "Phase 2",
-    sponsor: "Roche",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Inflammatory Bowel Disease",
-    mechanism: "Bispecific anti-PD-1 x TIM-3",
-    status: "Active",
-    patentExpiry: "2040",
-    marketCap: "Novel bispecific for refractory IBD",
-    primaryEndpoint: "Clinical remission at week 12",
-    npv: 1600,
-    confidence: 55,
-    trialData: {
-      phase1: { enrolled: 42, completed: 42, successRate: 100 },
-      phase2: { enrolled: 180, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2020-08",
-        outcome: "success" as const,
-        keyData: ["Bispecific format validated", "Novel T-cell modulation"],
-        score: 35,
-        rationale: "Exploratory mechanism in IBD, high-risk/high-reward",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2021-06",
-        outcome: "success" as const,
-        keyData: ["Acceptable safety in healthy volunteers", "Target engagement confirmed"],
-        score: 45,
-        rationale: "Safety enables IBD patient testing",
-        availableData: "Phase 1 data"
-      },
-      {
-        phase: "Phase 2",
-        date: "2023-10",
-        outcome: "pending" as const,
-        keyData: ["Dose-ranging study in UC/CD", "Novel mechanism exploration"],
-        score: 55,
-        rationale: "Early signal generation in treatment-refractory IBD",
-        availableData: "Study ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US11,292,853",
-        title: "Bispecific antibodies targeting PD-1 and TIM-3",
-        expirationDate: "2040-08-12",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Ustekinumab",
-        sponsor: "J&J",
-        phase: "Approved",
-        mechanism: "Anti-IL-12/23",
-        differentiator: "Established IBD therapy"
-      },
-      {
-        name: "Risankizumab",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "Anti-IL-23p19",
-        differentiator: "Strong CD efficacy"
-      }
-    ]
-  },
-  {
-    id: "imm-016",
-    name: "Ianalumab",
-    phase: "Phase 3",
-    sponsor: "Novartis",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Systemic Lupus Erythematosus",
-    mechanism: "Anti-BAFF-R monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2036",
-    marketCap: "BAFF-R targeted B-cell depletion for SLE",
-    primaryEndpoint: "SRI-4 at week 52",
-    npv: 3100,
-    confidence: 74,
-    trialData: {
-      phase1: { enrolled: 40, completed: 40, successRate: 100 },
-      phase2: { enrolled: 144, completed: 138, successRate: 96 },
-      phase3: { enrolled: 500, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2015-06",
-        outcome: "success" as const,
-        keyData: ["BAFF-R specific targeting", "B-cell depletion mechanism"],
-        score: 42,
-        rationale: "BAFF pathway validated in SLE; receptor targeting novel",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2016-04",
-        outcome: "success" as const,
-        keyData: ["Durable B-cell depletion", "Favorable safety"],
-        score: 52,
-        rationale: "Strong target engagement supports SLE development",
-        availableData: "Phase 1 data"
-      },
-      {
-        phase: "Phase 2",
-        date: "2020-11",
-        outcome: "success" as const,
-        keyData: ["64% SRI-4 vs 47% placebo", "Steroid-sparing effect"],
-        score: 70,
-        rationale: "Positive signal in moderate-severe SLE",
-        availableData: "Phase 2 efficacy data"
-      },
-      {
-        phase: "Phase 3",
-        date: "2024-02",
-        outcome: "pending" as const,
-        keyData: ["Global Phase 3 ongoing", "Multiple autoimmune indications"],
-        score: 74,
-        rationale: "Broad autoimmune program",
-        availableData: "Study ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US9,650,439",
-        title: "Anti-BAFF-R antibodies for treating autoimmune diseases",
-        expirationDate: "2036-06-28",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Belimumab",
-        sponsor: "GSK",
-        phase: "Approved",
-        mechanism: "Anti-BLyS/BAFF",
-        differentiator: "First approved B-cell targeting for SLE"
-      },
-      {
-        name: "Anifrolumab",
-        sponsor: "AstraZeneca",
-        phase: "Approved",
-        mechanism: "Anti-IFNAR1",
-        differentiator: "Type I IFN pathway"
-      },
-      {
-        name: "Obinutuzumab",
-        sponsor: "Roche",
-        phase: "Phase 3",
-        mechanism: "Anti-CD20",
-        differentiator: "Enhanced B-cell depletion"
-      }
-    ]
-  },
-  {
-    id: "imm-017",
-    name: "Litifilimab",
-    phase: "Phase 3",
-    sponsor: "Biogen",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Cutaneous Lupus Erythematosus",
-    mechanism: "Anti-BDCA2 monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2037",
-    marketCap: "First targeted therapy for cutaneous lupus",
-    primaryEndpoint: "CLASI-A 50% reduction at week 16",
-    npv: 1900,
-    confidence: 68,
-    trialData: {
-      phase1: { enrolled: 30, completed: 30, successRate: 100 },
-      phase2: { enrolled: 132, completed: 126, successRate: 95 },
-      phase3: { enrolled: 400, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2016-09",
-        outcome: "success" as const,
-        keyData: ["BDCA2 targets pDCs", "Type I IFN suppression"],
-        score: 40,
-        rationale: "Novel pDC-targeting approach for cutaneous lupus",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2017-06",
-        outcome: "success" as const,
-        keyData: ["pDC depletion confirmed", "IFN signature reduction"],
-        score: 50,
-        rationale: "Target engagement validates mechanism",
-        availableData: "Phase 1 PD data"
-      },
-      {
-        phase: "Phase 2 (LILAC)",
-        date: "2021-04",
-        outcome: "success" as const,
-        keyData: ["CLASI-A 50: 48% vs 25% placebo", "Skin improvement"],
-        score: 66,
-        rationale: "Meaningful efficacy in CLE",
-        availableData: "Phase 2 results"
-      },
-      {
-        phase: "Phase 3 (TOPAZ)",
-        date: "2024-01",
-        outcome: "pending" as const,
-        keyData: ["Pivotal Phase 3 ongoing", "CLE and DLE populations"],
-        score: 68,
-        rationale: "First targeted therapy in late-stage CLE development",
-        availableData: "Study ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,179,817",
-        title: "Anti-BDCA2 antibodies for lupus",
-        expirationDate: "2037-09-05",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Anifrolumab",
-        sponsor: "AstraZeneca",
-        phase: "Phase 3",
-        mechanism: "Anti-IFNAR1",
-        differentiator: "Approved for SLE, studying CLE"
-      },
-      {
-        name: "BIIB059",
-        sponsor: "Biogen",
-        phase: "Phase 3",
-        mechanism: "Anti-BDCA2",
-        differentiator: "Same molecule, different branding"
-      }
-    ]
-  },
-  {
-    id: "imm-018",
-    name: "Iberdomide",
-    phase: "Phase 3",
-    sponsor: "Bristol-Myers Squibb",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Systemic Lupus Erythematosus",
-    mechanism: "CELMoD (Cereblon E3 ligase modulator)",
-    status: "Active",
-    patentExpiry: "2038",
-    marketCap: "Oral immunomodulator for SLE",
-    primaryEndpoint: "SRI-4 at week 24",
-    npv: 2400,
-    confidence: 67,
-    trialData: {
-      phase1: { enrolled: 48, completed: 48, successRate: 100 },
-      phase2: { enrolled: 288, completed: 274, successRate: 95 },
-      phase3: { enrolled: 500, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2017-03",
-        outcome: "success" as const,
-        keyData: ["Novel CELMoD mechanism", "Dual Aiolos/Ikaros degradation"],
-        score: 44,
-        rationale: "Oral drug with novel mechanism for autoimmunity",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2018-01",
-        outcome: "success" as const,
-        keyData: ["B-cell reduction", "Manageable safety profile"],
-        score: 52,
-        rationale: "POC for transcription factor degradation",
-        availableData: "Phase 1 data"
-      },
-      {
-        phase: "Phase 2",
-        date: "2022-06",
-        outcome: "partial" as const,
-        keyData: ["Trend toward efficacy", "Dose-response seen"],
-        score: 62,
-        rationale: "Mixed results require dose optimization in Phase 3",
-        availableData: "Phase 2 data"
-      },
-      {
-        phase: "Phase 3",
-        date: "2024-03",
-        outcome: "pending" as const,
-        keyData: ["Optimized dose in Phase 3", "SLE population refined"],
-        score: 67,
-        rationale: "Revised development strategy in Phase 3",
-        availableData: "Study ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,351,575",
-        title: "CELMoD compounds for autoimmune diseases",
-        expirationDate: "2038-03-18",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Belimumab",
-        sponsor: "GSK",
-        phase: "Approved",
-        mechanism: "Anti-BLyS",
-        differentiator: "Injectable, established"
-      },
-      {
-        name: "Deucravacitinib",
-        sponsor: "BMS",
-        phase: "Phase 3",
-        mechanism: "TYK2 inhibitor",
-        differentiator: "Same sponsor, oral alternative"
-      }
-    ]
-  },
-  {
-    id: "imm-019",
-    name: "Felzartamab",
-    phase: "Phase 3",
-    sponsor: "MorphoSys/Human Immunology Biosciences",
-    therapeuticArea: "Immunology & Inflammation",
-    indication: "Antibody-Mediated Rejection (Kidney Transplant)",
-    mechanism: "Anti-CD38 monoclonal antibody",
-    status: "Active",
-    patentExpiry: "2036",
-    marketCap: "First CD38-targeting therapy for AMR",
-    primaryEndpoint: "Histological resolution at month 6",
-    npv: 1800,
-    confidence: 72,
-    trialData: {
-      phase1: { enrolled: 24, completed: 24, successRate: 100 },
-      phase2: { enrolled: 22, completed: 22, successRate: 100 },
-      phase3: { enrolled: 200, completed: 0, successRate: 0 }
-    },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2018-11",
-        outcome: "success" as const,
-        keyData: ["CD38 targets plasma cells/antibody production", "Novel indication"],
-        score: 42,
-        rationale: "CD38 validated in oncology, novel in transplant",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2019-08",
-        outcome: "success" as const,
-        keyData: ["Plasma cell reduction", "DSA reduction"],
-        score: 52,
-        rationale: "POC for reducing donor-specific antibodies",
-        availableData: "Phase 1 data"
-      },
-      {
-        phase: "Phase 2",
-        date: "2023-05",
-        outcome: "success" as const,
-        keyData: ["68% histological resolution vs 0% placebo", "DSA clearance"],
-        score: 72,
-        rationale: "Striking efficacy in AMR, first positive trial",
-        availableData: "Phase 2 results"
-      },
-      {
-        phase: "Phase 3",
-        date: "2024-06",
-        outcome: "pending" as const,
-        keyData: ["Pivotal Phase 3 initiated", "AMR + PLA indications"],
-        score: 72,
-        rationale: "Breakthrough efficacy supports rapid Phase 3",
-        availableData: "Study ongoing"
-      }
-    ],
-    patents: [
-      {
-        patentNumber: "US10,047,160",
-        title: "Anti-CD38 antibodies for transplant rejection",
-        expirationDate: "2036-11-22",
-        type: "Method of Use" as const,
-        status: "Active" as const
-      }
-    ],
-    competitiveLandscape: [
-      {
-        name: "Daratumumab",
-        sponsor: "J&J",
-        phase: "Off-label",
-        mechanism: "Anti-CD38",
-        differentiator: "MM-approved, exploring AMR"
-      },
-      {
-        name: "Imlifidase",
-        sponsor: "Hansa",
-        phase: "Approved (EU)",
-        mechanism: "IgG-degrading enzyme",
-        differentiator: "Desensitization focus"
-      }
-    ]
-  },
-  {
-    id: "imm-020",
-    name: "Zimlovisertib",
-    phase: "Phase 2",
-    sponsor: "Kymera Therapeutics",
-    therapeuticArea: "Immunology & Inflammation",
+    id: "SONE-01",
+    name: "Sonelokimab",
+    trialName: "MOCCASIN",
+    phase: "Phase III",
     indication: "Hidradenitis Suppurativa",
-    mechanism: "IRAK4 degrader (oral protein degradation)",
-    status: "Active",
-    patentExpiry: "2041",
-    marketCap: "First-in-class IRAK4 degrader for autoimmunity",
-    primaryEndpoint: "HiSCR at week 16",
-    npv: 2100,
-    confidence: 58,
-    trialData: {
-      phase1: { enrolled: 80, completed: 80, successRate: 100 },
-      phase2: { enrolled: 160, completed: 0, successRate: 0 }
+    therapeuticArea: "Immunology & Inflammation",
+    company: "MoonLake Immunotherapeutics",
+    companyTrackRecord: 'slow',
+    nctId: "NCT05322473",
+    clinicalTrialsSearchTerm: "sonelokimab",
+    scores: calculateProbabilityScores("Phase III", "Hidradenitis Suppurativa", "Immunology"),
+    marketData: generateMarketProjections("Sonelokimab", "Phase III", "Hidradenitis Suppurativa", 'slow'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Trivalent nanobody targeting IL-17A and IL-17F",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Superior tissue penetration with nanobody format",
+      discovery: "Ablynx (Sanofi)",
+      license: "MoonLake (spin-out)",
+      development: "MoonLake Immunotherapeutics",
     },
-    retrospectiveTimeline: [
-      {
-        phase: "IND Filing",
-        date: "2020-10",
-        outcome: "success" as const,
-        keyData: ["Oral IRAK4 degrader", "Potent protein knockdown"],
-        score: 38,
-        rationale: "Novel modality in inflammation; high-risk/high-reward",
-        availableData: "Preclinical data"
-      },
-      {
-        phase: "Phase 1",
-        date: "2021-09",
-        outcome: "success" as const,
-        keyData: [">90% IRAK4 degradation", "Cytokine suppression"],
-        score: 50,
-        rationale: "Strong PD effect validates degrader mechanism",
-        availableData: "Phase 1 PD data"
-      },
-      {
-        phase: "Phase 2 (HS Study)",
-        date: "2024-01",
-        outcome: "pending" as const,
-        keyData: ["Dose-ranging in HS", "First efficacy signal expected"],
-        score: 58,
-        rationale: "Testing novel degrader in inflammatory disease",
-        availableData: "Study ongoing"
-      }
-    ],
     patents: [
-      {
-        patentNumber: "US11,034,710",
-        title: "IRAK4 degrader compounds",
-        expirationDate: "2041-10-15",
-        type: "Composition of Matter" as const,
-        status: "Active" as const
-      }
+      { patentNumber: "US10,829,555", title: "Nanobodies targeting IL-17A/F", expirationDate: "2038", type: 'composition', status: 'active' },
     ],
-    competitiveLandscape: [
-      {
-        name: "Adalimumab",
-        sponsor: "AbbVie",
-        phase: "Approved",
-        mechanism: "Anti-TNF",
-        differentiator: "First approved HS therapy"
-      },
-      {
-        name: "Secukinumab",
-        sponsor: "Novartis",
-        phase: "Approved",
-        mechanism: "Anti-IL-17A",
-        differentiator: "Approved for HS"
-      },
-      {
-        name: "PF-06650833",
-        sponsor: "Pfizer",
-        phase: "Phase 2",
-        mechanism: "IRAK4 inhibitor",
-        differentiator: "Inhibitor vs degrader"
-      }
+    competitiveLandscape: {
+      totalMarketSize: "$3B+ (HS market)",
+      projectedGrowth: "15% CAGR",
+      keyPlayers: [
+        { name: "Adalimumab (Humira)", company: "AbbVie", phase: "Approved", mechanism: "Anti-TNF", keyDifferentiator: "First HS approval", efficacy: "~42% HiSCR", threat: 'medium' },
+        { name: "Secukinumab (Cosentyx)", company: "Novartis", phase: "Approved", mechanism: "Anti-IL-17A", keyDifferentiator: "IL-17 validation in HS", efficacy: "~45% HiSCR", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Nanobody tissue penetration", "Dual IL-17A/F", "Strong Phase 2 data"],
+      competitiveRisks: ["Phase 3 execution", "Competitive market", "Small company resources"],
+      marketPositioning: "Best-in-class IL-17 nanobody for hidradenitis suppurativa."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2b", date: "Q4 2022", outcome: 'success', keyData: ["78% HiSCR at week 16", "Dose-dependent response"], scoreAtTime: 75, rationale: "Exceptional efficacy vs approved therapies", dataAvailableAtTime: ["Phase 2b topline"] },
+      { phase: "Phase 3 MOCCASIN", date: "Q1 2024", outcome: 'pending', keyData: ["Pivotal program initiated", "Multiple studies ongoing"], scoreAtTime: 78, rationale: "Strong Phase 2 supports advancement", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 9. Etrasimod - S1P modulator for UC
+  {
+    id: "ETRA-01",
+    name: "Etrasimod (Velsipity)",
+    trialName: "ELEVATE",
+    phase: "Approved",
+    indication: "Ulcerative Colitis",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Pfizer (via Arena)",
+    companyTrackRecord: 'fast',
+    nctId: "NCT03945188",
+    clinicalTrialsSearchTerm: "etrasimod",
+    scores: calculateProbabilityScores("Approved", "Ulcerative Colitis", "Immunology"),
+    marketData: generateMarketProjections("Etrasimod", "Approved", "Ulcerative Colitis", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "S1P receptor modulator (S1P1,4,5)",
+      administration: "Once-daily oral tablet",
+      keyAdvantage: "No first-dose monitoring required",
+      discovery: "Arena Pharmaceuticals",
+      license: "Pfizer acquisition ($6.7B, 2022)",
+      development: "Pfizer",
+    },
+    patents: [
+      { patentNumber: "US10,231,968", title: "S1P receptor modulators", expirationDate: "2034", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$18B+ (IBD market)",
+      projectedGrowth: "10% CAGR",
+      keyPlayers: [
+        { name: "Ozanimod (Zeposia)", company: "BMS", phase: "Approved", mechanism: "S1P modulator", keyDifferentiator: "First S1P in UC", efficacy: "~18% clinical remission", threat: 'high' },
+        { name: "Tofacitinib (Xeljanz)", company: "Pfizer", phase: "Approved", mechanism: "JAK inhibitor", keyDifferentiator: "Oral JAK", efficacy: "~18% clinical remission", threat: 'medium' },
+      ],
+      competitiveAdvantages: ["No first-dose monitoring", "Once-daily oral", "Clean safety profile"],
+      competitiveRisks: ["S1P class competition", "Biologic competition", "Label restrictions"],
+      marketPositioning: "Convenient once-daily oral S1P modulator for UC."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2", date: "Q2 2019", outcome: 'success', keyData: ["Clinical remission signal", "Dose-response established"], scoreAtTime: 68, rationale: "Proof of concept in UC", dataAvailableAtTime: ["Phase 2 data"] },
+      { phase: "Phase 3 ELEVATE", date: "Q1 2023", outcome: 'success', keyData: ["25% clinical remission vs 15% placebo", "Sustained efficacy"], scoreAtTime: 88, rationale: "Met all primary endpoints", dataAvailableAtTime: ["ELEVATE UC 52/12 results"] },
+      { phase: "FDA Approval", date: "Oct 2023", outcome: 'success', keyData: ["Approved for UC", "No titration required"], scoreAtTime: 95, rationale: "Differentiated convenience", dataAvailableAtTime: ["Commercial launch"] }
+    ]
+  },
+
+  // 10. Dapirolizumab pegol - Anti-CD40L for SLE
+  {
+    id: "DAPI-01",
+    name: "Dapirolizumab pegol",
+    trialName: "PHOENYCS",
+    phase: "Phase III",
+    indication: "Systemic Lupus Erythematosus",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "UCB/Biogen",
+    companyTrackRecord: 'average',
+    nctId: "NCT04294667",
+    clinicalTrialsSearchTerm: "dapirolizumab",
+    scores: calculateProbabilityScores("Phase III", "Lupus", "Immunology"),
+    marketData: generateMarketProjections("Dapirolizumab", "Phase III", "Lupus", 'average'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "PEGylated anti-CD40L Fab fragment",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "CD40L pathway without thromboembolic risk",
+      discovery: "UCB/Biogen",
+      development: "UCB/Biogen collaboration",
+      additionalInfo: [
+        "Modified to avoid platelet binding",
+        "Addresses historic CD40L safety issues",
+        "Novel pathway in SLE"
+      ]
+    },
+    patents: [
+      { patentNumber: "US9,550,828", title: "Anti-CD40L Fab fragments", expirationDate: "2034", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$5B+ (SLE market)",
+      projectedGrowth: "12% CAGR",
+      keyPlayers: [
+        { name: "Anifrolumab (Saphnelo)", company: "AstraZeneca", phase: "Approved", mechanism: "Anti-IFNAR1", keyDifferentiator: "Type I IFN pathway", efficacy: "~48% BICLA", threat: 'high' },
+        { name: "Belimumab (Benlysta)", company: "GSK", phase: "Approved", mechanism: "Anti-BLyS", keyDifferentiator: "First SLE biologic", efficacy: "~43% SRI-4", threat: 'medium' },
+      ],
+      competitiveAdvantages: ["Novel CD40L pathway", "Modified safety profile", "Strong Phase 2 data"],
+      competitiveRisks: ["Historic CD40L safety concerns", "Competitive SLE market", "Complex mechanism"],
+      marketPositioning: "First CD40L pathway therapy with optimized safety for SLE."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2b", date: "Q4 2020", outcome: 'success', keyData: ["45% BICLA vs 26% placebo at week 24", "Well tolerated"], scoreAtTime: 72, rationale: "Strong efficacy with clean safety", dataAvailableAtTime: ["Phase 2b results"] },
+      { phase: "Phase 3 PHOENYCS", date: "Q2 2024", outcome: 'pending', keyData: ["Pivotal studies ongoing", "Multiple endpoints"], scoreAtTime: 74, rationale: "Phase 3 in progress", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 11. Batoclimab - FcRn for autoimmune
+  {
+    id: "BATO-01",
+    name: "Batoclimab",
+    trialName: "MG Study",
+    phase: "Phase III",
+    indication: "Myasthenia Gravis",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Immunovant/Harbour BioMed",
+    companyTrackRecord: 'slow',
+    nctId: "NCT05039190",
+    clinicalTrialsSearchTerm: "batoclimab",
+    scores: calculateProbabilityScores("Phase III", "Myasthenia Gravis", "Immunology"),
+    marketData: generateMarketProjections("Batoclimab", "Phase III", "Myasthenia Gravis", 'slow'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-FcRn monoclonal antibody",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "SC administration in FcRn class",
+      discovery: "Harbour BioMed",
+      license: "Immunovant (ex-Greater China)",
+      development: "Immunovant",
+    },
+    patents: [
+      { patentNumber: "US10,590,189", title: "Anti-FcRn antibodies for autoimmune disease", expirationDate: "2038", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$4B+ (MG and FcRn market)",
+      projectedGrowth: "25% CAGR",
+      keyPlayers: [
+        { name: "Efgartigimod (Vyvgart)", company: "argenx", phase: "Approved", mechanism: "FcRn blocker", keyDifferentiator: "First FcRn approval", efficacy: "68% responders", threat: 'high' },
+        { name: "Rozanolixizumab", company: "UCB", phase: "Approved", mechanism: "FcRn blocker", keyDifferentiator: "SC approved", efficacy: "72% responders", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Weekly SC dosing", "Multiple indications", "Strong China partnership"],
+      competitiveRisks: ["Late to FcRn market", "Cholesterol signal", "Resource constraints"],
+      marketPositioning: "Convenient weekly SC FcRn inhibitor."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2 ASCEND-MG", date: "Q2 2022", outcome: 'success', keyData: ["MG-ADL improvement", "SC administration validated"], scoreAtTime: 68, rationale: "Efficacy in competitive FcRn class", dataAvailableAtTime: ["Phase 2 MG results"] },
+      { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["Pivotal MG study ongoing", "Thyroid eye disease also in Phase 3"], scoreAtTime: 70, rationale: "Multiple pivotal studies active", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 12. Rilzabrutinib - BTK inhibitor for autoimmune
+  {
+    id: "RILZ-01",
+    name: "Rilzabrutinib",
+    trialName: "LUNA",
+    phase: "Phase III",
+    indication: "Immune Thrombocytopenia",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Sanofi",
+    companyTrackRecord: 'average',
+    nctId: "NCT04562766",
+    clinicalTrialsSearchTerm: "rilzabrutinib",
+    scores: calculateProbabilityScores("Phase III", "ITP", "Immunology"),
+    marketData: generateMarketProjections("Rilzabrutinib", "Phase III", "ITP", 'average'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Reversible covalent BTK inhibitor",
+      administration: "Twice-daily oral tablet",
+      keyAdvantage: "Reversible binding may offer improved safety",
+      discovery: "Principia Biopharma (Sanofi)",
+      development: "Sanofi",
+      additionalInfo: [
+        "Reversible covalent mechanism",
+        "Multiple autoimmune indications",
+        "Differentiated from irreversible BTK inhibitors"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,561,658", title: "BTK inhibitor compounds", expirationDate: "2037", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$3B+ (ITP and autoimmune)",
+      projectedGrowth: "10% CAGR",
+      keyPlayers: [
+        { name: "Romiplostim (Nplate)", company: "Amgen", phase: "Approved", mechanism: "TPO agonist", keyDifferentiator: "Standard of care", efficacy: "~80% platelet response", threat: 'high' },
+        { name: "Eltrombopag (Promacta)", company: "Novartis", phase: "Approved", mechanism: "TPO agonist", keyDifferentiator: "Oral TPO agonist", efficacy: "~70% response", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Novel mechanism", "Reversible binding", "Multiple indications"],
+      competitiveRisks: ["TPO agonist competition", "Twice-daily dosing", "Efficacy vs standard of care"],
+      marketPositioning: "First BTK inhibitor for immune thrombocytopenia."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2", date: "Q3 2020", outcome: 'success', keyData: ["Platelet response in ITP", "Acceptable safety"], scoreAtTime: 65, rationale: "Proof of concept achieved", dataAvailableAtTime: ["Phase 2 ITP data"] },
+      { phase: "Phase 3 LUNA", date: "Q4 2024", outcome: 'pending', keyData: ["Pivotal ITP study ongoing", "Pemphigus also in Phase 3"], scoreAtTime: 68, rationale: "Multiple pivotal studies active", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 13. Telitacicept - TACI-Fc fusion for SLE
+  {
+    id: "TELI-01",
+    name: "Telitacicept",
+    trialName: "SLE Studies",
+    phase: "Phase III",
+    indication: "Systemic Lupus Erythematosus",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "RemeGen",
+    companyTrackRecord: 'slow',
+    nctId: "NCT04082416",
+    clinicalTrialsSearchTerm: "telitacicept",
+    scores: calculateProbabilityScores("Phase III", "Lupus", "Immunology"),
+    marketData: generateMarketProjections("Telitacicept", "Phase III", "Lupus", 'slow'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "TACI-Fc fusion protein",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Dual BLyS and APRIL blockade",
+      discovery: "RemeGen",
+      development: "RemeGen",
+      additionalInfo: [
+        "Approved in China for SLE",
+        "Dual cytokine targeting",
+        "US Phase 3 ongoing"
+      ]
+    },
+    patents: [
+      { patentNumber: "US9,822,178", title: "TACI-Fc fusion proteins", expirationDate: "2034", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$5B+ (SLE market)",
+      projectedGrowth: "12% CAGR",
+      keyPlayers: [
+        { name: "Belimumab (Benlysta)", company: "GSK", phase: "Approved", mechanism: "Anti-BLyS", keyDifferentiator: "First SLE biologic", efficacy: "~43% SRI-4", threat: 'high' },
+        { name: "Anifrolumab (Saphnelo)", company: "AstraZeneca", phase: "Approved", mechanism: "Anti-IFNAR1", keyDifferentiator: "Type I IFN pathway", efficacy: "~48% BICLA", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Dual BLyS/APRIL blockade", "China approval", "Strong efficacy signal"],
+      competitiveRisks: ["Regulatory pathway in US", "China-based company", "Competitive market"],
+      marketPositioning: "Dual BLyS and APRIL inhibitor for lupus."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2", date: "Q4 2019", outcome: 'success', keyData: ["79.2% SRI-4 vs 32% placebo", "Exceptional response rate"], scoreAtTime: 78, rationale: "Strong efficacy signal", dataAvailableAtTime: ["Phase 2 China data"] },
+      { phase: "China Approval", date: "Mar 2021", outcome: 'success', keyData: ["First SLE approval in China", "Commercial launch"], scoreAtTime: 85, rationale: "Regulatory success in China", dataAvailableAtTime: ["China launch"] },
+      { phase: "US Phase 3", date: "Q2 2024", outcome: 'pending', keyData: ["US pivotal studies ongoing", "Global expansion"], scoreAtTime: 78, rationale: "US regulatory path in progress", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 14. Izokibep - IL-17A nanobody for psoriasis
+  {
+    id: "IZOK-01",
+    name: "Izokibep",
+    trialName: "INTEGRATE",
+    phase: "Phase III",
+    indication: "Psoriatic Arthritis",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Acelyrin",
+    companyTrackRecord: 'slow',
+    nctId: "NCT05411081",
+    clinicalTrialsSearchTerm: "izokibep",
+    scores: calculateProbabilityScores("Phase III", "Psoriatic Arthritis", "Immunology"),
+    marketData: generateMarketProjections("Izokibep", "Phase III", "Psoriatic Arthritis", 'slow'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Small protein IL-17A inhibitor",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Small size enables superior tissue penetration",
+      discovery: "Affibody (licensed)",
+      development: "Acelyrin",
+      additionalInfo: [
+        "~6 kDa vs ~150 kDa monoclonal antibodies",
+        "Enhanced tissue penetration",
+        "High IL-17A binding affinity"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,844,104", title: "IL-17A binding polypeptides", expirationDate: "2039", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$12B+ (psoriasis and PsA)",
+      projectedGrowth: "8% CAGR",
+      keyPlayers: [
+        { name: "Secukinumab (Cosentyx)", company: "Novartis", phase: "Approved", mechanism: "Anti-IL-17A", keyDifferentiator: "Market leader", efficacy: "~50% ACR50", threat: 'high' },
+        { name: "Ixekizumab (Taltz)", company: "Eli Lilly", phase: "Approved", mechanism: "Anti-IL-17A", keyDifferentiator: "Strong skin data", efficacy: "~54% ACR50", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Small molecule-like PK", "Tissue penetration", "Convenient dosing"],
+      competitiveRisks: ["Competitive IL-17 market", "Late to market", "Small company"],
+      marketPositioning: "Next-generation IL-17A inhibitor with unique small protein format."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2b", date: "Q4 2022", outcome: 'success', keyData: ["70% PASI90 in psoriasis", "Dose-response established"], scoreAtTime: 74, rationale: "Strong skin clearance", dataAvailableAtTime: ["Phase 2b psoriasis data"] },
+      { phase: "Phase 3 INTEGRATE", date: "Q1 2024", outcome: 'pending', keyData: ["PsA pivotal program initiated", "Psoriasis Phase 3 also ongoing"], scoreAtTime: 75, rationale: "Multiple pivotal studies active", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 15. Elsubrutinib - BTK/JAK1 dual inhibitor
+  {
+    id: "ELSU-01",
+    name: "Elsubrutinib + Upadacitinib",
+    trialName: "ABBEY",
+    phase: "Phase III",
+    indication: "Systemic Lupus Erythematosus",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "AbbVie",
+    companyTrackRecord: 'fast',
+    nctId: "NCT04963985",
+    clinicalTrialsSearchTerm: "elsubrutinib lupus",
+    scores: calculateProbabilityScores("Phase III", "Lupus", "Immunology"),
+    marketData: generateMarketProjections("Elsubrutinib", "Phase III", "Lupus", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "BTK inhibitor combination with JAK1 inhibitor",
+      administration: "Oral combination therapy",
+      keyAdvantage: "Dual pathway inhibition for enhanced efficacy",
+      discovery: "AbbVie",
+      development: "AbbVie",
+      additionalInfo: [
+        "Novel combination approach",
+        "Addresses multiple immune pathways",
+        "Oral convenience"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,689,401", title: "BTK inhibitor compounds", expirationDate: "2038", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$5B+ (SLE market)",
+      projectedGrowth: "12% CAGR",
+      keyPlayers: [
+        { name: "Anifrolumab (Saphnelo)", company: "AstraZeneca", phase: "Approved", mechanism: "Anti-IFNAR1", keyDifferentiator: "Type I IFN pathway", efficacy: "~48% BICLA", threat: 'high' },
+        { name: "Deucravacitinib", company: "BMS", phase: "Phase III", mechanism: "TYK2 inhibitor", keyDifferentiator: "Oral TYK2", efficacy: "~58% SRI-4 (Ph2)", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Dual mechanism", "Oral administration", "AbbVie pipeline strength"],
+      competitiveRisks: ["Combination complexity", "Safety profile", "Competitive market"],
+      marketPositioning: "First dual BTK/JAK1 inhibitor combination for lupus."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2 ABBEY", date: "Q2 2023", outcome: 'success', keyData: ["Combination showed enhanced efficacy", "Acceptable safety profile"], scoreAtTime: 70, rationale: "Proof of concept for dual inhibition", dataAvailableAtTime: ["Phase 2 combination data"] },
+      { phase: "Phase 3", date: "Q4 2024", outcome: 'pending', keyData: ["Pivotal combination study ongoing"], scoreAtTime: 72, rationale: "Phase 3 initiation", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 16. Litifilimab - Anti-BDCA2 for cutaneous lupus
+  {
+    id: "LITI-01",
+    name: "Litifilimab",
+    trialName: "LILAC",
+    phase: "Phase III",
+    indication: "Cutaneous Lupus Erythematosus",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Biogen",
+    companyTrackRecord: 'average',
+    nctId: "NCT04865887",
+    clinicalTrialsSearchTerm: "litifilimab",
+    scores: calculateProbabilityScores("Phase III", "Cutaneous Lupus", "Immunology"),
+    marketData: generateMarketProjections("Litifilimab", "Phase III", "Cutaneous Lupus", 'average'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-BDCA2 (CD303) monoclonal antibody",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Targets plasmacytoid dendritic cells upstream of IFN",
+      discovery: "Biogen",
+      development: "Biogen",
+      additionalInfo: [
+        "Novel pDC targeting approach",
+        "Upstream of type I interferon",
+        "Addresses skin manifestations"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,501,541", title: "Anti-BDCA2 antibodies", expirationDate: "2037", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$2B+ (cutaneous lupus)",
+      projectedGrowth: "10% CAGR",
+      keyPlayers: [
+        { name: "Hydroxychloroquine", company: "Generic", phase: "Approved", mechanism: "TLR inhibition", keyDifferentiator: "Standard of care", efficacy: "Variable", threat: 'low' },
+        { name: "Anifrolumab", company: "AstraZeneca", phase: "Post-hoc CLE", mechanism: "Anti-IFNAR1", keyDifferentiator: "Type I IFN", efficacy: "Skin benefit shown", threat: 'medium' },
+      ],
+      competitiveAdvantages: ["Novel pDC target", "Upstream mechanism", "Skin-focused indication"],
+      competitiveRisks: ["Phase 3 execution", "CLE heterogeneity", "Market size"],
+      marketPositioning: "First targeted therapy for cutaneous lupus erythematosus."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2 LILAC", date: "Q4 2021", outcome: 'success', keyData: ["CLASI-A improvement", "pDC depletion confirmed"], scoreAtTime: 68, rationale: "Proof of concept in CLE", dataAvailableAtTime: ["Phase 2 LILAC data"] },
+      { phase: "Phase 3 TOPAZ", date: "Q1 2024", outcome: 'pending', keyData: ["Pivotal CLE study ongoing", "DLE and SCLE included"], scoreAtTime: 70, rationale: "Phase 3 advancement", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 17. Remibrutinib - BTK inhibitor for CSU
+  {
+    id: "REMI-01",
+    name: "Remibrutinib",
+    trialName: "REMIX",
+    phase: "Phase III",
+    indication: "Chronic Spontaneous Urticaria",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Novartis",
+    companyTrackRecord: 'fast',
+    nctId: "NCT05048342",
+    clinicalTrialsSearchTerm: "remibrutinib urticaria",
+    scores: calculateProbabilityScores("Phase III", "Urticaria", "Immunology"),
+    marketData: generateMarketProjections("Remibrutinib", "Phase III", "Urticaria", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Covalent BTK inhibitor",
+      administration: "Twice-daily oral tablet",
+      keyAdvantage: "Oral option for anti-IgE refractory patients",
+      discovery: "Novartis",
+      development: "Novartis",
+      additionalInfo: [
+        "Targets mast cell activation",
+        "Alternative to omalizumab",
+        "Oral convenience"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,738,061", title: "BTK inhibitors for mast cell diseases", expirationDate: "2038", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$4B+ (CSU market)",
+      projectedGrowth: "12% CAGR",
+      keyPlayers: [
+        { name: "Omalizumab (Xolair)", company: "Novartis/Roche", phase: "Approved", mechanism: "Anti-IgE", keyDifferentiator: "Standard of care", efficacy: "~80% response", threat: 'high' },
+        { name: "Ligelizumab", company: "Novartis", phase: "Phase III", mechanism: "Anti-IgE", keyDifferentiator: "Next-gen anti-IgE", efficacy: "Mixed results", threat: 'medium' },
+      ],
+      competitiveAdvantages: ["Oral administration", "Novel mechanism", "Refractory patient potential"],
+      competitiveRisks: ["BTK safety class", "Twice-daily dosing", "Omalizumab established"],
+      marketPositioning: "First oral BTK inhibitor for chronic spontaneous urticaria."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2b", date: "Q2 2022", outcome: 'success', keyData: ["UAS7 reduction", "Dose-response demonstrated"], scoreAtTime: 72, rationale: "Strong efficacy in CSU", dataAvailableAtTime: ["Phase 2b CSU data"] },
+      { phase: "Phase 3 REMIX", date: "Q4 2024", outcome: 'pending', keyData: ["Pivotal CSU program ongoing", "Sjogren's also in development"], scoreAtTime: 75, rationale: "Multiple indications advancing", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 18. Imsidolimab - Anti-IL-36R for GPP
+  {
+    id: "IMSI-01",
+    name: "Imsidolimab",
+    trialName: "GEMINI",
+    phase: "Phase III",
+    indication: "Generalized Pustular Psoriasis",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "AnaptysBio",
+    companyTrackRecord: 'slow',
+    nctId: "NCT05352893",
+    clinicalTrialsSearchTerm: "imsidolimab",
+    scores: calculateProbabilityScores("Phase III", "Psoriasis", "Immunology"),
+    marketData: generateMarketProjections("Imsidolimab", "Phase III", "Psoriasis", 'slow'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-IL-36 receptor monoclonal antibody",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "SC administration vs IV spesolimab",
+      discovery: "AnaptysBio",
+      development: "AnaptysBio",
+      additionalInfo: [
+        "Second IL-36R inhibitor in development",
+        "SC administration convenience",
+        "GPP prevention focus"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,759,860", title: "Anti-IL-36R antibodies", expirationDate: "2038", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$2B+ (pustular psoriasis)",
+      projectedGrowth: "15% CAGR",
+      keyPlayers: [
+        { name: "Spesolimab (Spevigo)", company: "Boehringer", phase: "Approved", mechanism: "Anti-IL-36R", keyDifferentiator: "First-in-class approval", efficacy: "High response rate", threat: 'high' },
+      ],
+      competitiveAdvantages: ["SC administration", "Prevention indication", "Chronic dosing"],
+      competitiveRisks: ["Second to market", "Spesolimab established", "Small market"],
+      marketPositioning: "Convenient SC IL-36R inhibitor for GPP prevention."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2 GALLOP", date: "Q3 2022", outcome: 'partial', keyData: ["Did not meet primary endpoint in PPP", "GPP subset encouraging"], scoreAtTime: 55, rationale: "PPP failure but GPP signal", dataAvailableAtTime: ["GALLOP results"] },
+      { phase: "Phase 3 GEMINI", date: "Q1 2024", outcome: 'pending', keyData: ["Focused on GPP prevention", "Learning from GALLOP"], scoreAtTime: 60, rationale: "Refined development strategy", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 19. Bermekimab - Anti-IL-1α for HS
+  {
+    id: "BERM-01",
+    name: "Bermekimab",
+    trialName: "PHOENIX",
+    phase: "Phase III",
+    indication: "Hidradenitis Suppurativa",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "Janssen (from XBiotech)",
+    companyTrackRecord: 'fast',
+    nctId: "NCT04988048",
+    clinicalTrialsSearchTerm: "bermekimab",
+    scores: calculateProbabilityScores("Phase III", "Hidradenitis Suppurativa", "Immunology"),
+    marketData: generateMarketProjections("Bermekimab", "Phase III", "Hidradenitis Suppurativa", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-IL-1α monoclonal antibody",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Novel IL-1α target in HS",
+      discovery: "XBiotech",
+      license: "Janssen ($750M acquisition, 2020)",
+      development: "Janssen",
+    },
+    patents: [
+      { patentNumber: "US9,512,216", title: "Anti-IL-1α antibodies", expirationDate: "2033", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$3B+ (HS market)",
+      projectedGrowth: "15% CAGR",
+      keyPlayers: [
+        { name: "Adalimumab (Humira)", company: "AbbVie", phase: "Approved", mechanism: "Anti-TNF", keyDifferentiator: "First HS approval", efficacy: "~42% HiSCR", threat: 'medium' },
+        { name: "Secukinumab (Cosentyx)", company: "Novartis", phase: "Approved", mechanism: "Anti-IL-17A", keyDifferentiator: "Second HS approval", efficacy: "~45% HiSCR", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Novel IL-1α target", "Janssen backing", "Differentiated mechanism"],
+      competitiveRisks: ["Phase 2 mixed data", "Competitive HS market", "Late-stage competition"],
+      marketPositioning: "First IL-1α inhibitor for hidradenitis suppurativa."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2", date: "Q4 2019", outcome: 'success', keyData: ["63% HiSCR at week 12", "Rapid pain reduction"], scoreAtTime: 70, rationale: "Strong efficacy signal", dataAvailableAtTime: ["Phase 2 HS data"] },
+      { phase: "Phase 3 PHOENIX", date: "Q1 2024", outcome: 'pending', keyData: ["Pivotal HS program ongoing", "Atopic dermatitis also studied"], scoreAtTime: 72, rationale: "Phase 3 advancement", dataAvailableAtTime: ["Study ongoing"] }
+    ]
+  },
+
+  // 20. Tozorakimab - Anti-IL-33 for COPD
+  {
+    id: "TOZO-01",
+    name: "Tozorakimab",
+    trialName: "TITANIA",
+    phase: "Phase III",
+    indication: "COPD",
+    therapeuticArea: "Immunology & Inflammation",
+    company: "AstraZeneca",
+    companyTrackRecord: 'fast',
+    nctId: "NCT05166889",
+    clinicalTrialsSearchTerm: "tozorakimab",
+    scores: calculateProbabilityScores("Phase III", "COPD", "Immunology"),
+    marketData: generateMarketProjections("Tozorakimab", "Phase III", "COPD", 'fast'),
+    overallScore: 0,
+    hasRetrospective: true,
+    drugInfo: {
+      class: "Anti-IL-33 monoclonal antibody",
+      administration: "Subcutaneous injection",
+      keyAdvantage: "Targets upstream alarmin in COPD inflammation",
+      discovery: "AstraZeneca",
+      development: "AstraZeneca",
+      additionalInfo: [
+        "First anti-IL-33 in Phase 3 for COPD",
+        "Addresses exacerbation reduction",
+        "Broad respiratory portfolio fit"
+      ]
+    },
+    patents: [
+      { patentNumber: "US10,836,832", title: "Anti-IL-33 antibodies", expirationDate: "2038", type: 'composition', status: 'active' },
+    ],
+    competitiveLandscape: {
+      totalMarketSize: "$15B+ (COPD market)",
+      projectedGrowth: "5% CAGR",
+      keyPlayers: [
+        { name: "Dupixent", company: "Sanofi/Regeneron", phase: "Approved", mechanism: "Anti-IL-4Rα", keyDifferentiator: "Approved for COPD+eos", efficacy: "30% exacerbation reduction", threat: 'high' },
+        { name: "Itepekimab", company: "Sanofi/Regeneron", phase: "Phase III", mechanism: "Anti-IL-33", keyDifferentiator: "Combination potential", efficacy: "Phase 2 promising", threat: 'high' },
+      ],
+      competitiveAdvantages: ["Upstream alarmin target", "AstraZeneca respiratory expertise", "Broad COPD population"],
+      competitiveRisks: ["IL-33 target validation", "Dupixent competition", "COPD heterogeneity"],
+      marketPositioning: "First-in-class anti-IL-33 therapy for COPD exacerbation reduction."
+    },
+    retrospectivePhases: [
+      { phase: "Phase 2 FRONTIER", date: "Q4 2022", outcome: 'success', keyData: ["Exacerbation reduction signal", "Biomarker-defined population benefit"], scoreAtTime: 68, rationale: "Proof of concept in COPD", dataAvailableAtTime: ["FRONTIER data"] },
+      { phase: "Phase 3 TITANIA", date: "Q2 2024", outcome: 'pending', keyData: ["Pivotal COPD program ongoing", "Large global trial"], scoreAtTime: 72, rationale: "Phase 3 advancement", dataAvailableAtTime: ["Study ongoing"] }
     ]
   }
 ];
