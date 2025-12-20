@@ -60,6 +60,7 @@ import { cardiovascularMolecules } from "@/lib/cardiovascularMolecules";
 import { neurologyMolecules } from "@/lib/neurologyMolecules";
 import { immunologyMolecules } from "@/lib/immunologyMolecules";
 import { infectiousMolecules } from "@/lib/infectiousMolecules";
+import { rareDiseaseMolecules } from "@/lib/rareDiseaseMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
 interface TimelinePhase {
@@ -1369,8 +1370,8 @@ const Index = () => {
     },
   ];
 
-  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules + cardiovascularMolecules + neurologyMolecules + immunologyMolecules + infectiousMolecules
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules];
+  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules + cardiovascularMolecules + neurologyMolecules + immunologyMolecules + infectiousMolecules + rareDiseaseMolecules
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
