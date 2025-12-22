@@ -1039,7 +1039,7 @@ const Index = () => {
     },
     // 18. PEDIATRICS (Cross-cutting)
     {
-      id: "VILT-01",
+      id: "VILT-PED-01",
       name: "Viltolarsen (Viltepso)",
       phase: "Phase III",
       indication: "Duchenne Muscular Dystrophy (Exon 53)",
