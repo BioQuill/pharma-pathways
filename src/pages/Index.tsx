@@ -40,6 +40,7 @@ import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+import { getTherapeuticIndexForMolecule } from "@/lib/therapeuticIndex";
 import { 
   calculateProbabilityScores,
   generateMarketProjections, 
@@ -50,7 +51,7 @@ import {
 } from "@/lib/scoring";
 import { generateLaunchFactors, type LaunchFactors } from "@/lib/launchFactors";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
-import { additionalMolecules } from "@/lib/moleculesData";
+import { additionalMolecules, type MoleculeProfile, type TherapeuticIndex } from "@/lib/moleculesData";
 import { endocrinologyMolecules } from "@/lib/endocrinologyMolecules";
 import { obesityMolecules } from "@/lib/obesityMolecules";
 import { diabetesMolecules } from "@/lib/diabetesMolecules";
@@ -61,51 +62,10 @@ import { neurologyMolecules } from "@/lib/neurologyMolecules";
 import { immunologyMolecules } from "@/lib/immunologyMolecules";
 import { infectiousMolecules } from "@/lib/infectiousMolecules";
 import { rareDiseaseMolecules } from "@/lib/rareDiseaseMolecules";
+import { rheumatologyMolecules } from "@/lib/rheumatologyMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
-interface TimelinePhase {
-  phase: string;
-  date: string;
-  trialName?: string;
-  nctIds?: string[];
-  outcome: 'success' | 'partial' | 'pending' | 'setback';
-  keyData: string[];
-  scoreAtTime: number;
-  rationale: string;
-  dataAvailableAtTime: string[];
-}
-
-interface MoleculeProfile {
-  id: string;
-  name: string;
-  phase: string;
-  indication: string;
-  therapeuticArea: string;
-  scores: ProbabilityScores;
-  marketData: MarketData[];
-  overallScore: number;
-  company: string;
-  companyTrackRecord: 'fast' | 'average' | 'slow';
-  isFailed?: boolean;
-  trialName?: string;
-  nctId?: string;
-  clinicalTrialsSearchTerm?: string;
-  hasRetrospective?: boolean;
-  retrospectivePhases?: TimelinePhase[];
-  patents?: PatentInfo[];
-  regulatoryExclusivity?: { type: string; endDate: string; }[];
-  competitiveLandscape?: CompetitiveLandscape;
-  launchFactors?: LaunchFactors;
-  drugInfo?: {
-    class: string;
-    administration: string;
-    keyAdvantage?: string;
-    discovery?: string;
-    license?: string;
-    development?: string;
-    additionalInfo?: string[];
-  };
-}
+// TimelinePhase interface imported from moleculesData
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -1370,8 +1330,8 @@ const Index = () => {
     },
   ];
 
-  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules + cardiovascularMolecules + neurologyMolecules + immunologyMolecules + infectiousMolecules + rareDiseaseMolecules
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules];
+  // Merge all molecules: existing + additionalMolecules (20 TAs) + endocrinologyMolecules + obesityMolecules + diabetesMolecules + dermatologyMolecules + oncologyMolecules + cardiovascularMolecules + neurologyMolecules + immunologyMolecules + infectiousMolecules + rareDiseaseMolecules + rheumatologyMolecules
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules, ...rheumatologyMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
@@ -1724,6 +1684,26 @@ const Index = () => {
                                 <span className="text-muted-foreground">Dropout: </span>
                                 <span className="font-semibold">{molecule.scores.dropoutRanking}/5</span>
                               </div>
+                              {/* Therapeutic Index */}
+                              {(() => {
+                                const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
+                                const tiColor = ti.classification === 'wide' 
+                                  ? 'text-[hsl(142,76%,36%)]' 
+                                  : ti.classification === 'moderate' 
+                                    ? 'text-[hsl(45,93%,47%)]' 
+                                    : 'text-[hsl(0,72%,51%)]';
+                                return (
+                                  <div className="text-xs" title={`Therapeutic Index: ${ti.notes || 'Safety margin between efficacy and toxicity'}`}>
+                                    <span className="text-muted-foreground">TI: </span>
+                                    <span className={`font-semibold ${tiColor}`}>
+                                      {ti.value.toFixed(1)} ({ti.classification})
+                                    </span>
+                                    {ti.monitoringRequired && (
+                                      <span className="ml-1 text-[hsl(0,72%,51%)]" title="Monitoring required">⚠</span>
+                                    )}
+                                  </div>
+                                );
+                              })()}
                               <div className="text-xs">
                                 <span className="text-muted-foreground">Revenue (2Y): </span>
                                 <span className="font-semibold">${molecule.marketData.reduce((sum, m) => sum + m.revenueProjection.year1 + m.revenueProjection.year2, 0).toFixed(0)}M</span>

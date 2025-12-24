@@ -23,6 +23,15 @@ interface TimelinePhase {
   dataAvailableAtTime: string[];
 }
 
+export interface TherapeuticIndex {
+  value: number; // TI ratio (higher = safer)
+  classification: 'narrow' | 'moderate' | 'wide';
+  td50?: number; // Median toxic dose
+  ed50?: number; // Median effective dose
+  monitoringRequired: boolean;
+  notes?: string;
+}
+
 export interface MoleculeProfile {
   id: string;
   name: string;
@@ -44,6 +53,7 @@ export interface MoleculeProfile {
   regulatoryExclusivity?: { type: string; endDate: string; }[];
   competitiveLandscape?: CompetitiveLandscape;
   launchFactors?: LaunchFactors;
+  therapeuticIndex?: TherapeuticIndex;
   drugInfo?: {
     class: string;
     administration: string;
