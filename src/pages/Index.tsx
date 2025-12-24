@@ -17,7 +17,10 @@ import {
   Brain,
   Target,
   ExternalLink,
-  Info
+  Info,
+  ShieldCheck,
+  AlertTriangle,
+  Activity
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
@@ -40,7 +43,7 @@ import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
-import { getTherapeuticIndexForMolecule } from "@/lib/therapeuticIndex";
+import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
 import { 
   calculateProbabilityScores,
   generateMarketProjections, 
@@ -70,7 +73,7 @@ import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChar
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta'>('lpi');
+  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta' | 'ti'>('lpi');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
@@ -1550,6 +1553,7 @@ const Index = () => {
                       { key: 'lpi', label: 'LPI%' },
                       { key: 'ttm', label: 'TTM' },
                       { key: 'composite', label: 'Score' },
+                      { key: 'ti', label: 'TI' },
                       { key: 'company', label: 'Company' },
                       { key: 'ta', label: 'TA' },
                     ].map(({ key, label }) => (
@@ -1602,6 +1606,8 @@ const Index = () => {
                       return Math.round(mol.overallScore * 0.6 + ttmEfficiency * 0.4);
                     };
                     
+                    const getTI = (mol: typeof a) => getTherapeuticIndexForMolecule(mol).value;
+                    
                     let comparison = 0;
                     switch (sortBy) {
                       case 'lpi':
@@ -1612,6 +1618,9 @@ const Index = () => {
                         break;
                       case 'composite':
                         comparison = getComposite(b) - getComposite(a);
+                        break;
+                      case 'ti':
+                        comparison = getTI(b) - getTI(a); // Higher TI = safer, so descending
                         break;
                       case 'company':
                         comparison = a.company.localeCompare(b.company);
@@ -1899,7 +1908,124 @@ const Index = () => {
                   </CardContent>
                 </Card>
 
-                {/* Clinical Studies Summary Section */}
+                {/* Therapeutic Index Analysis Section */}
+                {(() => {
+                  const ti = getTherapeuticIndexForMolecule(activeMolecule);
+                  const tiColor = getTherapeuticIndexColor(ti.classification);
+                  const tiBgColor = getTherapeuticIndexBgColor(ti.classification);
+                  
+                  return (
+                    <Card className="border-l-4 border-l-chart-4">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <ShieldCheck className="h-5 w-5" />
+                          Therapeutic Index (TI) Analysis
+                        </CardTitle>
+                        <CardDescription>
+                          Safety margin assessment based on TD50/ED50 ratio
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {/* TI Score Display */}
+                          <div className="flex flex-col items-center justify-center p-6 rounded-lg bg-muted/50">
+                            <div className={`text-5xl font-bold ${tiColor}`}>
+                              {ti.value.toFixed(1)}
+                            </div>
+                            <div className="mt-2 text-sm text-muted-foreground">Therapeutic Index</div>
+                            <Badge className={`mt-2 ${tiBgColor} text-white`}>
+                              {ti.classification === 'narrow' ? 'Narrow TI' : ti.classification === 'moderate' ? 'Moderate TI' : 'Wide TI'}
+                            </Badge>
+                          </div>
+                          
+                          {/* TD50/ED50 Values */}
+                          <div className="space-y-4">
+                            <h4 className="font-semibold flex items-center gap-2">
+                              <Activity className="h-4 w-4" />
+                              Dose-Response Parameters
+                            </h4>
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
+                                <div>
+                                  <span className="text-sm font-medium">ED50</span>
+                                  <p className="text-xs text-muted-foreground">Effective Dose 50%</p>
+                                </div>
+                                <span className="text-lg font-semibold text-[hsl(142,76%,36%)]">{ti.ed50} units</span>
+                              </div>
+                              <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
+                                <div>
+                                  <span className="text-sm font-medium">TD50</span>
+                                  <p className="text-xs text-muted-foreground">Toxic Dose 50%</p>
+                                </div>
+                                <span className="text-lg font-semibold text-[hsl(0,72%,51%)]">{ti.td50} units</span>
+                              </div>
+                              <div className="flex justify-between items-center p-3 rounded-md bg-primary/10 border border-primary/20">
+                                <div>
+                                  <span className="text-sm font-medium">Safety Margin</span>
+                                  <p className="text-xs text-muted-foreground">TD50 ÷ ED50</p>
+                                </div>
+                                <span className={`text-lg font-bold ${tiColor}`}>{ti.value.toFixed(1)}x</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Monitoring & Safety Notes */}
+                          <div className="space-y-4">
+                            <h4 className="font-semibold flex items-center gap-2">
+                              {ti.monitoringRequired ? <AlertTriangle className="h-4 w-4 text-[hsl(45,93%,47%)]" /> : <ShieldCheck className="h-4 w-4 text-[hsl(142,76%,36%)]" />}
+                              Safety Assessment
+                            </h4>
+                            
+                            <div className={`p-4 rounded-md ${ti.monitoringRequired ? 'bg-[hsl(45,93%,47%)]/10 border border-[hsl(45,93%,47%)]/30' : 'bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30'}`}>
+                              <div className="flex items-start gap-2">
+                                {ti.monitoringRequired ? (
+                                  <AlertTriangle className="h-5 w-5 text-[hsl(45,93%,47%)] mt-0.5 shrink-0" />
+                                ) : (
+                                  <ShieldCheck className="h-5 w-5 text-[hsl(142,76%,36%)] mt-0.5 shrink-0" />
+                                )}
+                                <div>
+                                  <p className="font-medium text-sm">
+                                    {ti.monitoringRequired ? 'Monitoring Required' : 'Standard Monitoring Sufficient'}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {ti.monitoringRequired 
+                                      ? 'Drug level monitoring, dose adjustments, and regular safety assessments recommended'
+                                      : 'Routine clinical monitoring as per standard protocols'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="p-4 rounded-md bg-muted/30">
+                              <p className="text-sm font-medium mb-1">Clinical Notes</p>
+                              <p className="text-sm text-muted-foreground">{ti.notes}</p>
+                            </div>
+                            
+                            {/* TI Classification Legend */}
+                            <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t">
+                              <p className="font-medium">TI Classification:</p>
+                              <div className="flex gap-4">
+                                <span className="flex items-center gap-1">
+                                  <span className="w-2 h-2 rounded-full bg-[hsl(0,72%,51%)]"></span>
+                                  Narrow (&lt;2)
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <span className="w-2 h-2 rounded-full bg-[hsl(45,93%,47%)]"></span>
+                                  Moderate (2-10)
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <span className="w-2 h-2 rounded-full bg-[hsl(142,76%,36%)]"></span>
+                                  Wide (&gt;10)
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })()}
+
                 <Card className="border-l-4 border-l-primary">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
