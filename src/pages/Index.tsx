@@ -811,7 +811,7 @@ const Index = () => {
     },
     // 12. RARE DISEASES/ORPHAN DRUGS
     {
-      id: "CASG-01",
+      id: "CASG-02",
       name: "Casgevy (Exagamglogene autotemcel)",
       trialName: "CLIMB",
       phase: "Approved/Phase III Expansion",
