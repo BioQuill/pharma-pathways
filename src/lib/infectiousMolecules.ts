@@ -561,7 +561,7 @@ export const infectiousMolecules: MoleculeProfile[] = [
 
   // 12. Dapivirine Ring - HIV prevention
   {
-    id: "DAPI-01",
+    id: "DAPI-INF-01",
     name: "Dapivirine Vaginal Ring",
     trialName: "ASPIRE/HOPE",
     phase: "Approved (WHO)",

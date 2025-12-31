@@ -320,7 +320,7 @@ export const rareDiseaseMolecules: MoleculeProfile[] = [
 
   // 7. Eplontersen - hATTR Polyneuropathy
   {
-    id: "EPLO-01",
+    id: "EPLO-RD-01",
     name: "Eplontersen (Wainua)",
     trialName: "NEURO-TTRansform",
     phase: "Approved",
