@@ -67,6 +67,14 @@ import { infectiousMolecules } from "@/lib/infectiousMolecules";
 import { rareDiseaseMolecules } from "@/lib/rareDiseaseMolecules";
 import { rheumatologyMolecules } from "@/lib/rheumatologyMolecules";
 import { psychiatryMolecules } from "@/lib/psychiatryMolecules";
+import { hematologyMolecules } from "@/lib/hematologyMolecules";
+import { gastroenterologyMolecules } from "@/lib/gastroenterologyMolecules";
+import { nephrologyMolecules } from "@/lib/nephologyMolecules";
+import { painMolecules } from "@/lib/painMolecules";
+import { womensHealthMolecules } from "@/lib/womensHealthMolecules";
+import { extendedOncologyMolecules } from "@/lib/extendedOncologyMolecules";
+import { extendedNeurologyMolecules } from "@/lib/extendedNeurologyMolecules";
+import { extendedCardiometabolicMolecules } from "@/lib/extendedCardiometabolicMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
 // TimelinePhase interface imported from moleculesData
@@ -1335,7 +1343,7 @@ const Index = () => {
   ];
 
   // Merge all molecules from all therapeutic areas
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules, ...rheumatologyMolecules, ...psychiatryMolecules];
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules, ...rheumatologyMolecules, ...psychiatryMolecules, ...hematologyMolecules, ...gastroenterologyMolecules, ...nephrologyMolecules, ...painMolecules, ...womensHealthMolecules, ...extendedOncologyMolecules, ...extendedNeurologyMolecules, ...extendedCardiometabolicMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
