@@ -75,6 +75,10 @@ import { womensHealthMolecules } from "@/lib/womensHealthMolecules";
 import { extendedOncologyMolecules } from "@/lib/extendedOncologyMolecules";
 import { extendedNeurologyMolecules } from "@/lib/extendedNeurologyMolecules";
 import { extendedCardiometabolicMolecules } from "@/lib/extendedCardiometabolicMolecules";
+import { extendedImmunologyMolecules } from "@/lib/extendedImmunologyMolecules";
+import { extendedInfectiousMolecules } from "@/lib/extendedInfectiousMolecules";
+import { extendedPsychiatryMolecules } from "@/lib/extendedPsychiatryMolecules";
+import { extendedRheumatologyMolecules } from "@/lib/extendedRheumatologyMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
 // TimelinePhase interface imported from moleculesData
@@ -1343,7 +1347,7 @@ const Index = () => {
   ];
 
   // Merge all molecules from all therapeutic areas
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules, ...rheumatologyMolecules, ...psychiatryMolecules, ...hematologyMolecules, ...gastroenterologyMolecules, ...nephrologyMolecules, ...painMolecules, ...womensHealthMolecules, ...extendedOncologyMolecules, ...extendedNeurologyMolecules, ...extendedCardiometabolicMolecules];
+  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules, ...rheumatologyMolecules, ...psychiatryMolecules, ...hematologyMolecules, ...gastroenterologyMolecules, ...nephrologyMolecules, ...painMolecules, ...womensHealthMolecules, ...extendedOncologyMolecules, ...extendedNeurologyMolecules, ...extendedCardiometabolicMolecules, ...extendedImmunologyMolecules, ...extendedInfectiousMolecules, ...extendedPsychiatryMolecules, ...extendedRheumatologyMolecules];
 
   // Calculate overall scores and generate launch factors based on probabilities and market projections
   allMolecules.forEach(mol => {
