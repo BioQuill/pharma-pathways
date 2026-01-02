@@ -42,32 +42,20 @@ export const extendedRheumatologyMolecules: MoleculeProfile[] = Array.from({ len
     scores: probabilities,
     overallScore: 0,
     drugInfo: {
-      moleculeType: i % 3 === 0 ? 'Monoclonal Antibody' : i % 3 === 1 ? 'Small Molecule' : 'Fusion Protein',
-      mechanismOfAction: mechanism,
-      routeOfAdministration: i % 3 === 0 ? 'Subcutaneous' : i % 3 === 1 ? 'Oral' : 'Intravenous',
-      targetPatientPopulation: `Adults with moderate-to-severe ${indication}`,
-      clinicalTrialDesign: 'Randomized, double-blind, placebo-controlled',
-      primaryEndpoint: 'ACR20/50/70 response rate',
-      secondaryEndpoints: ['DAS28-CRP change', 'HAQ-DI improvement', 'Radiographic progression'],
-      competitorAnalysis: 'Competitive with established biologics and JAK inhibitors',
-      regulatoryDesignation: i % 5 === 0 ? ['Fast Track'] : i % 7 === 0 ? ['Breakthrough Therapy'] : [],
-      safetyProfile: {
-        commonAEs: ['Upper respiratory infection', 'Injection site reaction', 'Headache'],
-        seriousAEs: ['Serious infections', 'Malignancy', 'Cardiovascular events'],
-        blackBoxWarnings: i % 4 === 0 ? ['Serious infections', 'Malignancy risk'] : []
-      },
-      differentiationFactors: `Next-generation ${mechanism} with improved safety profile`
+      class: mechanism,
+      administration: i % 3 === 0 ? 'Subcutaneous' : i % 3 === 1 ? 'Oral' : 'Intravenous',
+      keyAdvantage: `Next-generation ${mechanism} with improved safety profile`
     },
     probabilities,
     marketData,
-    patents: [{ id: `PAT-RHM-${i}`, filingDate: '2019-08-15', expirationDate: '2039-08-15', jurisdiction: 'US', status: 'Active', patentType: 'Composition of Matter' }],
+    patents: [{ patentNumber: `US10,${400 + i},000`, title: `${mechanism} compound and methods`, expirationDate: '2039', type: 'composition', status: 'active' }],
     competitiveLandscape: {
-      directCompetitors: [{ name: 'Humira biosimilars', phase: 'Approved', company: 'Multiple', differentiatingFactors: ['Low cost', 'Established'] }],
-      indirectCompetitors: [{ name: 'JAK inhibitors', phase: 'Approved', company: 'Multiple', differentiatingFactors: ['Oral convenience'] }],
-      marketPositioning: 'Differentiated efficacy and safety in competitive landscape',
+      totalMarketSize: '$65B+',
+      projectedGrowth: '7% CAGR',
+      keyPlayers: [{ name: 'Humira biosimilars', company: 'Multiple', phase: 'Approved', mechanism: 'TNF inhibition', keyDifferentiator: 'Low cost', efficacy: 'High', threat: 'high' as const }],
       competitiveAdvantages: ['Novel target', 'Improved safety', 'Convenient dosing'],
-      competitiveDisadvantages: ['Crowded market', 'Biosimilar competition'],
-      estimatedMarketShare: 8 + (i % 22)
+      competitiveRisks: ['Biosimilar competition', 'Crowded market'],
+      marketPositioning: 'Differentiated efficacy and safety in competitive landscape'
     },
     retrospectivePhases: [
       { phase: 'Preclinical', date: '2017-09-01', outcome: 'success', keyData: ['Efficacy in CIA model'], scoreAtTime: 25, rationale: 'Strong animal model data', dataAvailableAtTime: ['Preclinical studies'] },
