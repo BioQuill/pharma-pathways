@@ -42,32 +42,20 @@ export const extendedPsychiatryMolecules: MoleculeProfile[] = Array.from({ lengt
     scores: probabilities,
     overallScore: 0,
     drugInfo: {
-      moleculeType: i % 5 === 0 ? 'Peptide' : 'Small Molecule',
-      mechanismOfAction: mechanism,
-      routeOfAdministration: i % 4 === 0 ? 'Intranasal' : i % 4 === 1 ? 'Intravenous' : 'Oral',
-      targetPatientPopulation: `Adults with ${indication}`,
-      clinicalTrialDesign: 'Randomized, double-blind, placebo-controlled',
-      primaryEndpoint: 'Change in symptom severity scale',
-      secondaryEndpoints: ['Clinical response rate', 'Remission rate', 'Functional improvement'],
-      competitorAnalysis: 'Addressing high unmet need in psychiatric disorders',
-      regulatoryDesignation: i % 4 === 0 ? ['Breakthrough Therapy'] : i % 6 === 0 ? ['Fast Track'] : [],
-      safetyProfile: {
-        commonAEs: ['Sedation', 'Dizziness', 'Nausea', 'Headache'],
-        seriousAEs: ['Suicidal ideation', 'Dissociation'],
-        blackBoxWarnings: i % 3 === 0 ? ['Suicidal thoughts and behaviors'] : []
-      },
-      differentiationFactors: `Rapid-acting ${mechanism} with novel therapeutic profile`
+      class: mechanism,
+      administration: i % 4 === 0 ? 'Intranasal' : i % 4 === 1 ? 'Intravenous' : 'Oral',
+      keyAdvantage: `Rapid-acting ${mechanism} with novel therapeutic profile`
     },
     probabilities,
     marketData,
-    patents: [{ id: `PAT-PSY-${i}`, filingDate: '2020-05-10', expirationDate: '2040-05-10', jurisdiction: 'US', status: 'Active', patentType: 'Composition of Matter' }],
+    patents: [{ patentNumber: `US10,${300 + i},000`, title: `${mechanism} compound and methods`, expirationDate: '2040', type: 'composition', status: 'active' }],
     competitiveLandscape: {
-      directCompetitors: [{ name: 'SSRI/SNRI', phase: 'Approved', company: 'Generic', differentiatingFactors: ['Established safety', 'Low cost'] }],
-      indirectCompetitors: [{ name: 'Psychotherapy', phase: 'N/A', company: 'N/A', differentiatingFactors: ['Non-pharmacological'] }],
-      marketPositioning: 'Novel mechanism for treatment-resistant patients',
+      totalMarketSize: '$20B+',
+      projectedGrowth: '6% CAGR',
+      keyPlayers: [{ name: 'SSRI/SNRI', company: 'Generic', phase: 'Approved', mechanism: 'Serotonin modulation', keyDifferentiator: 'Established safety', efficacy: 'Moderate', threat: 'low' as const }],
       competitiveAdvantages: ['Rapid onset', 'Novel mechanism', 'Addresses unmet need'],
-      competitiveDisadvantages: ['Safety monitoring required', 'Limited long-term data'],
-      estimatedMarketShare: 12 + (i % 18)
+      competitiveRisks: ['Generic competition', 'Treatment adherence'],
+      marketPositioning: 'Novel mechanism for treatment-resistant patients'
     },
     retrospectivePhases: [
       { phase: 'Preclinical', date: '2018-03-01', outcome: 'success', keyData: ['Behavioral models validated'], scoreAtTime: 25, rationale: 'Strong preclinical efficacy', dataAvailableAtTime: ['Animal models'] },

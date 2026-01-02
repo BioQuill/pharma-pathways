@@ -42,32 +42,20 @@ export const extendedInfectiousMolecules: MoleculeProfile[] = Array.from({ lengt
     scores: probabilities,
     overallScore: 0,
     drugInfo: {
-      moleculeType: i % 4 === 0 ? 'Monoclonal Antibody' : i % 4 === 1 ? 'Small Molecule' : i % 4 === 2 ? 'Peptide' : 'Nucleoside Analog',
-      mechanismOfAction: mechanism,
-      routeOfAdministration: i % 3 === 0 ? 'Intravenous' : i % 3 === 1 ? 'Oral' : 'Subcutaneous',
-      targetPatientPopulation: `Patients with ${indication}`,
-      clinicalTrialDesign: 'Randomized, active-controlled, non-inferiority',
-      primaryEndpoint: 'Clinical cure rate',
-      secondaryEndpoints: ['Microbiological eradication', 'Time to symptom resolution', 'All-cause mortality'],
-      competitorAnalysis: 'Addressing unmet need in resistant infections',
-      regulatoryDesignation: i % 3 === 0 ? ['QIDP', 'Fast Track'] : i % 5 === 0 ? ['Breakthrough Therapy'] : [],
-      safetyProfile: {
-        commonAEs: ['Nausea', 'Diarrhea', 'Headache'],
-        seriousAEs: ['Hepatotoxicity', 'QT prolongation'],
-        blackBoxWarnings: []
-      },
-      differentiationFactors: `Activity against resistant pathogens via ${mechanism}`
+      class: mechanism,
+      administration: i % 3 === 0 ? 'Intravenous' : i % 3 === 1 ? 'Oral' : 'Subcutaneous',
+      keyAdvantage: `Activity against resistant pathogens via ${mechanism}`
     },
     probabilities,
     marketData,
-    patents: [{ id: `PAT-INF-${i}`, filingDate: '2019-03-20', expirationDate: '2039-03-20', jurisdiction: 'US', status: 'Active', patentType: 'Composition of Matter' }],
+    patents: [{ patentNumber: `US10,${200 + i},000`, title: `${mechanism} compound and methods`, expirationDate: '2039', type: 'composition', status: 'active' }],
     competitiveLandscape: {
-      directCompetitors: [{ name: 'Generic antibiotic', phase: 'Approved', company: 'Multiple', differentiatingFactors: ['Low cost'] }],
-      indirectCompetitors: [{ name: 'Combination therapy', phase: 'Approved', company: 'Various', differentiatingFactors: ['Broad spectrum'] }],
-      marketPositioning: 'Targeting resistant pathogens with limited treatment options',
+      totalMarketSize: '$50B+',
+      projectedGrowth: '5% CAGR',
+      keyPlayers: [{ name: 'Generic antibiotic', company: 'Multiple', phase: 'Approved', mechanism: 'Various', keyDifferentiator: 'Low cost', efficacy: 'Variable', threat: 'medium' as const }],
       competitiveAdvantages: ['Novel mechanism', 'Activity against MDR strains'],
-      competitiveDisadvantages: ['Limited market size', 'Antibiotic stewardship'],
-      estimatedMarketShare: 10 + (i % 25)
+      competitiveRisks: ['Antibiotic stewardship', 'Resistance development'],
+      marketPositioning: 'Targeting resistant pathogens with limited treatment options'
     },
     retrospectivePhases: [
       { phase: 'Preclinical', date: '2017-06-01', outcome: 'success', keyData: ['In vitro activity confirmed'], scoreAtTime: 25, rationale: 'Strong MIC data', dataAvailableAtTime: ['Microbiology'] },

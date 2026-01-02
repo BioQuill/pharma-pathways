@@ -42,32 +42,20 @@ export const extendedImmunologyMolecules: MoleculeProfile[] = Array.from({ lengt
     scores: probabilities,
     overallScore: 0,
     drugInfo: {
-      moleculeType: i % 3 === 0 ? 'Monoclonal Antibody' : i % 3 === 1 ? 'Small Molecule' : 'Fusion Protein',
-      mechanismOfAction: mechanism,
-      routeOfAdministration: i % 2 === 0 ? 'Subcutaneous' : 'Oral',
-      targetPatientPopulation: `Adults with ${indication}`,
-      clinicalTrialDesign: 'Randomized, double-blind, placebo-controlled',
-      primaryEndpoint: 'Disease activity score improvement',
-      secondaryEndpoints: ['Quality of life improvement', 'Biomarker changes', 'Time to flare'],
-      competitorAnalysis: 'Competing with established biologics',
-      regulatoryDesignation: i % 4 === 0 ? ['Fast Track'] : i % 4 === 1 ? ['Breakthrough Therapy'] : [],
-      safetyProfile: {
-        commonAEs: ['Infections', 'Injection site reactions', 'Headache'],
-        seriousAEs: ['Serious infections', 'Malignancy risk'],
-        blackBoxWarnings: i % 5 === 0 ? ['Increased infection risk'] : []
-      },
-      differentiationFactors: `Novel ${mechanism} with improved selectivity`
+      class: mechanism,
+      administration: i % 2 === 0 ? 'Subcutaneous' : 'Oral',
+      keyAdvantage: `Novel ${mechanism} with improved selectivity`
     },
     probabilities,
     marketData,
-    patents: [{ id: `PAT-IMM-${i}`, filingDate: '2020-01-15', expirationDate: '2040-01-15', jurisdiction: 'US', status: 'Active', patentType: 'Composition of Matter' }],
+    patents: [{ patentNumber: `US10,${100 + i},000`, title: `${mechanism} compound and methods`, expirationDate: '2040', type: 'composition', status: 'active' }],
     competitiveLandscape: {
-      directCompetitors: [{ name: 'Competitor A', phase: 'Phase III', company: 'Major Pharma', differentiatingFactors: ['Different mechanism'] }],
-      indirectCompetitors: [{ name: 'Existing therapy', phase: 'Approved', company: 'Generic', differentiatingFactors: ['Established safety'] }],
-      marketPositioning: 'Novel mechanism with potential for improved efficacy',
+      totalMarketSize: '$15B+',
+      projectedGrowth: '8% CAGR',
+      keyPlayers: [{ name: 'Competitor A', company: 'Major Pharma', phase: 'Phase III', mechanism: mechanism, keyDifferentiator: 'Different mechanism', efficacy: 'Similar', threat: 'medium' as const }],
       competitiveAdvantages: ['Novel target', 'Convenient dosing'],
-      competitiveDisadvantages: ['Limited long-term data'],
-      estimatedMarketShare: 15 + (i % 20)
+      competitiveRisks: ['Crowded market', 'Biosimilar pressure'],
+      marketPositioning: 'Novel mechanism with potential for improved efficacy'
     },
     retrospectivePhases: [
       { phase: 'Preclinical', date: '2018-01-01', outcome: 'success', keyData: ['IND-enabling studies completed'], scoreAtTime: 25, rationale: 'Strong preclinical data', dataAvailableAtTime: ['Toxicology', 'PK studies'] },
