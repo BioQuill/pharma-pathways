@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { 
   Calendar, 
   Globe, 
@@ -2300,6 +2302,133 @@ const Index = () => {
                       </CardContent>
                     </Card>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Historical PTRS Charts */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Success Rates by Therapeutic Area */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Historical PTRS by Therapeutic Area</CardTitle>
+                  <CardDescription>Average success rates across therapeutic areas (2014-2024)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer
+                    config={{
+                      pts: { label: "PTS", color: "hsl(217, 91%, 60%)" },
+                      prs: { label: "PRS", color: "hsl(142, 71%, 45%)" },
+                      ptrs: { label: "PTRS", color: "hsl(271, 81%, 56%)" },
+                    }}
+                    className="h-[350px]"
+                  >
+                    <BarChart
+                      data={[
+                        { ta: "Oncology", pts: 5.3, prs: 85, ptrs: 4.5 },
+                        { ta: "CNS", pts: 6.2, prs: 82, ptrs: 5.1 },
+                        { ta: "Cardiovascular", pts: 8.4, prs: 88, ptrs: 7.4 },
+                        { ta: "Infectious", pts: 15.6, prs: 90, ptrs: 14.0 },
+                        { ta: "Immunology", pts: 11.2, prs: 86, ptrs: 9.6 },
+                        { ta: "Metabolic", pts: 9.8, prs: 87, ptrs: 8.5 },
+                        { ta: "Rare Disease", pts: 17.4, prs: 92, ptrs: 16.0 },
+                        { ta: "Dermatology", pts: 12.3, prs: 89, ptrs: 10.9 },
+                      ]}
+                      layout="vertical"
+                      margin={{ left: 80, right: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                      <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                      <YAxis dataKey="ta" type="category" width={75} tick={{ fontSize: 12 }} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="ptrs" fill="var(--color-ptrs)" radius={4} name="PTRS %" />
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+
+              {/* Success Rates by Development Phase */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Phase Transition Success Rates</CardTitle>
+                  <CardDescription>Historical probability of advancing to next phase</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer
+                    config={{
+                      overall: { label: "Overall", color: "hsl(217, 91%, 60%)" },
+                      oncology: { label: "Oncology", color: "hsl(0, 84%, 60%)" },
+                      nonOncology: { label: "Non-Oncology", color: "hsl(142, 71%, 45%)" },
+                    }}
+                    className="h-[350px]"
+                  >
+                    <BarChart
+                      data={[
+                        { phase: "Phase I → II", overall: 52, oncology: 45, nonOncology: 58 },
+                        { phase: "Phase II → III", overall: 29, oncology: 24, nonOncology: 34 },
+                        { phase: "Phase III → NDA", overall: 58, oncology: 51, nonOncology: 64 },
+                        { phase: "NDA → Approval", overall: 85, oncology: 82, nonOncology: 88 },
+                      ]}
+                      margin={{ left: 20, right: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="phase" tick={{ fontSize: 11 }} />
+                      <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="overall" fill="var(--color-overall)" radius={4} name="Overall %" />
+                      <Bar dataKey="oncology" fill="var(--color-oncology)" radius={4} name="Oncology %" />
+                      <Bar dataKey="nonOncology" fill="var(--color-nonOncology)" radius={4} name="Non-Oncology %" />
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Cumulative PTRS Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Cumulative PTRS from Phase I to Approval</CardTitle>
+                <CardDescription>Overall likelihood of success from initial clinical trials to market approval</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4 font-semibold">Therapeutic Area</th>
+                        <th className="text-center py-3 px-4 font-semibold">Phase I</th>
+                        <th className="text-center py-3 px-4 font-semibold">Phase II</th>
+                        <th className="text-center py-3 px-4 font-semibold">Phase III</th>
+                        <th className="text-center py-3 px-4 font-semibold">NDA/BLA</th>
+                        <th className="text-center py-3 px-4 font-semibold">Cumulative PTRS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { ta: "Oncology", p1: 63, p2: 32, p3: 51, nda: 82, ptrs: 8.6 },
+                        { ta: "Hematology", p1: 68, p2: 38, p3: 55, nda: 85, ptrs: 12.1 },
+                        { ta: "Infectious Disease", p1: 72, p2: 42, p3: 64, nda: 90, ptrs: 17.4 },
+                        { ta: "Cardiovascular", p1: 65, p2: 35, p3: 58, nda: 88, ptrs: 11.6 },
+                        { ta: "CNS/Neurology", p1: 59, p2: 28, p3: 48, nda: 82, ptrs: 6.6 },
+                        { ta: "Immunology", p1: 66, p2: 36, p3: 56, nda: 86, ptrs: 11.5 },
+                        { ta: "Metabolic/Endocrine", p1: 64, p2: 34, p3: 54, nda: 87, ptrs: 10.2 },
+                        { ta: "Rare Disease", p1: 74, p2: 45, p3: 68, nda: 92, ptrs: 21.0 },
+                      ].map((row) => (
+                        <tr key={row.ta} className="border-b hover:bg-muted/50">
+                          <td className="py-3 px-4 font-medium">{row.ta}</td>
+                          <td className="text-center py-3 px-4">{row.p1}%</td>
+                          <td className="text-center py-3 px-4">{row.p2}%</td>
+                          <td className="text-center py-3 px-4">{row.p3}%</td>
+                          <td className="text-center py-3 px-4">{row.nda}%</td>
+                          <td className="text-center py-3 px-4">
+                            <Badge variant={row.ptrs >= 15 ? "default" : row.ptrs >= 10 ? "secondary" : "outline"}>
+                              {row.ptrs}%
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
