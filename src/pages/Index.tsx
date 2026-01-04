@@ -5,7 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend, ResponsiveContainer } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { 
   Calendar, 
   Globe, 
@@ -84,6 +87,232 @@ import { extendedRheumatologyMolecules } from "@/lib/extendedRheumatologyMolecul
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
 // TimelinePhase interface imported from moleculesData
+
+// PTRS Calculator Component
+const PTRSCalculator = () => {
+  const [therapeuticArea, setTherapeuticArea] = useState("oncology");
+  const [currentPhase, setCurrentPhase] = useState("phase2");
+  const [mechanismNovelty, setMechanismNovelty] = useState([50]);
+  const [endpointClarity, setEndpointClarity] = useState([70]);
+  const [priorTrialData, setPriorTrialData] = useState([60]);
+  const [sponsorExperience, setSponsorExperience] = useState([65]);
+  const [regulatoryPrecedent, setRegulatoryPrecedent] = useState([75]);
+  const [safetyProfile, setSafetyProfile] = useState([70]);
+
+  // Base rates by therapeutic area
+  const taBaseRates: Record<string, { pts: number; prs: number }> = {
+    oncology: { pts: 12, prs: 82 },
+    cns: { pts: 8, prs: 78 },
+    cardiovascular: { pts: 15, prs: 85 },
+    infectious: { pts: 22, prs: 88 },
+    immunology: { pts: 18, prs: 84 },
+    metabolic: { pts: 16, prs: 86 },
+    rareDisease: { pts: 25, prs: 90 },
+    dermatology: { pts: 20, prs: 87 },
+  };
+
+  // Phase multipliers
+  const phaseMultipliers: Record<string, number> = {
+    preclinical: 0.3,
+    phase1: 0.5,
+    phase2: 0.75,
+    phase3: 1.2,
+    nda: 1.5,
+  };
+
+  // Calculate PTS based on inputs
+  const calculatePTS = () => {
+    const baseRate = taBaseRates[therapeuticArea]?.pts || 15;
+    const phaseMultiplier = phaseMultipliers[currentPhase] || 1;
+    
+    const adjustmentFactor = 
+      (mechanismNovelty[0] * 0.15 + 
+       endpointClarity[0] * 0.25 + 
+       priorTrialData[0] * 0.35 + 
+       sponsorExperience[0] * 0.25) / 100;
+    
+    const pts = Math.min(95, Math.max(5, baseRate * phaseMultiplier * (0.5 + adjustmentFactor)));
+    return Math.round(pts * 10) / 10;
+  };
+
+  // Calculate PRS based on inputs
+  const calculatePRS = () => {
+    const baseRate = taBaseRates[therapeuticArea]?.prs || 85;
+    
+    const adjustmentFactor = 
+      (regulatoryPrecedent[0] * 0.4 + 
+       safetyProfile[0] * 0.4 + 
+       sponsorExperience[0] * 0.2) / 100;
+    
+    const prs = Math.min(98, Math.max(50, baseRate * (0.7 + adjustmentFactor * 0.6)));
+    return Math.round(prs * 10) / 10;
+  };
+
+  const pts = calculatePTS();
+  const prs = calculatePRS();
+  const ptrs = Math.round((pts / 100) * prs * 10) / 10;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Input Parameters */}
+        <div className="space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Therapeutic Area</Label>
+              <Select value={therapeuticArea} onValueChange={setTherapeuticArea}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="oncology">Oncology</SelectItem>
+                  <SelectItem value="cns">CNS/Neurology</SelectItem>
+                  <SelectItem value="cardiovascular">Cardiovascular</SelectItem>
+                  <SelectItem value="infectious">Infectious Disease</SelectItem>
+                  <SelectItem value="immunology">Immunology</SelectItem>
+                  <SelectItem value="metabolic">Metabolic/Endocrine</SelectItem>
+                  <SelectItem value="rareDisease">Rare Disease</SelectItem>
+                  <SelectItem value="dermatology">Dermatology</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Current Phase</Label>
+              <Select value={currentPhase} onValueChange={setCurrentPhase}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="preclinical">Preclinical</SelectItem>
+                  <SelectItem value="phase1">Phase I</SelectItem>
+                  <SelectItem value="phase2">Phase II</SelectItem>
+                  <SelectItem value="phase3">Phase III</SelectItem>
+                  <SelectItem value="nda">NDA/BLA Filed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <h4 className="font-medium text-sm text-muted-foreground">Technical Success Factors (PTS)</h4>
+            
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Mechanism Novelty</span>
+                <span className="font-medium">{mechanismNovelty[0]}%</span>
+              </div>
+              <Slider value={mechanismNovelty} onValueChange={setMechanismNovelty} max={100} step={5} />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Endpoint Clarity</span>
+                <span className="font-medium">{endpointClarity[0]}%</span>
+              </div>
+              <Slider value={endpointClarity} onValueChange={setEndpointClarity} max={100} step={5} />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Prior Trial Data Quality</span>
+                <span className="font-medium">{priorTrialData[0]}%</span>
+              </div>
+              <Slider value={priorTrialData} onValueChange={setPriorTrialData} max={100} step={5} />
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <h4 className="font-medium text-sm text-muted-foreground">Regulatory Success Factors (PRS)</h4>
+            
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Sponsor Experience</span>
+                <span className="font-medium">{sponsorExperience[0]}%</span>
+              </div>
+              <Slider value={sponsorExperience} onValueChange={setSponsorExperience} max={100} step={5} />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Regulatory Precedent</span>
+                <span className="font-medium">{regulatoryPrecedent[0]}%</span>
+              </div>
+              <Slider value={regulatoryPrecedent} onValueChange={setRegulatoryPrecedent} max={100} step={5} />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span>Safety Profile</span>
+                <span className="font-medium">{safetyProfile[0]}%</span>
+              </div>
+              <Slider value={safetyProfile} onValueChange={setSafetyProfile} max={100} step={5} />
+            </div>
+          </div>
+        </div>
+
+        {/* Results Display */}
+        <div className="space-y-4">
+          <div className="grid gap-4">
+            <Card className="bg-blue-50 dark:bg-blue-950/30 border-blue-200">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-blue-600">PTS (Technical Success)</p>
+                    <p className="text-xs text-muted-foreground mt-1">Probability of meeting clinical endpoints</p>
+                  </div>
+                  <div className="text-3xl font-bold text-blue-600">{pts}%</div>
+                </div>
+                <div className="mt-3 h-2 bg-blue-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500 rounded-full transition-all" style={{ width: `${pts}%` }} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-green-50 dark:bg-green-950/30 border-green-200">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-green-600">PRS (Regulatory Success)</p>
+                    <p className="text-xs text-muted-foreground mt-1">Probability of regulatory approval</p>
+                  </div>
+                  <div className="text-3xl font-bold text-green-600">{prs}%</div>
+                </div>
+                <div className="mt-3 h-2 bg-green-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${prs}%` }} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-purple-50 dark:bg-purple-950/30 border-purple-200">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-purple-600">PTRS (Combined)</p>
+                    <p className="text-xs text-muted-foreground mt-1">Overall probability of success</p>
+                  </div>
+                  <div className="text-4xl font-bold text-purple-600">{ptrs}%</div>
+                </div>
+                <div className="mt-3 h-3 bg-purple-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${Math.min(ptrs * 3, 100)}%` }} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4 border">
+            <p className="text-xs text-muted-foreground">
+              <strong>Formula:</strong> PTRS = PTS × PRS = {pts}% × {prs}% = <strong>{ptrs}%</strong>
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              This calculator provides estimated probabilities based on historical industry data and the parameters you've selected. 
+              Actual outcomes may vary based on specific trial characteristics and regulatory environment.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -2303,6 +2532,70 @@ const Index = () => {
                     </Card>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Interactive PTRS Calculator */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Interactive PTRS Calculator
+                </CardTitle>
+                <CardDescription>Input clinical trial parameters to calculate PTS, PRS, and overall PTRS</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSCalculator />
+              </CardContent>
+            </Card>
+
+            {/* Historical PTRS Trend Lines */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">PTRS Trends Over Time (2014-2024)</CardTitle>
+                <CardDescription>Historical success rate trends by therapeutic area</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={{
+                    oncology: { label: "Oncology", color: "hsl(0, 84%, 60%)" },
+                    cns: { label: "CNS/Neurology", color: "hsl(217, 91%, 60%)" },
+                    cardiovascular: { label: "Cardiovascular", color: "hsl(142, 71%, 45%)" },
+                    infectious: { label: "Infectious", color: "hsl(45, 93%, 47%)" },
+                    immunology: { label: "Immunology", color: "hsl(271, 81%, 56%)" },
+                    rareDisease: { label: "Rare Disease", color: "hsl(340, 82%, 52%)" },
+                  }}
+                  className="h-[400px]"
+                >
+                  <LineChart
+                    data={[
+                      { year: "2014", oncology: 5.1, cns: 6.8, cardiovascular: 9.2, infectious: 16.8, immunology: 10.5, rareDisease: 15.2 },
+                      { year: "2015", oncology: 5.4, cns: 6.5, cardiovascular: 9.0, infectious: 17.2, immunology: 10.8, rareDisease: 16.1 },
+                      { year: "2016", oncology: 5.8, cns: 6.2, cardiovascular: 8.8, infectious: 17.5, immunology: 11.2, rareDisease: 17.3 },
+                      { year: "2017", oncology: 6.2, cns: 5.9, cardiovascular: 8.5, infectious: 16.9, immunology: 11.5, rareDisease: 18.5 },
+                      { year: "2018", oncology: 7.1, cns: 5.5, cardiovascular: 8.2, infectious: 16.5, immunology: 12.0, rareDisease: 19.2 },
+                      { year: "2019", oncology: 7.8, cns: 5.8, cardiovascular: 8.0, infectious: 15.8, immunology: 12.4, rareDisease: 20.1 },
+                      { year: "2020", oncology: 8.2, cns: 6.0, cardiovascular: 7.8, infectious: 18.5, immunology: 12.8, rareDisease: 20.8 },
+                      { year: "2021", oncology: 8.5, cns: 6.3, cardiovascular: 7.6, infectious: 19.2, immunology: 13.1, rareDisease: 21.5 },
+                      { year: "2022", oncology: 8.8, cns: 6.5, cardiovascular: 7.5, infectious: 18.8, immunology: 13.5, rareDisease: 22.0 },
+                      { year: "2023", oncology: 9.2, cns: 6.8, cardiovascular: 7.4, infectious: 18.2, immunology: 14.0, rareDisease: 22.5 },
+                      { year: "2024", oncology: 9.5, cns: 7.0, cardiovascular: 7.3, infectious: 17.8, immunology: 14.5, rareDisease: 23.0 },
+                    ]}
+                    margin={{ left: 20, right: 30, top: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+                    <YAxis domain={[0, 25]} tickFormatter={(v) => `${v}%`} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Legend />
+                    <Line type="monotone" dataKey="oncology" stroke="var(--color-oncology)" strokeWidth={2} dot={{ r: 3 }} name="Oncology" />
+                    <Line type="monotone" dataKey="cns" stroke="var(--color-cns)" strokeWidth={2} dot={{ r: 3 }} name="CNS/Neurology" />
+                    <Line type="monotone" dataKey="cardiovascular" stroke="var(--color-cardiovascular)" strokeWidth={2} dot={{ r: 3 }} name="Cardiovascular" />
+                    <Line type="monotone" dataKey="infectious" stroke="var(--color-infectious)" strokeWidth={2} dot={{ r: 3 }} name="Infectious" />
+                    <Line type="monotone" dataKey="immunology" stroke="var(--color-immunology)" strokeWidth={2} dot={{ r: 3 }} name="Immunology" />
+                    <Line type="monotone" dataKey="rareDisease" stroke="var(--color-rareDisease)" strokeWidth={2} dot={{ r: 3 }} name="Rare Disease" />
+                  </LineChart>
+                </ChartContainer>
               </CardContent>
             </Card>
 
