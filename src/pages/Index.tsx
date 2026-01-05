@@ -46,6 +46,7 @@ import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
+import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
@@ -1778,6 +1779,10 @@ const Index = () => {
                 <TrendingUp className="h-4 w-4" />
                 LPI-3
               </TabsTrigger>
+              <TabsTrigger value="peak-sales" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <TrendingUp className="h-4 w-4" />
+                Peak Sales Index
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -2735,6 +2740,11 @@ const Index = () => {
           {/* LPI-3 Tab - ML Model */}
           <TabsContent value="lpi-3" className="space-y-6">
             <LPI3Dashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* Peak Sales Index Tab */}
+          <TabsContent value="peak-sales" className="space-y-6">
+            <PeakSalesIndexDashboard />
           </TabsContent>
         </Tabs>
 
