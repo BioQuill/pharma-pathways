@@ -1,9 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProbabilityScores, MarketData, calculateTimeToBlockbuster, calculateRevenueScore, calculateTTMPercent, calculateTTMMonths, calculateCompositeScore } from "@/lib/scoring";
-import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign, Clock, ExternalLink } from "lucide-react";
+import { TrendingUp, Activity, Target, Award, GitBranch, DollarSign, Clock, ExternalLink, BarChart3, Zap } from "lucide-react";
 import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
+import { calculatePeakSalesIndex, getPeakSalesScoreColor, getPeakSalesScoreBgColor, type PeakSalesResult } from "@/lib/peakSalesIndex";
+import { type MoleculeProfile } from "@/lib/moleculesData";
 
 interface MoleculeScoreCardProps {
   moleculeName: string;
@@ -17,10 +19,14 @@ interface MoleculeScoreCardProps {
   marketData?: MarketData[];
   companyTrackRecord?: 'fast' | 'average' | 'slow';
   company?: string;
+  molecule?: MoleculeProfile; // Full molecule for Peak Sales Index calculation
 }
 
-export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [], companyTrackRecord = 'average', company }: MoleculeScoreCardProps) {
+export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indication, therapeuticArea, overallScore, nctId, marketData = [], companyTrackRecord = 'average', company, molecule }: MoleculeScoreCardProps) {
   const mfgCapability = company ? getManufacturingCapability(company) : null;
+  
+  // Calculate Peak Sales Index if molecule is provided
+  const peakSalesIndex = molecule ? calculatePeakSalesIndex(molecule) : null;
   
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
@@ -223,6 +229,71 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             </div>
           </div>
         </div>
+
+        {/* Peak Sales Index Section */}
+        {peakSalesIndex && (
+          <div className="space-y-4 pt-4 border-t">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <BarChart3 className="w-4 h-4" />
+              <span>Peak Sales Composite Index</span>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Composite Score */}
+              <div className={`p-4 rounded-lg border-2 ${getPeakSalesScoreBgColor(peakSalesIndex.compositeScore)}`}>
+                <p className="text-xs font-medium text-muted-foreground">Composite Score</p>
+                <p className={`text-3xl font-bold ${getPeakSalesScoreColor(peakSalesIndex.compositeScore)}`}>
+                  {peakSalesIndex.compositeScore}
+                </p>
+                <p className="text-xs text-muted-foreground">out of 100</p>
+              </div>
+
+              {/* Blockbuster Probability */}
+              <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg border border-amber-200">
+                <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                  <DollarSign className="h-3 w-3" />
+                  Blockbuster Probability (≥$1B)
+                </p>
+                <p className="text-2xl font-bold text-amber-700">
+                  {peakSalesIndex.blockbusterProbability}%
+                </p>
+                <div className="w-full bg-amber-200 rounded-full h-1.5 mt-1">
+                  <div 
+                    className="bg-amber-600 h-1.5 rounded-full transition-all"
+                    style={{ width: `${peakSalesIndex.blockbusterProbability}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Peak Sales Estimate */}
+              <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                  <Zap className="h-3 w-3" />
+                  Estimated Peak Sales
+                </p>
+                <p className="text-2xl font-bold text-green-700">
+                  ${peakSalesIndex.peakSalesEstimate}B
+                </p>
+                <p className="text-xs text-muted-foreground">Annual at peak</p>
+              </div>
+            </div>
+
+            {/* Component Breakdown */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
+              {peakSalesIndex.componentScores.map((comp) => (
+                <div key={comp.name} className="p-2 bg-muted/50 rounded-md text-center">
+                  <p className="text-xs text-muted-foreground truncate" title={comp.name}>
+                    {comp.name.split(' ')[0]}
+                  </p>
+                  <p className={`text-lg font-semibold ${getPeakSalesScoreColor(comp.score)}`}>
+                    {Math.round(comp.score)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">×{(comp.weight * 100).toFixed(0)}%</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

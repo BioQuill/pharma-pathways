@@ -2081,6 +2081,7 @@ const Index = () => {
                   marketData={activeMolecule.marketData}
                   companyTrackRecord={activeMolecule.companyTrackRecord}
                   company={activeMolecule.company}
+                  molecule={activeMolecule}
                 />
 
                 {/* Drug Information Section */}
