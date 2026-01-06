@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -24,6 +24,31 @@ import {
   Zap
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { type MoleculeProfile } from "@/lib/moleculesData";
+
+// List of 20 Therapeutic Areas
+const THERAPEUTIC_AREAS = [
+  "ONCOLOGY/HEMATOLOGY",
+  "CARDIOVASCULAR",
+  "NEUROLOGY/CNS",
+  "PSYCHIATRY/MENTAL HEALTH",
+  "IMMUNOLOGY & INFLAMMATION",
+  "RHEUMATOLOGY",
+  "INFECTIOUS DISEASES",
+  "RESPIRATORY/PULMONOLOGY",
+  "GASTROENTEROLOGY & HEPATOLOGY",
+  "NEPHROLOGY/RENAL",
+  "DERMATOLOGY",
+  "OPHTHALMOLOGY",
+  "RARE DISEASES/ORPHAN",
+  "VACCINES & VIROLOGY",
+  "WOMEN'S HEALTH",
+  "UROLOGY",
+  "PAIN MANAGEMENT/ANESTHESIA",
+  "TRANSPLANT/CELL-GENE",
+  "PEDIATRICS",
+  "ENDOCRINOLOGY & METABOLISM",
+];
 
 // Types
 interface ComponentScore {
@@ -38,6 +63,10 @@ interface PeakSalesResult {
   blockbusterProbability: number;
   peakSalesEstimate: number;
   componentScores: ComponentScore[];
+}
+
+interface PeakSalesCalculatorProps {
+  molecules: MoleculeProfile[];
 }
 
 // Helper functions
@@ -64,7 +93,16 @@ const calculateBlockbusterProbability = (compositeScore: number): number => {
 };
 
 // Peak Sales Calculator Component
-const PeakSalesCalculator = () => {
+const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
+  // Selection parameters
+  const [selectedTA, setSelectedTA] = useState<string>("");
+  const [selectedMolecule, setSelectedMolecule] = useState<string>("");
+
+  // Filter molecules by selected TA
+  const filteredMolecules = selectedTA 
+    ? molecules.filter(m => m.therapeuticArea.toUpperCase().includes(selectedTA.split("/")[0]) || 
+                            m.therapeuticArea.toUpperCase().includes(selectedTA.split("&")[0].trim()))
+    : molecules;
   // Component 1: Base Market Size (Weight: 25%)
   const [patientPopulation, setPatientPopulation] = useState("large");
   const [geographicReach, setGeographicReach] = useState("global");
@@ -108,6 +146,53 @@ const PeakSalesCalculator = () => {
   const [isOrphanDrug, setIsOrphanDrug] = useState(false);
   const [avoidsHospitalizations, setAvoidsHospitalizations] = useState(true);
   const [hasGenericCompetition, setHasGenericCompetition] = useState(false);
+
+  // Pre-populate parameters when a molecule is selected
+  useEffect(() => {
+    if (selectedMolecule) {
+      const molecule = molecules.find(m => m.id === selectedMolecule);
+      if (molecule) {
+        // Set TA based on molecule
+        const matchingTA = THERAPEUTIC_AREAS.find(ta => 
+          molecule.therapeuticArea.toUpperCase().includes(ta.split("/")[0]) ||
+          molecule.therapeuticArea.toUpperCase().includes(ta.split("&")[0].trim())
+        );
+        if (matchingTA && !selectedTA) {
+          setSelectedTA(matchingTA);
+        }
+
+        // Pre-populate based on molecule phase and data
+        if (molecule.phase === "Approved") {
+          setEvidenceQuality([95]);
+          setHcpAcceptance([85]);
+        } else if (molecule.phase.includes("Phase III")) {
+          setEvidenceQuality([75]);
+          setHcpAcceptance([65]);
+        } else if (molecule.phase.includes("Phase II")) {
+          setEvidenceQuality([55]);
+          setHcpAcceptance([50]);
+        }
+
+        // Set orphan drug status for rare diseases
+        if (molecule.therapeuticArea.toLowerCase().includes("rare") || 
+            molecule.therapeuticArea.toLowerCase().includes("orphan")) {
+          setIsOrphanDrug(true);
+          setPatientPopulation("rare");
+        }
+
+        // Pre-populate based on overall score
+        if (molecule.overallScore >= 80) {
+          setEfficacyVsSoC([85]);
+          setSafetyProfile([80]);
+          setClinicalDifferentiation([85]);
+        } else if (molecule.overallScore >= 60) {
+          setEfficacyVsSoC([70]);
+          setSafetyProfile([70]);
+          setClinicalDifferentiation([70]);
+        }
+      }
+    }
+  }, [selectedMolecule, molecules, selectedTA]);
 
   // Calculate scores
   const calculateBaseMarketScore = (): number => {
@@ -340,6 +425,51 @@ const PeakSalesCalculator = () => {
               </TabsList>
 
               <TabsContent value="market" className="space-y-4">
+                {/* TA and Molecule Selection */}
+                <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg border mb-4">
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Therapeutic Area</Label>
+                    <Select value={selectedTA} onValueChange={(value) => {
+                      setSelectedTA(value);
+                      setSelectedMolecule(""); // Reset molecule when TA changes
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Therapeutic Area..." />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px]">
+                        <SelectItem value="">All Therapeutic Areas</SelectItem>
+                        {THERAPEUTIC_AREAS.map((ta) => (
+                          <SelectItem key={ta} value={ta}>{ta}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="font-semibold">Molecule</Label>
+                    <Select value={selectedMolecule} onValueChange={setSelectedMolecule}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Molecule..." />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-[300px]">
+                        <SelectItem value="">Custom Parameters</SelectItem>
+                        {filteredMolecules.slice(0, 100).map((mol) => (
+                          <SelectItem key={mol.id} value={mol.id}>
+                            {mol.name} ({mol.phase})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {selectedMolecule && (
+                    <div className="col-span-2 text-sm text-muted-foreground">
+                      <Badge variant="outline" className="mr-2">
+                        {molecules.find(m => m.id === selectedMolecule)?.therapeuticArea}
+                      </Badge>
+                      <span>{molecules.find(m => m.id === selectedMolecule)?.indication}</span>
+                    </div>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Patient Population</Label>
@@ -752,7 +882,11 @@ const HistoricalValidation = () => {
 };
 
 // Main Dashboard Component
-export const PeakSalesIndexDashboard = () => {
+interface PeakSalesIndexDashboardProps {
+  molecules: MoleculeProfile[];
+}
+
+export const PeakSalesIndexDashboard = ({ molecules }: PeakSalesIndexDashboardProps) => {
   return (
     <div className="space-y-6">
       {/* Model Overview */}
@@ -837,7 +971,7 @@ export const PeakSalesIndexDashboard = () => {
         </TabsList>
 
         <TabsContent value="calculator">
-          <PeakSalesCalculator />
+          <PeakSalesCalculator molecules={molecules} />
         </TabsContent>
 
         <TabsContent value="validation">
