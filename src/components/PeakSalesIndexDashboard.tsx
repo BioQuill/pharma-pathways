@@ -95,11 +95,11 @@ const calculateBlockbusterProbability = (compositeScore: number): number => {
 // Peak Sales Calculator Component
 const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
   // Selection parameters
-  const [selectedTA, setSelectedTA] = useState<string>("");
-  const [selectedMolecule, setSelectedMolecule] = useState<string>("");
+  const [selectedTA, setSelectedTA] = useState<string>("all");
+  const [selectedMolecule, setSelectedMolecule] = useState<string>("custom");
 
   // Filter molecules by selected TA
-  const filteredMolecules = selectedTA 
+  const filteredMolecules = selectedTA && selectedTA !== "all"
     ? molecules.filter(m => m.therapeuticArea.toUpperCase().includes(selectedTA.split("/")[0]) || 
                             m.therapeuticArea.toUpperCase().includes(selectedTA.split("&")[0].trim()))
     : molecules;
@@ -149,7 +149,7 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
 
   // Pre-populate parameters when a molecule is selected
   useEffect(() => {
-    if (selectedMolecule) {
+    if (selectedMolecule && selectedMolecule !== "custom") {
       const molecule = molecules.find(m => m.id === selectedMolecule);
       if (molecule) {
         // Set TA based on molecule
@@ -157,7 +157,7 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
           molecule.therapeuticArea.toUpperCase().includes(ta.split("/")[0]) ||
           molecule.therapeuticArea.toUpperCase().includes(ta.split("&")[0].trim())
         );
-        if (matchingTA && !selectedTA) {
+        if (matchingTA && selectedTA === "all") {
           setSelectedTA(matchingTA);
         }
 
@@ -431,13 +431,13 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
                     <Label className="font-semibold">Therapeutic Area</Label>
                     <Select value={selectedTA} onValueChange={(value) => {
                       setSelectedTA(value);
-                      setSelectedMolecule(""); // Reset molecule when TA changes
+                      setSelectedMolecule("custom"); // Reset molecule when TA changes
                     }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Therapeutic Area..." />
                       </SelectTrigger>
                       <SelectContent className="max-h-[300px]">
-                        <SelectItem value="">All Therapeutic Areas</SelectItem>
+                        <SelectItem value="all">All Therapeutic Areas</SelectItem>
                         {THERAPEUTIC_AREAS.map((ta) => (
                           <SelectItem key={ta} value={ta}>{ta}</SelectItem>
                         ))}
@@ -451,7 +451,7 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
                         <SelectValue placeholder="Select Molecule..." />
                       </SelectTrigger>
                       <SelectContent className="max-h-[300px]">
-                        <SelectItem value="">Custom Parameters</SelectItem>
+                        <SelectItem value="custom">Custom Parameters</SelectItem>
                         {filteredMolecules.slice(0, 100).map((mol) => (
                           <SelectItem key={mol.id} value={mol.id}>
                             {mol.name} ({mol.phase})
@@ -460,7 +460,7 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
                       </SelectContent>
                     </Select>
                   </div>
-                  {selectedMolecule && (
+                  {selectedMolecule && selectedMolecule !== "custom" && (
                     <div className="col-span-2 text-sm text-muted-foreground">
                       <Badge variant="outline" className="mr-2">
                         {molecules.find(m => m.id === selectedMolecule)?.therapeuticArea}
