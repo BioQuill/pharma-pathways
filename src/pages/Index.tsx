@@ -2744,7 +2744,7 @@ const Index = () => {
 
           {/* Peak Sales Index Tab */}
           <TabsContent value="peak-sales" className="space-y-6">
-            <PeakSalesIndexDashboard />
+            <PeakSalesIndexDashboard molecules={allMolecules} />
           </TabsContent>
         </Tabs>
 
