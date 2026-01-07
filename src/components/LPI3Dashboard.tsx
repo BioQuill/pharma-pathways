@@ -257,7 +257,7 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
               <Brain className="h-6 w-6" />
             </div>
             <div>
-              <CardTitle className="text-xl">LPI-3: ML-Based Launch Probability Model</CardTitle>
+              <CardTitle className="text-xl">LPI: ML-Based Launch Probability Model</CardTitle>
               <CardDescription>
                 XGBoost classifier with isotonic calibration • SHAP feature importance • Survival analysis integration
               </CardDescription>

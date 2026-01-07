@@ -54,7 +54,7 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
             <Brain className="h-5 w-5" />
           </div>
           <div className="flex-1">
-            <CardTitle className="text-lg">LPI-3 Analysis</CardTitle>
+            <CardTitle className="text-lg">LPI (Launch Probability Index) Analysis</CardTitle>
             <p className="text-xs text-muted-foreground">ML-Based Launch Probability (XGBoost + Calibration)</p>
           </div>
           <div className="text-right">
@@ -66,7 +66,7 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
                 <div className="text-xl font-bold" style={{ lineHeight: '1.2' }}>
                   {(prediction.calibratedProbability * 100).toFixed(0)}%
                 </div>
-                <div className="text-[10px] opacity-90" style={{ lineHeight: '1.2' }}>LPI-3</div>
+                <div className="text-[10px] opacity-90" style={{ lineHeight: '1.2' }}>LPI</div>
               </div>
             </div>
             <div 
