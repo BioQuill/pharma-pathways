@@ -45,6 +45,7 @@ import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
+import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
@@ -1777,7 +1778,7 @@ const Index = () => {
               </TabsTrigger>
               <TabsTrigger value="lpi-3" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <TrendingUp className="h-4 w-4" />
-                LPI-3
+                LPI
               </TabsTrigger>
               <TabsTrigger value="peak-sales" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <TrendingUp className="h-4 w-4" />
@@ -2336,7 +2337,7 @@ const Index = () => {
                   </CardContent>
                 </Card>
                 
-                {/* LPI-3 Analysis Card */}
+                {/* LPI (Launch Probability Index) Analysis Card */}
                 <LPI3ReportCard molecule={activeMolecule} />
                 
                 {activeMolecule.launchFactors && (
@@ -2347,6 +2348,17 @@ const Index = () => {
                     company={activeMolecule.company}
                   />
                 )}
+                
+                {/* Investment Score Analysis Card */}
+                <InvestmentScoreReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                  indication: activeMolecule.indication,
+                  company: activeMolecule.company,
+                  companyTrackRecord: activeMolecule.companyTrackRecord,
+                }} />
                 
                 {activeMolecule.patents && activeMolecule.patents.length > 0 && (
                   <PatentTimeline
