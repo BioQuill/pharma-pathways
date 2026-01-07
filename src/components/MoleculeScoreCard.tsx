@@ -74,17 +74,17 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             )}
             {company && (
               <div className="flex items-center gap-2 mt-1">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm bg-[hsl(50,100%,85%)] text-foreground">
-                  <span>{company}</span>
+                <span className="inline-flex items-center gap-1.5 text-sm">
+                  <span className="font-bold text-[hsl(142,60%,25%)]">{company}</span>
                   {mfgCapability?.ticker && (
                     <a
                       href={`https://finance.yahoo.com/quote/${mfgCapability.ticker}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
                       title="View on Yahoo Finance"
                     >
-                      {mfgCapability.ticker}
+                      ({mfgCapability.ticker})
                     </a>
                   )}
                 </span>
