@@ -1773,7 +1773,7 @@ const Index = () => {
               </TabsTrigger>
               <TabsTrigger value="lpi-2" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <TrendingUp className="h-4 w-4" />
-                LPI-2
+                Investment Score
               </TabsTrigger>
               <TabsTrigger value="lpi-3" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <TrendingUp className="h-4 w-4" />
