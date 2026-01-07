@@ -2085,79 +2085,6 @@ const Index = () => {
                   molecule={activeMolecule}
                 />
 
-                {/* Drug Information Section */}
-                <Card className="border-l-4 border-l-accent">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Info className="h-5 w-5" />
-                      Drug Information
-                    </CardTitle>
-                    <CardDescription>
-                      {activeMolecule.name}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {activeMolecule.drugInfo ? (
-                        <>
-                          <div className="space-y-3">
-                            <div>
-                              <span className="text-sm font-medium text-muted-foreground">Class:</span>
-                              <p className="text-sm">{activeMolecule.drugInfo.class}</p>
-                            </div>
-                            <div>
-                              <span className="text-sm font-medium text-muted-foreground">Administration:</span>
-                              <p className="text-sm">{activeMolecule.drugInfo.administration}</p>
-                            </div>
-                            {activeMolecule.drugInfo.keyAdvantage && (
-                              <div>
-                                <span className="text-sm font-medium text-muted-foreground">Key Advantage:</span>
-                                <p className="text-sm">{activeMolecule.drugInfo.keyAdvantage}</p>
-                              </div>
-                            )}
-                          </div>
-                          <div className="space-y-3">
-                            {activeMolecule.drugInfo.discovery && (
-                              <div>
-                                <span className="text-sm font-medium text-muted-foreground">Discovery:</span>
-                                <p className="text-sm">{activeMolecule.drugInfo.discovery}</p>
-                              </div>
-                            )}
-                            {activeMolecule.drugInfo.license && (
-                              <div>
-                                <span className="text-sm font-medium text-muted-foreground">License:</span>
-                                <p className="text-sm">{activeMolecule.drugInfo.license}</p>
-                              </div>
-                            )}
-                            {activeMolecule.drugInfo.development && (
-                              <div>
-                                <span className="text-sm font-medium text-muted-foreground">Development:</span>
-                                <p className="text-sm">{activeMolecule.drugInfo.development}</p>
-                              </div>
-                            )}
-                          </div>
-                          {activeMolecule.drugInfo.additionalInfo && activeMolecule.drugInfo.additionalInfo.length > 0 && (
-                            <div className="col-span-1 md:col-span-2">
-                              <span className="text-sm font-medium text-muted-foreground">Additional Information:</span>
-                              <ul className="list-disc list-inside text-sm mt-1 space-y-1">
-                                {activeMolecule.drugInfo.additionalInfo.map((info, idx) => (
-                                  <li key={idx}>{info}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <div className="col-span-2 text-sm text-muted-foreground">
-                          <p><span className="font-medium">Therapeutic Area:</span> {activeMolecule.therapeuticArea}</p>
-                          <p><span className="font-medium">Indication:</span> {activeMolecule.indication}</p>
-                          <p><span className="font-medium">Phase:</span> {activeMolecule.phase}</p>
-                          <p><span className="font-medium">Sponsor:</span> {activeMolecule.company}</p>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
 
                 {/* Therapeutic Index Analysis Section */}
                 {(() => {
@@ -2307,15 +2234,6 @@ const Index = () => {
                         >
                           <Globe className="h-4 w-4" />
                           View Trials Map
-                        </a>
-                        <a
-                          href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-muted transition-colors"
-                        >
-                          <BarChart3 className="h-4 w-4" />
-                          View Results Analysis
                         </a>
                       </div>
                       {activeMolecule.trialName && (
