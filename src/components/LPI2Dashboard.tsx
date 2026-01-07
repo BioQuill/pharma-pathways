@@ -182,7 +182,7 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
                 style={{ backgroundColor: getScoreColor(prediction.totalScore) }}
               >
                 <div className="text-2xl">{prediction.totalScore}</div>
-                <div className="text-[10px] opacity-90">LPI-2</div>
+                <div className="text-[10px] opacity-90">Investment</div>
               </div>
               <div className="flex gap-2 mt-2 justify-end">
                 {getRecommendationBadge(prediction.recommendation)}
@@ -303,7 +303,7 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
               <TrendingUp className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-xl">LPI-2: 5-Factor Investment Model</CardTitle>
+              <CardTitle className="text-xl">Investment Score: 5-Factor Investment Model</CardTitle>
               <CardDescription>
                 VC / Investment Model • Used by venture capital, licensing teams, and biotech accelerators
               </CardDescription>
@@ -322,7 +322,7 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <div className="text-3xl font-bold text-primary">{avgScore}</div>
-                  <div className="text-sm text-muted-foreground">Avg LPI-2</div>
+                  <div className="text-sm text-muted-foreground">Avg Investment Score</div>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
                   <div className="text-3xl font-bold text-[hsl(142,76%,36%)]">{strongBuys}</div>
@@ -406,7 +406,7 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
       {/* Portfolio Comparison Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>Portfolio LPI-2 Comparison</CardTitle>
+          <CardTitle>Portfolio Investment Score Comparison</CardTitle>
           <CardDescription>Investment readiness scores across all molecules</CardDescription>
         </CardHeader>
         <CardContent>
@@ -437,7 +437,7 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
                   return null;
                 }}
               />
-              <Bar dataKey="score" name="LPI-2 Score">
+              <Bar dataKey="score" name="Investment Score">
                 {portfolioChartData.map((entry, index) => (
                   <Cell key={index} fill={getScoreColor(entry.score)} />
                 ))}
