@@ -1765,6 +1765,7 @@ const Index = () => {
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="-mx-4 px-0">
+            {/* Primary Navigation Bar - Blue */}
             <TabsList className="w-full justify-start bg-[#000080] border-0 rounded-none h-12 px-4">
               <TabsTrigger value="overview" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <BarChart3 className="h-4 w-4" />
@@ -1778,6 +1779,22 @@ const Index = () => {
                 <Pill className="h-4 w-4" />
                 Molecules
               </TabsTrigger>
+              <TabsTrigger value="top-100" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Target className="h-4 w-4" />
+                Top 100
+              </TabsTrigger>
+              <TabsTrigger value="watchlist" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Star className="h-4 w-4" />
+                Watchlist ({watchlist.length})
+              </TabsTrigger>
+              <TabsTrigger value="portfolio" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <LayoutDashboard className="h-4 w-4" />
+                Portfolio
+              </TabsTrigger>
+            </TabsList>
+            
+            {/* Secondary Navigation Bar - Dark Purple */}
+            <TabsList className="w-full justify-start bg-[#4B0082] border-0 rounded-none h-12 px-4">
               <TabsTrigger value="ttm" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Calendar className="h-4 w-4" />
                 TTM
@@ -1801,18 +1818,6 @@ const Index = () => {
               <TabsTrigger value="peak-sales" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <TrendingUp className="h-4 w-4" />
                 Peak Sales Index
-              </TabsTrigger>
-              <TabsTrigger value="top-100" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Target className="h-4 w-4" />
-                Top 100
-              </TabsTrigger>
-              <TabsTrigger value="watchlist" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Star className="h-4 w-4" />
-                Watchlist ({watchlist.length})
-              </TabsTrigger>
-              <TabsTrigger value="portfolio" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <LayoutDashboard className="h-4 w-4" />
-                Portfolio
               </TabsTrigger>
             </TabsList>
           </div>
