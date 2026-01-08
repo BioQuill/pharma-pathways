@@ -51,7 +51,7 @@ import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
-import { exportMoleculesToExcel, exportLPIDetailedToExcel, exportTherapeuticAreaSummary } from "@/lib/excelExport";
+import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
 import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
 import { 
   calculateProbabilityScores,
@@ -2369,42 +2369,7 @@ const Index = () => {
                 <CardTitle className="flex items-center justify-between">
                   <span>Molecule Database</span>
                   <div className="flex items-center gap-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-2">
-                          <Download className="h-4 w-4" />
-                          Export to Excel
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-56" align="end">
-                        <div className="grid gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="justify-start"
-                            onClick={() => exportMoleculesToExcel(allMolecules)}
-                          >
-                            All Molecule Data
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="justify-start"
-                            onClick={() => exportLPIDetailedToExcel(allMolecules)}
-                          >
-                            LPI Detailed Scores
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="justify-start"
-                            onClick={() => exportTherapeuticAreaSummary(allMolecules)}
-                          >
-                            TA Summary
-                          </Button>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <MoleculeExportPanel molecules={allMolecules} />
                     <Badge variant="secondary" className="text-lg px-3 py-1">{allMolecules.length.toLocaleString()} Molecules</Badge>
                   </div>
                 </CardTitle>

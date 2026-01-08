@@ -170,3 +170,130 @@ export function exportTherapeuticAreaSummary(molecules: MoleculeProfile[], filen
 
   XLSX.writeFile(wb, `${filename}-${new Date().toISOString().split('T')[0]}.xlsx`);
 }
+
+export function exportComparisonToExcel(molecules: MoleculeProfile[], filename = 'molecule-comparison') {
+  if (molecules.length < 2) return;
+
+  // Create comparison data with all molecules side by side
+  const comparisonData: Record<string, string | number>[] = [];
+  
+  // Define metrics to compare
+  const metrics = [
+    'Molecule Name',
+    'Company',
+    'Ticker',
+    'Phase',
+    'Therapeutic Area',
+    'Indication',
+    'LPI Score (%)',
+    'CI Lower (%)',
+    'CI Upper (%)',
+    'Risk Level',
+    'Approval Probability (%)',
+    'Next Phase Probability (%)',
+    'TTM (Months)',
+    'Composite Score (%)',
+    'Scientific/Preclinical (%)',
+    'Clinical Signals (%)',
+    'Regulatory & Program (%)',
+    'Sponsor/Organization (%)',
+    'Market & Commercial (%)',
+    'Safety & History (%)',
+    'Company Track Record',
+    'Status',
+  ];
+
+  // Build row-based comparison (metrics as rows, molecules as columns)
+  metrics.forEach(metric => {
+    const row: Record<string, string | number> = { 'Metric': metric };
+    
+    molecules.forEach((mol, idx) => {
+      const lpi3 = calculateLPI3ForMolecule(mol);
+      const lpiScore = Math.round(lpi3.calibratedProbability * 100);
+      const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
+      const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
+      
+      const lpiNormalized = lpi3.calibratedProbability;
+      const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
+      const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
+
+      const categoryScores: Record<string, number> = {};
+      lpi3.featureCategories.forEach((cat) => {
+        const avgScore = cat.features.reduce((sum, f) => sum + f.value, 0) / cat.features.length;
+        categoryScores[cat.name] = Math.round(avgScore * 100);
+      });
+
+      const riskLevel = lpi3.riskFlags.length === 0 ? 'Low' : 
+                        lpi3.riskFlags.some(f => f.severity === 'critical' || f.severity === 'high') ? 'High' : 'Medium';
+
+      const values: Record<string, string | number> = {
+        'Molecule Name': mol.name,
+        'Company': mol.company,
+        'Ticker': mol.ticker || 'N/A',
+        'Phase': mol.phase,
+        'Therapeutic Area': mol.therapeuticArea,
+        'Indication': mol.indication || 'N/A',
+        'LPI Score (%)': lpiScore,
+        'CI Lower (%)': Math.round(lpi3.confidenceInterval.lower * 100),
+        'CI Upper (%)': Math.round(lpi3.confidenceInterval.upper * 100),
+        'Risk Level': riskLevel,
+        'Approval Probability (%)': Math.round(probScores.approval * 100),
+        'Next Phase Probability (%)': Math.round(probScores.nextPhase * 100),
+        'TTM (Months)': ttmMonths,
+        'Composite Score (%)': compositeScore,
+        'Scientific/Preclinical (%)': categoryScores['Scientific / Preclinical'] || 0,
+        'Clinical Signals (%)': categoryScores['Clinical Signals'] || 0,
+        'Regulatory & Program (%)': categoryScores['Regulatory & Program'] || 0,
+        'Sponsor/Organization (%)': categoryScores['Sponsor / Organization'] || 0,
+        'Market & Commercial (%)': categoryScores['Market & Commercial'] || 0,
+        'Safety & History (%)': categoryScores['Safety & History'] || 0,
+        'Company Track Record': mol.companyTrackRecord || 'average',
+        'Status': mol.isFailed ? 'Failed' : 'Active',
+      };
+
+      row[`Molecule ${idx + 1}`] = values[metric];
+    });
+
+    comparisonData.push(row);
+  });
+
+  const ws = XLSX.utils.json_to_sheet(comparisonData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Side-by-Side Comparison');
+
+  // Also add individual molecule sheets
+  molecules.forEach((mol, idx) => {
+    const lpi3 = calculateLPI3ForMolecule(mol);
+    const lpiScore = Math.round(lpi3.calibratedProbability * 100);
+    const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
+    const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
+
+    const categoryScores: Record<string, number> = {};
+    lpi3.featureCategories.forEach((cat) => {
+      const avgScore = cat.features.reduce((sum, f) => sum + f.value, 0) / cat.features.length;
+      categoryScores[cat.name] = Math.round(avgScore * 100);
+    });
+
+    const molData = [{
+      'Molecule Name': mol.name,
+      'Company': mol.company,
+      'Phase': mol.phase,
+      'Therapeutic Area': mol.therapeuticArea,
+      'LPI Score (%)': lpiScore,
+      'Approval Probability (%)': Math.round(probScores.approval * 100),
+      'TTM (Months)': ttmMonths,
+      'Scientific/Preclinical (%)': categoryScores['Scientific / Preclinical'] || 0,
+      'Clinical Signals (%)': categoryScores['Clinical Signals'] || 0,
+      'Regulatory & Program (%)': categoryScores['Regulatory & Program'] || 0,
+      'Sponsor/Organization (%)': categoryScores['Sponsor / Organization'] || 0,
+      'Market & Commercial (%)': categoryScores['Market & Commercial'] || 0,
+      'Safety & History (%)': categoryScores['Safety & History'] || 0,
+    }];
+
+    const molWs = XLSX.utils.json_to_sheet(molData);
+    const sheetName = mol.name.slice(0, 28).replace(/[\\/*?[\]:]/g, ''); // Excel sheet name limits
+    XLSX.utils.book_append_sheet(wb, molWs, sheetName);
+  });
+
+  XLSX.writeFile(wb, `${filename}-${new Date().toISOString().split('T')[0]}.xlsx`);
+}
