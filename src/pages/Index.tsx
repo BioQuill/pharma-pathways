@@ -58,6 +58,7 @@ import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuti
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { WatchlistPanel } from "@/components/WatchlistPanel";
 import { PortfolioDashboard } from "@/components/PortfolioDashboard";
+import { Top100BlockbusterDrugs } from "@/components/Top100BlockbusterDrugs";
 import { 
   calculateProbabilityScores,
   generateMarketProjections, 
@@ -1801,6 +1802,10 @@ const Index = () => {
                 <TrendingUp className="h-4 w-4" />
                 Peak Sales Index
               </TabsTrigger>
+              <TabsTrigger value="top-100" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Target className="h-4 w-4" />
+                Top 100
+              </TabsTrigger>
               <TabsTrigger value="watchlist" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Star className="h-4 w-4" />
                 Watchlist ({watchlist.length})
@@ -2862,6 +2867,11 @@ const Index = () => {
                 molecules={allMolecules} 
                 watchlistIds={watchlist.map(w => w.moleculeId)}
               />
+            </TabsContent>
+
+            {/* Top 100 Blockbuster Drugs Tab */}
+            <TabsContent value="top-100" className="space-y-6">
+              <Top100BlockbusterDrugs />
             </TabsContent>
           </Tabs>
         </div>
