@@ -2871,7 +2871,13 @@ const Index = () => {
 
             {/* Top 100 Blockbuster Drugs Tab */}
             <TabsContent value="top-100" className="space-y-6">
-              <Top100BlockbusterDrugs />
+              <Top100BlockbusterDrugs 
+                molecules={allMolecules}
+                onViewMolecule={(id) => {
+                  setSelectedMolecule(id);
+                  setActiveTab("overview");
+                }}
+              />
             </TabsContent>
           </Tabs>
         </div>

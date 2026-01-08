@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,15 @@ import {
   DollarSign,
   ExternalLink,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Download,
+  Eye
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import * as XLSX from 'xlsx';
+import { type MoleculeProfile } from "@/lib/moleculesData";
 
 interface Drug {
   name: string;
@@ -262,10 +267,75 @@ const getPeakSalesValue = (peakSales: string): number => {
   return 1;
 };
 
-export function Top100BlockbusterDrugs() {
+interface Top100BlockbusterDrugsProps {
+  molecules?: MoleculeProfile[];
+  onViewMolecule?: (moleculeId: string) => void;
+}
+
+export function Top100BlockbusterDrugs({ molecules = [], onViewMolecule }: Top100BlockbusterDrugsProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTA, setSelectedTA] = useState<string>('all');
   const [expandedTAs, setExpandedTAs] = useState<Set<string>>(new Set(top100Data.map(ta => ta.name)));
+
+  // Create a lookup map for matching Top 100 drugs to molecule database
+  const moleculeMatchMap = useMemo(() => {
+    const map = new Map<string, string>();
+    molecules.forEach(mol => {
+      // Match by name (case-insensitive, partial match)
+      const nameLower = mol.name.toLowerCase();
+      top100Data.forEach(ta => {
+        ta.drugs.forEach(drug => {
+          const drugNameLower = drug.name.toLowerCase();
+          // Check if drug name is contained in molecule name or vice versa
+          if (nameLower.includes(drugNameLower) || drugNameLower.includes(nameLower.split(' ')[0])) {
+            map.set(`${drug.name}-${drug.company}`, mol.id);
+          }
+        });
+      });
+    });
+    return map;
+  }, [molecules]);
+
+  const getMoleculeId = (drug: Drug): string | null => {
+    return moleculeMatchMap.get(`${drug.name}-${drug.company}`) || null;
+  };
+
+  const handleExportToExcel = () => {
+    // Flatten all drugs with their TA
+    const allDrugs = top100Data.flatMap(ta => 
+      ta.drugs.map(drug => ({
+        'Therapeutic Area': ta.name,
+        'Drug Name': drug.name,
+        'Company': drug.company,
+        'Mechanism': drug.mechanism,
+        'Indication': drug.indication,
+        'Peak Sales Estimate': drug.peakSales,
+        'Status': drug.status,
+        'NCT Number': drug.nct,
+        'In Database': getMoleculeId(drug) ? 'Yes' : 'No'
+      }))
+    );
+
+    const worksheet = XLSX.utils.json_to_sheet(allDrugs);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Top 100 Blockbusters');
+
+    // Auto-size columns
+    const colWidths = [
+      { wch: 25 }, // TA
+      { wch: 30 }, // Drug Name
+      { wch: 25 }, // Company
+      { wch: 30 }, // Mechanism
+      { wch: 35 }, // Indication
+      { wch: 18 }, // Peak Sales
+      { wch: 25 }, // Status
+      { wch: 15 }, // NCT
+      { wch: 12 }, // In Database
+    ];
+    worksheet['!cols'] = colWidths;
+
+    XLSX.writeFile(workbook, 'Top_100_Blockbuster_Drugs.xlsx');
+  };
 
   const toggleTA = (taName: string) => {
     const newExpanded = new Set(expandedTAs);
@@ -317,6 +387,10 @@ export function Top100BlockbusterDrugs() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleExportToExcel}>
+            <Download className="h-4 w-4 mr-1" />
+            Export Excel
+          </Button>
           <Button variant="outline" size="sm" onClick={expandAll}>Expand All</Button>
           <Button variant="outline" size="sm" onClick={collapseAll}>Collapse All</Button>
         </div>
@@ -446,42 +520,65 @@ export function Top100BlockbusterDrugs() {
                           <th className="text-left py-3 px-2 font-medium">Peak Sales</th>
                           <th className="text-left py-3 px-2 font-medium">Status</th>
                           <th className="text-left py-3 px-2 font-medium hidden lg:table-cell">NCT#</th>
+                          <th className="text-left py-3 px-2 font-medium w-16">Report</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {ta.drugs.map((drug, index) => (
-                          <tr key={`${drug.name}-${index}`} className="border-b last:border-0 hover:bg-accent/30">
-                            <td className="py-3 px-2 font-medium">{drug.name}</td>
-                            <td className="py-3 px-2 text-muted-foreground">{drug.company}</td>
-                            <td className="py-3 px-2 text-muted-foreground hidden md:table-cell">{drug.mechanism}</td>
-                            <td className="py-3 px-2">{drug.indication}</td>
-                            <td className="py-3 px-2">
-                              <span className={`font-semibold ${getPeakSalesValue(drug.peakSales) >= 2 ? 'text-green-600' : 'text-yellow-600'}`}>
-                                {drug.peakSales}
-                              </span>
-                            </td>
-                            <td className="py-3 px-2">
-                              <Badge className={getStatusColor(drug.status)} variant="secondary">
-                                {drug.status}
-                              </Badge>
-                            </td>
-                            <td className="py-3 px-2 hidden lg:table-cell">
-                              {drug.nct !== 'TBD' ? (
-                                <a 
-                                  href={`https://clinicaltrials.gov/ct2/show/${drug.nct}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-primary hover:underline flex items-center gap-1"
-                                >
-                                  {drug.nct}
-                                  <ExternalLink className="h-3 w-3" />
-                                </a>
-                              ) : (
-                                <span className="text-muted-foreground">TBD</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
+                        {ta.drugs.map((drug, index) => {
+                          const moleculeId = getMoleculeId(drug);
+                          return (
+                            <tr key={`${drug.name}-${index}`} className="border-b last:border-0 hover:bg-accent/30">
+                              <td className="py-3 px-2 font-medium">{drug.name}</td>
+                              <td className="py-3 px-2 text-muted-foreground">{drug.company}</td>
+                              <td className="py-3 px-2 text-muted-foreground hidden md:table-cell">{drug.mechanism}</td>
+                              <td className="py-3 px-2">{drug.indication}</td>
+                              <td className="py-3 px-2">
+                                <span className={`font-semibold ${getPeakSalesValue(drug.peakSales) >= 2 ? 'text-green-600' : 'text-yellow-600'}`}>
+                                  {drug.peakSales}
+                                </span>
+                              </td>
+                              <td className="py-3 px-2">
+                                <Badge className={getStatusColor(drug.status)} variant="secondary">
+                                  {drug.status}
+                                </Badge>
+                              </td>
+                              <td className="py-3 px-2 hidden lg:table-cell">
+                                {drug.nct !== 'TBD' ? (
+                                  <a 
+                                    href={`https://clinicaltrials.gov/ct2/show/${drug.nct}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-primary hover:underline flex items-center gap-1"
+                                  >
+                                    {drug.nct}
+                                    <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                ) : (
+                                  <span className="text-muted-foreground">TBD</span>
+                                )}
+                              </td>
+                              <td className="py-3 px-2">
+                                {moleculeId && onViewMolecule ? (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => onViewMolecule(moleculeId)}
+                                        className="h-8 w-8 p-0"
+                                      >
+                                        <Eye className="h-4 w-4 text-primary" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>View Full Due Diligence Report</TooltipContent>
+                                  </Tooltip>
+                                ) : (
+                                  <span className="text-muted-foreground text-xs">—</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
