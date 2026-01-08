@@ -231,7 +231,7 @@ export default function Methodology() {
         <div className="mb-16">
           <div className="text-center mb-10">
             <Badge className="mb-4">Methodology</Badge>
-            <h2 className="text-3xl font-bold mb-4">LPI-3 Model Architecture</h2>
+            <h2 className="text-3xl font-bold mb-4">LPI Model Architecture</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Our Launch Probability Index uses gradient boosting machine learning with rigorous 
               calibration and validation to deliver trustworthy probability estimates.
@@ -387,7 +387,7 @@ export default function Methodology() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      Every LPI-3 score includes a confidence interval reflecting uncertainty from 
+                      Every LPI score includes a confidence interval reflecting uncertainty from 
                       limited training data and model variance. Narrower intervals indicate higher 
                       prediction confidence.
                     </p>
