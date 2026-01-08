@@ -25,7 +25,9 @@ import {
   Info,
   ShieldCheck,
   AlertTriangle,
-  Activity
+  Activity,
+  Star,
+  LayoutDashboard
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
@@ -53,6 +55,9 @@ import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
 import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
+import { useWatchlist } from "@/hooks/useWatchlist";
+import { WatchlistPanel } from "@/components/WatchlistPanel";
+import { PortfolioDashboard } from "@/components/PortfolioDashboard";
 import { 
   calculateProbabilityScores,
   generateMarketProjections, 
@@ -326,6 +331,16 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
+  
+  // Watchlist hook for persistent molecule tracking
+  const { 
+    watchlist, 
+    addToWatchlist, 
+    removeFromWatchlist, 
+    isInWatchlist, 
+    updateNotes, 
+    clearWatchlist 
+  } = useWatchlist();
 
   const handleDownloadPDF = () => {
     if (!reportRef.current || !activeMolecule) return;
@@ -1786,6 +1801,14 @@ const Index = () => {
                 <TrendingUp className="h-4 w-4" />
                 Peak Sales Index
               </TabsTrigger>
+              <TabsTrigger value="watchlist" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Star className="h-4 w-4" />
+                Watchlist ({watchlist.length})
+              </TabsTrigger>
+              <TabsTrigger value="portfolio" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <LayoutDashboard className="h-4 w-4" />
+                Portfolio
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -2816,6 +2839,29 @@ const Index = () => {
                 </a>
               </div>
               <div className="text-xs text-muted-foreground mt-3 text-right">Last sync: Dec 7, 2025</div>
+            </TabsContent>
+
+            {/* Watchlist Tab */}
+            <TabsContent value="watchlist" className="space-y-6">
+              <WatchlistPanel
+                watchlist={watchlist}
+                molecules={allMolecules}
+                onRemove={removeFromWatchlist}
+                onUpdateNotes={updateNotes}
+                onViewMolecule={(id) => {
+                  setSelectedMolecule(id);
+                  setActiveTab("overview");
+                }}
+                onClear={clearWatchlist}
+              />
+            </TabsContent>
+
+            {/* Portfolio Dashboard Tab */}
+            <TabsContent value="portfolio" className="space-y-6">
+              <PortfolioDashboard 
+                molecules={allMolecules} 
+                watchlistIds={watchlist.map(w => w.moleculeId)}
+              />
             </TabsContent>
           </Tabs>
         </div>
