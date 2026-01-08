@@ -1980,7 +1980,7 @@ const Index = () => {
                                 const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
                                 return (
                                   <div className="text-right">
-                                    <div className="text-xs text-muted-foreground">LPI-3</div>
+                                    <div className="text-xs text-muted-foreground">LPI</div>
                                     <div className={`text-2xl font-bold ${
                                       lpi3Score >= 67 
                                         ? 'text-[hsl(142,76%,36%)]' 
@@ -2402,7 +2402,7 @@ const Index = () => {
                           const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
                           return (
                             <div className="flex items-center gap-2">
-                              <Badge className="bg-blue-500 text-white">LPI-3 {lpi3Score}%</Badge>
+                              <Badge className="bg-blue-500 text-white">LPI {lpi3Score}%</Badge>
                               <span className="text-[10px] text-muted-foreground">CI: {ciLower}–{ciUpper}%</span>
                             </div>
                           );
