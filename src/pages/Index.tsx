@@ -45,6 +45,7 @@ import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
+import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
 import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
@@ -2257,6 +2258,9 @@ const Index = () => {
                 
                 {/* LPI (Launch Probability Index) Analysis Card */}
                 <LPI3ReportCard molecule={activeMolecule} />
+                
+                {/* LPI Extended Data - Feature Category Breakdown, Category Weight vs Performance, TA Launch Probability Comparison */}
+                <LPIExtendedReportCard molecule={activeMolecule} />
                 
                 {activeMolecule.launchFactors && (
                   <LaunchFactorsCard
