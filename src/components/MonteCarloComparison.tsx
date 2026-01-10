@@ -26,8 +26,11 @@ import {
   X,
   Plus,
   RefreshCw,
-  Layers
+  Layers,
+  Download,
+  FileSpreadsheet
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import { 
   runMonteCarloSimulation, 
   type ComponentUncertainty,
@@ -196,6 +199,118 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
 
   const hasResults = selectedMolecules.some(m => m.result);
 
+  // Export to CSV
+  const exportToCSV = useCallback(() => {
+    if (!hasResults) return;
+
+    const headers = ["Molecule", "Mean ($B)", "Median ($B)", "Std Dev ($B)", "Min ($B)", "Max ($B)", "P5 ($B)", "P10 ($B)", "P25 ($B)", "P50 ($B)", "P75 ($B)", "P90 ($B)", "P95 ($B)", "P(≥$1B) %"];
+    const rows = statisticsComparison.map(stat => {
+      const mol = selectedMolecules.find(m => m.name === stat.name);
+      const result = mol?.result;
+      return [
+        stat.name,
+        stat.mean,
+        stat.median,
+        stat.stdDev,
+        stat.min,
+        stat.max,
+        result?.percentiles.p5 || 0,
+        result?.percentiles.p10 || 0,
+        result?.percentiles.p25 || 0,
+        result?.percentiles.p50 || 0,
+        result?.percentiles.p75 || 0,
+        result?.percentiles.p90 || 0,
+        result?.percentiles.p95 || 0,
+        stat.blockbusterProb
+      ].join(",");
+    });
+
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `monte_carlo_comparison_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [hasResults, statisticsComparison, selectedMolecules]);
+
+  // Export to Excel
+  const exportToExcel = useCallback(() => {
+    if (!hasResults) return;
+
+    const workbook = XLSX.utils.book_new();
+
+    // Summary Statistics Sheet
+    const summaryData = statisticsComparison.map(stat => {
+      const mol = selectedMolecules.find(m => m.name === stat.name);
+      const result = mol?.result;
+      return {
+        "Molecule": stat.name,
+        "Mean ($B)": stat.mean,
+        "Median ($B)": stat.median,
+        "Std Dev ($B)": stat.stdDev,
+        "Min ($B)": stat.min,
+        "Max ($B)": stat.max,
+        "P5 ($B)": result?.percentiles.p5 || 0,
+        "P10 ($B)": result?.percentiles.p10 || 0,
+        "P25 ($B)": result?.percentiles.p25 || 0,
+        "P50 ($B)": result?.percentiles.p50 || 0,
+        "P75 ($B)": result?.percentiles.p75 || 0,
+        "P90 ($B)": result?.percentiles.p90 || 0,
+        "P95 ($B)": result?.percentiles.p95 || 0,
+        "P(≥$1B) %": parseFloat(stat.blockbusterProb),
+        "P(≥$2B) %": mol?.result ? ((mol.result.peakSalesDistribution.filter(v => v >= 2).length / mol.result.peakSalesDistribution.length) * 100).toFixed(1) : 0,
+      };
+    });
+    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
+    summarySheet['!cols'] = Array(15).fill({ wch: 14 });
+    XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary Statistics");
+
+    // Percentile Comparison Sheet
+    const percentileData = ["P5", "P10", "P25", "P50", "P75", "P90", "P95"].map((label, idx) => {
+      const percentileKeys = ["p5", "p10", "p25", "p50", "p75", "p90", "p95"] as const;
+      const row: Record<string, string | number> = { "Percentile": label };
+      selectedMolecules.forEach(mol => {
+        if (mol.result) {
+          row[mol.name] = mol.result.percentiles[percentileKeys[idx]];
+        }
+      });
+      return row;
+    });
+    const percentileSheet = XLSX.utils.json_to_sheet(percentileData);
+    percentileSheet['!cols'] = Array(selectedMolecules.length + 1).fill({ wch: 18 });
+    XLSX.utils.book_append_sheet(workbook, percentileSheet, "Percentile Comparison");
+
+    // Distribution Data Sheet (sampled)
+    const distributionData: Record<string, number>[] = [];
+    const sampleSize = 100; // Sample to avoid huge files
+    selectedMolecules.forEach(mol => {
+      if (mol.result) {
+        const step = Math.max(1, Math.floor(mol.result.peakSalesDistribution.length / sampleSize));
+        mol.result.peakSalesDistribution.filter((_, i) => i % step === 0).forEach((val, i) => {
+          if (!distributionData[i]) distributionData[i] = {};
+          distributionData[i][mol.name] = val;
+        });
+      }
+    });
+    const distSheet = XLSX.utils.json_to_sheet(distributionData);
+    XLSX.utils.book_append_sheet(workbook, distSheet, "Distribution Sample");
+
+    // Configuration Sheet
+    const configData = [{
+      "Iterations": iterations,
+      "Uncertainty Range": `±${uncertaintyRange[0]}%`,
+      "Confidence Interval": "95%",
+      "Date Generated": new Date().toLocaleString(),
+      "Molecules Compared": selectedMolecules.length,
+    }];
+    const configSheet = XLSX.utils.json_to_sheet(configData);
+    XLSX.utils.book_append_sheet(workbook, configSheet, "Configuration");
+
+    XLSX.writeFile(workbook, `monte_carlo_comparison_${new Date().toISOString().split('T')[0]}.xlsx`);
+  }, [hasResults, statisticsComparison, selectedMolecules, iterations, uncertaintyRange]);
+
   return (
     <div className="space-y-6">
       {/* Molecule Selection Panel */}
@@ -329,6 +444,20 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
                 </Button>
               </div>
             </div>
+
+            {/* Export Buttons */}
+            {hasResults && (
+              <div className="flex gap-2 mt-4 pt-4 border-t">
+                <Button variant="outline" onClick={exportToCSV} className="gap-2">
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </Button>
+                <Button variant="outline" onClick={exportToExcel} className="gap-2">
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Export Excel
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

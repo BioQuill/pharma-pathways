@@ -28,7 +28,8 @@ import {
   Activity,
   Target,
   RefreshCw,
-  Download
+  Download,
+  Layers
 } from "lucide-react";
 import { 
   runMonteCarloSimulation, 
@@ -54,6 +55,11 @@ const MonteCarloSimulation = ({ componentScores, moleculeName }: MonteCarloSimul
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
   const [sensitivityResult, setSensitivityResult] = useState<SensitivityResult[] | null>(null);
   const [scenarioResult, setScenarioResult] = useState<ScenarioResult[] | null>(null);
+  const [scenarioSimulations, setScenarioSimulations] = useState<{
+    optimistic: SimulationResult | null;
+    base: SimulationResult | null;
+    pessimistic: SimulationResult | null;
+  }>({ optimistic: null, base: null, pessimistic: null });
 
   // Convert component scores to uncertainty format
   const componentUncertainties: ComponentUncertainty[] = useMemo(() => {
@@ -80,9 +86,44 @@ const MonteCarloSimulation = ({ componentScores, moleculeName }: MonteCarloSimul
       const sensitivity = runSensitivityAnalysis(componentUncertainties);
       const scenarios = runScenarioAnalysis(componentUncertainties, DEFAULT_SCENARIOS);
       
+      // Run scenario-based simulations (optimistic, base, pessimistic)
+      // Optimistic: +15% on all scores
+      const optimisticUncertainties: ComponentUncertainty[] = componentUncertainties.map(c => ({
+        ...c,
+        baseScore: Math.min(100, c.baseScore * 1.15),
+        minScore: Math.min(100, c.minScore * 1.15),
+        maxScore: Math.min(100, c.maxScore * 1.15),
+      }));
+      const optimisticResult = runMonteCarloSimulation(optimisticUncertainties, {
+        iterations: Math.min(iterations, 5000),
+        uncertaintyRange: uncertaintyRange[0] * 0.7, // Less uncertainty in optimistic
+        confidenceInterval: 95,
+      });
+
+      // Base case is the main simulation result
+      const baseResult = result;
+
+      // Pessimistic: -15% on all scores
+      const pessimisticUncertainties: ComponentUncertainty[] = componentUncertainties.map(c => ({
+        ...c,
+        baseScore: Math.max(0, c.baseScore * 0.85),
+        minScore: Math.max(0, c.minScore * 0.85),
+        maxScore: Math.max(0, c.maxScore * 0.85),
+      }));
+      const pessimisticResult = runMonteCarloSimulation(pessimisticUncertainties, {
+        iterations: Math.min(iterations, 5000),
+        uncertaintyRange: uncertaintyRange[0] * 1.3, // More uncertainty in pessimistic
+        confidenceInterval: 95,
+      });
+      
       setSimulationResult(result);
       setSensitivityResult(sensitivity);
       setScenarioResult(scenarios);
+      setScenarioSimulations({
+        optimistic: optimisticResult,
+        base: baseResult,
+        pessimistic: pessimisticResult,
+      });
       setIsRunning(false);
     }, 100);
   }, [componentUncertainties, iterations, uncertaintyRange]);
@@ -121,6 +162,73 @@ const MonteCarloSimulation = ({ componentScores, moleculeName }: MonteCarloSimul
       downside: s.downImpact,
     }));
   }, [sensitivityResult]);
+
+  // Scenario overlay distribution data
+  const scenarioOverlayData = useMemo(() => {
+    if (!scenarioSimulations.base || !scenarioSimulations.optimistic || !scenarioSimulations.pessimistic) return [];
+
+    // Find common range
+    const allValues = [
+      ...scenarioSimulations.optimistic.peakSalesDistribution,
+      ...scenarioSimulations.base.peakSalesDistribution,
+      ...scenarioSimulations.pessimistic.peakSalesDistribution,
+    ];
+    const minVal = Math.min(...allValues);
+    const maxVal = Math.max(...allValues);
+    const binCount = 20;
+    const binWidth = (maxVal - minVal) / binCount;
+
+    const bins: { range: string; minValue: number; optimistic: number; base: number; pessimistic: number }[] = [];
+
+    for (let i = 0; i < binCount; i++) {
+      const binStart = minVal + (i * binWidth);
+      const binEnd = binStart + binWidth;
+
+      const countOptimistic = scenarioSimulations.optimistic.peakSalesDistribution.filter(
+        v => v >= binStart && v < binEnd
+      ).length;
+      const countBase = scenarioSimulations.base.peakSalesDistribution.filter(
+        v => v >= binStart && v < binEnd
+      ).length;
+      const countPessimistic = scenarioSimulations.pessimistic.peakSalesDistribution.filter(
+        v => v >= binStart && v < binEnd
+      ).length;
+
+      bins.push({
+        range: `$${binStart.toFixed(1)}B`,
+        minValue: binStart,
+        optimistic: (countOptimistic / scenarioSimulations.optimistic.peakSalesDistribution.length) * 100,
+        base: (countBase / scenarioSimulations.base.peakSalesDistribution.length) * 100,
+        pessimistic: (countPessimistic / scenarioSimulations.pessimistic.peakSalesDistribution.length) * 100,
+      });
+    }
+
+    return bins;
+  }, [scenarioSimulations]);
+
+  const scenarioStats = useMemo(() => {
+    if (!scenarioSimulations.base || !scenarioSimulations.optimistic || !scenarioSimulations.pessimistic) return null;
+    return {
+      optimistic: {
+        mean: scenarioSimulations.optimistic.statistics.mean,
+        median: scenarioSimulations.optimistic.statistics.median,
+        p10: scenarioSimulations.optimistic.percentiles.p10,
+        p90: scenarioSimulations.optimistic.percentiles.p90,
+      },
+      base: {
+        mean: scenarioSimulations.base.statistics.mean,
+        median: scenarioSimulations.base.statistics.median,
+        p10: scenarioSimulations.base.percentiles.p10,
+        p90: scenarioSimulations.base.percentiles.p90,
+      },
+      pessimistic: {
+        mean: scenarioSimulations.pessimistic.statistics.mean,
+        median: scenarioSimulations.pessimistic.statistics.median,
+        p10: scenarioSimulations.pessimistic.percentiles.p10,
+        p90: scenarioSimulations.pessimistic.percentiles.p90,
+      },
+    };
+  }, [scenarioSimulations]);
 
   return (
     <div className="space-y-6">
@@ -477,6 +585,120 @@ const MonteCarloSimulation = ({ componentScores, moleculeName }: MonteCarloSimul
               </CardContent>
             </Card>
           </div>
+
+          {/* Scenario Overlay Distribution */}
+          {scenarioStats && scenarioOverlayData.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Layers className="h-5 w-5" />
+                  Scenario Distribution Overlay
+                </CardTitle>
+                <CardDescription>
+                  Optimistic, Base, and Pessimistic cases overlaid showing probability distributions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                      <span className="font-semibold text-green-800">Optimistic (+15%)</span>
+                    </div>
+                    <p className="text-2xl font-bold text-green-700">${scenarioStats.optimistic.mean}B</p>
+                    <p className="text-sm text-green-600">Median: ${scenarioStats.optimistic.median}B</p>
+                    <p className="text-xs text-green-600/80">P10-P90: ${scenarioStats.optimistic.p10}B - ${scenarioStats.optimistic.p90}B</p>
+                  </div>
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-3 h-3 rounded-full bg-blue-500" />
+                      <span className="font-semibold text-blue-800">Base Case</span>
+                    </div>
+                    <p className="text-2xl font-bold text-blue-700">${scenarioStats.base.mean}B</p>
+                    <p className="text-sm text-blue-600">Median: ${scenarioStats.base.median}B</p>
+                    <p className="text-xs text-blue-600/80">P10-P90: ${scenarioStats.base.p10}B - ${scenarioStats.base.p90}B</p>
+                  </div>
+                  <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-3 h-3 rounded-full bg-red-500" />
+                      <span className="font-semibold text-red-800">Pessimistic (-15%)</span>
+                    </div>
+                    <p className="text-2xl font-bold text-red-700">${scenarioStats.pessimistic.mean}B</p>
+                    <p className="text-sm text-red-600">Median: ${scenarioStats.pessimistic.median}B</p>
+                    <p className="text-xs text-red-600/80">P10-P90: ${scenarioStats.pessimistic.p10}B - ${scenarioStats.pessimistic.p90}B</p>
+                  </div>
+                </div>
+
+                <div className="h-[350px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={scenarioOverlayData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="range" 
+                        tick={{ fontSize: 9 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis 
+                        tickFormatter={(v) => `${v.toFixed(0)}%`}
+                        tick={{ fontSize: 10 }}
+                      />
+                      <ChartTooltip 
+                        content={({ active, payload, label }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div className="bg-background p-3 border rounded-lg shadow-lg">
+                                <p className="font-semibold mb-2">{label}</p>
+                                {payload.map((entry: { color?: string; name?: string; value?: number }, idx: number) => (
+                                  <p key={idx} className="text-sm" style={{ color: entry.color }}>
+                                    {entry.name === 'optimistic' ? 'Optimistic' : 
+                                     entry.name === 'base' ? 'Base Case' : 'Pessimistic'}: 
+                                    {typeof entry.value === 'number' ? entry.value.toFixed(1) : entry.value}%
+                                  </p>
+                                ))}
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Legend 
+                        formatter={(value) => 
+                          value === 'optimistic' ? 'Optimistic (+15%)' : 
+                          value === 'base' ? 'Base Case' : 'Pessimistic (-15%)'
+                        }
+                      />
+                      <Area 
+                        type="monotone"
+                        dataKey="optimistic"
+                        stroke="hsl(142, 76%, 36%)"
+                        fill="hsl(142, 76%, 36%)"
+                        fillOpacity={0.25}
+                        strokeWidth={2}
+                      />
+                      <Area 
+                        type="monotone"
+                        dataKey="base"
+                        stroke="hsl(221, 83%, 53%)"
+                        fill="hsl(221, 83%, 53%)"
+                        fillOpacity={0.25}
+                        strokeWidth={2}
+                      />
+                      <Area 
+                        type="monotone"
+                        dataKey="pessimistic"
+                        stroke="hsl(0, 84%, 60%)"
+                        fill="hsl(0, 84%, 60%)"
+                        fillOpacity={0.25}
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Distribution Details */}
           <Card>
