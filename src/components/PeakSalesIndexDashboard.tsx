@@ -28,7 +28,8 @@ import {
   TrendingDown,
   Award,
   Shuffle,
-  FileText
+  FileText,
+  Layers
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type MoleculeProfile } from "@/lib/moleculesData";
@@ -62,6 +63,7 @@ import {
   type PeakSalesResult
 } from "@/lib/peakSalesIndex";
 import MonteCarloSimulation from "./MonteCarloSimulation";
+import MonteCarloComparison from "./MonteCarloComparison";
 import PeakSalesPDFReport from "./PeakSalesPDFReport";
 
 // List of 20 Therapeutic Areas
@@ -1287,6 +1289,10 @@ export const PeakSalesIndexDashboard = ({ molecules }: PeakSalesIndexDashboardPr
             <Shuffle className="h-4 w-4" />
             Monte Carlo Simulation
           </TabsTrigger>
+          <TabsTrigger value="comparison" className="gap-2">
+            <Layers className="h-4 w-4" />
+            Multi-Molecule Comparison
+          </TabsTrigger>
           <TabsTrigger value="portfolio" className="gap-2">
             <BarChart3 className="h-4 w-4" />
             Portfolio Analysis
@@ -1311,6 +1317,10 @@ export const PeakSalesIndexDashboard = ({ molecules }: PeakSalesIndexDashboardPr
 
         <TabsContent value="montecarlo">
           <MonteCarloSimulationWrapper molecules={molecules} />
+        </TabsContent>
+
+        <TabsContent value="comparison">
+          <MonteCarloComparison molecules={molecules} />
         </TabsContent>
 
         <TabsContent value="portfolio">
