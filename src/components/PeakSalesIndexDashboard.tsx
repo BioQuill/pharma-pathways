@@ -26,7 +26,9 @@ import {
   ArrowDown,
   Activity,
   TrendingDown,
-  Award
+  Award,
+  Shuffle,
+  FileText
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type MoleculeProfile } from "@/lib/moleculesData";
@@ -59,6 +61,8 @@ import {
   type ComponentScore,
   type PeakSalesResult
 } from "@/lib/peakSalesIndex";
+import MonteCarloSimulation from "./MonteCarloSimulation";
+import PeakSalesPDFReport from "./PeakSalesPDFReport";
 
 // List of 20 Therapeutic Areas
 const THERAPEUTIC_AREAS = [
@@ -1118,14 +1122,22 @@ export const PeakSalesIndexDashboard = ({ molecules }: PeakSalesIndexDashboardPr
 
       {/* Tabs */}
       <Tabs defaultValue="calculator" className="w-full">
-        <TabsList className="mb-4">
+        <TabsList className="mb-4 flex-wrap">
           <TabsTrigger value="calculator" className="gap-2">
             <Calculator className="h-4 w-4" />
             Interactive Calculator
           </TabsTrigger>
+          <TabsTrigger value="montecarlo" className="gap-2">
+            <Shuffle className="h-4 w-4" />
+            Monte Carlo Simulation
+          </TabsTrigger>
           <TabsTrigger value="portfolio" className="gap-2">
             <BarChart3 className="h-4 w-4" />
             Portfolio Analysis
+          </TabsTrigger>
+          <TabsTrigger value="export" className="gap-2">
+            <FileText className="h-4 w-4" />
+            PDF Export
           </TabsTrigger>
           <TabsTrigger value="validation" className="gap-2">
             <CheckCircle2 className="h-4 w-4" />
@@ -1141,8 +1153,16 @@ export const PeakSalesIndexDashboard = ({ molecules }: PeakSalesIndexDashboardPr
           <PeakSalesCalculator molecules={molecules} />
         </TabsContent>
 
+        <TabsContent value="montecarlo">
+          <MonteCarloSimulationWrapper molecules={molecules} />
+        </TabsContent>
+
         <TabsContent value="portfolio">
           <PortfolioAnalysis molecules={molecules} />
+        </TabsContent>
+
+        <TabsContent value="export">
+          <PDFExportWrapper molecules={molecules} />
         </TabsContent>
 
         <TabsContent value="validation">
