@@ -29,7 +29,10 @@ import {
   Target,
   RefreshCw,
   Download,
-  Layers
+  Layers,
+  Shield,
+  TrendingDown,
+  Zap
 } from "lucide-react";
 import { 
   runMonteCarloSimulation, 
@@ -699,6 +702,138 @@ const MonteCarloSimulation = ({ componentScores, moleculeName }: MonteCarloSimul
               </CardContent>
             </Card>
           )}
+
+          {/* Risk-Adjusted Return Metrics */}
+          <Card className="border-2 border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                Risk-Adjusted Return Metrics
+              </CardTitle>
+              <CardDescription>
+                Comprehensive risk-weighted valuation combining peak sales estimates with probability distributions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Primary Risk-Weighted Value */}
+              <div className="mb-6 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Risk-Weighted Value (RWV)</p>
+                    <p className="text-4xl font-bold text-primary">
+                      ${simulationResult.statistics.riskAdjustedReturn.riskWeightedValue}B
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Combines mean estimate, volatility penalty, and success probability
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground mb-1">Certainty Equivalent</p>
+                    <p className="text-2xl font-bold">
+                      ${simulationResult.statistics.riskAdjustedReturn.certaintyEquivalent}B
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Risk-aversion adjusted value
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Risk Ratios */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="p-4 bg-muted/50 rounded-lg text-center">
+                  <div className="flex items-center justify-center gap-1 mb-2">
+                    <Zap className="h-4 w-4 text-amber-500" />
+                    <p className="text-xs text-muted-foreground">Sharpe Ratio</p>
+                  </div>
+                  <p className={`text-2xl font-bold ${
+                    simulationResult.statistics.riskAdjustedReturn.sharpeRatio >= 1 ? 'text-green-600' :
+                    simulationResult.statistics.riskAdjustedReturn.sharpeRatio >= 0.5 ? 'text-amber-600' : 'text-red-600'
+                  }`}>
+                    {simulationResult.statistics.riskAdjustedReturn.sharpeRatio}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {simulationResult.statistics.riskAdjustedReturn.sharpeRatio >= 1 ? 'Excellent' :
+                     simulationResult.statistics.riskAdjustedReturn.sharpeRatio >= 0.5 ? 'Good' : 'Low'}
+                  </p>
+                </div>
+                <div className="p-4 bg-muted/50 rounded-lg text-center">
+                  <div className="flex items-center justify-center gap-1 mb-2">
+                    <TrendingDown className="h-4 w-4 text-blue-500" />
+                    <p className="text-xs text-muted-foreground">Sortino Ratio</p>
+                  </div>
+                  <p className={`text-2xl font-bold ${
+                    simulationResult.statistics.riskAdjustedReturn.sortinoRatio >= 2 ? 'text-green-600' :
+                    simulationResult.statistics.riskAdjustedReturn.sortinoRatio >= 1 ? 'text-amber-600' : 'text-red-600'
+                  }`}>
+                    {simulationResult.statistics.riskAdjustedReturn.sortinoRatio}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Downside-adjusted
+                  </p>
+                </div>
+                <div className="p-4 bg-muted/50 rounded-lg text-center">
+                  <div className="flex items-center justify-center gap-1 mb-2">
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    <p className="text-xs text-muted-foreground">Risk/Reward</p>
+                  </div>
+                  <p className={`text-2xl font-bold ${
+                    simulationResult.statistics.riskAdjustedReturn.riskRewardRatio >= 1.5 ? 'text-green-600' :
+                    simulationResult.statistics.riskAdjustedReturn.riskRewardRatio >= 1 ? 'text-amber-600' : 'text-red-600'
+                  }`}>
+                    {simulationResult.statistics.riskAdjustedReturn.riskRewardRatio}x
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Upside / Downside
+                  </p>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg text-center border border-green-200">
+                  <div className="flex items-center justify-center gap-1 mb-2">
+                    <Target className="h-4 w-4 text-green-600" />
+                    <p className="text-xs text-green-700">Success Prob</p>
+                  </div>
+                  <p className="text-2xl font-bold text-green-700">
+                    {simulationResult.statistics.riskAdjustedReturn.probabilityOfSuccess}%
+                  </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    P(≥$1B)
+                  </p>
+                </div>
+              </div>
+
+              {/* Downside Risk Metrics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-3 bg-red-50 rounded-lg text-center border border-red-200">
+                  <p className="text-xs text-red-700">Value at Risk (95%)</p>
+                  <p className="text-lg font-bold text-red-700">
+                    ${simulationResult.statistics.riskAdjustedReturn.valueAtRisk}B
+                  </p>
+                  <p className="text-xs text-red-600">5th percentile</p>
+                </div>
+                <div className="p-3 bg-red-50 rounded-lg text-center border border-red-200">
+                  <p className="text-xs text-red-700">Expected Shortfall</p>
+                  <p className="text-lg font-bold text-red-700">
+                    ${simulationResult.statistics.riskAdjustedReturn.expectedShortfall}B
+                  </p>
+                  <p className="text-xs text-red-600">CVaR (avg worst 5%)</p>
+                </div>
+                <div className="p-3 bg-muted/50 rounded-lg text-center">
+                  <p className="text-xs text-muted-foreground">Downside Deviation</p>
+                  <p className="text-lg font-bold">
+                    ±${simulationResult.statistics.riskAdjustedReturn.downsideDeviation}B
+                  </p>
+                  <p className="text-xs text-muted-foreground">Below-mean volatility</p>
+                </div>
+                <div className="p-3 bg-green-50 rounded-lg text-center border border-green-200">
+                  <p className="text-xs text-green-700">Upside Potential</p>
+                  <p className="text-lg font-bold text-green-700">
+                    ${simulationResult.statistics.riskAdjustedReturn.upsidePotential}B
+                  </p>
+                  <p className="text-xs text-green-600">Expected above median</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Distribution Details */}
           <Card>

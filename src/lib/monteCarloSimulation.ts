@@ -34,6 +34,20 @@ export interface SimulationStatistics {
   max: number;
   skewness: number;
   kurtosis: number;
+  riskAdjustedReturn: RiskAdjustedMetrics;
+}
+
+export interface RiskAdjustedMetrics {
+  sharpeRatio: number;           // (Mean - Risk-free) / StdDev
+  sortinoRatio: number;          // (Mean - Risk-free) / Downside deviation
+  expectedShortfall: number;     // CVaR - average of worst 5% outcomes
+  valueAtRisk: number;           // 5th percentile (95% VaR)
+  riskWeightedValue: number;     // Mean * (1 - CV) * BlockbusterProb
+  certaintyEquivalent: number;   // Risk-adjusted expected value
+  downsideDeviation: number;     // Std dev of returns below mean
+  upsidePotential: number;       // Expected value above median
+  probabilityOfSuccess: number;  // P(≥$1B)
+  riskRewardRatio: number;       // Upside potential / Downside risk
 }
 
 export interface PercentileData {
@@ -104,6 +118,9 @@ const calculateStatistics = (values: number[]): SimulationStatistics => {
   // Excess kurtosis
   const kurtosis = values.reduce((sum, v) => sum + Math.pow((v - mean) / stdDev, 4), 0) / n - 3;
   
+  // Risk-adjusted metrics
+  const riskAdjustedReturn = calculateRiskAdjustedMetrics(values, mean, stdDev, median, sorted);
+  
   return {
     mean: Math.round(mean * 100) / 100,
     median: Math.round(median * 100) / 100,
@@ -112,6 +129,82 @@ const calculateStatistics = (values: number[]): SimulationStatistics => {
     max: Math.round(sorted[n - 1] * 100) / 100,
     skewness: Math.round(skewness * 100) / 100,
     kurtosis: Math.round(kurtosis * 100) / 100,
+    riskAdjustedReturn,
+  };
+};
+
+// Calculate risk-adjusted return metrics
+const calculateRiskAdjustedMetrics = (
+  values: number[], 
+  mean: number, 
+  stdDev: number, 
+  median: number,
+  sorted: number[]
+): RiskAdjustedMetrics => {
+  const n = values.length;
+  const riskFreeRate = 0.05; // 5% risk-free rate assumption
+  
+  // Coefficient of Variation
+  const cv = stdDev / mean;
+  
+  // Downside deviation (semi-deviation below mean)
+  const downsideValues = values.filter(v => v < mean);
+  const downsideDeviation = downsideValues.length > 0
+    ? Math.sqrt(downsideValues.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / downsideValues.length)
+    : 0;
+  
+  // Upside potential (average of values above median)
+  const upsideValues = values.filter(v => v > median);
+  const upsidePotential = upsideValues.length > 0
+    ? upsideValues.reduce((sum, v) => sum + v, 0) / upsideValues.length
+    : mean;
+  
+  // Value at Risk (5th percentile - 95% VaR)
+  const var5Index = Math.floor(0.05 * n);
+  const valueAtRisk = sorted[var5Index];
+  
+  // Expected Shortfall (CVaR) - average of worst 5% outcomes
+  const worstOutcomes = sorted.slice(0, var5Index);
+  const expectedShortfall = worstOutcomes.length > 0
+    ? worstOutcomes.reduce((sum, v) => sum + v, 0) / worstOutcomes.length
+    : sorted[0];
+  
+  // Sharpe Ratio (using mean as return, risk-free as benchmark)
+  const sharpeRatio = stdDev > 0 ? (mean - riskFreeRate) / stdDev : 0;
+  
+  // Sortino Ratio (penalizes only downside volatility)
+  const sortinoRatio = downsideDeviation > 0 ? (mean - riskFreeRate) / downsideDeviation : 0;
+  
+  // Probability of success (≥$1B)
+  const probabilityOfSuccess = (values.filter(v => v >= 1).length / n) * 100;
+  
+  // Risk-Weighted Value: Mean adjusted by volatility and success probability
+  // Formula: Mean * (1 - CV/2) * (ProbSuccess/100)^0.5 + (1-ProbSuccess/100) * ExpectedShortfall
+  const successWeight = Math.sqrt(probabilityOfSuccess / 100);
+  const riskWeightedValue = mean * (1 - Math.min(cv, 1) / 2) * successWeight + 
+    (1 - successWeight) * Math.max(expectedShortfall, 0);
+  
+  // Certainty Equivalent: Risk-adjusted expected value using exponential utility
+  // CE = Mean - 0.5 * RiskAversion * Variance
+  const riskAversion = 2; // Moderate risk aversion
+  const certaintyEquivalent = Math.max(0, mean - 0.5 * riskAversion * Math.pow(stdDev, 2));
+  
+  // Risk-Reward Ratio
+  const downsideRisk = mean - valueAtRisk;
+  const upsideReward = upsidePotential - mean;
+  const riskRewardRatio = downsideRisk > 0 ? upsideReward / downsideRisk : upsideReward;
+  
+  return {
+    sharpeRatio: Math.round(sharpeRatio * 100) / 100,
+    sortinoRatio: Math.round(sortinoRatio * 100) / 100,
+    expectedShortfall: Math.round(expectedShortfall * 100) / 100,
+    valueAtRisk: Math.round(valueAtRisk * 100) / 100,
+    riskWeightedValue: Math.round(riskWeightedValue * 100) / 100,
+    certaintyEquivalent: Math.round(certaintyEquivalent * 100) / 100,
+    downsideDeviation: Math.round(downsideDeviation * 100) / 100,
+    upsidePotential: Math.round(upsidePotential * 100) / 100,
+    probabilityOfSuccess: Math.round(probabilityOfSuccess * 10) / 10,
+    riskRewardRatio: Math.round(riskRewardRatio * 100) / 100,
   };
 };
 
