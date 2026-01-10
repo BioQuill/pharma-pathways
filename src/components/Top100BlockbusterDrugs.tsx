@@ -13,7 +13,10 @@ import {
   ChevronDown,
   ChevronRight,
   Download,
-  Eye
+  Eye,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
@@ -272,10 +275,15 @@ interface Top100BlockbusterDrugsProps {
   onViewMolecule?: (moleculeId: string) => void;
 }
 
+type SortField = 'name' | 'peakSales' | 'company' | 'status';
+type SortOrder = 'asc' | 'desc';
+
 export function Top100BlockbusterDrugs({ molecules = [], onViewMolecule }: Top100BlockbusterDrugsProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTA, setSelectedTA] = useState<string>('all');
   const [expandedTAs, setExpandedTAs] = useState<Set<string>>(new Set(top100Data.map(ta => ta.name)));
+  const [sortField, setSortField] = useState<SortField>('peakSales');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   // Create a lookup map for matching Top 100 drugs to molecule database
   const moleculeMatchMap = useMemo(() => {
@@ -350,18 +358,61 @@ export function Top100BlockbusterDrugs({ molecules = [], onViewMolecule }: Top10
   const expandAll = () => setExpandedTAs(new Set(top100Data.map(ta => ta.name)));
   const collapseAll = () => setExpandedTAs(new Set());
 
+  const getStatusPriority = (status: string): number => {
+    if (status.toLowerCase().includes('approved')) return 5;
+    if (status.toLowerCase().includes('filing')) return 4;
+    if (status.toLowerCase().includes('review')) return 3;
+    if (status.toLowerCase().includes('positive')) return 2;
+    return 1; // Phase 3 or other
+  };
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder(field === 'peakSales' ? 'desc' : 'asc');
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return <ArrowUpDown className="h-3 w-3 opacity-50" />;
+    return sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />;
+  };
+
+  const sortDrugs = (drugs: Drug[]): Drug[] => {
+    return [...drugs].sort((a, b) => {
+      let comparison = 0;
+      switch (sortField) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'company':
+          comparison = a.company.localeCompare(b.company);
+          break;
+        case 'peakSales':
+          comparison = getPeakSalesValue(a.peakSales) - getPeakSalesValue(b.peakSales);
+          break;
+        case 'status':
+          comparison = getStatusPriority(a.status) - getStatusPriority(b.status);
+          break;
+      }
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  };
+
   const filteredData = top100Data
     .filter(ta => selectedTA === 'all' || ta.name === selectedTA)
     .map(ta => ({
       ...ta,
-      drugs: ta.drugs.filter(drug => {
+      drugs: sortDrugs(ta.drugs.filter(drug => {
         const query = searchQuery.toLowerCase();
         return !query ||
           drug.name.toLowerCase().includes(query) ||
           drug.company.toLowerCase().includes(query) ||
           drug.mechanism.toLowerCase().includes(query) ||
           drug.indication.toLowerCase().includes(query);
-      })
+      }))
     }))
     .filter(ta => ta.drugs.length > 0);
 
@@ -386,7 +437,29 @@ export function Top100BlockbusterDrugs({ molecules = [], onViewMolecule }: Top10
             Phase 3 novel molecules with &gt;$1B revenue potential across 20 therapeutic areas
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1 mr-2">
+            <span className="text-sm text-muted-foreground">Sort by:</span>
+            <Select value={sortField} onValueChange={(val) => { setSortField(val as SortField); }}>
+              <SelectTrigger className="w-[130px] h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="peakSales">Peak Sales</SelectItem>
+                <SelectItem value="company">Company</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+                <SelectItem value="name">Drug Name</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 px-2"
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            >
+              {sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+            </Button>
+          </div>
           <Button variant="outline" size="sm" onClick={handleExportToExcel}>
             <Download className="h-4 w-4 mr-1" />
             Export Excel
@@ -513,12 +586,40 @@ export function Top100BlockbusterDrugs({ molecules = [], onViewMolecule }: Top10
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b">
-                          <th className="text-left py-3 px-2 font-medium">Drug Name</th>
-                          <th className="text-left py-3 px-2 font-medium">Company</th>
+                          <th 
+                            className="text-left py-3 px-2 font-medium cursor-pointer hover:bg-accent/30"
+                            onClick={() => handleSort('name')}
+                          >
+                            <div className="flex items-center gap-1">
+                              Drug Name {getSortIcon('name')}
+                            </div>
+                          </th>
+                          <th 
+                            className="text-left py-3 px-2 font-medium cursor-pointer hover:bg-accent/30"
+                            onClick={() => handleSort('company')}
+                          >
+                            <div className="flex items-center gap-1">
+                              Company {getSortIcon('company')}
+                            </div>
+                          </th>
                           <th className="text-left py-3 px-2 font-medium hidden md:table-cell">Mechanism</th>
                           <th className="text-left py-3 px-2 font-medium">Indication</th>
-                          <th className="text-left py-3 px-2 font-medium">Peak Sales</th>
-                          <th className="text-left py-3 px-2 font-medium">Status</th>
+                          <th 
+                            className="text-left py-3 px-2 font-medium cursor-pointer hover:bg-accent/30"
+                            onClick={() => handleSort('peakSales')}
+                          >
+                            <div className="flex items-center gap-1">
+                              Peak Sales {getSortIcon('peakSales')}
+                            </div>
+                          </th>
+                          <th 
+                            className="text-left py-3 px-2 font-medium cursor-pointer hover:bg-accent/30"
+                            onClick={() => handleSort('status')}
+                          >
+                            <div className="flex items-center gap-1">
+                              Status {getSortIcon('status')}
+                            </div>
+                          </th>
                           <th className="text-left py-3 px-2 font-medium hidden lg:table-cell">NCT#</th>
                           <th className="text-left py-3 px-2 font-medium w-16">Report</th>
                         </tr>
