@@ -2718,6 +2718,40 @@ const Index = () => {
           <TabsContent value="peak-sales" className="space-y-6">
             <PeakSalesIndexDashboard molecules={allMolecules} />
           </TabsContent>
+
+          {/* Watchlist Tab */}
+          <TabsContent value="watchlist" className="space-y-6">
+            <WatchlistPanel
+              watchlist={watchlist}
+              molecules={allMolecules}
+              onRemove={removeFromWatchlist}
+              onUpdateNotes={updateNotes}
+              onViewMolecule={(id) => {
+                setSelectedMolecule(id);
+                setActiveTab("overview");
+              }}
+              onClear={clearWatchlist}
+            />
+          </TabsContent>
+
+          {/* Portfolio Dashboard Tab */}
+          <TabsContent value="portfolio" className="space-y-6">
+            <PortfolioDashboard 
+              molecules={allMolecules} 
+              watchlistIds={watchlist.map(w => w.moleculeId)}
+            />
+          </TabsContent>
+
+          {/* Top 100 Blockbuster Drugs Tab */}
+          <TabsContent value="top-100" className="space-y-6">
+            <Top100BlockbusterDrugs 
+              molecules={allMolecules}
+              onViewMolecule={(id) => {
+                setSelectedMolecule(id);
+                setActiveTab("overview");
+              }}
+            />
+          </TabsContent>
         </Tabs>
 
         {/* Data Sources - Bottom of page */}
@@ -2849,40 +2883,6 @@ const Index = () => {
                 </a>
               </div>
               <div className="text-xs text-muted-foreground mt-3 text-right">Last sync: Dec 7, 2025</div>
-            </TabsContent>
-
-            {/* Watchlist Tab */}
-            <TabsContent value="watchlist" className="space-y-6">
-              <WatchlistPanel
-                watchlist={watchlist}
-                molecules={allMolecules}
-                onRemove={removeFromWatchlist}
-                onUpdateNotes={updateNotes}
-                onViewMolecule={(id) => {
-                  setSelectedMolecule(id);
-                  setActiveTab("overview");
-                }}
-                onClear={clearWatchlist}
-              />
-            </TabsContent>
-
-            {/* Portfolio Dashboard Tab */}
-            <TabsContent value="portfolio" className="space-y-6">
-              <PortfolioDashboard 
-                molecules={allMolecules} 
-                watchlistIds={watchlist.map(w => w.moleculeId)}
-              />
-            </TabsContent>
-
-            {/* Top 100 Blockbuster Drugs Tab */}
-            <TabsContent value="top-100" className="space-y-6">
-              <Top100BlockbusterDrugs 
-                molecules={allMolecules}
-                onViewMolecule={(id) => {
-                  setSelectedMolecule(id);
-                  setActiveTab("overview");
-                }}
-              />
             </TabsContent>
           </Tabs>
         </div>
