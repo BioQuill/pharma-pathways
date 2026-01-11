@@ -54,6 +54,7 @@ import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
 import { PTRSMoleculeComparison } from "@/components/PTRSMoleculeComparison";
 import { PTRSHistoricalTracking } from "@/components/PTRSHistoricalTracking";
 import { PTRSAlertSystem } from "@/components/PTRSAlertSystem";
+import { PTRSMonteCarloIntegration } from "@/components/PTRSMonteCarloIntegration";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
@@ -2899,6 +2900,20 @@ const Index = () => {
 
             {/* PTRS Alert System */}
             <PTRSAlertSystem molecules={allMolecules} />
+
+            {/* Monte Carlo PTRS Simulation */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Monte Carlo PTRS Simulation
+                </CardTitle>
+                <CardDescription>Probability distributions for success outcomes with configurable uncertainty</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloIntegration />
+              </CardContent>
+            </Card>
 
             {/* Historical PTRS Trend Lines */}
             <Card>
