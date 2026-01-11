@@ -26,6 +26,11 @@ import {
   X,
   Plus,
   RefreshCw,
+  Shield,
+  TrendingDown,
+  TrendingUp,
+  Target,
+  Briefcase,
   Layers,
   Download,
   FileSpreadsheet
@@ -194,7 +199,105 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
         p90: mol.result!.percentiles.p90,
         blockbusterProb: ((mol.result!.peakSalesDistribution.filter(v => v >= 1).length / 
           mol.result!.peakSalesDistribution.length) * 100).toFixed(1),
+        riskMetrics: mol.result!.statistics.riskAdjustedReturn,
       }));
+  }, [selectedMolecules]);
+
+  // Portfolio-level aggregation
+  const portfolioAggregation = useMemo(() => {
+    const moleculesWithResults = selectedMolecules.filter(m => m.result);
+    if (moleculesWithResults.length === 0) return null;
+
+    // Aggregate peak sales distributions (sum across molecules)
+    const iterations = moleculesWithResults[0].result!.peakSalesDistribution.length;
+    const portfolioDistribution: number[] = [];
+    
+    for (let i = 0; i < iterations; i++) {
+      const totalPeakSales = moleculesWithResults.reduce((sum, mol) => {
+        return sum + mol.result!.peakSalesDistribution[i];
+      }, 0);
+      portfolioDistribution.push(totalPeakSales);
+    }
+    
+    const sorted = [...portfolioDistribution].sort((a, b) => a - b);
+    const n = sorted.length;
+    const mean = portfolioDistribution.reduce((sum, v) => sum + v, 0) / n;
+    const median = n % 2 === 0 ? (sorted[n/2 - 1] + sorted[n/2]) / 2 : sorted[Math.floor(n/2)];
+    const variance = portfolioDistribution.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / n;
+    const stdDev = Math.sqrt(variance);
+    
+    // Portfolio risk metrics
+    const cv = stdDev / mean;
+    const var5Index = Math.floor(0.05 * n);
+    const valueAtRisk = sorted[var5Index];
+    const worstOutcomes = sorted.slice(0, var5Index);
+    const expectedShortfall = worstOutcomes.length > 0
+      ? worstOutcomes.reduce((sum, v) => sum + v, 0) / worstOutcomes.length
+      : sorted[0];
+    
+    // Downside deviation
+    const downsideValues = portfolioDistribution.filter(v => v < mean);
+    const downsideDeviation = downsideValues.length > 0
+      ? Math.sqrt(downsideValues.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / downsideValues.length)
+      : 0;
+    
+    // Upside potential
+    const upsideValues = portfolioDistribution.filter(v => v > median);
+    const upsidePotential = upsideValues.length > 0
+      ? upsideValues.reduce((sum, v) => sum + v, 0) / upsideValues.length
+      : mean;
+    
+    // Portfolio success probability (total > sum of $1B thresholds)
+    const thresholdSum = moleculesWithResults.length; // Each molecule should hit $1B
+    const portfolioSuccessProb = (portfolioDistribution.filter(v => v >= thresholdSum).length / n) * 100;
+    
+    // Risk-free rate for ratios
+    const riskFreeRate = 0.05 * moleculesWithResults.length;
+    const sharpeRatio = stdDev > 0 ? (mean - riskFreeRate) / stdDev : 0;
+    const sortinoRatio = downsideDeviation > 0 ? (mean - riskFreeRate) / downsideDeviation : 0;
+    
+    // Diversification benefit (reduced correlation)
+    const sumOfIndividualVariances = moleculesWithResults.reduce((sum, mol) => {
+      return sum + Math.pow(mol.result!.statistics.stdDev, 2);
+    }, 0);
+    const diversificationBenefit = sumOfIndividualVariances > 0 
+      ? (1 - variance / sumOfIndividualVariances) * 100 
+      : 0;
+    
+    // Risk-weighted value
+    const successWeight = Math.sqrt(portfolioSuccessProb / 100);
+    const riskWeightedValue = mean * (1 - Math.min(cv, 1) / 2) * successWeight + 
+      (1 - successWeight) * Math.max(expectedShortfall, 0);
+    
+    // Certainty equivalent
+    const riskAversion = 2;
+    const certaintyEquivalent = Math.max(0, mean - 0.5 * riskAversion * variance);
+
+    return {
+      totalMean: Math.round(mean * 100) / 100,
+      totalMedian: Math.round(median * 100) / 100,
+      totalStdDev: Math.round(stdDev * 100) / 100,
+      totalMin: Math.round(sorted[0] * 100) / 100,
+      totalMax: Math.round(sorted[n - 1] * 100) / 100,
+      p5: Math.round(sorted[Math.floor(0.05 * n)] * 100) / 100,
+      p10: Math.round(sorted[Math.floor(0.10 * n)] * 100) / 100,
+      p25: Math.round(sorted[Math.floor(0.25 * n)] * 100) / 100,
+      p50: Math.round(sorted[Math.floor(0.50 * n)] * 100) / 100,
+      p75: Math.round(sorted[Math.floor(0.75 * n)] * 100) / 100,
+      p90: Math.round(sorted[Math.floor(0.90 * n)] * 100) / 100,
+      p95: Math.round(sorted[Math.floor(0.95 * n)] * 100) / 100,
+      valueAtRisk: Math.round(valueAtRisk * 100) / 100,
+      expectedShortfall: Math.round(expectedShortfall * 100) / 100,
+      sharpeRatio: Math.round(sharpeRatio * 100) / 100,
+      sortinoRatio: Math.round(sortinoRatio * 100) / 100,
+      diversificationBenefit: Math.round(diversificationBenefit * 10) / 10,
+      portfolioSuccessProb: Math.round(portfolioSuccessProb * 10) / 10,
+      riskWeightedValue: Math.round(riskWeightedValue * 100) / 100,
+      certaintyEquivalent: Math.round(certaintyEquivalent * 100) / 100,
+      downsideDeviation: Math.round(downsideDeviation * 100) / 100,
+      upsidePotential: Math.round(upsidePotential * 100) / 100,
+      moleculeCount: moleculesWithResults.length,
+    };
   }, [selectedMolecules]);
 
   const hasResults = selectedMolecules.some(m => m.result);
@@ -264,8 +367,88 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
       };
     });
     const summarySheet = XLSX.utils.json_to_sheet(summaryData);
-    summarySheet['!cols'] = Array(15).fill({ wch: 14 });
+    summarySheet['!cols'] = Array(17).fill({ wch: 14 });
     XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary Statistics");
+
+    // Risk Analysis Sheet (NEW)
+    const riskData = statisticsComparison.map(stat => ({
+      "Molecule": stat.name,
+      "Risk-Weighted Value ($B)": stat.riskMetrics.riskWeightedValue,
+      "Certainty Equivalent ($B)": stat.riskMetrics.certaintyEquivalent,
+      "Sharpe Ratio": stat.riskMetrics.sharpeRatio,
+      "Sortino Ratio": stat.riskMetrics.sortinoRatio,
+      "Value at Risk 5% ($B)": stat.riskMetrics.valueAtRisk,
+      "Expected Shortfall ($B)": stat.riskMetrics.expectedShortfall,
+      "Downside Deviation ($B)": stat.riskMetrics.downsideDeviation,
+      "Upside Potential ($B)": stat.riskMetrics.upsidePotential,
+      "P(≥$1B) %": stat.riskMetrics.probabilityOfSuccess,
+      "Risk-Reward Ratio": stat.riskMetrics.riskRewardRatio,
+    }));
+    const riskSheet = XLSX.utils.json_to_sheet(riskData);
+    riskSheet['!cols'] = Array(11).fill({ wch: 22 });
+    XLSX.utils.book_append_sheet(workbook, riskSheet, "Risk Analysis");
+
+    // Portfolio Aggregation Sheet (NEW)
+    if (portfolioAggregation) {
+      const portfolioData = [{
+        "Metric": "Total Expected Value",
+        "Value": `$${portfolioAggregation.totalMean}B`,
+      }, {
+        "Metric": "Total Median",
+        "Value": `$${portfolioAggregation.totalMedian}B`,
+      }, {
+        "Metric": "Total Std Dev",
+        "Value": `$${portfolioAggregation.totalStdDev}B`,
+      }, {
+        "Metric": "Risk-Weighted Value",
+        "Value": `$${portfolioAggregation.riskWeightedValue}B`,
+      }, {
+        "Metric": "Certainty Equivalent",
+        "Value": `$${portfolioAggregation.certaintyEquivalent}B`,
+      }, {
+        "Metric": "Portfolio Sharpe Ratio",
+        "Value": portfolioAggregation.sharpeRatio,
+      }, {
+        "Metric": "Portfolio Sortino Ratio",
+        "Value": portfolioAggregation.sortinoRatio,
+      }, {
+        "Metric": "Value at Risk (5%)",
+        "Value": `$${portfolioAggregation.valueAtRisk}B`,
+      }, {
+        "Metric": "Expected Shortfall (CVaR)",
+        "Value": `$${portfolioAggregation.expectedShortfall}B`,
+      }, {
+        "Metric": "Portfolio Success Prob",
+        "Value": `${portfolioAggregation.portfolioSuccessProb}%`,
+      }, {
+        "Metric": "Diversification Benefit",
+        "Value": `${portfolioAggregation.diversificationBenefit}%`,
+      }, {
+        "Metric": "P5 Percentile",
+        "Value": `$${portfolioAggregation.p5}B`,
+      }, {
+        "Metric": "P10 Percentile",
+        "Value": `$${portfolioAggregation.p10}B`,
+      }, {
+        "Metric": "P25 Percentile",
+        "Value": `$${portfolioAggregation.p25}B`,
+      }, {
+        "Metric": "P75 Percentile",
+        "Value": `$${portfolioAggregation.p75}B`,
+      }, {
+        "Metric": "P90 Percentile",
+        "Value": `$${portfolioAggregation.p90}B`,
+      }, {
+        "Metric": "P95 Percentile",
+        "Value": `$${portfolioAggregation.p95}B`,
+      }, {
+        "Metric": "Molecules in Portfolio",
+        "Value": portfolioAggregation.moleculeCount,
+      }];
+      const portfolioSheet = XLSX.utils.json_to_sheet(portfolioData);
+      portfolioSheet['!cols'] = [{ wch: 25 }, { wch: 18 }];
+      XLSX.utils.book_append_sheet(workbook, portfolioSheet, "Portfolio Aggregation");
+    }
 
     // Percentile Comparison Sheet
     const percentileData = ["P5", "P10", "P25", "P50", "P75", "P90", "P95"].map((label, idx) => {
@@ -309,7 +492,7 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
     XLSX.utils.book_append_sheet(workbook, configSheet, "Configuration");
 
     XLSX.writeFile(workbook, `monte_carlo_comparison_${new Date().toISOString().split('T')[0]}.xlsx`);
-  }, [hasResults, statisticsComparison, selectedMolecules, iterations, uncertaintyRange]);
+  }, [hasResults, statisticsComparison, selectedMolecules, iterations, uncertaintyRange, portfolioAggregation]);
 
   return (
     <div className="space-y-6">
@@ -465,6 +648,100 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
       {/* Results */}
       {hasResults && (
         <>
+          {/* Portfolio Aggregation Card */}
+          {portfolioAggregation && selectedMolecules.length >= 2 && (
+            <Card className="border-primary/30 bg-primary/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5 text-primary" />
+                  Portfolio Risk Aggregation
+                </CardTitle>
+                <CardDescription>
+                  Combined risk-adjusted metrics across {portfolioAggregation.moleculeCount} molecules
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {/* Primary Value Metrics */}
+                  <div className="bg-background p-4 rounded-lg border">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <Target className="h-3 w-3" />
+                      Total Expected Value
+                    </div>
+                    <p className="text-2xl font-bold text-primary">${portfolioAggregation.totalMean}B</p>
+                    <p className="text-xs text-muted-foreground">P50: ${portfolioAggregation.totalMedian}B</p>
+                  </div>
+                  
+                  <div className="bg-background p-4 rounded-lg border">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <Shield className="h-3 w-3" />
+                      Risk-Weighted Value
+                    </div>
+                    <p className="text-2xl font-bold text-green-600">${portfolioAggregation.riskWeightedValue}B</p>
+                    <p className="text-xs text-muted-foreground">CE: ${portfolioAggregation.certaintyEquivalent}B</p>
+                  </div>
+                  
+                  <div className="bg-background p-4 rounded-lg border">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <TrendingUp className="h-3 w-3" />
+                      Portfolio Sharpe
+                    </div>
+                    <p className={`text-2xl font-bold ${portfolioAggregation.sharpeRatio >= 1 ? 'text-green-600' : portfolioAggregation.sharpeRatio >= 0.5 ? 'text-amber-600' : 'text-red-600'}`}>
+                      {portfolioAggregation.sharpeRatio}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Sortino: {portfolioAggregation.sortinoRatio}</p>
+                  </div>
+                  
+                  <div className="bg-background p-4 rounded-lg border">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <TrendingDown className="h-3 w-3" />
+                      Value at Risk (5%)
+                    </div>
+                    <p className="text-2xl font-bold text-amber-600">${portfolioAggregation.valueAtRisk}B</p>
+                    <p className="text-xs text-muted-foreground">CVaR: ${portfolioAggregation.expectedShortfall}B</p>
+                  </div>
+                  
+                  <div className="bg-background p-4 rounded-lg border">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <Briefcase className="h-3 w-3" />
+                      Diversification Benefit
+                    </div>
+                    <p className={`text-2xl font-bold ${portfolioAggregation.diversificationBenefit > 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {portfolioAggregation.diversificationBenefit > 0 ? '+' : ''}{portfolioAggregation.diversificationBenefit}%
+                    </p>
+                    <p className="text-xs text-muted-foreground">Variance reduction</p>
+                  </div>
+                  
+                  <div className="bg-background p-4 rounded-lg border">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <Target className="h-3 w-3" />
+                      Portfolio Success
+                    </div>
+                    <p className={`text-2xl font-bold ${portfolioAggregation.portfolioSuccessProb >= 50 ? 'text-green-600' : 'text-amber-600'}`}>
+                      {portfolioAggregation.portfolioSuccessProb}%
+                    </p>
+                    <p className="text-xs text-muted-foreground">All molecules ≥$1B</p>
+                  </div>
+                </div>
+                
+                {/* Range Metrics */}
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex flex-wrap items-center gap-4 text-sm">
+                    <span className="text-muted-foreground">Portfolio Range:</span>
+                    <Badge variant="outline">Min: ${portfolioAggregation.totalMin}B</Badge>
+                    <Badge variant="outline">P10: ${portfolioAggregation.p10}B</Badge>
+                    <Badge variant="outline">P25: ${portfolioAggregation.p25}B</Badge>
+                    <Badge variant="secondary">P50: ${portfolioAggregation.p50}B</Badge>
+                    <Badge variant="outline">P75: ${portfolioAggregation.p75}B</Badge>
+                    <Badge variant="outline">P90: ${portfolioAggregation.p90}B</Badge>
+                    <Badge variant="outline">Max: ${portfolioAggregation.totalMax}B</Badge>
+                    <span className="text-muted-foreground ml-2">σ: ±${portfolioAggregation.totalStdDev}B</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Summary Statistics Table */}
           <Card>
             <CardHeader>
@@ -483,6 +760,8 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
                       <th className="text-right py-2 px-3">Median</th>
                       <th className="text-right py-2 px-3">Std Dev</th>
                       <th className="text-right py-2 px-3">P10-P90</th>
+                      <th className="text-right py-2 px-3">RWV</th>
+                      <th className="text-right py-2 px-3">Sharpe</th>
                       <th className="text-right py-2 px-3">P(≥$1B)</th>
                     </tr>
                   </thead>
@@ -502,6 +781,12 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
                         <td className="text-right py-2 px-3">${stat.median}B</td>
                         <td className="text-right py-2 px-3 text-muted-foreground">±${stat.stdDev}B</td>
                         <td className="text-right py-2 px-3">${stat.p10}B - ${stat.p90}B</td>
+                        <td className="text-right py-2 px-3 text-green-600 font-medium">${stat.riskMetrics.riskWeightedValue}B</td>
+                        <td className="text-right py-2 px-3">
+                          <span className={stat.riskMetrics.sharpeRatio >= 1 ? 'text-green-600' : stat.riskMetrics.sharpeRatio >= 0.5 ? 'text-amber-600' : 'text-red-600'}>
+                            {stat.riskMetrics.sharpeRatio}
+                          </span>
+                        </td>
                         <td className="text-right py-2 px-3">
                           <Badge variant={parseFloat(stat.blockbusterProb) >= 50 ? "default" : "secondary"}>
                             {stat.blockbusterProb}%
@@ -514,6 +799,7 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
               </div>
             </CardContent>
           </Card>
+
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Overlaid Distribution Chart */}
