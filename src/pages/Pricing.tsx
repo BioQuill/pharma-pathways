@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Zap, Building2, Crown, FileText } from "lucide-react";
+import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp } from "lucide-react";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 
 interface PricingTier {
@@ -19,6 +19,25 @@ interface PricingTier {
 }
 
 const pricingTiers: PricingTier[] = [
+  {
+    name: "Monte Carlo Analysis",
+    description: "Peak sales simulation with probabilistic risk analysis",
+    price: "$2,500",
+    priceSubtext: "per molecule",
+    icon: <TrendingUp className="h-6 w-6" />,
+    features: [
+      "10,000+ Monte Carlo simulations",
+      "Peak sales probability distribution",
+      "Blockbuster probability assessment",
+      "Risk-adjusted metrics (VaR, CVaR)",
+      "Sensitivity analysis by component",
+      "Scenario comparisons (Bull/Bear)",
+      "Downloadable PDF report",
+      "14-day data access",
+    ],
+    buttonText: "Purchase Analysis",
+    buttonVariant: "outline",
+  },
   {
     name: "Single Report",
     description: "One-time due diligence report for a specific molecule",
@@ -99,17 +118,19 @@ const pricingTiers: PricingTier[] = [
 ];
 
 const comparisonFeatures = [
-  { feature: "Molecules included", single: "1", annual: "1", ta: "20-40", enterprise: "Unlimited" },
-  { feature: "LPI-3 ML analysis", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "TTM projections", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Patent timeline", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Competitive analysis", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "PDF export", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Live dashboard", single: "30 days", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Real-time alerts", single: "—", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "API access", single: "—", annual: "—", ta: "Limited", enterprise: "Full" },
-  { feature: "Custom reports", single: "—", annual: "—", ta: "✓", enterprise: "✓" },
-  { feature: "Dedicated support", single: "Email", annual: "Priority", ta: "Account Mgr", enterprise: "24/7" },
+  { feature: "Molecules included", monteCarlo: "1", single: "1", annual: "1", ta: "20-40", enterprise: "Unlimited" },
+  { feature: "Monte Carlo simulation", monteCarlo: "✓", single: "Add-on", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "LPI-3 ML analysis", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "TTM projections", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Risk-adjusted metrics", monteCarlo: "✓", single: "—", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Sensitivity analysis", monteCarlo: "✓", single: "—", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Patent timeline", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Competitive analysis", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "PDF export", monteCarlo: "✓", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Live dashboard", monteCarlo: "14 days", single: "30 days", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Real-time alerts", monteCarlo: "—", single: "—", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "API access", monteCarlo: "—", single: "—", annual: "—", ta: "Limited", enterprise: "Full" },
+  { feature: "Dedicated support", monteCarlo: "Email", single: "Email", annual: "Priority", ta: "Account Mgr", enterprise: "24/7" },
 ];
 
 export default function Pricing() {
@@ -153,7 +174,7 @@ export default function Pricing() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-16">
           {pricingTiers.map((tier) => (
             <Card
               key={tier.name}
@@ -213,6 +234,7 @@ export default function Pricing() {
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left p-4 font-medium">Feature</th>
+                    <th className="text-center p-4 font-medium">Monte Carlo</th>
                     <th className="text-center p-4 font-medium">Single Report</th>
                     <th className="text-center p-4 font-medium bg-primary/5">Annual Molecule</th>
                     <th className="text-center p-4 font-medium">TA Package</th>
@@ -223,6 +245,7 @@ export default function Pricing() {
                   {comparisonFeatures.map((row, idx) => (
                     <tr key={idx} className={idx % 2 === 0 ? "bg-background" : "bg-muted/30"}>
                       <td className="p-4 text-sm font-medium">{row.feature}</td>
+                      <td className="p-4 text-sm text-center">{row.monteCarlo}</td>
                       <td className="p-4 text-sm text-center">{row.single}</td>
                       <td className="p-4 text-sm text-center bg-primary/5 font-medium">{row.annual}</td>
                       <td className="p-4 text-sm text-center">{row.ta}</td>
