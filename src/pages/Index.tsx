@@ -55,6 +55,8 @@ import { PTRSMoleculeComparison } from "@/components/PTRSMoleculeComparison";
 import { PTRSHistoricalTracking } from "@/components/PTRSHistoricalTracking";
 import { PTRSAlertSystem } from "@/components/PTRSAlertSystem";
 import { PTRSMonteCarloIntegration } from "@/components/PTRSMonteCarloIntegration";
+import { PTRSMonteCarloComparison } from "@/components/PTRSMonteCarloComparison";
+import { PTRSStressTesting } from "@/components/PTRSStressTesting";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
@@ -2912,6 +2914,34 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <PTRSMonteCarloIntegration />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Comparison */}
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-blue-500" />
+                  Monte Carlo Distribution Comparison
+                </CardTitle>
+                <CardDescription>Compare PTRS probability distributions across multiple molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloComparison molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Stress Testing */}
+            <Card className="border-l-4 border-l-destructive">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  Monte Carlo Stress Testing
+                </CardTitle>
+                <CardDescription>Simulate extreme scenarios and assess PTRS resilience</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSStressTesting molecules={allMolecules} />
               </CardContent>
             </Card>
 
