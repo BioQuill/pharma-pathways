@@ -62,6 +62,7 @@ import MonteCarloConvergenceAnalysis from "@/components/MonteCarloConvergenceAna
 import PTRSPortfolioOptimization from "@/components/PTRSPortfolioOptimization";
 import PTRSCustomScenarioBuilder from "@/components/PTRSCustomScenarioBuilder";
 import { PTRSPortfolioRebalancing } from "@/components/PTRSPortfolioRebalancing";
+import PTRSRebalancingHistory from "@/components/PTRSRebalancingHistory";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
@@ -3005,6 +3006,9 @@ const Index = () => {
                 <PTRSPortfolioRebalancing molecules={allMolecules} />
               </CardContent>
             </Card>
+
+            {/* Rebalancing History */}
+            <PTRSRebalancingHistory molecules={allMolecules} />
 
             {/* Custom Scenario Builder */}
             <Card className="border-l-4 border-l-indigo-500">
