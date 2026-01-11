@@ -57,6 +57,8 @@ import { PTRSAlertSystem } from "@/components/PTRSAlertSystem";
 import { PTRSMonteCarloIntegration } from "@/components/PTRSMonteCarloIntegration";
 import { PTRSMonteCarloComparison } from "@/components/PTRSMonteCarloComparison";
 import { PTRSStressTesting } from "@/components/PTRSStressTesting";
+import PTRSPortfolioStressTest from "@/components/PTRSPortfolioStressTest";
+import MonteCarloConvergenceAnalysis from "@/components/MonteCarloConvergenceAnalysis";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
@@ -2942,6 +2944,34 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <PTRSStressTesting molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Stress Test */}
+            <Card className="border-l-4 border-l-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-orange-500" />
+                  Portfolio Stress Test
+                </CardTitle>
+                <CardDescription>Run all stress scenarios across your watchlist to identify vulnerable molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioStressTest molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Convergence Analysis */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-purple-500" />
+                  Monte Carlo Convergence Analysis
+                </CardTitle>
+                <CardDescription>Analyze simulation accuracy and find optimal iteration settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MonteCarloConvergenceAnalysis molecules={allMolecules} />
               </CardContent>
             </Card>
 
