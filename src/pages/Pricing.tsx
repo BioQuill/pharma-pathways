@@ -3,19 +3,23 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp } from "lucide-react";
+import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 
 interface PricingTier {
   name: string;
   description: string;
   price: string;
+  originalPrice?: string;
   priceSubtext: string;
   icon: React.ReactNode;
   features: string[];
   highlighted?: boolean;
+  isBundle?: boolean;
   buttonText: string;
   buttonVariant: "default" | "outline" | "secondary";
+  previewButton?: boolean;
 }
 
 const pricingTiers: PricingTier[] = [
@@ -37,6 +41,7 @@ const pricingTiers: PricingTier[] = [
     ],
     buttonText: "Purchase Analysis",
     buttonVariant: "outline",
+    previewButton: true,
   },
   {
     name: "Single Report",
@@ -57,13 +62,35 @@ const pricingTiers: PricingTier[] = [
     buttonVariant: "outline",
   },
   {
+    name: "Complete Bundle",
+    description: "Monte Carlo + Single Report combined at 17% discount",
+    price: "$5,000",
+    originalPrice: "$6,000",
+    priceSubtext: "per molecule",
+    icon: <Package className="h-6 w-6" />,
+    features: [
+      "Full Monte Carlo simulation suite",
+      "Complete LPI-3 due diligence report",
+      "Risk-adjusted peak sales projections",
+      "TTM projections across 10 markets",
+      "Patent & competitive analysis",
+      "Sensitivity & scenario analysis",
+      "Combined PDF report package",
+      "45-day data access",
+    ],
+    isBundle: true,
+    buttonText: "Get Bundle",
+    buttonVariant: "default",
+    previewButton: true,
+  },
+  {
     name: "Annual Molecule",
     description: "Continuous monitoring and updates for one molecule",
     price: "$12,000",
     priceSubtext: "per molecule / year",
     icon: <Zap className="h-6 w-6" />,
     features: [
-      "Everything in Single Report",
+      "Everything in Complete Bundle",
       "Live dashboard access",
       "Real-time trial updates",
       "Regulatory milestone alerts",
@@ -118,20 +145,163 @@ const pricingTiers: PricingTier[] = [
 ];
 
 const comparisonFeatures = [
-  { feature: "Molecules included", monteCarlo: "1", single: "1", annual: "1", ta: "20-40", enterprise: "Unlimited" },
-  { feature: "Monte Carlo simulation", monteCarlo: "✓", single: "Add-on", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "LPI-3 ML analysis", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "TTM projections", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Risk-adjusted metrics", monteCarlo: "✓", single: "—", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Sensitivity analysis", monteCarlo: "✓", single: "—", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Patent timeline", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Competitive analysis", monteCarlo: "—", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "PDF export", monteCarlo: "✓", single: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Live dashboard", monteCarlo: "14 days", single: "30 days", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Real-time alerts", monteCarlo: "—", single: "—", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "API access", monteCarlo: "—", single: "—", annual: "—", ta: "Limited", enterprise: "Full" },
-  { feature: "Dedicated support", monteCarlo: "Email", single: "Email", annual: "Priority", ta: "Account Mgr", enterprise: "24/7" },
+  { feature: "Molecules included", monteCarlo: "1", single: "1", bundle: "1", annual: "1", ta: "20-40", enterprise: "Unlimited" },
+  { feature: "Monte Carlo simulation", monteCarlo: "✓", single: "—", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "LPI-3 ML analysis", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "TTM projections", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Risk-adjusted metrics", monteCarlo: "✓", single: "—", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Sensitivity analysis", monteCarlo: "✓", single: "—", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Patent timeline", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Competitive analysis", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "PDF export", monteCarlo: "✓", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Live dashboard", monteCarlo: "14 days", single: "30 days", bundle: "45 days", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "Real-time alerts", monteCarlo: "—", single: "—", bundle: "—", annual: "✓", ta: "✓", enterprise: "✓" },
+  { feature: "API access", monteCarlo: "—", single: "—", bundle: "—", annual: "—", ta: "Limited", enterprise: "Full" },
+  { feature: "Dedicated support", monteCarlo: "Email", single: "Email", bundle: "Email", annual: "Priority", ta: "Account Mgr", enterprise: "24/7" },
 ];
+
+// Sample Monte Carlo Report Preview Component
+const MonteCarloReportPreview = () => (
+  <div className="max-h-[70vh] overflow-y-auto">
+    <div className="space-y-6 p-4">
+      {/* Header */}
+      <div className="border-b pb-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-bold text-primary">Monte Carlo Peak Sales Analysis</h3>
+          <Badge>Sample Report</Badge>
+        </div>
+        <p className="text-sm text-muted-foreground">Molecule: Lecanemab (Alzheimer's Disease)</p>
+        <p className="text-xs text-muted-foreground">Generated: January 11, 2026</p>
+      </div>
+
+      {/* Key Metrics */}
+      <div className="grid grid-cols-2 gap-4">
+        <Card className="bg-muted/30">
+          <CardContent className="p-4 text-center">
+            <BarChart3 className="h-6 w-6 mx-auto mb-2 text-primary" />
+            <p className="text-2xl font-bold">$4.2B</p>
+            <p className="text-xs text-muted-foreground">Expected Peak Sales</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-muted/30">
+          <CardContent className="p-4 text-center">
+            <Target className="h-6 w-6 mx-auto mb-2 text-primary" />
+            <p className="text-2xl font-bold">68%</p>
+            <p className="text-xs text-muted-foreground">Blockbuster Probability</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-muted/30">
+          <CardContent className="p-4 text-center">
+            <Shield className="h-6 w-6 mx-auto mb-2 text-primary" />
+            <p className="text-2xl font-bold">1.42</p>
+            <p className="text-xs text-muted-foreground">Sharpe Ratio</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-muted/30">
+          <CardContent className="p-4 text-center">
+            <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-primary" />
+            <p className="text-2xl font-bold">$1.8B</p>
+            <p className="text-xs text-muted-foreground">Value at Risk (95%)</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Distribution Preview */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Peak Sales Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-24 bg-gradient-to-r from-muted via-primary/30 to-muted rounded-lg flex items-end justify-center gap-1 p-2">
+            {[15, 25, 40, 60, 80, 95, 100, 90, 75, 55, 35, 20, 10].map((h, i) => (
+              <div 
+                key={i} 
+                className="bg-primary/70 rounded-t w-4"
+                style={{ height: `${h}%` }}
+              />
+            ))}
+          </div>
+          <div className="flex justify-between text-xs text-muted-foreground mt-2">
+            <span>$0B</span>
+            <span>$4.2B (median)</span>
+            <span>$10B+</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Percentile Table Preview */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Percentile Analysis</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="p-2 text-left">Percentile</th>
+                <th className="p-2 text-right">Peak Sales</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { p: "5th (Bear)", v: "$1.2B" },
+                { p: "25th", v: "$2.8B" },
+                { p: "50th (Median)", v: "$4.2B" },
+                { p: "75th", v: "$5.8B" },
+                { p: "95th (Bull)", v: "$8.5B" },
+              ].map((row, i) => (
+                <tr key={i} className={i % 2 === 0 ? "bg-background" : "bg-muted/30"}>
+                  <td className="p-2">{row.p}</td>
+                  <td className="p-2 text-right font-medium">{row.v}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
+
+      {/* Sensitivity Preview */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm">Top Sensitivity Factors</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {[
+              { name: "Market Size", impact: 85 },
+              { name: "Clinical Efficacy", impact: 72 },
+              { name: "Competition", impact: 58 },
+              { name: "Regulatory", impact: 45 },
+            ].map((factor, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="text-xs w-24 truncate">{factor.name}</span>
+                <div className="flex-1 bg-muted rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full"
+                    style={{ width: `${factor.impact}%` }}
+                  />
+                </div>
+                <span className="text-xs font-medium w-8">{factor.impact}%</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Footer */}
+      <div className="text-center pt-4 border-t">
+        <p className="text-xs text-muted-foreground mb-2">
+          This is a sample preview. Full reports include detailed methodology, 
+          scenario analysis, and actionable investment insights.
+        </p>
+        <Badge variant="outline" className="text-xs">
+          <Percent className="h-3 w-3 mr-1" />
+          10,000+ Simulations per Analysis
+        </Badge>
+      </div>
+    </div>
+  </div>
+);
 
 export default function Pricing() {
   return (
@@ -174,13 +344,15 @@ export default function Pricing() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-16">
           {pricingTiers.map((tier) => (
             <Card
               key={tier.name}
               className={`relative flex flex-col ${
                 tier.highlighted
                   ? "border-2 border-primary shadow-lg shadow-primary/10"
+                  : tier.isBundle
+                  ? "border-2 border-[hsl(142,76%,36%)] shadow-lg shadow-[hsl(142,76%,36%)]/10"
                   : "border"
               }`}
             >
@@ -189,37 +361,73 @@ export default function Pricing() {
                   <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
                 </div>
               )}
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className={`p-2 rounded-lg ${tier.highlighted ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+              {tier.isBundle && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <Badge className="bg-[hsl(142,76%,36%)] text-white">Save 17%</Badge>
+                </div>
+              )}
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`p-2 rounded-lg ${
+                    tier.highlighted 
+                      ? "bg-primary text-primary-foreground" 
+                      : tier.isBundle 
+                      ? "bg-[hsl(142,76%,36%)] text-white"
+                      : "bg-muted"
+                  }`}>
                     {tier.icon}
                   </div>
-                  <CardTitle className="text-xl">{tier.name}</CardTitle>
+                  <CardTitle className="text-base">{tier.name}</CardTitle>
                 </div>
-                <CardDescription>{tier.description}</CardDescription>
+                <CardDescription className="text-xs">{tier.description}</CardDescription>
               </CardHeader>
-              <CardContent className="flex-1">
-                <div className="mb-6">
-                  <span className="text-3xl font-bold">{tier.price}</span>
-                  <span className="text-muted-foreground text-sm ml-2">{tier.priceSubtext}</span>
+              <CardContent className="flex-1 pb-2">
+                <div className="mb-4">
+                  {tier.originalPrice && (
+                    <span className="text-sm text-muted-foreground line-through mr-2">{tier.originalPrice}</span>
+                  )}
+                  <span className="text-2xl font-bold">{tier.price}</span>
+                  <span className="text-muted-foreground text-xs ml-1">{tier.priceSubtext}</span>
                 </div>
-                <ul className="space-y-3">
-                  {tier.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-sm">
-                      <Check className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
+                <ul className="space-y-2">
+                  {tier.features.slice(0, 6).map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-1.5 text-xs">
+                      <Check className="h-3 w-3 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
+                  {tier.features.length > 6 && (
+                    <li className="text-xs text-muted-foreground">+{tier.features.length - 6} more</li>
+                  )}
                 </ul>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex flex-col gap-2 pt-2">
                 <Button
                   className="w-full"
                   variant={tier.buttonVariant}
-                  size="lg"
+                  size="sm"
                 >
                   {tier.buttonText}
                 </Button>
+                {tier.previewButton && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="sm" className="w-full text-xs">
+                        <Eye className="h-3 w-3 mr-1" />
+                        Preview Sample Report
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <TrendingUp className="h-5 w-5 text-primary" />
+                          Monte Carlo Report Preview
+                        </DialogTitle>
+                      </DialogHeader>
+                      <MonteCarloReportPreview />
+                    </DialogContent>
+                  </Dialog>
+                )}
               </CardFooter>
             </Card>
           ))}
@@ -230,26 +438,28 @@ export default function Pricing() {
           <h2 className="text-2xl font-bold text-center mb-8">Feature Comparison</h2>
           <Card>
             <CardContent className="p-0 overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-muted/50">
-                    <th className="text-left p-4 font-medium">Feature</th>
-                    <th className="text-center p-4 font-medium">Monte Carlo</th>
-                    <th className="text-center p-4 font-medium">Single Report</th>
-                    <th className="text-center p-4 font-medium bg-primary/5">Annual Molecule</th>
-                    <th className="text-center p-4 font-medium">TA Package</th>
-                    <th className="text-center p-4 font-medium">Enterprise</th>
+                    <th className="text-left p-3 font-medium">Feature</th>
+                    <th className="text-center p-3 font-medium">Monte Carlo</th>
+                    <th className="text-center p-3 font-medium">Single Report</th>
+                    <th className="text-center p-3 font-medium bg-[hsl(142,76%,36%)]/10">Bundle</th>
+                    <th className="text-center p-3 font-medium bg-primary/5">Annual</th>
+                    <th className="text-center p-3 font-medium">TA Package</th>
+                    <th className="text-center p-3 font-medium">Enterprise</th>
                   </tr>
                 </thead>
                 <tbody>
                   {comparisonFeatures.map((row, idx) => (
                     <tr key={idx} className={idx % 2 === 0 ? "bg-background" : "bg-muted/30"}>
-                      <td className="p-4 text-sm font-medium">{row.feature}</td>
-                      <td className="p-4 text-sm text-center">{row.monteCarlo}</td>
-                      <td className="p-4 text-sm text-center">{row.single}</td>
-                      <td className="p-4 text-sm text-center bg-primary/5 font-medium">{row.annual}</td>
-                      <td className="p-4 text-sm text-center">{row.ta}</td>
-                      <td className="p-4 text-sm text-center">{row.enterprise}</td>
+                      <td className="p-3 text-sm font-medium">{row.feature}</td>
+                      <td className="p-3 text-sm text-center">{row.monteCarlo}</td>
+                      <td className="p-3 text-sm text-center">{row.single}</td>
+                      <td className="p-3 text-sm text-center bg-[hsl(142,76%,36%)]/5 font-medium">{row.bundle}</td>
+                      <td className="p-3 text-sm text-center bg-primary/5 font-medium">{row.annual}</td>
+                      <td className="p-3 text-sm text-center">{row.ta}</td>
+                      <td className="p-3 text-sm text-center">{row.enterprise}</td>
                     </tr>
                   ))}
                 </tbody>
