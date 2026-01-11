@@ -59,6 +59,8 @@ import { PTRSMonteCarloComparison } from "@/components/PTRSMonteCarloComparison"
 import { PTRSStressTesting } from "@/components/PTRSStressTesting";
 import PTRSPortfolioStressTest from "@/components/PTRSPortfolioStressTest";
 import MonteCarloConvergenceAnalysis from "@/components/MonteCarloConvergenceAnalysis";
+import PTRSPortfolioOptimization from "@/components/PTRSPortfolioOptimization";
+import PTRSCustomScenarioBuilder from "@/components/PTRSCustomScenarioBuilder";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
@@ -2972,6 +2974,34 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <MonteCarloConvergenceAnalysis molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Optimization */}
+            <Card className="border-l-4 border-l-green-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                  Portfolio Optimization
+                </CardTitle>
+                <CardDescription>Optimize molecule mix to minimize vulnerability while maximizing expected returns</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioOptimization molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Custom Scenario Builder */}
+            <Card className="border-l-4 border-l-indigo-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-indigo-500" />
+                  Custom Scenario Builder
+                </CardTitle>
+                <CardDescription>Define custom stress scenarios with adjustable impact parameters for each PTRS factor</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSCustomScenarioBuilder molecules={allMolecules} />
               </CardContent>
             </Card>
 
