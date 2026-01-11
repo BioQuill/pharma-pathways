@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent, Mail, Send, Calculator, DollarSign, PieChart } from "lucide-react";
+import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent, Mail, Send, Calculator, DollarSign, PieChart, Clock, Database, RefreshCw, CheckCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -824,6 +824,123 @@ export default function Pricing() {
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-center mb-8">Calculate Your ROI</h2>
           <ROICalculator />
+        </div>
+
+        {/* BioQuill vs Traditional Due Diligence Comparison */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">BioQuill vs Traditional Due Diligence</h2>
+          <Card className="border-primary/20">
+            <CardContent className="p-8">
+              {/* Summary Cards */}
+              <div className="grid gap-4 md:grid-cols-3 mb-8">
+                <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 rounded-lg p-6 text-center">
+                  <Clock className="h-8 w-8 text-[hsl(142,76%,36%)] mx-auto mb-3" />
+                  <p className="text-4xl font-bold text-[hsl(142,76%,36%)]">96%</p>
+                  <p className="text-sm font-medium text-[hsl(142,70%,35%)]">Time Savings</p>
+                  <p className="text-xs text-muted-foreground mt-1">2 days vs 45 days</p>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 rounded-lg p-6 text-center">
+                  <DollarSign className="h-8 w-8 text-blue-600 mx-auto mb-3" />
+                  <p className="text-4xl font-bold text-blue-600">97%</p>
+                  <p className="text-sm font-medium text-blue-700">Cost Reduction</p>
+                  <p className="text-xs text-muted-foreground mt-1">$500 vs $15,000</p>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 rounded-lg p-6 text-center">
+                  <Database className="h-8 w-8 text-purple-600 mx-auto mb-3" />
+                  <p className="text-4xl font-bold text-purple-600">33x</p>
+                  <p className="text-sm font-medium text-purple-700">More Coverage</p>
+                  <p className="text-xs text-muted-foreground mt-1">500 vs 15 molecules</p>
+                </div>
+              </div>
+
+              {/* Detailed Comparison Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/50">
+                      <th className="text-left p-4 font-semibold">Metric</th>
+                      <th className="text-center p-4 font-semibold text-[hsl(142,76%,36%)]">
+                        <div className="flex items-center justify-center gap-2">
+                          <CheckCircle className="h-4 w-4" />
+                          BioQuill
+                        </div>
+                      </th>
+                      <th className="text-center p-4 font-semibold text-muted-foreground">Traditional</th>
+                      <th className="text-center p-4 font-semibold text-primary">Advantage</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b hover:bg-muted/30">
+                      <td className="p-4 flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        Time to Complete Analysis
+                      </td>
+                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">2 days</td>
+                      <td className="text-center p-4 text-muted-foreground">45 days</td>
+                      <td className="text-center p-4">
+                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">96% faster</Badge>
+                      </td>
+                    </tr>
+                    <tr className="border-b hover:bg-muted/30">
+                      <td className="p-4 flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        Cost per Molecule Report
+                      </td>
+                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">$500</td>
+                      <td className="text-center p-4 text-muted-foreground">$15,000</td>
+                      <td className="text-center p-4">
+                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">97% savings</Badge>
+                      </td>
+                    </tr>
+                    <tr className="border-b hover:bg-muted/30">
+                      <td className="p-4 flex items-center gap-2">
+                        <Database className="h-4 w-4 text-muted-foreground" />
+                        Data Sources Analyzed
+                      </td>
+                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">85 sources</td>
+                      <td className="text-center p-4 text-muted-foreground">12 sources</td>
+                      <td className="text-center p-4">
+                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">7x more</Badge>
+                      </td>
+                    </tr>
+                    <tr className="border-b hover:bg-muted/30">
+                      <td className="p-4 flex items-center gap-2">
+                        <Target className="h-4 w-4 text-muted-foreground" />
+                        Portfolio Coverage
+                      </td>
+                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">500+ molecules</td>
+                      <td className="text-center p-4 text-muted-foreground">15 molecules</td>
+                      <td className="text-center p-4">
+                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">33x coverage</Badge>
+                      </td>
+                    </tr>
+                    <tr className="border-b hover:bg-muted/30">
+                      <td className="p-4 flex items-center gap-2">
+                        <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                        Update Frequency
+                      </td>
+                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">Daily</td>
+                      <td className="text-center p-4 text-muted-foreground">Quarterly</td>
+                      <td className="text-center p-4">
+                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">90x faster</Badge>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-4 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                        Accuracy Rate
+                      </td>
+                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">94%</td>
+                      <td className="text-center p-4 text-muted-foreground">78%</td>
+                      <td className="text-center p-4">
+                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">+16%</Badge>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* FAQ */}

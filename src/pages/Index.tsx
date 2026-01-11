@@ -98,8 +98,124 @@ import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChar
 
 // TimelinePhase interface imported from moleculesData
 
+// BioQuill vs Traditional Due Diligence Comparison Chart
+const DueDiligenceComparisonChart = () => {
+  const comparisonData = [
+    { metric: "Time to Complete Analysis", bioquill: 2, traditional: 45, unit: "days", savings: "96%" },
+    { metric: "Cost per Molecule Report", bioquill: 500, traditional: 15000, unit: "$", savings: "97%" },
+    { metric: "Data Sources Analyzed", bioquill: 85, traditional: 12, unit: "sources", improvement: "7x" },
+    { metric: "Portfolio Coverage", bioquill: 500, traditional: 15, unit: "molecules", improvement: "33x" },
+    { metric: "Update Frequency", bioquill: 1, traditional: 90, unit: "days", savings: "99%" },
+    { metric: "Accuracy Rate", bioquill: 94, traditional: 78, unit: "%", improvement: "+16%" },
+  ];
+
+  const chartData = [
+    { category: "Time (days)", BioQuill: 2, Traditional: 45 },
+    { category: "Cost ($K)", BioQuill: 0.5, Traditional: 15 },
+    { category: "Data Sources", BioQuill: 85, Traditional: 12 },
+    { category: "Molecules", BioQuill: 500, Traditional: 15 },
+  ];
+
+  return (
+    <Card className="border-primary/20">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-primary" />
+          BioQuill vs Traditional Due Diligence
+        </CardTitle>
+        <CardDescription>Time, cost, and coverage advantages of AI-powered analysis</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Summary Cards */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 rounded-lg p-4 text-center">
+            <p className="text-3xl font-bold text-green-600">96%</p>
+            <p className="text-sm text-green-700 dark:text-green-400">Time Savings</p>
+            <p className="text-xs text-muted-foreground mt-1">2 days vs 45 days</p>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 rounded-lg p-4 text-center">
+            <p className="text-3xl font-bold text-blue-600">97%</p>
+            <p className="text-sm text-blue-700 dark:text-blue-400">Cost Reduction</p>
+            <p className="text-xs text-muted-foreground mt-1">$500 vs $15,000</p>
+          </div>
+          <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 rounded-lg p-4 text-center">
+            <p className="text-3xl font-bold text-purple-600">33x</p>
+            <p className="text-sm text-purple-700 dark:text-purple-400">More Coverage</p>
+            <p className="text-xs text-muted-foreground mt-1">500 vs 15 molecules</p>
+          </div>
+        </div>
+
+        {/* Comparison Chart */}
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} layout="vertical" margin={{ left: 80, right: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+              <XAxis type="number" />
+              <YAxis type="category" dataKey="category" tick={{ fontSize: 12 }} width={75} />
+              <ChartTooltip 
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-popover border rounded-lg shadow-lg p-3 text-sm">
+                        <p className="font-medium">{payload[0]?.payload?.category}</p>
+                        {payload.map((entry: any, index: number) => (
+                          <p key={index} style={{ color: entry.color }}>
+                            {entry.name}: {entry.value}
+                          </p>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend />
+              <Bar dataKey="BioQuill" fill="hsl(142, 71%, 45%)" radius={[0, 4, 4, 0]} name="BioQuill" />
+              <Bar dataKey="Traditional" fill="hsl(0, 0%, 70%)" radius={[0, 4, 4, 0]} name="Traditional" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Detailed Comparison Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="text-left p-3 font-medium">Metric</th>
+                <th className="text-center p-3 font-medium text-green-600">BioQuill</th>
+                <th className="text-center p-3 font-medium text-muted-foreground">Traditional</th>
+                <th className="text-center p-3 font-medium text-primary">Advantage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonData.map((row, idx) => (
+                <tr key={idx} className="border-b hover:bg-muted/30">
+                  <td className="p-3">{row.metric}</td>
+                  <td className="text-center p-3 font-semibold text-green-600">
+                    {row.unit === "$" ? `$${row.bioquill.toLocaleString()}` : row.bioquill}{row.unit !== "$" && row.unit !== "%" ? ` ${row.unit}` : row.unit === "%" ? "%" : ""}
+                  </td>
+                  <td className="text-center p-3 text-muted-foreground">
+                    {row.unit === "$" ? `$${row.traditional.toLocaleString()}` : row.traditional}{row.unit !== "$" && row.unit !== "%" ? ` ${row.unit}` : row.unit === "%" ? "%" : ""}
+                  </td>
+                  <td className="text-center p-3">
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                      {row.savings || row.improvement}
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 // PTRS Calculator Component
-const PTRSCalculator = () => {
+const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
+  const [calculationMode, setCalculationMode] = useState<"ta" | "molecule">("ta");
+  const [selectedMoleculeId, setSelectedMoleculeId] = useState<string>("");
   const [therapeuticArea, setTherapeuticArea] = useState("oncology");
   const [currentPhase, setCurrentPhase] = useState("phase2");
   const [mechanismNovelty, setMechanismNovelty] = useState([50]);
@@ -128,6 +244,55 @@ const PTRSCalculator = () => {
     phase2: 0.75,
     phase3: 1.2,
     nda: 1.5,
+    approved: 2.0,
+  };
+
+  // Get TA key from molecule's therapeutic area
+  const getTAKey = (ta: string): string => {
+    const taLower = ta.toLowerCase();
+    if (taLower.includes("oncology") || taLower.includes("hematology")) return "oncology";
+    if (taLower.includes("cns") || taLower.includes("neurology")) return "cns";
+    if (taLower.includes("cardio")) return "cardiovascular";
+    if (taLower.includes("infectious")) return "infectious";
+    if (taLower.includes("immun")) return "immunology";
+    if (taLower.includes("metabol") || taLower.includes("endocr") || taLower.includes("diabetes") || taLower.includes("obesity")) return "metabolic";
+    if (taLower.includes("rare")) return "rareDisease";
+    if (taLower.includes("derma")) return "dermatology";
+    return "oncology";
+  };
+
+  // Get phase key from molecule's phase
+  const getPhaseKey = (phase: string): string => {
+    const phaseLower = phase.toLowerCase();
+    if (phaseLower.includes("preclinical")) return "preclinical";
+    if (phaseLower.includes("phase i") && !phaseLower.includes("ii") && !phaseLower.includes("iii")) return "phase1";
+    if (phaseLower.includes("phase ii") && !phaseLower.includes("iii")) return "phase2";
+    if (phaseLower.includes("phase iii") || phaseLower.includes("phase 3")) return "phase3";
+    if (phaseLower.includes("nda") || phaseLower.includes("bla") || phaseLower.includes("filed")) return "nda";
+    if (phaseLower.includes("approved")) return "approved";
+    return "phase2";
+  };
+
+  // When a molecule is selected, update parameters based on molecule data
+  const handleMoleculeSelect = (moleculeId: string) => {
+    setSelectedMoleculeId(moleculeId);
+    const molecule = molecules.find(m => m.id === moleculeId);
+    if (molecule) {
+      const taKey = getTAKey(molecule.therapeuticArea);
+      const phaseKey = getPhaseKey(molecule.phase);
+      setTherapeuticArea(taKey);
+      setCurrentPhase(phaseKey);
+      
+      // Adjust sliders based on molecule scores
+      if (molecule.scores) {
+        setMechanismNovelty([Math.round(molecule.scores.meetingEndpoints * 100)]);
+        setEndpointClarity([Math.round(molecule.scores.approval * 100)]);
+        setPriorTrialData([Math.round(molecule.scores.nextPhase * 100)]);
+        setSponsorExperience([molecule.companyTrackRecord === 'fast' ? 80 : molecule.companyTrackRecord === 'average' ? 60 : 45]);
+        setRegulatoryPrecedent([Math.round(molecule.scores.regulatoryPathway.accelerated * 100)]);
+        setSafetyProfile([Math.round((1 - molecule.scores.dropoutRanking / 5) * 100)]);
+      }
+    }
   };
 
   // Calculate PTS based on inputs
@@ -162,15 +327,67 @@ const PTRSCalculator = () => {
   const prs = calculatePRS();
   const ptrs = Math.round((pts / 100) * prs * 10) / 10;
 
+  const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
+
   return (
     <div className="space-y-6">
+      {/* Calculation Mode Toggle */}
+      <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg border">
+        <Label className="font-medium">Calculate for:</Label>
+        <div className="flex gap-2">
+          <Button
+            variant={calculationMode === "ta" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setCalculationMode("ta")}
+          >
+            Therapeutic Area
+          </Button>
+          <Button
+            variant={calculationMode === "molecule" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setCalculationMode("molecule")}
+          >
+            Specific Molecule
+          </Button>
+        </div>
+      </div>
+
+      {/* Molecule Selector (when in molecule mode) */}
+      {calculationMode === "molecule" && (
+        <div className="space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/20">
+          <Label className="font-medium">Select a Molecule</Label>
+          <Select value={selectedMoleculeId} onValueChange={handleMoleculeSelect}>
+            <SelectTrigger className="bg-background">
+              <SelectValue placeholder="Choose a molecule to analyze..." />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {molecules.slice(0, 50).map((mol) => (
+                <SelectItem key={mol.id} value={mol.id}>
+                  <span className="flex items-center gap-2">
+                    <span className="font-medium">{mol.name}</span>
+                    <span className="text-muted-foreground text-xs">({mol.company} - {mol.phase})</span>
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {selectedMolecule && (
+            <div className="mt-3 p-3 bg-background rounded border">
+              <p className="text-sm"><strong>Molecule:</strong> {selectedMolecule.name}</p>
+              <p className="text-sm text-muted-foreground"><strong>Indication:</strong> {selectedMolecule.indication}</p>
+              <p className="text-sm text-muted-foreground"><strong>TA:</strong> {selectedMolecule.therapeuticArea} | <strong>Phase:</strong> {selectedMolecule.phase}</p>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Input Parameters */}
         <div className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Therapeutic Area</Label>
-              <Select value={therapeuticArea} onValueChange={setTherapeuticArea}>
+              <Select value={therapeuticArea} onValueChange={setTherapeuticArea} disabled={calculationMode === "molecule" && !!selectedMoleculeId}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -188,7 +405,7 @@ const PTRSCalculator = () => {
             </div>
             <div className="space-y-2">
               <Label>Current Phase</Label>
-              <Select value={currentPhase} onValueChange={setCurrentPhase}>
+              <Select value={currentPhase} onValueChange={setCurrentPhase} disabled={calculationMode === "molecule" && !!selectedMoleculeId}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -198,6 +415,7 @@ const PTRSCalculator = () => {
                   <SelectItem value="phase2">Phase II</SelectItem>
                   <SelectItem value="phase3">Phase III</SelectItem>
                   <SelectItem value="nda">NDA/BLA Filed</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -262,6 +480,15 @@ const PTRSCalculator = () => {
 
         {/* Results Display */}
         <div className="space-y-4">
+          {calculationMode === "molecule" && selectedMolecule && (
+            <div className="p-3 bg-primary/10 rounded-lg border border-primary/20 mb-4">
+              <p className="text-sm font-medium flex items-center gap-2">
+                <Pill className="h-4 w-4" />
+                Calculating PTRS for: <span className="text-primary">{selectedMolecule.name}</span>
+              </p>
+            </div>
+          )}
+          
           <div className="grid gap-4">
             <Card className="bg-blue-50 dark:bg-blue-950/30 border-blue-200">
               <CardContent className="p-5">
@@ -314,8 +541,9 @@ const PTRSCalculator = () => {
               <strong>Formula:</strong> PTRS = PTS × PRS = {pts}% × {prs}% = <strong>{ptrs}%</strong>
             </p>
             <p className="text-xs text-muted-foreground mt-2">
-              This calculator provides estimated probabilities based on historical industry data and the parameters you've selected. 
-              Actual outcomes may vary based on specific trial characteristics and regulatory environment.
+              {calculationMode === "molecule" && selectedMolecule 
+                ? `This calculation uses the profile data from ${selectedMolecule.name} to pre-populate adjustment factors.`
+                : "This calculator provides estimated probabilities based on historical industry data and the parameters you've selected."}
             </p>
           </div>
         </div>
@@ -323,7 +551,6 @@ const PTRSCalculator = () => {
     </div>
   );
 };
-
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
@@ -2535,7 +2762,7 @@ const Index = () => {
                 <CardDescription>Input clinical trial parameters to calculate PTS, PRS, and overall PTRS</CardDescription>
               </CardHeader>
               <CardContent>
-                <PTRSCalculator />
+                <PTRSCalculator molecules={allMolecules} />
               </CardContent>
             </Card>
 
