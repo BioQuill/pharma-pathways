@@ -224,6 +224,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
   const [sponsorExperience, setSponsorExperience] = useState([65]);
   const [regulatoryPrecedent, setRegulatoryPrecedent] = useState([75]);
   const [safetyProfile, setSafetyProfile] = useState([70]);
+  const ptrsReportRef = useRef<HTMLDivElement>(null);
 
   // Base rates by therapeutic area
   const taBaseRates: Record<string, { pts: number; prs: number }> = {
@@ -329,27 +330,109 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
 
   const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
 
+  // TA display names
+  const taDisplayNames: Record<string, string> = {
+    oncology: "Oncology",
+    cns: "CNS/Neurology",
+    cardiovascular: "Cardiovascular",
+    infectious: "Infectious Disease",
+    immunology: "Immunology",
+    metabolic: "Metabolic/Endocrine",
+    rareDisease: "Rare Disease",
+    dermatology: "Dermatology",
+  };
+
+  // Phase display names
+  const phaseDisplayNames: Record<string, string> = {
+    preclinical: "Preclinical",
+    phase1: "Phase I",
+    phase2: "Phase II",
+    phase3: "Phase III",
+    nda: "NDA/BLA Filed",
+    approved: "Approved",
+  };
+
+  // Handle PDF download
+  const handleDownloadPTRSPDF = () => {
+    if (!ptrsReportRef.current) return;
+    
+    const element = ptrsReportRef.current.cloneNode(true) as HTMLElement;
+    
+    // Show PDF header
+    const pdfHeader = element.querySelector('.ptrs-pdf-header');
+    if (pdfHeader) {
+      (pdfHeader as HTMLElement).style.display = 'block';
+    }
+    
+    // Hide download button in PDF
+    const hideButtons = element.querySelectorAll('.ptrs-pdf-hide');
+    hideButtons.forEach(btn => {
+      (btn as HTMLElement).style.display = 'none';
+    });
+    
+    const filename = selectedMolecule 
+      ? `PTRS_Analysis_${selectedMolecule.name.replace(/\s+/g, '_')}.pdf`
+      : `PTRS_Analysis_${taDisplayNames[therapeuticArea]}_${phaseDisplayNames[currentPhase]}.pdf`;
+    
+    const opt = {
+      margin: 10,
+      filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
+    
+    html2pdf().set(opt).from(element).save();
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Calculation Mode Toggle */}
-      <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg border">
-        <Label className="font-medium">Calculate for:</Label>
-        <div className="flex gap-2">
-          <Button
-            variant={calculationMode === "ta" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCalculationMode("ta")}
-          >
-            Therapeutic Area
-          </Button>
-          <Button
-            variant={calculationMode === "molecule" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setCalculationMode("molecule")}
-          >
-            Specific Molecule
-          </Button>
+    <div className="space-y-6" ref={ptrsReportRef}>
+      {/* PDF Header (hidden on screen, shown in PDF) */}
+      <div className="ptrs-pdf-header hidden">
+        <div className="text-center mb-6 pb-4 border-b">
+          <h1 className="text-2xl font-bold text-primary">BioQuill PTRS Analysis Report</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Generated on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
+          {selectedMolecule && (
+            <div className="mt-3 p-3 bg-primary/5 rounded-lg inline-block">
+              <p className="font-semibold">{selectedMolecule.name}</p>
+              <p className="text-sm text-muted-foreground">{selectedMolecule.company} | {selectedMolecule.indication}</p>
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* Calculation Mode Toggle */}
+      <div className="flex items-center justify-between gap-4 p-4 bg-muted/50 rounded-lg border">
+        <div className="flex items-center gap-4">
+          <Label className="font-medium">Calculate for:</Label>
+          <div className="flex gap-2">
+            <Button
+              variant={calculationMode === "ta" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setCalculationMode("ta")}
+            >
+              Therapeutic Area
+            </Button>
+            <Button
+              variant={calculationMode === "molecule" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setCalculationMode("molecule")}
+            >
+              Specific Molecule
+            </Button>
+          </div>
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleDownloadPTRSPDF}
+          className="ptrs-pdf-hide gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export PDF
+        </Button>
       </div>
 
       {/* Molecule Selector (when in molecule mode) */}
@@ -545,6 +628,45 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
                 ? `This calculation uses the profile data from ${selectedMolecule.name} to pre-populate adjustment factors.`
                 : "This calculator provides estimated probabilities based on historical industry data and the parameters you've selected."}
             </p>
+          </div>
+
+          {/* Parameters Summary (for PDF) */}
+          <div className="bg-muted/30 rounded-lg p-4 border mt-4">
+            <h4 className="text-sm font-semibold mb-3">Input Parameters Summary</h4>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Therapeutic Area:</span>
+                <span className="font-medium">{taDisplayNames[therapeuticArea]}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Current Phase:</span>
+                <span className="font-medium">{phaseDisplayNames[currentPhase]}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Mechanism Novelty:</span>
+                <span className="font-medium">{mechanismNovelty[0]}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Endpoint Clarity:</span>
+                <span className="font-medium">{endpointClarity[0]}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Prior Trial Data:</span>
+                <span className="font-medium">{priorTrialData[0]}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Sponsor Experience:</span>
+                <span className="font-medium">{sponsorExperience[0]}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Regulatory Precedent:</span>
+                <span className="font-medium">{regulatoryPrecedent[0]}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Safety Profile:</span>
+                <span className="font-medium">{safetyProfile[0]}%</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
