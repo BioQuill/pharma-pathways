@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, BarChart3, ArrowUpDown } from "lucide-react";
+import { X, Plus, BarChart3, ArrowUpDown, FileText } from "lucide-react";
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { type MoleculeProfile } from "@/lib/moleculesData";
+import { PTRSComparisonPDFReport } from "./PTRSComparisonPDFReport";
 
 interface PTRSMoleculeComparisonProps {
   molecules: MoleculeProfile[];
@@ -318,6 +319,14 @@ export const PTRSMoleculeComparison = ({ molecules }: PTRSMoleculeComparisonProp
             <p>Select molecules above to compare their PTRS scores</p>
             <p className="text-sm mt-1">You can compare up to 5 molecules at once</p>
           </div>
+        )}
+
+        {/* PDF Report Export */}
+        {selectedMolecules.length > 0 && (
+          <PTRSComparisonPDFReport 
+            molecules={molecules} 
+            selectedMoleculeIds={selectedMolecules} 
+          />
         )}
       </CardContent>
     </Card>
