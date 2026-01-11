@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent } from "lucide-react";
+import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent, Mail, Send } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 
 interface PricingTier {
@@ -17,6 +19,7 @@ interface PricingTier {
   features: string[];
   highlighted?: boolean;
   isBundle?: boolean;
+  isContactSales?: boolean;
   buttonText: string;
   buttonVariant: "default" | "outline" | "secondary";
   previewButton?: boolean;
@@ -120,7 +123,8 @@ const pricingTiers: PricingTier[] = [
       "API access (limited)",
     ],
     buttonText: "Contact Sales",
-    buttonVariant: "outline",
+    buttonVariant: "secondary",
+    isContactSales: true,
   },
   {
     name: "Enterprise",
@@ -140,7 +144,8 @@ const pricingTiers: PricingTier[] = [
       "Quarterly strategy sessions",
     ],
     buttonText: "Contact Sales",
-    buttonVariant: "outline",
+    buttonVariant: "secondary",
+    isContactSales: true,
   },
 ];
 
@@ -160,154 +165,302 @@ const comparisonFeatures = [
   { feature: "Dedicated support", monteCarlo: "Email", single: "Email", bundle: "Email", annual: "Priority", ta: "Account Mgr", enterprise: "24/7" },
 ];
 
+// Sample data for different therapeutic areas
+const sampleMoleculeData: Record<string, {
+  molecule: string;
+  indication: string;
+  peakSales: string;
+  blockbusterProb: string;
+  sharpeRatio: string;
+  var95: string;
+  percentiles: { p: string; v: string }[];
+  sensitivity: { name: string; impact: number }[];
+}> = {
+  neurology: {
+    molecule: "Lecanemab",
+    indication: "Alzheimer's Disease",
+    peakSales: "$4.2B",
+    blockbusterProb: "68%",
+    sharpeRatio: "1.42",
+    var95: "$1.8B",
+    percentiles: [
+      { p: "5th (Bear)", v: "$1.2B" },
+      { p: "25th", v: "$2.8B" },
+      { p: "50th (Median)", v: "$4.2B" },
+      { p: "75th", v: "$5.8B" },
+      { p: "95th (Bull)", v: "$8.5B" },
+    ],
+    sensitivity: [
+      { name: "Market Size", impact: 85 },
+      { name: "Clinical Efficacy", impact: 72 },
+      { name: "Competition", impact: 58 },
+      { name: "Regulatory", impact: 45 },
+    ],
+  },
+  oncology: {
+    molecule: "Dato-DXd",
+    indication: "NSCLC / Breast Cancer",
+    peakSales: "$6.8B",
+    blockbusterProb: "82%",
+    sharpeRatio: "1.68",
+    var95: "$2.4B",
+    percentiles: [
+      { p: "5th (Bear)", v: "$2.1B" },
+      { p: "25th", v: "$4.5B" },
+      { p: "50th (Median)", v: "$6.8B" },
+      { p: "75th", v: "$9.2B" },
+      { p: "95th (Bull)", v: "$14.5B" },
+    ],
+    sensitivity: [
+      { name: "Clinical Efficacy", impact: 92 },
+      { name: "Competition", impact: 78 },
+      { name: "Market Size", impact: 65 },
+      { name: "Pricing", impact: 52 },
+    ],
+  },
+  immunology: {
+    molecule: "Dupixent",
+    indication: "Atopic Dermatitis",
+    peakSales: "$12.5B",
+    blockbusterProb: "95%",
+    sharpeRatio: "2.15",
+    var95: "$4.2B",
+    percentiles: [
+      { p: "5th (Bear)", v: "$5.8B" },
+      { p: "25th", v: "$9.2B" },
+      { p: "50th (Median)", v: "$12.5B" },
+      { p: "75th", v: "$15.8B" },
+      { p: "95th (Bull)", v: "$22.0B" },
+    ],
+    sensitivity: [
+      { name: "Label Expansion", impact: 88 },
+      { name: "Competition", impact: 72 },
+      { name: "Pricing", impact: 58 },
+      { name: "Market Access", impact: 48 },
+    ],
+  },
+  cardiovascular: {
+    molecule: "Inclisiran",
+    indication: "Hypercholesterolemia",
+    peakSales: "$3.5B",
+    blockbusterProb: "58%",
+    sharpeRatio: "1.18",
+    var95: "$1.2B",
+    percentiles: [
+      { p: "5th (Bear)", v: "$0.8B" },
+      { p: "25th", v: "$2.2B" },
+      { p: "50th (Median)", v: "$3.5B" },
+      { p: "75th", v: "$4.8B" },
+      { p: "95th (Bull)", v: "$7.2B" },
+    ],
+    sensitivity: [
+      { name: "Market Access", impact: 82 },
+      { name: "Competition", impact: 68 },
+      { name: "Clinical Efficacy", impact: 55 },
+      { name: "Pricing", impact: 42 },
+    ],
+  },
+};
+
 // Sample Monte Carlo Report Preview Component
-const MonteCarloReportPreview = () => (
-  <div className="max-h-[70vh] overflow-y-auto">
-    <div className="space-y-6 p-4">
-      {/* Header */}
-      <div className="border-b pb-4">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold text-primary">Monte Carlo Peak Sales Analysis</h3>
+const MonteCarloReportPreview = () => {
+  const [selectedTA, setSelectedTA] = useState("neurology");
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const data = sampleMoleculeData[selectedTA];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      setSubmitted(true);
+    }
+  };
+
+  return (
+    <div className="max-h-[70vh] overflow-y-auto">
+      <div className="space-y-6 p-4">
+        {/* TA Selector */}
+        <div className="flex items-center gap-4 border-b pb-4">
+          <Select value={selectedTA} onValueChange={setSelectedTA}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select Therapeutic Area" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="neurology">Neurology</SelectItem>
+              <SelectItem value="oncology">Oncology</SelectItem>
+              <SelectItem value="immunology">Immunology</SelectItem>
+              <SelectItem value="cardiovascular">Cardiovascular</SelectItem>
+            </SelectContent>
+          </Select>
           <Badge>Sample Report</Badge>
         </div>
-        <p className="text-sm text-muted-foreground">Molecule: Lecanemab (Alzheimer's Disease)</p>
-        <p className="text-xs text-muted-foreground">Generated: January 11, 2026</p>
-      </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="bg-muted/30">
-          <CardContent className="p-4 text-center">
-            <BarChart3 className="h-6 w-6 mx-auto mb-2 text-primary" />
-            <p className="text-2xl font-bold">$4.2B</p>
-            <p className="text-xs text-muted-foreground">Expected Peak Sales</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-muted/30">
-          <CardContent className="p-4 text-center">
-            <Target className="h-6 w-6 mx-auto mb-2 text-primary" />
-            <p className="text-2xl font-bold">68%</p>
-            <p className="text-xs text-muted-foreground">Blockbuster Probability</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-muted/30">
-          <CardContent className="p-4 text-center">
-            <Shield className="h-6 w-6 mx-auto mb-2 text-primary" />
-            <p className="text-2xl font-bold">1.42</p>
-            <p className="text-xs text-muted-foreground">Sharpe Ratio</p>
-          </CardContent>
-        </Card>
-        <Card className="bg-muted/30">
-          <CardContent className="p-4 text-center">
-            <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-primary" />
-            <p className="text-2xl font-bold">$1.8B</p>
-            <p className="text-xs text-muted-foreground">Value at Risk (95%)</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Header */}
+        <div className="border-b pb-4">
+          <h3 className="text-lg font-bold text-primary">Monte Carlo Peak Sales Analysis</h3>
+          <p className="text-sm text-muted-foreground">Molecule: {data.molecule} ({data.indication})</p>
+          <p className="text-xs text-muted-foreground">Generated: January 11, 2026</p>
+        </div>
 
-      {/* Distribution Preview */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Peak Sales Distribution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-24 bg-gradient-to-r from-muted via-primary/30 to-muted rounded-lg flex items-end justify-center gap-1 p-2">
-            {[15, 25, 40, 60, 80, 95, 100, 90, 75, 55, 35, 20, 10].map((h, i) => (
-              <div 
-                key={i} 
-                className="bg-primary/70 rounded-t w-4"
-                style={{ height: `${h}%` }}
-              />
-            ))}
-          </div>
-          <div className="flex justify-between text-xs text-muted-foreground mt-2">
-            <span>$0B</span>
-            <span>$4.2B (median)</span>
-            <span>$10B+</span>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Key Metrics */}
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="bg-muted/30">
+            <CardContent className="p-4 text-center">
+              <BarChart3 className="h-6 w-6 mx-auto mb-2 text-primary" />
+              <p className="text-2xl font-bold">{data.peakSales}</p>
+              <p className="text-xs text-muted-foreground">Expected Peak Sales</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-muted/30">
+            <CardContent className="p-4 text-center">
+              <Target className="h-6 w-6 mx-auto mb-2 text-primary" />
+              <p className="text-2xl font-bold">{data.blockbusterProb}</p>
+              <p className="text-xs text-muted-foreground">Blockbuster Probability</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-muted/30">
+            <CardContent className="p-4 text-center">
+              <Shield className="h-6 w-6 mx-auto mb-2 text-primary" />
+              <p className="text-2xl font-bold">{data.sharpeRatio}</p>
+              <p className="text-xs text-muted-foreground">Sharpe Ratio</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-muted/30">
+            <CardContent className="p-4 text-center">
+              <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-primary" />
+              <p className="text-2xl font-bold">{data.var95}</p>
+              <p className="text-xs text-muted-foreground">Value at Risk (95%)</p>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Percentile Table Preview */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Percentile Analysis</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/50">
-                <th className="p-2 text-left">Percentile</th>
-                <th className="p-2 text-right">Peak Sales</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { p: "5th (Bear)", v: "$1.2B" },
-                { p: "25th", v: "$2.8B" },
-                { p: "50th (Median)", v: "$4.2B" },
-                { p: "75th", v: "$5.8B" },
-                { p: "95th (Bull)", v: "$8.5B" },
-              ].map((row, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-background" : "bg-muted/30"}>
-                  <td className="p-2">{row.p}</td>
-                  <td className="p-2 text-right font-medium">{row.v}</td>
-                </tr>
+        {/* Distribution Preview */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Peak Sales Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-24 bg-gradient-to-r from-muted via-primary/30 to-muted rounded-lg flex items-end justify-center gap-1 p-2">
+              {[15, 25, 40, 60, 80, 95, 100, 90, 75, 55, 35, 20, 10].map((h, i) => (
+                <div 
+                  key={i} 
+                  className="bg-primary/70 rounded-t w-4"
+                  style={{ height: `${h}%` }}
+                />
               ))}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-2">
+              <span>$0B</span>
+              <span>{data.peakSales} (median)</span>
+              <span>$10B+</span>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Sensitivity Preview */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Top Sensitivity Factors</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {[
-              { name: "Market Size", impact: 85 },
-              { name: "Clinical Efficacy", impact: 72 },
-              { name: "Competition", impact: 58 },
-              { name: "Regulatory", impact: 45 },
-            ].map((factor, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="text-xs w-24 truncate">{factor.name}</span>
-                <div className="flex-1 bg-muted rounded-full h-2">
-                  <div 
-                    className="bg-primary h-2 rounded-full"
-                    style={{ width: `${factor.impact}%` }}
-                  />
+        {/* Percentile Table Preview */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Percentile Analysis</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="p-2 text-left">Percentile</th>
+                  <th className="p-2 text-right">Peak Sales</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.percentiles.map((row, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-background" : "bg-muted/30"}>
+                    <td className="p-2">{row.p}</td>
+                    <td className="p-2 text-right font-medium">{row.v}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+
+        {/* Sensitivity Preview */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Top Sensitivity Factors</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {data.sensitivity.map((factor, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-xs w-24 truncate">{factor.name}</span>
+                  <div className="flex-1 bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full"
+                      style={{ width: `${factor.impact}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium w-8">{factor.impact}%</span>
                 </div>
-                <span className="text-xs font-medium w-8">{factor.impact}%</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Footer */}
-      <div className="text-center pt-4 border-t">
-        <p className="text-xs text-muted-foreground mb-2">
-          This is a sample preview. Full reports include detailed methodology, 
-          scenario analysis, and actionable investment insights.
-        </p>
-        <Badge variant="outline" className="text-xs">
-          <Percent className="h-3 w-3 mr-1" />
-          10,000+ Simulations per Analysis
-        </Badge>
+        {/* Email Capture Form */}
+        <Card className="border-primary/30 bg-primary/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Mail className="h-4 w-4 text-primary" />
+              Request Custom Demo
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!submitted ? (
+              <form onSubmit={handleSubmit} className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1"
+                  required
+                />
+                <Button type="submit" size="sm" className="gap-1">
+                  <Send className="h-3 w-3" />
+                  Request
+                </Button>
+              </form>
+            ) : (
+              <div className="text-center py-2">
+                <Check className="h-6 w-6 text-[hsl(142,76%,36%)] mx-auto mb-1" />
+                <p className="text-sm font-medium">Thank you!</p>
+                <p className="text-xs text-muted-foreground">Our team will contact you within 24 hours.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2">
+            This is a sample preview. Full reports include detailed methodology, 
+            scenario analysis, and actionable investment insights.
+          </p>
+          <Badge variant="outline" className="text-xs">
+            <Percent className="h-3 w-3 mr-1" />
+            10,000+ Simulations per Analysis
+          </Badge>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#F5D547] w-full">
+      <header className="sticky top-0 z-10 bg-[hsl(25,95%,55%)] w-full">
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3">
@@ -315,12 +468,12 @@ export default function Pricing() {
             </Link>
             <nav className="flex items-center gap-4">
               <Link to="/methodology">
-                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                <Button variant="ghost" size="sm" className="text-white hover:bg-orange-400/50">
                   Methodology
                 </Button>
               </Link>
               <Link to="/">
-                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+                <Button variant="ghost" size="sm" className="text-white hover:bg-orange-400/50">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Platform
                 </Button>
@@ -403,8 +556,8 @@ export default function Pricing() {
               </CardContent>
               <CardFooter className="flex flex-col gap-2 pt-2">
                 <Button
-                  className="w-full"
-                  variant={tier.buttonVariant}
+                  className={`w-full ${tier.isContactSales ? "bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white" : ""}`}
+                  variant={tier.isContactSales ? "default" : tier.buttonVariant}
                   size="sm"
                 >
                   {tier.buttonText}
@@ -554,7 +707,7 @@ export default function Pricing() {
                 Explore Platform
               </Button>
             </Link>
-            <Button variant="outline" size="lg">
+            <Button size="lg" className="bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white">
               Contact Sales
             </Button>
           </div>
