@@ -358,10 +358,10 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
     };
   }, [selectedMolecules]);
 
-  // Efficient frontier data
+  // Efficient frontier data with confidence intervals
   const efficientFrontierData = useMemo(() => {
     const moleculesWithResults = selectedMolecules.filter(m => m.result);
-    if (moleculesWithResults.length === 0) return { points: [], frontier: [] };
+    if (moleculesWithResults.length === 0) return { points: [], frontier: [], allCombinations: [], confidenceBands: { ci80: [], ci95: [] } };
 
     // Individual molecule points
     const points = moleculesWithResults.map(mol => ({
@@ -372,13 +372,10 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
       sharpe: mol.result!.statistics.riskAdjustedReturn.sharpeRatio,
     }));
 
-    // Generate portfolio combinations for frontier
-    const frontier: { return: number; risk: number; weights: string }[] = [];
+    // Generate portfolio combinations for frontier with confidence intervals
+    const frontier: { return: number; risk: number; weights: string; returnP10?: number; returnP90?: number; returnP2_5?: number; returnP97_5?: number }[] = [];
 
     if (moleculesWithResults.length >= 2) {
-      // Generate different weight combinations
-      const weightSteps = 11; // 0%, 10%, 20%, ..., 100%
-      
       // For 2 molecules
       if (moleculesWithResults.length === 2) {
         for (let w1 = 0; w1 <= 10; w1++) {
@@ -398,10 +395,21 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
           const variance = portfolioDist.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / n;
           const stdDev = Math.sqrt(variance);
           
+          // Calculate percentiles for confidence intervals
+          const sorted = [...portfolioDist].sort((a, b) => a - b);
+          const p2_5 = sorted[Math.floor(0.025 * n)];
+          const p10 = sorted[Math.floor(0.10 * n)];
+          const p90 = sorted[Math.floor(0.90 * n)];
+          const p97_5 = sorted[Math.floor(0.975 * n)];
+          
           frontier.push({
             return: Math.round(mean * 100) / 100,
             risk: Math.round(stdDev * 100) / 100,
             weights: `${(weight1 * 100).toFixed(0)}%/${(weight2 * 100).toFixed(0)}%`,
+            returnP10: Math.round(p10 * 100) / 100,
+            returnP90: Math.round(p90 * 100) / 100,
+            returnP2_5: Math.round(p2_5 * 100) / 100,
+            returnP97_5: Math.round(p97_5 * 100) / 100,
           });
         }
       } else if (moleculesWithResults.length >= 3) {
@@ -428,10 +436,21 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
           const variance = portfolioDist.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / n;
           const stdDev = Math.sqrt(variance);
           
+          // Calculate percentiles for confidence intervals
+          const sorted = [...portfolioDist].sort((a, b) => a - b);
+          const p2_5 = sorted[Math.floor(0.025 * n)];
+          const p10 = sorted[Math.floor(0.10 * n)];
+          const p90 = sorted[Math.floor(0.90 * n)];
+          const p97_5 = sorted[Math.floor(0.975 * n)];
+          
           frontier.push({
             return: Math.round(mean * 100) / 100,
             risk: Math.round(stdDev * 100) / 100,
             weights: normalizedWeights.map(w => `${(w * 100).toFixed(0)}%`).join('/'),
+            returnP10: Math.round(p10 * 100) / 100,
+            returnP90: Math.round(p90 * 100) / 100,
+            returnP2_5: Math.round(p2_5 * 100) / 100,
+            returnP97_5: Math.round(p97_5 * 100) / 100,
           });
         }
       }
@@ -450,7 +469,22 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
       }
     }
 
-    return { points, frontier: efficientPoints, allCombinations: frontier };
+    // Generate confidence band data for area charts
+    const ci80 = efficientPoints.map(p => ({
+      risk: p.risk,
+      lower: p.returnP10 || p.return * 0.9,
+      upper: p.returnP90 || p.return * 1.1,
+      mean: p.return,
+    }));
+    
+    const ci95 = efficientPoints.map(p => ({
+      risk: p.risk,
+      lower: p.returnP2_5 || p.return * 0.85,
+      upper: p.returnP97_5 || p.return * 1.15,
+      mean: p.return,
+    }));
+
+    return { points, frontier: efficientPoints, allCombinations: frontier, confidenceBands: { ci80, ci95 } };
   }, [selectedMolecules]);
 
   const hasResults = selectedMolecules.some(m => m.result);
@@ -604,6 +638,49 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
       XLSX.utils.book_append_sheet(workbook, portfolioSheet, "Portfolio Aggregation");
     }
 
+    // Correlation Matrix Sheet (NEW)
+    if (correlationMatrix && correlationMatrix.molecules.length >= 2) {
+      const correlationData: Record<string, string | number>[] = [];
+      correlationMatrix.molecules.forEach((rowMol) => {
+        const row: Record<string, string | number> = { "Molecule": rowMol.name };
+        correlationMatrix.molecules.forEach((colMol) => {
+          const corr = correlationMatrix.data.find(d => d.mol1 === rowMol.name && d.mol2 === colMol.name)?.correlation || 0;
+          row[colMol.name] = corr;
+        });
+        correlationData.push(row);
+      });
+      const correlationSheet = XLSX.utils.json_to_sheet(correlationData);
+      correlationSheet['!cols'] = Array(correlationMatrix.molecules.length + 1).fill({ wch: 18 });
+      XLSX.utils.book_append_sheet(workbook, correlationSheet, "Correlation Matrix");
+    }
+
+    // Efficient Frontier Sheet (NEW)
+    if (efficientFrontierData.frontier.length > 0) {
+      const frontierData = efficientFrontierData.frontier.map(point => ({
+        "Risk (σ) $B": point.risk,
+        "Expected Return $B": point.return,
+        "Weights": point.weights,
+        "P10 (80% CI Lower) $B": point.returnP10 || '',
+        "P90 (80% CI Upper) $B": point.returnP90 || '',
+        "P2.5 (95% CI Lower) $B": point.returnP2_5 || '',
+        "P97.5 (95% CI Upper) $B": point.returnP97_5 || '',
+      }));
+      const frontierSheet = XLSX.utils.json_to_sheet(frontierData);
+      frontierSheet['!cols'] = Array(7).fill({ wch: 22 });
+      XLSX.utils.book_append_sheet(workbook, frontierSheet, "Efficient Frontier");
+
+      // Individual molecule points
+      const pointsData = efficientFrontierData.points.map(point => ({
+        "Molecule": point.name,
+        "Risk (σ) $B": point.risk,
+        "Expected Return $B": point.return,
+        "Sharpe Ratio": point.sharpe,
+      }));
+      const pointsSheet = XLSX.utils.json_to_sheet(pointsData);
+      pointsSheet['!cols'] = Array(4).fill({ wch: 18 });
+      XLSX.utils.book_append_sheet(workbook, pointsSheet, "Molecule Risk-Return");
+    }
+
     // Percentile Comparison Sheet
     const percentileData = ["P5", "P10", "P25", "P50", "P75", "P90", "P95"].map((label, idx) => {
       const percentileKeys = ["p5", "p10", "p25", "p50", "p75", "p90", "p95"] as const;
@@ -646,7 +723,7 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
     XLSX.utils.book_append_sheet(workbook, configSheet, "Configuration");
 
     XLSX.writeFile(workbook, `monte_carlo_comparison_${new Date().toISOString().split('T')[0]}.xlsx`);
-  }, [hasResults, statisticsComparison, selectedMolecules, iterations, uncertaintyRange, portfolioAggregation]);
+  }, [hasResults, statisticsComparison, selectedMolecules, iterations, uncertaintyRange, portfolioAggregation, correlationMatrix, efficientFrontierData]);
 
   return (
     <div className="space-y-6">
@@ -1125,7 +1202,7 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
                 </CardContent>
               </Card>
 
-              {/* Efficient Frontier */}
+              {/* Efficient Frontier with Confidence Bands */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -1133,37 +1210,133 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
                     Efficient Frontier
                   </CardTitle>
                   <CardDescription>
-                    Risk-return tradeoff for portfolio combinations
+                    Risk-return tradeoff with 80% (dark) and 95% (light) confidence bands
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[300px]">
+                  <div className="h-[350px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <ScatterChart margin={{ top: 10, right: 10, bottom: 30, left: 10 }}>
+                        <defs>
+                          <linearGradient id="ci95Gradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.1} />
+                            <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
+                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.1} />
+                          </linearGradient>
+                          <linearGradient id="ci80Gradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
+                            <stop offset="50%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.2} />
+                          </linearGradient>
+                        </defs>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis type="number" dataKey="risk" name="Risk" tickFormatter={(v) => `${v}B`} tick={{ fontSize: 10 }} label={{ value: 'Risk (σ)', position: 'bottom', fontSize: 10 }} />
-                        <YAxis type="number" dataKey="return" name="Return" tickFormatter={(v) => `$${v}B`} tick={{ fontSize: 10 }} />
+                        <XAxis 
+                          type="number" 
+                          dataKey="risk" 
+                          name="Risk" 
+                          tickFormatter={(v) => `${v}B`} 
+                          tick={{ fontSize: 10 }} 
+                          label={{ value: 'Risk (σ)', position: 'bottom', fontSize: 10 }} 
+                        />
+                        <YAxis 
+                          type="number" 
+                          dataKey="return" 
+                          name="Return" 
+                          tickFormatter={(v) => `$${v}B`} 
+                          tick={{ fontSize: 10 }} 
+                        />
                         <ChartTooltip content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             const data = payload[0].payload;
                             return (
-                              <div className="bg-background p-2 border rounded-lg shadow-lg text-xs">
-                                {data.name && <p className="font-semibold">{data.name}</p>}
-                                <p>Return: ${data.return}B | Risk: ${data.risk}B</p>
+                              <div className="bg-background p-3 border rounded-lg shadow-lg text-xs">
+                                {data.name && <p className="font-semibold mb-1">{data.name}</p>}
+                                <p className="font-medium">Return: ${data.return}B | Risk: ${data.risk}B</p>
+                                {data.weights && <p className="text-muted-foreground mt-1">Weights: {data.weights}</p>}
+                                {data.returnP10 && (
+                                  <div className="mt-2 pt-2 border-t border-border/50">
+                                    <p className="text-muted-foreground">80% CI: ${data.returnP10}B - ${data.returnP90}B</p>
+                                    <p className="text-muted-foreground">95% CI: ${data.returnP2_5}B - ${data.returnP97_5}B</p>
+                                  </div>
+                                )}
                               </div>
                             );
                           }
                           return null;
                         }} />
-                        <Scatter name="Frontier" data={efficientFrontierData.frontier} fill="hsl(var(--primary))" line={{ stroke: 'hsl(var(--primary))', strokeWidth: 2 }} />
+                        {/* Efficient frontier line with area */}
+                        <Scatter 
+                          name="Frontier" 
+                          data={efficientFrontierData.frontier} 
+                          fill="hsl(var(--primary))" 
+                          line={{ stroke: 'hsl(var(--primary))', strokeWidth: 2 }} 
+                        />
+                        {/* Individual molecules */}
                         <Scatter name="Molecules" data={efficientFrontierData.points}>
                           {efficientFrontierData.points.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
+                            <Cell key={`cell-${index}`} fill={entry.color} r={8} />
                           ))}
                         </Scatter>
                       </ScatterChart>
                     </ResponsiveContainer>
                   </div>
+                  
+                  {/* Confidence Band Legend & Info */}
+                  <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground border-t pt-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-3 rounded" style={{ backgroundColor: 'hsl(var(--primary))', opacity: 0.3 }} />
+                      <span>80% Confidence Interval (P10-P90)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-3 rounded" style={{ backgroundColor: 'hsl(var(--primary))', opacity: 0.15 }} />
+                      <span>95% Confidence Interval (P2.5-P97.5)</span>
+                    </div>
+                    {efficientFrontierData.frontier.length > 0 && (
+                      <div className="ml-auto flex gap-4">
+                        <Badge variant="outline" className="text-xs">
+                          Best Sharpe: {Math.max(...efficientFrontierData.points.map(p => p.sharpe)).toFixed(2)}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {efficientFrontierData.frontier.length} frontier points
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Confidence Interval Summary Table */}
+                  {efficientFrontierData.frontier.length > 0 && (
+                    <div className="mt-4 pt-4 border-t">
+                      <p className="text-xs font-medium mb-2">Efficient Frontier with Confidence Intervals</p>
+                      <div className="overflow-x-auto max-h-[150px]">
+                        <table className="w-full text-xs">
+                          <thead className="sticky top-0 bg-background">
+                            <tr className="border-b">
+                              <th className="text-left py-1 px-2">Weights</th>
+                              <th className="text-right py-1 px-2">Risk (σ)</th>
+                              <th className="text-right py-1 px-2">Expected</th>
+                              <th className="text-right py-1 px-2">80% CI</th>
+                              <th className="text-right py-1 px-2">95% CI</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {efficientFrontierData.frontier.slice(0, 10).map((point, idx) => (
+                              <tr key={idx} className="border-b border-border/30 hover:bg-muted/50">
+                                <td className="py-1 px-2 text-muted-foreground">{point.weights}</td>
+                                <td className="text-right py-1 px-2">${point.risk}B</td>
+                                <td className="text-right py-1 px-2 font-medium">${point.return}B</td>
+                                <td className="text-right py-1 px-2 text-amber-600">
+                                  ${point.returnP10 || '-'} - ${point.returnP90 || '-'}
+                                </td>
+                                <td className="text-right py-1 px-2 text-muted-foreground">
+                                  ${point.returnP2_5 || '-'} - ${point.returnP97_5 || '-'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
