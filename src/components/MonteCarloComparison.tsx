@@ -17,7 +17,11 @@ import {
   Line,
   Legend,
   AreaChart,
-  Area
+  Area,
+  ScatterChart,
+  Scatter,
+  ZAxis,
+  Cell
 } from "recharts";
 import { 
   Play, 
@@ -33,7 +37,9 @@ import {
   Briefcase,
   Layers,
   Download,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Grid3X3,
+  Sparkles
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { 
@@ -300,7 +306,155 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
     };
   }, [selectedMolecules]);
 
+  // Correlation matrix calculation
+  const correlationMatrix = useMemo(() => {
+    const moleculesWithResults = selectedMolecules.filter(m => m.result);
+    if (moleculesWithResults.length < 2) return null;
+
+    const calculateCorrelation = (arr1: number[], arr2: number[]): number => {
+      const n = Math.min(arr1.length, arr2.length);
+      if (n === 0) return 0;
+      
+      const mean1 = arr1.reduce((a, b) => a + b, 0) / n;
+      const mean2 = arr2.reduce((a, b) => a + b, 0) / n;
+      
+      let numerator = 0;
+      let denom1 = 0;
+      let denom2 = 0;
+      
+      for (let i = 0; i < n; i++) {
+        const diff1 = arr1[i] - mean1;
+        const diff2 = arr2[i] - mean2;
+        numerator += diff1 * diff2;
+        denom1 += diff1 * diff1;
+        denom2 += diff2 * diff2;
+      }
+      
+      const denom = Math.sqrt(denom1 * denom2);
+      return denom === 0 ? 0 : Math.round((numerator / denom) * 100) / 100;
+    };
+
+    const matrix: { mol1: string; mol2: string; correlation: number; color1: string; color2: string }[] = [];
+    
+    for (let i = 0; i < moleculesWithResults.length; i++) {
+      for (let j = 0; j < moleculesWithResults.length; j++) {
+        const corr = calculateCorrelation(
+          moleculesWithResults[i].result!.peakSalesDistribution,
+          moleculesWithResults[j].result!.peakSalesDistribution
+        );
+        matrix.push({
+          mol1: moleculesWithResults[i].name,
+          mol2: moleculesWithResults[j].name,
+          correlation: corr,
+          color1: moleculesWithResults[i].color,
+          color2: moleculesWithResults[j].color,
+        });
+      }
+    }
+
+    return {
+      molecules: moleculesWithResults.map(m => ({ name: m.name, color: m.color })),
+      data: matrix,
+    };
+  }, [selectedMolecules]);
+
+  // Efficient frontier data
+  const efficientFrontierData = useMemo(() => {
+    const moleculesWithResults = selectedMolecules.filter(m => m.result);
+    if (moleculesWithResults.length === 0) return { points: [], frontier: [] };
+
+    // Individual molecule points
+    const points = moleculesWithResults.map(mol => ({
+      name: mol.name,
+      color: mol.color,
+      return: mol.result!.statistics.mean,
+      risk: mol.result!.statistics.stdDev,
+      sharpe: mol.result!.statistics.riskAdjustedReturn.sharpeRatio,
+    }));
+
+    // Generate portfolio combinations for frontier
+    const frontier: { return: number; risk: number; weights: string }[] = [];
+
+    if (moleculesWithResults.length >= 2) {
+      // Generate different weight combinations
+      const weightSteps = 11; // 0%, 10%, 20%, ..., 100%
+      
+      // For 2 molecules
+      if (moleculesWithResults.length === 2) {
+        for (let w1 = 0; w1 <= 10; w1++) {
+          const weight1 = w1 / 10;
+          const weight2 = 1 - weight1;
+          
+          const dist1 = moleculesWithResults[0].result!.peakSalesDistribution;
+          const dist2 = moleculesWithResults[1].result!.peakSalesDistribution;
+          const n = Math.min(dist1.length, dist2.length);
+          
+          const portfolioDist = [];
+          for (let i = 0; i < n; i++) {
+            portfolioDist.push(dist1[i] * weight1 + dist2[i] * weight2);
+          }
+          
+          const mean = portfolioDist.reduce((a, b) => a + b, 0) / n;
+          const variance = portfolioDist.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / n;
+          const stdDev = Math.sqrt(variance);
+          
+          frontier.push({
+            return: Math.round(mean * 100) / 100,
+            risk: Math.round(stdDev * 100) / 100,
+            weights: `${(weight1 * 100).toFixed(0)}%/${(weight2 * 100).toFixed(0)}%`,
+          });
+        }
+      } else if (moleculesWithResults.length >= 3) {
+        // For 3+ molecules, sample combinations
+        const distributions = moleculesWithResults.map(m => m.result!.peakSalesDistribution);
+        const n = Math.min(...distributions.map(d => d.length));
+        
+        // Generate random portfolio weights
+        for (let sample = 0; sample < 50; sample++) {
+          const weights = moleculesWithResults.map(() => Math.random());
+          const weightSum = weights.reduce((a, b) => a + b, 0);
+          const normalizedWeights = weights.map(w => w / weightSum);
+          
+          const portfolioDist = [];
+          for (let i = 0; i < n; i++) {
+            let value = 0;
+            for (let j = 0; j < distributions.length; j++) {
+              value += distributions[j][i] * normalizedWeights[j];
+            }
+            portfolioDist.push(value);
+          }
+          
+          const mean = portfolioDist.reduce((a, b) => a + b, 0) / n;
+          const variance = portfolioDist.reduce((a, v) => a + Math.pow(v - mean, 2), 0) / n;
+          const stdDev = Math.sqrt(variance);
+          
+          frontier.push({
+            return: Math.round(mean * 100) / 100,
+            risk: Math.round(stdDev * 100) / 100,
+            weights: normalizedWeights.map(w => `${(w * 100).toFixed(0)}%`).join('/'),
+          });
+        }
+      }
+    }
+
+    // Sort frontier by risk to get the efficient frontier line
+    const sortedFrontier = [...frontier].sort((a, b) => a.risk - b.risk);
+    
+    // Filter to only keep efficient points (highest return for each risk level)
+    const efficientPoints: typeof frontier = [];
+    let maxReturn = -Infinity;
+    for (const point of sortedFrontier) {
+      if (point.return >= maxReturn) {
+        efficientPoints.push(point);
+        maxReturn = point.return;
+      }
+    }
+
+    return { points, frontier: efficientPoints, allCombinations: frontier };
+  }, [selectedMolecules]);
+
   const hasResults = selectedMolecules.some(m => m.result);
+
 
   // Export to CSV
   const exportToCSV = useCallback(() => {
@@ -920,6 +1074,100 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Correlation Matrix & Efficient Frontier */}
+          {selectedMolecules.length >= 2 && correlationMatrix && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Correlation Matrix */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Grid3X3 className="h-5 w-5" />
+                    Correlation Matrix
+                  </CardTitle>
+                  <CardDescription>
+                    How molecule outcomes correlate with each other
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr>
+                          <th className="text-left py-2 px-2"></th>
+                          {correlationMatrix.molecules.map((mol) => (
+                            <th key={mol.name} className="text-center py-2 px-2 min-w-[70px]">
+                              <span className="w-2 h-2 rounded-full inline-block mr-1" style={{ backgroundColor: mol.color }} />
+                              <span className="text-xs">{mol.name.split(' ')[0]}</span>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {correlationMatrix.molecules.map((rowMol, rowIdx) => (
+                          <tr key={rowMol.name} className="border-t">
+                            <td className="py-2 px-2 text-xs font-medium">{rowMol.name.split(' ')[0]}</td>
+                            {correlationMatrix.molecules.map((colMol, colIdx) => {
+                              const corr = correlationMatrix.data.find(d => d.mol1 === rowMol.name && d.mol2 === colMol.name)?.correlation || 0;
+                              const isDiagonal = rowIdx === colIdx;
+                              const bgColor = isDiagonal ? 'bg-primary/20' : corr >= 0.7 ? 'bg-red-100' : corr >= 0.3 ? 'bg-amber-100' : 'bg-green-100';
+                              return (
+                                <td key={colMol.name} className={`text-center py-2 px-2 ${bgColor}`}>
+                                  <span className="text-sm font-medium">{corr.toFixed(2)}</span>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Efficient Frontier */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    Efficient Frontier
+                  </CardTitle>
+                  <CardDescription>
+                    Risk-return tradeoff for portfolio combinations
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ScatterChart margin={{ top: 10, right: 10, bottom: 30, left: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" dataKey="risk" name="Risk" tickFormatter={(v) => `${v}B`} tick={{ fontSize: 10 }} label={{ value: 'Risk (σ)', position: 'bottom', fontSize: 10 }} />
+                        <YAxis type="number" dataKey="return" name="Return" tickFormatter={(v) => `$${v}B`} tick={{ fontSize: 10 }} />
+                        <ChartTooltip content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background p-2 border rounded-lg shadow-lg text-xs">
+                                {data.name && <p className="font-semibold">{data.name}</p>}
+                                <p>Return: ${data.return}B | Risk: ${data.risk}B</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }} />
+                        <Scatter name="Frontier" data={efficientFrontierData.frontier} fill="hsl(var(--primary))" line={{ stroke: 'hsl(var(--primary))', strokeWidth: 2 }} />
+                        <Scatter name="Molecules" data={efficientFrontierData.points}>
+                          {efficientFrontierData.points.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Scatter>
+                      </ScatterChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {/* Individual Distribution Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

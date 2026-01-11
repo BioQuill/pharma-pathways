@@ -32,8 +32,10 @@ import {
   Layers,
   Shield,
   TrendingDown,
-  Zap
+  Zap,
+  FileText
 } from "lucide-react";
+import MonteCarloPDFReport from "./MonteCarloPDFReport";
 import { 
   runMonteCarloSimulation, 
   runSensitivityAnalysis,
@@ -894,6 +896,16 @@ const MonteCarloSimulation = ({ componentScores, moleculeName }: MonteCarloSimul
               </div>
             </CardContent>
           </Card>
+          {/* PDF Export */}
+          <MonteCarloPDFReport
+            simulationResult={simulationResult}
+            sensitivityResult={sensitivityResult}
+            scenarioResult={scenarioResult}
+            scenarioStats={scenarioStats}
+            moleculeName={moleculeName}
+            iterations={iterations}
+            uncertaintyRange={uncertaintyRange[0]}
+          />
         </>
       )}
 
