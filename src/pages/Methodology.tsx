@@ -168,25 +168,39 @@ const uniqueStrengths = [
 export default function Methodology() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#F5D547] w-full">
-        <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img src={bioquillLogo} alt="BiOQUILL" className="h-16 w-auto object-contain" />
-            </Link>
-            <nav className="flex items-center gap-4">
-              <Link to="/pricing">
-                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
+      {/* Header with Yellow Bar + Orange Navigation Bar */}
+      <header className="sticky top-0 z-10 w-full">
+        {/* Yellow Brand Bar */}
+        <div className="bg-[#F5D547] w-full">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <Link to="/" className="flex items-center gap-4">
+                <img src={bioquillLogo} alt="BiOQUILL" className="h-14 w-auto object-contain" />
+                <span className="text-lg font-semibold text-gray-800 hidden md:block">
+                  Pharmaceutical Intelligence for Smart Investors
+                </span>
+              </Link>
+            </div>
+          </div>
+        </div>
+        
+        {/* Orange Navigation Bar */}
+        <div className="bg-[hsl(25,95%,55%)] w-full">
+          <div className="container mx-auto px-4">
+            <nav className="flex items-center justify-center gap-0">
+              <Link to="/" className="flex-1 max-w-[200px]">
+                <button className="w-full py-3 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                  Platform
+                </button>
+              </Link>
+              <Link to="/pricing" className="flex-1 max-w-[200px]">
+                <button className="w-full py-3 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
                   Pricing
-                </Button>
+                </button>
               </Link>
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="text-gray-800 hover:bg-yellow-400/50">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Platform
-                </Button>
-              </Link>
+              <button className="flex-1 max-w-[200px] py-3 text-center font-bold text-black bg-orange-400/30 border-r border-orange-400/30">
+                Methodology
+              </button>
             </nav>
           </div>
         </div>
