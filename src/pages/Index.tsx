@@ -51,6 +51,8 @@ import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
 import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
+import { PTRSMoleculeComparison } from "@/components/PTRSMoleculeComparison";
+import { PTRSHistoricalTracking } from "@/components/PTRSHistoricalTracking";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
@@ -2887,6 +2889,12 @@ const Index = () => {
                 <PTRSCalculator molecules={allMolecules} />
               </CardContent>
             </Card>
+
+            {/* PTRS Molecule Comparison */}
+            <PTRSMoleculeComparison molecules={allMolecules} />
+
+            {/* PTRS Historical Tracking */}
+            <PTRSHistoricalTracking molecules={allMolecules} />
 
             {/* Historical PTRS Trend Lines */}
             <Card>
