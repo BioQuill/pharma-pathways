@@ -3,11 +3,176 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent, Mail, Send } from "lucide-react";
+import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent, Mail, Send, Calculator, DollarSign, PieChart } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
+
+// ROI Calculator Component
+const ROICalculator = () => {
+  const [portfolioSize, setPortfolioSize] = useState([10]);
+  const [avgDealValue, setAvgDealValue] = useState([50]);
+  const [failedDealRate, setFailedDealRate] = useState([25]);
+  const [improvementRate, setImprovementRate] = useState([30]);
+
+  // Calculate ROI metrics
+  const annualDeals = portfolioSize[0];
+  const avgDealValueM = avgDealValue[0];
+  const currentFailRate = failedDealRate[0] / 100;
+  const improvementPct = improvementRate[0] / 100;
+
+  const currentFailedDeals = Math.round(annualDeals * currentFailRate);
+  const currentLosses = currentFailedDeals * avgDealValueM;
+  
+  const improvedFailRate = currentFailRate * (1 - improvementPct);
+  const improvedFailedDeals = Math.round(annualDeals * improvedFailRate);
+  const improvedLosses = improvedFailedDeals * avgDealValueM;
+  
+  const annualSavings = currentLosses - improvedLosses;
+  const bioquillCost = 0.2; // $200K enterprise cost in millions
+  const netROI = annualSavings - bioquillCost;
+  const roiMultiple = netROI > 0 ? Math.round((netROI / bioquillCost) * 10) / 10 : 0;
+
+  return (
+    <Card className="border-primary/20 bg-gradient-to-br from-background to-primary/5">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Calculator className="h-5 w-5 text-primary" />
+          ROI Calculator
+        </CardTitle>
+        <CardDescription>
+          Estimate your potential savings with BioQuill intelligence
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Input Controls */}
+          <div className="space-y-5">
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <Label>Annual Deal Evaluations</Label>
+                <span className="font-bold text-primary">{portfolioSize[0]} deals</span>
+              </div>
+              <Slider 
+                value={portfolioSize} 
+                onValueChange={setPortfolioSize} 
+                min={1} 
+                max={50} 
+                step={1}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <Label>Average Deal Value</Label>
+                <span className="font-bold text-primary">${avgDealValue[0]}M</span>
+              </div>
+              <Slider 
+                value={avgDealValue} 
+                onValueChange={setAvgDealValue} 
+                min={10} 
+                max={500} 
+                step={10}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <Label>Current Failed Deal Rate</Label>
+                <span className="font-bold text-primary">{failedDealRate[0]}%</span>
+              </div>
+              <Slider 
+                value={failedDealRate} 
+                onValueChange={setFailedDealRate} 
+                min={5} 
+                max={50} 
+                step={5}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <Label>BioQuill Improvement Rate</Label>
+                <span className="font-bold text-primary">{improvementRate[0]}%</span>
+              </div>
+              <Slider 
+                value={improvementRate} 
+                onValueChange={setImprovementRate} 
+                min={10} 
+                max={60} 
+                step={5}
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                Based on historical LPI-3 model accuracy (82% AUC-ROC)
+              </p>
+            </div>
+          </div>
+
+          {/* Results */}
+          <div className="space-y-4">
+            <Card className="bg-red-50 dark:bg-red-950/30 border-red-200">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-red-600 font-medium">Current Annual Losses</p>
+                    <p className="text-xs text-muted-foreground">{currentFailedDeals} failed deals × ${avgDealValueM}M</p>
+                  </div>
+                  <div className="text-2xl font-bold text-red-600">${currentLosses}M</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-green-50 dark:bg-green-950/30 border-green-200">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-[hsl(142,76%,36%)] font-medium">Improved Annual Losses</p>
+                    <p className="text-xs text-muted-foreground">{improvedFailedDeals} failed deals × ${avgDealValueM}M</p>
+                  </div>
+                  <div className="text-2xl font-bold text-[hsl(142,76%,36%)]">${improvedLosses}M</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-primary/10 border-primary/30">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-primary font-medium">Annual Savings</p>
+                    <p className="text-xs text-muted-foreground">Reduced failed acquisitions</p>
+                  </div>
+                  <div className="text-2xl font-bold text-primary">${annualSavings}M</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium opacity-90">Net ROI (after $200K investment)</p>
+                    <p className="text-xs opacity-75">Return multiple on BioQuill cost</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-bold">{roiMultiple}x</div>
+                    <div className="text-sm opacity-90">${netROI.toFixed(1)}M net</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 interface PricingTier {
   name: string;
@@ -459,24 +624,38 @@ const MonteCarloReportPreview = () => {
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-[hsl(25,95%,55%)] w-full">
-        <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img src={bioquillLogo} alt="BiOQUILL" className="h-16 w-auto object-contain" />
-            </Link>
-            <nav className="flex items-center gap-4">
-              <Link to="/methodology">
-                <Button variant="ghost" size="sm" className="text-white hover:bg-orange-400/50">
-                  Methodology
-                </Button>
+      {/* Header with Yellow Bar + Orange Navigation Bar */}
+      <header className="sticky top-0 z-10 w-full">
+        {/* Yellow Brand Bar */}
+        <div className="bg-[#F5D547] w-full">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <Link to="/" className="flex items-center gap-4">
+                <img src={bioquillLogo} alt="BiOQUILL" className="h-14 w-auto object-contain" />
+                <span className="text-lg font-semibold text-gray-800 hidden md:block">
+                  Pharmaceutical Intelligence for Smart Investors
+                </span>
               </Link>
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="text-white hover:bg-orange-400/50">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Platform
-                </Button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Orange Navigation Bar */}
+        <div className="bg-[hsl(25,95%,55%)] w-full">
+          <div className="container mx-auto px-4">
+            <nav className="flex items-center justify-center gap-0">
+              <Link to="/" className="flex-1 max-w-[200px]">
+                <button className="w-full py-3 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                  Platform
+                </button>
+              </Link>
+              <button className="flex-1 max-w-[200px] py-3 text-center font-bold text-black bg-orange-400/30 border-r border-orange-400/30">
+                Pricing
+              </button>
+              <Link to="/methodology" className="flex-1 max-w-[200px]">
+                <button className="w-full py-3 text-center font-bold text-black hover:bg-orange-400/50 transition-colors">
+                  Methodology
+                </button>
               </Link>
             </nav>
           </div>
@@ -640,6 +819,12 @@ export default function Pricing() {
             </div>
           </CardContent>
         </Card>
+
+        {/* ROI Calculator */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">Calculate Your ROI</h2>
+          <ROICalculator />
+        </div>
 
         {/* FAQ */}
         <div className="max-w-3xl mx-auto">
