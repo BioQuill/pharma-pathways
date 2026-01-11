@@ -61,6 +61,7 @@ import PTRSPortfolioStressTest from "@/components/PTRSPortfolioStressTest";
 import MonteCarloConvergenceAnalysis from "@/components/MonteCarloConvergenceAnalysis";
 import PTRSPortfolioOptimization from "@/components/PTRSPortfolioOptimization";
 import PTRSCustomScenarioBuilder from "@/components/PTRSCustomScenarioBuilder";
+import { PTRSPortfolioRebalancing } from "@/components/PTRSPortfolioRebalancing";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
@@ -2988,6 +2989,20 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <PTRSPortfolioOptimization molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Rebalancing Tool */}
+            <Card className="border-l-4 border-l-teal-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-teal-500" />
+                  Portfolio Rebalancing
+                </CardTitle>
+                <CardDescription>Suggest weight adjustments when market conditions or PTRS scores change over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioRebalancing molecules={allMolecules} />
               </CardContent>
             </Card>
 
