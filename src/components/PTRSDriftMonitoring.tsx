@@ -32,7 +32,7 @@ import {
   ReferenceLine,
   Cell
 } from 'recharts';
-import html2pdf from 'html2pdf.js';
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 
 interface MoleculeProfile {
   name: string;
@@ -204,17 +204,9 @@ const PTRSDriftMonitoring: React.FC<PTRSDriftMonitoringProps> = ({ molecules }) 
     setLastRefresh(new Date());
   };
 
-  const exportToPDF = () => {
-    const element = document.getElementById('drift-monitoring-content');
-    if (element) {
-      html2pdf().set({
-        margin: 10,
-        filename: 'portfolio-drift-monitoring.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      }).from(element).save();
-    }
+  const exportToPDF = async () => {
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF('drift-monitoring-content', 'portfolio-drift-monitoring.pdf', { orientation: 'landscape' });
   };
 
   return (

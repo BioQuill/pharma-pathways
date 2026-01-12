@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Activity, TrendingUp, Target, Download, Play, CheckCircle, AlertTriangle, Info } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, Legend, ReferenceLine } from 'recharts';
 import { MoleculeProfile } from '@/lib/moleculesData';
-import html2pdf from 'html2pdf.js';
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 
 interface MonteCarloConvergenceAnalysisProps {
   molecules: MoleculeProfile[];
@@ -176,19 +176,13 @@ const MonteCarloConvergenceAnalysis: React.FC<MonteCarloConvergenceAnalysisProps
 
   const recommendation = getRecommendation();
 
-  const exportToPDF = () => {
-    const element = document.getElementById('convergence-analysis-content');
-    if (!element) return;
-
-    const opt = {
-      margin: 0.5,
-      filename: `Monte_Carlo_Convergence_${selectedMolecule?.name || 'Analysis'}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
-    };
-
-    html2pdf().set(opt).from(element).save();
+  const exportToPDF = async () => {
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF(
+      'convergence-analysis-content',
+      `Monte_Carlo_Convergence_${selectedMolecule?.name || 'Analysis'}.pdf`,
+      { orientation: 'landscape', format: 'letter' }
+    );
   };
 
   return (

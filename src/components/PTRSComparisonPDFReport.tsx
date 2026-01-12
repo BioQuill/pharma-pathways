@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FileText, Download, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { type MoleculeProfile } from "@/lib/moleculesData";
-import html2pdf from "html2pdf.js";
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 
 interface PTRSComparisonPDFReportProps {
   molecules: MoleculeProfile[];
@@ -200,18 +200,12 @@ export const PTRSComparisonPDFReport = ({ molecules, selectedMoleculeIds }: PTRS
     return data;
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!reportRef.current || selectedMolecules.length === 0) return;
-
-    const opt = {
-      margin: 0.5,
-      filename: `PTRS-Comparison-Report-${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(reportRef.current).save();
+    const id = 'ptrs-comparison-report';
+    reportRef.current.id = id;
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF(id, `PTRS-Comparison-Report-${new Date().toISOString().split('T')[0]}.pdf`, { format: 'letter' });
   };
 
   if (selectedMolecules.length === 0) {

@@ -22,7 +22,7 @@ import {
   type SimulationResult
 } from "@/lib/monteCarloSimulation";
 import { type MoleculeProfile } from "@/lib/moleculesData";
-import html2pdf from "html2pdf.js";
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 
 interface PTRSStressTestingProps {
   molecules: MoleculeProfile[];
@@ -335,18 +335,12 @@ export const PTRSStressTesting: React.FC<PTRSStressTestingProps> = ({ molecules 
   };
 
   const handleExportPDF = async () => {
-    const element = document.getElementById('ptrs-stress-test-content');
-    if (!element) return;
-    
-    const opt = {
-      margin: 10,
-      filename: `PTRS_StressTest_${selectedMolecule?.name || 'Analysis'}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-    };
-    
-    await html2pdf().set(opt).from(element).save();
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF(
+      'ptrs-stress-test-content',
+      `PTRS_StressTest_${selectedMolecule?.name || 'Analysis'}.pdf`,
+      { orientation: 'landscape' }
+    );
   };
 
   return (
