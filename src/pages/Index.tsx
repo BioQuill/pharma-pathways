@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
-import html2pdf from "html2pdf.js";
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
 import { MarketHeatMap } from "@/components/MarketHeatMap";

@@ -31,7 +31,7 @@ import {
   Legend,
   ReferenceLine
 } from 'recharts';
-import html2pdf from 'html2pdf.js';
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 
 interface MoleculeProfile {
   name: string;
@@ -270,17 +270,9 @@ const PTRSForecastingTool: React.FC<PTRSForecastingToolProps> = ({ molecules }) 
     }
   };
 
-  const exportToPDF = () => {
-    const element = document.getElementById('forecasting-content');
-    if (element) {
-      html2pdf().set({
-        margin: 10,
-        filename: `ptrs-forecast-${selectedMolecule}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      }).from(element).save();
-    }
+  const exportToPDF = async () => {
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF('forecasting-content', `ptrs-forecast-${selectedMolecule}.pdf`, { orientation: 'landscape' });
   };
 
   return (

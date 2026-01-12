@@ -44,7 +44,7 @@ import {
   PieChart as RechartsPieChart,
   Pie
 } from 'recharts';
-import html2pdf from 'html2pdf.js';
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import type { MoleculeProfile } from '@/lib/moleculesData';
 
 interface OptimizationResult {
@@ -271,18 +271,12 @@ export const PTRSPortfolioOptimization = ({ molecules }: PTRSPortfolioOptimizati
     }, 1500);
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!reportRef.current) return;
-    
-    const opt = {
-      margin: 0.5,
-      filename: `portfolio-optimization-${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(reportRef.current).save();
+    const id = 'portfolio-optimization-report';
+    reportRef.current.id = id;
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF(id, `portfolio-optimization-${new Date().toISOString().split('T')[0]}.pdf`, { format: 'letter' });
   };
 
   // Prepare chart data

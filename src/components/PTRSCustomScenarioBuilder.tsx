@@ -43,7 +43,7 @@ import {
   PolarRadiusAxis,
   Radar
 } from 'recharts';
-import html2pdf from 'html2pdf.js';
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import type { MoleculeProfile } from '@/lib/moleculesData';
 import { runMonteCarloSimulation } from '@/lib/monteCarloSimulation';
 
@@ -290,18 +290,12 @@ export const PTRSCustomScenarioBuilder = ({ molecules }: PTRSCustomScenarioBuild
     }, 1200);
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!reportRef.current) return;
-    
-    const opt = {
-      margin: 0.5,
-      filename: `custom-scenario-analysis-${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(reportRef.current).save();
+    const id = 'custom-scenario-report';
+    reportRef.current.id = id;
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF(id, `custom-scenario-analysis-${new Date().toISOString().split('T')[0]}.pdf`, { format: 'letter' });
   };
 
   // Chart data

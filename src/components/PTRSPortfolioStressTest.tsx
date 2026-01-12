@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertTriangle, Shield, TrendingDown, Download, Play, BarChart3 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ScatterChart, Scatter, ZAxis } from 'recharts';
 import { MoleculeProfile } from '@/lib/moleculesData';
-import html2pdf from 'html2pdf.js';
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 
 interface PTRSPortfolioStressTestProps {
   molecules: MoleculeProfile[];
@@ -154,19 +154,9 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
     return 'hsl(var(--success))';
   };
 
-  const exportToPDF = () => {
-    const element = document.getElementById('portfolio-stress-test-content');
-    if (!element) return;
-
-    const opt = {
-      margin: 0.5,
-      filename: 'PTRS_Portfolio_Stress_Test.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
-    };
-
-    html2pdf().set(opt).from(element).save();
+  const exportToPDF = async () => {
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF('portfolio-stress-test-content', 'PTRS_Portfolio_Stress_Test.pdf', { orientation: 'landscape', format: 'letter' });
   };
 
   return (

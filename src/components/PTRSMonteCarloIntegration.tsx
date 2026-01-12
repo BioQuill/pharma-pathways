@@ -26,7 +26,7 @@ import {
   type SensitivityResult,
   type ScenarioResult
 } from "@/lib/monteCarloSimulation";
-import html2pdf from "html2pdf.js";
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 
 interface PTRSMonteCarloIntegrationProps {
   // Optional initial values from PTRS calculator
@@ -266,18 +266,8 @@ export const PTRSMonteCarloIntegration: React.FC<PTRSMonteCarloIntegrationProps>
   }, [simulationResult, therapeuticArea, currentPhase]);
 
   const handleExportPDF = async () => {
-    const element = document.getElementById('ptrs-monte-carlo-content');
-    if (!element) return;
-    
-    const opt = {
-      margin: 10,
-      filename: 'PTRS_MonteCarlo_Analysis.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    
-    await html2pdf().set(opt).from(element).save();
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF('ptrs-monte-carlo-content', 'PTRS_MonteCarlo_Analysis.pdf');
   };
 
   const getSensitivityColor = (sensitivity: number): string => {
