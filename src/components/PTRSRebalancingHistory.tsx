@@ -221,20 +221,13 @@ const PTRSRebalancingHistory: React.FC<PTRSRebalancingHistoryProps> = ({ molecul
     return colors[outcome] || 'bg-gray-500/20 text-gray-400';
   };
 
-  const handleDownloadPDF = () => {
-    import('html2pdf.js').then((html2pdfModule) => {
-      const html2pdf = html2pdfModule.default;
-      const element = document.getElementById('rebalancing-history-content');
-      if (element) {
-        html2pdf().set({
-          margin: 10,
-          filename: `rebalancing-history-${new Date().toISOString().split('T')[0]}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-        }).from(element).save();
-      }
-    });
+  const handleDownloadPDF = async () => {
+    const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+    await exportDomToPDF(
+      'rebalancing-history-content',
+      `rebalancing-history-${new Date().toISOString().split('T')[0]}.pdf`,
+      { orientation: 'landscape' }
+    );
   };
 
   return (
