@@ -27,7 +27,8 @@ import {
   AlertTriangle,
   Activity,
   Star,
-  LayoutDashboard
+  LayoutDashboard,
+  Building2
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
@@ -71,6 +72,7 @@ import { useWatchlist } from "@/hooks/useWatchlist";
 import { WatchlistPanel } from "@/components/WatchlistPanel";
 import { PortfolioDashboard } from "@/components/PortfolioDashboard";
 import { Top100BlockbusterDrugs } from "@/components/Top100BlockbusterDrugs";
+import { Top50SmallCapFirms } from "@/components/Top50SmallCapFirms";
 import { 
   calculateProbabilityScores,
   generateMarketProjections, 
@@ -2161,6 +2163,10 @@ const Index = () => {
                 <Target className="h-4 w-4" />
                 Top 100
               </TabsTrigger>
+              <TabsTrigger value="top-50-smallcap" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Building2 className="h-4 w-4" />
+                Top 50 Small Cap Firms
+              </TabsTrigger>
               <TabsTrigger value="watchlist" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Star className="h-4 w-4" />
                 Watchlist ({watchlist.length})
@@ -3253,6 +3259,11 @@ const Index = () => {
                 setActiveTab("overview");
               }}
             />
+          </TabsContent>
+
+          {/* Top 50 Small Cap Firms Tab */}
+          <TabsContent value="top-50-smallcap" className="space-y-6">
+            <Top50SmallCapFirms />
           </TabsContent>
         </Tabs>
 
