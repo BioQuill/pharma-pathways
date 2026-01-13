@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Building2, 
   Search, 
@@ -20,9 +22,15 @@ import {
   Pill,
   Activity,
   ExternalLink,
-  Download
+  Download,
+  BarChart3,
+  GitCompare,
+  X,
+  Plus,
+  PieChart
 } from "lucide-react";
 import { exportDomToPDF } from "@/lib/pdfGenerator";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 
 interface SmallCapCompany {
   rank: number;
@@ -146,10 +154,46 @@ const hotSectors = [
   { name: "CNS", reason: "High unmet need, rare epilepsies validated" },
 ];
 
+// Helper to parse market cap range to midpoint value (in millions)
+const parseMarketCap = (marketCap: string): number => {
+  const cleaned = marketCap.replace(/[~$]/g, '').trim();
+  const match = cleaned.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*(B|M)?/i);
+  if (match) {
+    const low = parseFloat(match[1]);
+    const high = parseFloat(match[2]);
+    const unit = match[3]?.toUpperCase() || 'M';
+    const mid = (low + high) / 2;
+    return unit === 'B' ? mid * 1000 : mid;
+  }
+  const singleMatch = cleaned.match(/(\d+(?:\.\d+)?)\s*(B|M)?/i);
+  if (singleMatch) {
+    const val = parseFloat(singleMatch[1]);
+    const unit = singleMatch[2]?.toUpperCase() || 'M';
+    return unit === 'B' ? val * 1000 : val;
+  }
+  return 500; // default
+};
+
+// Chart colors
+const CHART_COLORS = [
+  'hsl(var(--primary))',
+  'hsl(217, 91%, 60%)',
+  'hsl(262, 83%, 58%)',
+  'hsl(332, 87%, 70%)',
+  'hsl(24, 95%, 53%)',
+  'hsl(142, 71%, 45%)',
+  'hsl(187, 92%, 41%)',
+  'hsl(45, 93%, 47%)',
+  'hsl(0, 84%, 60%)',
+  'hsl(280, 87%, 65%)',
+];
+
 export const Top50SmallCapFirms = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [stageFilter, setStageFilter] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState("list");
+  const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
 
   const filteredCompanies = companies.filter(company => {
     const matchesSearch = 
@@ -168,6 +212,113 @@ export const Top50SmallCapFirms = () => {
     ...cat,
     companies: filteredCompanies.filter(c => c.category === cat.name)
   })).filter(cat => cat.companies.length > 0);
+
+  // Chart data calculations
+  const marketCapByCategory = useMemo(() => {
+    return categories.map(cat => {
+      const catCompanies = companies.filter(c => c.category === cat.name);
+      const totalMarketCap = catCompanies.reduce((sum, c) => sum + parseMarketCap(c.marketCap), 0);
+      const avgMarketCap = catCompanies.length > 0 ? totalMarketCap / catCompanies.length : 0;
+      return {
+        name: cat.name.split(' ')[0], // Short name for chart
+        fullName: cat.name,
+        count: catCompanies.length,
+        avgMarketCap: Math.round(avgMarketCap),
+        totalMarketCap: Math.round(totalMarketCap),
+      };
+    });
+  }, []);
+
+  const stageDistribution = useMemo(() => {
+    const stages: Record<string, number> = {
+      'Approved/Commercial': 0,
+      'Phase 3': 0,
+      'Phase 2': 0,
+      'Phase 1': 0,
+      'Preclinical/Platform': 0,
+    };
+    companies.forEach(c => {
+      if (c.stage.includes('Approved') || c.stage.includes('Commercial')) stages['Approved/Commercial']++;
+      else if (c.stage.includes('Phase 3')) stages['Phase 3']++;
+      else if (c.stage.includes('Phase 2')) stages['Phase 2']++;
+      else if (c.stage.includes('Phase 1')) stages['Phase 1']++;
+      else stages['Preclinical/Platform']++;
+    });
+    return Object.entries(stages).map(([name, value]) => ({ name, value }));
+  }, []);
+
+  const marketCapRanges = useMemo(() => {
+    const ranges: Record<string, number> = {
+      '$50M-$300M': 0,
+      '$300M-$700M': 0,
+      '$700M-$1.5B': 0,
+      '$1.5B-$3B': 0,
+      '$3B+': 0,
+    };
+    companies.forEach(c => {
+      const mcap = parseMarketCap(c.marketCap);
+      if (mcap < 300) ranges['$50M-$300M']++;
+      else if (mcap < 700) ranges['$300M-$700M']++;
+      else if (mcap < 1500) ranges['$700M-$1.5B']++;
+      else if (mcap < 3000) ranges['$1.5B-$3B']++;
+      else ranges['$3B+']++;
+    });
+    return Object.entries(ranges).map(([name, value]) => ({ name, value }));
+  }, []);
+
+  // Comparison data
+  const comparisonCompanies = useMemo(() => {
+    return companies.filter(c => selectedForComparison.includes(c.ticker));
+  }, [selectedForComparison]);
+
+  const radarData = useMemo(() => {
+    if (comparisonCompanies.length === 0) return [];
+    
+    const metrics = ['Market Cap', 'Stage Progress', 'M&A Potential', 'Pipeline Strength', 'Platform Value'];
+    return metrics.map(metric => {
+      const dataPoint: Record<string, number | string> = { metric };
+      comparisonCompanies.forEach(c => {
+        let score = 50;
+        switch (metric) {
+          case 'Market Cap':
+            const mcap = parseMarketCap(c.marketCap);
+            score = Math.min(100, (mcap / 5000) * 100);
+            break;
+          case 'Stage Progress':
+            if (c.stage.includes('Approved') || c.stage.includes('Commercial')) score = 100;
+            else if (c.stage.includes('Phase 3')) score = 80;
+            else if (c.stage.includes('Phase 2')) score = 60;
+            else if (c.stage.includes('Phase 1')) score = 40;
+            else score = 20;
+            break;
+          case 'M&A Potential':
+            const mcapMa = parseMarketCap(c.marketCap);
+            // Sweet spot is $500M-$2B
+            if (mcapMa >= 500 && mcapMa <= 2000) score = 90;
+            else if (mcapMa < 500) score = 70;
+            else score = 50;
+            break;
+          case 'Pipeline Strength':
+            score = Math.min(100, 50 + c.pipeline.split(',').length * 15);
+            break;
+          case 'Platform Value':
+            if (c.category.includes('Platform') || c.whyTarget.toLowerCase().includes('platform')) score = 90;
+            else score = 50;
+            break;
+        }
+        dataPoint[c.ticker] = score;
+      });
+      return dataPoint;
+    });
+  }, [comparisonCompanies]);
+
+  const toggleCompanySelection = (ticker: string) => {
+    setSelectedForComparison(prev => 
+      prev.includes(ticker) 
+        ? prev.filter(t => t !== ticker)
+        : prev.length < 5 ? [...prev, ticker] : prev
+    );
+  };
 
   const handleExportPDF = async () => {
     await exportDomToPDF('top-50-small-cap-content', 'Top_50_Small_Cap_Biotech_MA_Targets.pdf', {
@@ -208,230 +359,586 @@ export const Top50SmallCapFirms = () => {
         </CardHeader>
       </Card>
 
-      {/* Filters */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name, ticker, focus, or pipeline..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
+      {/* View Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3 lg:w-[500px]">
+          <TabsTrigger value="list" className="gap-2">
+            <Building2 className="h-4 w-4" />
+            Company List
+          </TabsTrigger>
+          <TabsTrigger value="charts" className="gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Market Charts
+          </TabsTrigger>
+          <TabsTrigger value="compare" className="gap-2">
+            <GitCompare className="h-4 w-4" />
+            Compare ({selectedForComparison.length})
+          </TabsTrigger>
+        </TabsList>
+
+        {/* LIST TAB */}
+        <TabsContent value="list" className="space-y-6">
+          {/* Filters */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-wrap gap-4">
+                <div className="flex-1 min-w-[200px]">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by name, ticker, focus, or pipeline..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-[220px]">
+                    <SelectValue placeholder="Filter by category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map(cat => (
+                      <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={stageFilter} onValueChange={setStageFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by stage" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Stages</SelectItem>
+                    <SelectItem value="approved">Approved/Commercial</SelectItem>
+                    <SelectItem value="phase 3">Phase 3</SelectItem>
+                    <SelectItem value="phase 2">Phase 2</SelectItem>
+                    <SelectItem value="phase 1">Phase 1</SelectItem>
+                    <SelectItem value="preclinical">Preclinical</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map(cat => (
-                  <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={stageFilter} onValueChange={setStageFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by stage" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Stages</SelectItem>
-                <SelectItem value="approved">Approved/Commercial</SelectItem>
-                <SelectItem value="phase 3">Phase 3</SelectItem>
-                <SelectItem value="phase 2">Phase 2</SelectItem>
-                <SelectItem value="phase 1">Phase 1</SelectItem>
-                <SelectItem value="preclinical">Preclinical</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="mt-3 text-sm text-muted-foreground">
-            Showing {filteredCompanies.length} of {companies.length} companies
-          </div>
-        </CardContent>
-      </Card>
+              <div className="mt-3 flex items-center justify-between text-sm text-muted-foreground">
+                <span>Showing {filteredCompanies.length} of {companies.length} companies</span>
+                {selectedForComparison.length > 0 && (
+                  <Button variant="outline" size="sm" onClick={() => setActiveTab("compare")} className="gap-2">
+                    <GitCompare className="h-3 w-3" />
+                    Compare {selectedForComparison.length} selected
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {categories.slice(0, 5).map(cat => {
-          const count = companies.filter(c => c.category === cat.name).length;
-          const Icon = cat.icon;
-          return (
-            <Card key={cat.name} className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setCategoryFilter(cat.name)}>
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${cat.color}/20`}>
-                    <Icon className={`h-5 w-5 ${cat.color.replace('bg-', 'text-')}`} />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{count}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-1">{cat.name}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {categories.slice(0, 5).map(cat => {
+              const count = companies.filter(c => c.category === cat.name).length;
+              const Icon = cat.icon;
+              return (
+                <Card key={cat.name} className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setCategoryFilter(cat.name)}>
+                  <CardContent className="pt-4 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${cat.color}/20`}>
+                        <Icon className={`h-5 w-5 ${cat.color.replace('bg-', 'text-')}`} />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold">{count}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{cat.name}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
 
-      {/* Companies by Category */}
-      <Accordion type="multiple" defaultValue={categories.map(c => c.name)} className="space-y-4">
-        {groupedCompanies.map(group => {
-          const Icon = group.icon;
-          return (
-            <AccordionItem key={group.name} value={group.name} className="border rounded-lg overflow-hidden">
-              <AccordionTrigger className={`px-4 py-3 hover:no-underline ${group.color}/10`}>
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${group.color}/20`}>
-                    <Icon className={`h-5 w-5 ${group.color.replace('bg-', 'text-')}`} />
-                  </div>
-                  <span className="font-semibold">{group.name}</span>
-                  <Badge variant="secondary">{group.companies.length} companies</Badge>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="px-0 pb-0">
+          {/* Companies by Category */}
+          <Accordion type="multiple" defaultValue={categories.map(c => c.name)} className="space-y-4">
+            {groupedCompanies.map(group => {
+              const Icon = group.icon;
+              return (
+                <AccordionItem key={group.name} value={group.name} className="border rounded-lg overflow-hidden">
+                  <AccordionTrigger className={`px-4 py-3 hover:no-underline ${group.color}/10`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-lg ${group.color}/20`}>
+                        <Icon className={`h-5 w-5 ${group.color.replace('bg-', 'text-')}`} />
+                      </div>
+                      <span className="font-semibold">{group.name}</span>
+                      <Badge variant="secondary">{group.companies.length} companies</Badge>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-0 pb-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-muted/50">
+                          <TableHead className="w-[50px]">
+                            <span className="sr-only">Select</span>
+                          </TableHead>
+                          <TableHead className="w-[60px]">#</TableHead>
+                          <TableHead className="w-[80px]">Ticker</TableHead>
+                          <TableHead>Company</TableHead>
+                          <TableHead>Focus</TableHead>
+                          <TableHead>Pipeline</TableHead>
+                          <TableHead className="w-[120px]">Stage</TableHead>
+                          <TableHead>Why M&A Target</TableHead>
+                          <TableHead className="w-[120px]">Market Cap</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {group.companies.map(company => (
+                          <TableRow key={company.ticker} className="hover:bg-muted/30">
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedForComparison.includes(company.ticker)}
+                                onCheckedChange={() => toggleCompanySelection(company.ticker)}
+                                disabled={!selectedForComparison.includes(company.ticker) && selectedForComparison.length >= 5}
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium text-muted-foreground">{company.rank}</TableCell>
+                            <TableCell>
+                              <a 
+                                href={`https://finance.yahoo.com/quote/${company.ticker}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-mono font-bold text-primary hover:underline flex items-center gap-1"
+                              >
+                                {company.ticker}
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            </TableCell>
+                            <TableCell>
+                              <div>
+                                <span className="font-medium">{company.name}</span>
+                                {company.note && (
+                                  <p className="text-xs text-amber-500 mt-0.5">{company.note}</p>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">{company.focus}</TableCell>
+                            <TableCell className="text-sm">{company.pipeline}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className={getStageColor(company.stage)}>
+                                {company.stage}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">{company.whyTarget}</TableCell>
+                            <TableCell className="font-medium text-green-500">{company.marketCap}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+
+          {/* M&A Insights Section */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Recent Acquisitions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                  Recent M&A Comparables (2023-2024)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-muted/50">
-                      <TableHead className="w-[60px]">#</TableHead>
-                      <TableHead className="w-[80px]">Ticker</TableHead>
-                      <TableHead>Company</TableHead>
+                    <TableRow>
+                      <TableHead>Target</TableHead>
+                      <TableHead>Acquirer</TableHead>
+                      <TableHead>Value</TableHead>
                       <TableHead>Focus</TableHead>
-                      <TableHead>Pipeline</TableHead>
-                      <TableHead className="w-[120px]">Stage</TableHead>
-                      <TableHead>Why M&A Target</TableHead>
-                      <TableHead className="w-[120px]">Market Cap</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {group.companies.map(company => (
-                      <TableRow key={company.ticker} className="hover:bg-muted/30">
-                        <TableCell className="font-medium text-muted-foreground">{company.rank}</TableCell>
-                        <TableCell>
-                          <a 
-                            href={`https://finance.yahoo.com/quote/${company.ticker}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-mono font-bold text-primary hover:underline flex items-center gap-1"
-                          >
-                            {company.ticker}
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <span className="font-medium">{company.name}</span>
-                            {company.note && (
-                              <p className="text-xs text-amber-500 mt-0.5">{company.note}</p>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{company.focus}</TableCell>
-                        <TableCell className="text-sm">{company.pipeline}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={getStageColor(company.stage)}>
-                            {company.stage}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{company.whyTarget}</TableCell>
-                        <TableCell className="font-medium text-green-500">{company.marketCap}</TableCell>
+                    {recentAcquisitions.map(acq => (
+                      <TableRow key={acq.target}>
+                        <TableCell className="font-medium">{acq.target}</TableCell>
+                        <TableCell>{acq.acquirer}</TableCell>
+                        <TableCell className="text-green-500 font-bold">{acq.value}</TableCell>
+                        <TableCell className="text-muted-foreground text-sm">{acq.focus}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              </AccordionContent>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+              </CardContent>
+            </Card>
 
-      {/* M&A Insights Section */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Acquisitions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
-              Recent M&A Comparables (2023-2024)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Target</TableHead>
-                  <TableHead>Acquirer</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Focus</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentAcquisitions.map(acq => (
-                  <TableRow key={acq.target}>
-                    <TableCell className="font-medium">{acq.target}</TableCell>
-                    <TableCell>{acq.acquirer}</TableCell>
-                    <TableCell className="text-green-500 font-bold">{acq.value}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{acq.focus}</TableCell>
-                  </TableRow>
+            {/* Hot Sectors */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-orange-500" />
+                  Sectors Most Likely for M&A (2025-2026)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {hotSectors.map((sector, idx) => (
+                  <div key={sector.name} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-500/20 text-orange-500 text-sm font-bold">
+                      {idx + 1}
+                    </span>
+                    <div>
+                      <p className="font-semibold">{sector.name}</p>
+                      <p className="text-sm text-muted-foreground">{sector.reason}</p>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
 
-        {/* Hot Sectors */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-orange-500" />
-              Sectors Most Likely for M&A (2025-2026)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {hotSectors.map((sector, idx) => (
-              <div key={sector.name} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-500/20 text-orange-500 text-sm font-bold">
-                  {idx + 1}
-                </span>
-                <div>
-                  <p className="font-semibold">{sector.name}</p>
-                  <p className="text-sm text-muted-foreground">{sector.reason}</p>
+          {/* M&A Criteria */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Pill className="h-5 w-5 text-primary" />
+                Key M&A Criteria That Make These Attractive
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+                {maCriteria.map(criteria => (
+                  <div key={criteria.title} className="p-4 bg-muted/50 rounded-lg">
+                    <h4 className="font-semibold mb-2 text-primary">{criteria.title}</h4>
+                    <ul className="space-y-1">
+                      {criteria.items.map((item, idx) => (
+                        <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
+                          <span className="text-primary mt-1">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* CHARTS TAB */}
+        <TabsContent value="charts" className="space-y-6">
+          {/* Market Cap by Category */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  Average Market Cap by Category
+                </CardTitle>
+                <CardDescription>Average market cap (millions USD) per therapeutic area</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[350px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={marketCapByCategory} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis type="number" tickFormatter={(v) => `$${v}M`} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis dataKey="name" type="category" width={80} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <Tooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg p-3 shadow-lg">
+                                <p className="font-semibold">{data.fullName}</p>
+                                <p className="text-sm text-muted-foreground">Avg: ${data.avgMarketCap}M</p>
+                                <p className="text-sm text-muted-foreground">Companies: {data.count}</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar dataKey="avgMarketCap" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <PieChart className="h-5 w-5 text-primary" />
+                  Stage Distribution
+                </CardTitle>
+                <CardDescription>Companies by development stage</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[350px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RechartsPieChart>
+                      <Pie
+                        data={stageDistribution}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={2}
+                        dataKey="value"
+                        label={({ name, value }) => `${name}: ${value}`}
+                        labelLine={false}
+                      >
+                        {stageDistribution.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                      <Legend />
+                    </RechartsPieChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Market Cap Range Distribution */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+                Market Cap Distribution
+              </CardTitle>
+              <CardDescription>Number of companies in each market cap range - "M&A Sweet Spot" is $500M-$2B</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={marketCapRanges}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-background border rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold">{data.name}</p>
+                              <p className="text-sm">{data.value} companies</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                      {marketCapRanges.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={entry.name === '$700M-$1.5B' || entry.name === '$1.5B-$3B' 
+                            ? 'hsl(142, 71%, 45%)' 
+                            : CHART_COLORS[index % CHART_COLORS.length]} 
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 flex items-center justify-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: 'hsl(142, 71%, 45%)' }} />
+                  <span className="text-muted-foreground">M&A Sweet Spot ($700M-$3B)</span>
                 </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
 
-      {/* M&A Criteria */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Pill className="h-5 w-5 text-primary" />
-            Key M&A Criteria That Make These Attractive
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-            {maCriteria.map(criteria => (
-              <div key={criteria.title} className="p-4 bg-muted/50 rounded-lg">
-                <h4 className="font-semibold mb-2 text-primary">{criteria.title}</h4>
-                <ul className="space-y-1">
-                  {criteria.items.map((item, idx) => (
-                    <li key={idx} className="text-sm text-muted-foreground flex items-start gap-2">
-                      <span className="text-primary mt-1">•</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+          {/* Category Breakdown Cards */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Category Breakdown</CardTitle>
+              <CardDescription>Company count and market metrics by therapeutic area</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                {marketCapByCategory.map((cat, idx) => (
+                  <div key={cat.name} className="p-4 rounded-lg bg-muted/50 border">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS[idx % CHART_COLORS.length] }} />
+                      <span className="font-medium text-sm">{cat.fullName}</span>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-2xl font-bold">{cat.count}</p>
+                      <p className="text-xs text-muted-foreground">Avg: ${cat.avgMarketCap}M</p>
+                      <p className="text-xs text-muted-foreground">Total: ${(cat.totalMarketCap / 1000).toFixed(1)}B</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* COMPARE TAB */}
+        <TabsContent value="compare" className="space-y-6">
+          {/* Selection Panel */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <GitCompare className="h-5 w-5 text-primary" />
+                Company Comparison Tool
+              </CardTitle>
+              <CardDescription>Select up to 5 companies to compare side-by-side. Go to Company List tab to select companies.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {selectedForComparison.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <GitCompare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No companies selected for comparison</p>
+                  <Button variant="outline" className="mt-4" onClick={() => setActiveTab("list")}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Select Companies
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {comparisonCompanies.map(c => (
+                    <Badge key={c.ticker} variant="secondary" className="gap-2 py-2 px-3">
+                      <span className="font-mono font-bold">{c.ticker}</span>
+                      <span className="text-muted-foreground">|</span>
+                      <span>{c.name}</span>
+                      <button onClick={() => toggleCompanySelection(c.ticker)} className="ml-1 hover:text-destructive">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                  {selectedForComparison.length < 5 && (
+                    <Button variant="ghost" size="sm" onClick={() => setActiveTab("list")} className="gap-1">
+                      <Plus className="h-4 w-4" />
+                      Add More
+                    </Button>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {comparisonCompanies.length > 0 && (
+            <>
+              {/* Radar Chart Comparison */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>M&A Attractiveness Radar</CardTitle>
+                  <CardDescription>Comparative analysis of key M&A metrics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[400px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart data={radarData}>
+                        <PolarGrid stroke="hsl(var(--border))" />
+                        <PolarAngleAxis dataKey="metric" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                        <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                        {comparisonCompanies.map((c, idx) => (
+                          <Radar
+                            key={c.ticker}
+                            name={c.ticker}
+                            dataKey={c.ticker}
+                            stroke={CHART_COLORS[idx % CHART_COLORS.length]}
+                            fill={CHART_COLORS[idx % CHART_COLORS.length]}
+                            fillOpacity={0.2}
+                          />
+                        ))}
+                        <Legend />
+                        <Tooltip />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Detailed Comparison Table */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Detailed Comparison</CardTitle>
+                </CardHeader>
+                <CardContent className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[120px]">Metric</TableHead>
+                        {comparisonCompanies.map(c => (
+                          <TableHead key={c.ticker} className="min-w-[200px]">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono font-bold text-primary">{c.ticker}</span>
+                              <a href={`https://finance.yahoo.com/quote/${c.ticker}`} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                              </a>
+                            </div>
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">Company</TableCell>
+                        {comparisonCompanies.map(c => (
+                          <TableCell key={c.ticker}>{c.name}</TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Category</TableCell>
+                        {comparisonCompanies.map(c => (
+                          <TableCell key={c.ticker}>
+                            <Badge variant="outline">{c.category}</Badge>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Focus</TableCell>
+                        {comparisonCompanies.map(c => (
+                          <TableCell key={c.ticker} className="text-sm">{c.focus}</TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Pipeline</TableCell>
+                        {comparisonCompanies.map(c => (
+                          <TableCell key={c.ticker} className="text-sm">{c.pipeline}</TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Stage</TableCell>
+                        {comparisonCompanies.map(c => (
+                          <TableCell key={c.ticker}>
+                            <Badge variant="outline" className={getStageColor(c.stage)}>
+                              {c.stage}
+                            </Badge>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Market Cap</TableCell>
+                        {comparisonCompanies.map(c => (
+                          <TableCell key={c.ticker} className="font-bold text-green-500">{c.marketCap}</TableCell>
+                        ))}
+                      </TableRow>
+                      <TableRow>
+                        <TableCell className="font-medium">Why M&A Target</TableCell>
+                        {comparisonCompanies.map(c => (
+                          <TableCell key={c.ticker} className="text-sm text-muted-foreground">{c.whyTarget}</TableCell>
+                        ))}
+                      </TableRow>
+                      {comparisonCompanies.some(c => c.note) && (
+                        <TableRow>
+                          <TableCell className="font-medium">Notes</TableCell>
+                          {comparisonCompanies.map(c => (
+                            <TableCell key={c.ticker} className="text-sm text-amber-500">{c.note || '-'}</TableCell>
+                          ))}
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {/* Disclaimer */}
       <Card className="border-amber-500/30 bg-amber-500/5">
