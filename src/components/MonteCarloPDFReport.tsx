@@ -5,7 +5,7 @@ import {
   FileText, 
   Download
 } from "lucide-react";
-import html2pdf from "html2pdf.js";
+import { exportDomToPDF } from "@/lib/pdfGenerator";
 import { type SimulationResult, type SensitivityResult, type ScenarioResult } from "@/lib/monteCarloSimulation";
 
 interface MonteCarloPDFReportProps {
@@ -55,26 +55,15 @@ const MonteCarloPDFReport = ({
   const generatePDF = useCallback(async () => {
     if (!reportRef.current) return;
     
-    const element = reportRef.current;
-    const opt = {
-      margin: [8, 8, 8, 8],
-      filename: `MonteCarlo_Report_${moleculeName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      },
-      jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
-        orientation: 'portrait' 
-      },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    };
+    // Set an ID for the exportDomToPDF function
+    reportRef.current.id = 'monte-carlo-pdf-report';
     
     try {
-      await html2pdf().set(opt).from(element).save();
+      await exportDomToPDF(
+        'monte-carlo-pdf-report',
+        `MonteCarlo_Report_${moleculeName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+        { orientation: 'portrait' }
+      );
     } catch (error) {
       console.error('PDF generation failed:', error);
     }

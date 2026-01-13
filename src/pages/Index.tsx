@@ -365,19 +365,17 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
   };
 
   // Handle PDF download
-  const handleDownloadPTRSPDF = () => {
+  const handleDownloadPTRSPDF = async () => {
     if (!ptrsReportRef.current) return;
     
-    const element = ptrsReportRef.current.cloneNode(true) as HTMLElement;
-    
-    // Show PDF header
-    const pdfHeader = element.querySelector('.ptrs-pdf-header');
+    // Show PDF header temporarily
+    const pdfHeader = ptrsReportRef.current.querySelector('.ptrs-pdf-header');
     if (pdfHeader) {
       (pdfHeader as HTMLElement).style.display = 'block';
     }
     
-    // Hide download button in PDF
-    const hideButtons = element.querySelectorAll('.ptrs-pdf-hide');
+    // Hide download button temporarily
+    const hideButtons = ptrsReportRef.current.querySelectorAll('.ptrs-pdf-hide');
     hideButtons.forEach(btn => {
       (btn as HTMLElement).style.display = 'none';
     });
@@ -386,15 +384,20 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
       ? `PTRS_Analysis_${selectedMolecule.name.replace(/\s+/g, '_')}.pdf`
       : `PTRS_Analysis_${taDisplayNames[therapeuticArea]}_${phaseDisplayNames[currentPhase]}.pdf`;
     
-    const opt = {
-      margin: 10,
-      filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    };
-    
-    html2pdf().set(opt).from(element).save();
+    try {
+      const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+      // Set an ID on the element for exportDomToPDF
+      ptrsReportRef.current.id = 'ptrs-report-content';
+      await exportDomToPDF('ptrs-report-content', filename, { orientation: 'portrait' });
+    } finally {
+      // Restore hidden elements
+      if (pdfHeader) {
+        (pdfHeader as HTMLElement).style.display = 'none';
+      }
+      hideButtons.forEach(btn => {
+        (btn as HTMLElement).style.display = '';
+      });
+    }
   };
 
   return (
@@ -704,34 +707,35 @@ const Index = () => {
     clearWatchlist 
   } = useWatchlist();
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!reportRef.current || !activeMolecule) return;
     
-    // Clone the element to modify it for PDF
-    const element = reportRef.current.cloneNode(true) as HTMLElement;
-    
-    // Show PDF header
-    const pdfHeader = element.querySelector('.pdf-header');
+    // Show PDF header temporarily
+    const pdfHeader = reportRef.current.querySelector('.pdf-header');
     if (pdfHeader) {
       (pdfHeader as HTMLElement).style.display = 'block';
     }
     
-    // Hide action buttons
-    const hideButtons = element.querySelectorAll('.pdf-hide');
+    // Hide action buttons temporarily
+    const hideButtons = reportRef.current.querySelectorAll('.pdf-hide');
     hideButtons.forEach(btn => {
       (btn as HTMLElement).style.display = 'none';
     });
     
-    const opt = {
-      margin: 10,
-      filename: `${activeMolecule.name.replace(/\s+/g, '_')}_Due_Diligence_Report.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    };
-    
-    html2pdf().set(opt).from(element).save();
+    try {
+      const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+      // Set an ID on the element for exportDomToPDF
+      reportRef.current.id = 'due-diligence-report-content';
+      await exportDomToPDF('due-diligence-report-content', `${activeMolecule.name.replace(/\s+/g, '_')}_Due_Diligence_Report.pdf`, { orientation: 'portrait' });
+    } finally {
+      // Restore hidden elements
+      if (pdfHeader) {
+        (pdfHeader as HTMLElement).style.display = 'none';
+      }
+      hideButtons.forEach(btn => {
+        (btn as HTMLElement).style.display = '';
+      });
+    }
   };
 
   // Generate comprehensive molecule profiles with real probability calculations

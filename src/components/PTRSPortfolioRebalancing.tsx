@@ -323,7 +323,7 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
     }
   };
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     if (!analysisResults || !portfolioMetrics) return;
     
     const content = `
@@ -404,17 +404,24 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
       </html>
     `;
     
-    import('html2pdf.js').then(html2pdf => {
-      const element = document.createElement('div');
-      element.innerHTML = content;
-      html2pdf.default().set({
-        margin: 10,
-        filename: `portfolio-rebalancing-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-      }).from(element).save();
-    });
+    // Create a temporary container for the HTML content
+    const tempContainer = document.createElement('div');
+    tempContainer.id = 'portfolio-rebalancing-pdf-temp';
+    tempContainer.innerHTML = content;
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    document.body.appendChild(tempContainer);
+    
+    try {
+      const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+      await exportDomToPDF(
+        'portfolio-rebalancing-pdf-temp',
+        `portfolio-rebalancing-${new Date().toISOString().split('T')[0]}.pdf`,
+        { orientation: 'landscape' }
+      );
+    } finally {
+      document.body.removeChild(tempContainer);
+    }
   };
 
   return (
