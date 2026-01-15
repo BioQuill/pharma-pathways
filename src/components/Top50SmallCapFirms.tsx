@@ -27,10 +27,14 @@ import {
   GitCompare,
   X,
   Plus,
-  PieChart
+  PieChart,
+  Calendar,
+  DollarSign,
+  Percent,
+  History
 } from "lucide-react";
 import { exportDomToPDF } from "@/lib/pdfGenerator";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line, ComposedChart, Area, ScatterChart, Scatter, ZAxis } from "recharts";
 
 interface SmallCapCompany {
   rank: number;
@@ -154,6 +158,57 @@ const hotSectors = [
   { name: "CNS", reason: "High unmet need, rare epilepsies validated" },
 ];
 
+// Historical M&A deal data for visualization
+interface HistoricalMADeal {
+  year: number;
+  quarter: string;
+  target: string;
+  acquirer: string;
+  dealValue: number; // billions USD
+  premium: number; // percentage premium over market cap
+  sector: string;
+  stage: string;
+  notes?: string;
+}
+
+const historicalMADeals: HistoricalMADeal[] = [
+  // 2024 Deals
+  { year: 2024, quarter: "Q4", target: "Mirati Therapeutics", acquirer: "Bristol Myers Squibb", dealValue: 4.8, premium: 52, sector: "Oncology", stage: "Approved" },
+  { year: 2024, quarter: "Q3", target: "Morphic Holding", acquirer: "Eli Lilly", dealValue: 3.2, premium: 79, sector: "Immunology", stage: "Phase 2" },
+  { year: 2024, quarter: "Q2", target: "Alpine Immune Sciences", acquirer: "Vertex", dealValue: 4.9, premium: 67, sector: "Immunology", stage: "Phase 2" },
+  { year: 2024, quarter: "Q1", target: "Karuna Therapeutics", acquirer: "Bristol Myers Squibb", dealValue: 14.0, premium: 53, sector: "CNS", stage: "Phase 3" },
+  { year: 2024, quarter: "Q1", target: "Cerevel Therapeutics", acquirer: "AbbVie", dealValue: 8.7, premium: 52, sector: "CNS", stage: "Phase 3" },
+  { year: 2024, quarter: "Q1", target: "Inhibrx", acquirer: "Sanofi", dealValue: 2.2, premium: 121, sector: "CNS", stage: "Phase 2" },
+  { year: 2024, quarter: "Q2", target: "Albireo Pharma", acquirer: "Ipsen", dealValue: 0.95, premium: 43, sector: "Rare Disease", stage: "Approved" },
+  { year: 2024, quarter: "Q2", target: "Gracell Biotech", acquirer: "AstraZeneca", dealValue: 1.2, premium: 61, sector: "Oncology", stage: "Phase 1/2" },
+  
+  // 2023 Deals
+  { year: 2023, quarter: "Q4", target: "Chinook Therapeutics", acquirer: "Novartis", dealValue: 3.5, premium: 67, sector: "Nephrology", stage: "Phase 2/3" },
+  { year: 2023, quarter: "Q4", target: "Immune Design", acquirer: "Merck", dealValue: 0.3, premium: 89, sector: "Oncology", stage: "Phase 2" },
+  { year: 2023, quarter: "Q3", target: "Prometheus Biosciences", acquirer: "Merck", dealValue: 10.8, premium: 75, sector: "Immunology", stage: "Phase 2" },
+  { year: 2023, quarter: "Q3", target: "Seagen", acquirer: "Pfizer", dealValue: 43.0, premium: 33, sector: "Oncology", stage: "Approved" },
+  { year: 2023, quarter: "Q2", target: "Horizon Therapeutics", acquirer: "Amgen", dealValue: 27.8, premium: 48, sector: "Rare Disease", stage: "Approved" },
+  { year: 2023, quarter: "Q1", target: "CinCor Pharma", acquirer: "AstraZeneca", dealValue: 1.8, premium: 142, sector: "Cardiovascular", stage: "Phase 2" },
+  
+  // 2022 Deals
+  { year: 2022, quarter: "Q4", target: "Imago Biosciences", acquirer: "Merck", dealValue: 1.35, premium: 107, sector: "Oncology", stage: "Phase 2" },
+  { year: 2022, quarter: "Q3", target: "Turning Point Therapeutics", acquirer: "Bristol Myers Squibb", dealValue: 4.1, premium: 122, sector: "Oncology", stage: "Phase 2" },
+  { year: 2022, quarter: "Q2", target: "Biohaven Pharmaceutical", acquirer: "Pfizer", dealValue: 11.6, premium: 79, sector: "CNS", stage: "Approved" },
+  { year: 2022, quarter: "Q1", target: "Arena Pharmaceuticals", acquirer: "Pfizer", dealValue: 6.7, premium: 100, sector: "Immunology", stage: "Phase 3" },
+  
+  // 2021 Deals
+  { year: 2021, quarter: "Q4", target: "Acceleron Pharma", acquirer: "Merck", dealValue: 11.5, premium: 65, sector: "Cardiovascular", stage: "Approved" },
+  { year: 2021, quarter: "Q3", target: "Trillium Therapeutics", acquirer: "Pfizer", dealValue: 2.26, premium: 203, sector: "Oncology", stage: "Phase 1" },
+  { year: 2021, quarter: "Q2", target: "Tril (5 Prime)", acquirer: "Amgen", dealValue: 1.9, premium: 89, sector: "Oncology", stage: "Phase 2" },
+  { year: 2021, quarter: "Q1", target: "VelosBio", acquirer: "Merck", dealValue: 2.75, premium: 64, sector: "Oncology", stage: "Phase 1" },
+  
+  // 2020 Deals
+  { year: 2020, quarter: "Q4", target: "Alexion Pharmaceuticals", acquirer: "AstraZeneca", dealValue: 39.0, premium: 45, sector: "Rare Disease", stage: "Approved" },
+  { year: 2020, quarter: "Q3", target: "Immunomedics", acquirer: "Gilead", dealValue: 21.0, premium: 108, sector: "Oncology", stage: "Approved" },
+  { year: 2020, quarter: "Q2", target: "Forty Seven", acquirer: "Gilead", dealValue: 4.9, premium: 65, sector: "Oncology", stage: "Phase 1" },
+  { year: 2020, quarter: "Q1", target: "Portola Pharmaceuticals", acquirer: "Alexion", dealValue: 1.4, premium: 132, sector: "Hematology", stage: "Approved" },
+];
+
 // Helper to parse market cap range to midpoint value (in millions)
 const parseMarketCap = (marketCap: string): number => {
   const cleaned = marketCap.replace(/[~$]/g, '').trim();
@@ -266,6 +321,66 @@ export const Top50SmallCapFirms = () => {
     return Object.entries(ranges).map(([name, value]) => ({ name, value }));
   }, []);
 
+  // Historical M&A data calculations
+  const dealsByYear = useMemo(() => {
+    const years = [2020, 2021, 2022, 2023, 2024];
+    return years.map(year => {
+      const yearDeals = historicalMADeals.filter(d => d.year === year);
+      const totalValue = yearDeals.reduce((sum, d) => sum + d.dealValue, 0);
+      const avgPremium = yearDeals.length > 0 
+        ? yearDeals.reduce((sum, d) => sum + d.premium, 0) / yearDeals.length 
+        : 0;
+      return {
+        year,
+        dealCount: yearDeals.length,
+        totalValue: Math.round(totalValue * 10) / 10,
+        avgPremium: Math.round(avgPremium),
+      };
+    });
+  }, []);
+
+  const premiumBySector = useMemo(() => {
+    const sectors = [...new Set(historicalMADeals.map(d => d.sector))];
+    return sectors.map(sector => {
+      const sectorDeals = historicalMADeals.filter(d => d.sector === sector);
+      const avgPremium = sectorDeals.reduce((sum, d) => sum + d.premium, 0) / sectorDeals.length;
+      const avgValue = sectorDeals.reduce((sum, d) => sum + d.dealValue, 0) / sectorDeals.length;
+      return {
+        sector,
+        avgPremium: Math.round(avgPremium),
+        avgValue: Math.round(avgValue * 10) / 10,
+        dealCount: sectorDeals.length,
+      };
+    }).sort((a, b) => b.avgPremium - a.avgPremium);
+  }, []);
+
+  const premiumByStage = useMemo(() => {
+    const stages = ['Phase 1', 'Phase 2', 'Phase 3', 'Approved'];
+    return stages.map(stage => {
+      const stageDeals = historicalMADeals.filter(d => 
+        d.stage.toLowerCase().includes(stage.toLowerCase().replace('phase ', ''))
+      );
+      if (stageDeals.length === 0) return null;
+      const avgPremium = stageDeals.reduce((sum, d) => sum + d.premium, 0) / stageDeals.length;
+      const avgValue = stageDeals.reduce((sum, d) => sum + d.dealValue, 0) / stageDeals.length;
+      return {
+        stage,
+        avgPremium: Math.round(avgPremium),
+        avgValue: Math.round(avgValue * 10) / 10,
+        dealCount: stageDeals.length,
+      };
+    }).filter(Boolean);
+  }, []);
+
+  const dealScatterData = useMemo(() => {
+    return historicalMADeals.map(deal => ({
+      ...deal,
+      x: deal.dealValue,
+      y: deal.premium,
+      z: deal.dealValue * 100, // Size
+    }));
+  }, []);
+
   // Comparison data
   const comparisonCompanies = useMemo(() => {
     return companies.filter(c => selectedForComparison.includes(c.ticker));
@@ -361,7 +476,7 @@ export const Top50SmallCapFirms = () => {
 
       {/* View Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3 lg:w-[500px]">
+        <TabsList className="grid w-full grid-cols-4 lg:w-[650px]">
           <TabsTrigger value="list" className="gap-2">
             <Building2 className="h-4 w-4" />
             Company List
@@ -369,6 +484,10 @@ export const Top50SmallCapFirms = () => {
           <TabsTrigger value="charts" className="gap-2">
             <BarChart3 className="h-4 w-4" />
             Market Charts
+          </TabsTrigger>
+          <TabsTrigger value="history" className="gap-2">
+            <History className="h-4 w-4" />
+            M&A History
           </TabsTrigger>
           <TabsTrigger value="compare" className="gap-2">
             <GitCompare className="h-4 w-4" />
@@ -770,6 +889,289 @@ export const Top50SmallCapFirms = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* M&A HISTORY TAB */}
+        <TabsContent value="history" className="space-y-6">
+          {/* Summary Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="bg-gradient-to-br from-green-500/10 to-background border-green-500/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <DollarSign className="h-8 w-8 text-green-500" />
+                  <div>
+                    <p className="text-3xl font-bold text-green-500">${historicalMADeals.reduce((sum, d) => sum + d.dealValue, 0).toFixed(1)}B</p>
+                    <p className="text-sm text-muted-foreground">Total Deal Value (2020-2024)</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-gradient-to-br from-blue-500/10 to-background border-blue-500/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <Target className="h-8 w-8 text-blue-500" />
+                  <div>
+                    <p className="text-3xl font-bold text-blue-500">{historicalMADeals.length}</p>
+                    <p className="text-sm text-muted-foreground">Major Acquisitions</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-gradient-to-br from-amber-500/10 to-background border-amber-500/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <Percent className="h-8 w-8 text-amber-500" />
+                  <div>
+                    <p className="text-3xl font-bold text-amber-500">{Math.round(historicalMADeals.reduce((sum, d) => sum + d.premium, 0) / historicalMADeals.length)}%</p>
+                    <p className="text-sm text-muted-foreground">Average Premium</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-gradient-to-br from-purple-500/10 to-background border-purple-500/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="h-8 w-8 text-purple-500" />
+                  <div>
+                    <p className="text-3xl font-bold text-purple-500">${(historicalMADeals.reduce((sum, d) => sum + d.dealValue, 0) / historicalMADeals.length).toFixed(1)}B</p>
+                    <p className="text-sm text-muted-foreground">Average Deal Size</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* M&A Activity Over Time */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                M&A Activity Over Time (2020-2024)
+              </CardTitle>
+              <CardDescription>Deal count, total value, and average premium by year</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={dealsByYear}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="year" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `$${v}B`} />
+                    <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--muted-foreground))" fontSize={12} tickFormatter={(v) => `${v}%`} />
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-background border rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold text-lg">{data.year}</p>
+                              <p className="text-sm text-muted-foreground">Deals: {data.dealCount}</p>
+                              <p className="text-sm text-green-500">Total Value: ${data.totalValue}B</p>
+                              <p className="text-sm text-amber-500">Avg Premium: {data.avgPremium}%</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend />
+                    <Bar yAxisId="left" dataKey="totalValue" name="Total Deal Value ($B)" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    <Line yAxisId="right" type="monotone" dataKey="avgPremium" name="Avg Premium (%)" stroke="hsl(45, 93%, 47%)" strokeWidth={3} dot={{ r: 6 }} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Premium Analysis */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Premium by Sector */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Percent className="h-5 w-5 text-amber-500" />
+                  Acquisition Premiums by Sector
+                </CardTitle>
+                <CardDescription>Average premium paid in each therapeutic area</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={premiumBySector} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis type="number" tickFormatter={(v) => `${v}%`} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis dataKey="sector" type="category" width={100} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg p-3 shadow-lg">
+                                <p className="font-semibold">{data.sector}</p>
+                                <p className="text-sm text-amber-500">Avg Premium: {data.avgPremium}%</p>
+                                <p className="text-sm text-green-500">Avg Deal Size: ${data.avgValue}B</p>
+                                <p className="text-sm text-muted-foreground">{data.dealCount} deals</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar dataKey="avgPremium" fill="hsl(45, 93%, 47%)" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Premium by Stage */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FlaskConical className="h-5 w-5 text-blue-500" />
+                  Acquisition Premiums by Stage
+                </CardTitle>
+                <CardDescription>Earlier stage = higher premium (more risk, more upside)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={premiumByStage}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="stage" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis tickFormatter={(v) => `${v}%`} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg p-3 shadow-lg">
+                                <p className="font-semibold">{data.stage}</p>
+                                <p className="text-sm text-amber-500">Avg Premium: {data.avgPremium}%</p>
+                                <p className="text-sm text-green-500">Avg Deal Size: ${data.avgValue}B</p>
+                                <p className="text-sm text-muted-foreground">{data.dealCount} deals</p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar dataKey="avgPremium" radius={[4, 4, 0, 0]}>
+                        {premiumByStage.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Deal Value vs Premium Scatter */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-green-500" />
+                Deal Value vs. Premium Analysis
+              </CardTitle>
+              <CardDescription>Larger bubbles = higher deal value. Hover for details.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ScatterChart>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis 
+                      type="number" 
+                      dataKey="x" 
+                      name="Deal Value" 
+                      tickFormatter={(v) => `$${v}B`} 
+                      stroke="hsl(var(--muted-foreground))" 
+                      fontSize={12}
+                      label={{ value: 'Deal Value ($B)', position: 'bottom', offset: 0 }}
+                    />
+                    <YAxis 
+                      type="number" 
+                      dataKey="y" 
+                      name="Premium" 
+                      tickFormatter={(v) => `${v}%`} 
+                      stroke="hsl(var(--muted-foreground))" 
+                      fontSize={12}
+                      label={{ value: 'Premium (%)', angle: -90, position: 'insideLeft' }}
+                    />
+                    <ZAxis type="number" dataKey="z" range={[100, 2000]} />
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-background border rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold">{data.target}</p>
+                              <p className="text-sm text-muted-foreground">Acquirer: {data.acquirer}</p>
+                              <p className="text-sm text-green-500">Deal Value: ${data.dealValue}B</p>
+                              <p className="text-sm text-amber-500">Premium: {data.premium}%</p>
+                              <p className="text-sm">{data.sector} • {data.stage}</p>
+                              <p className="text-xs text-muted-foreground">{data.quarter} {data.year}</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Scatter name="M&A Deals" data={dealScatterData} fill="hsl(var(--primary))" fillOpacity={0.6} />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recent Deals Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="h-5 w-5 text-primary" />
+                Historical M&A Transactions (2020-2024)
+              </CardTitle>
+              <CardDescription>Complete list of major biotech acquisitions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Year/Qtr</TableHead>
+                      <TableHead>Target</TableHead>
+                      <TableHead>Acquirer</TableHead>
+                      <TableHead className="text-right">Deal Value</TableHead>
+                      <TableHead className="text-right">Premium</TableHead>
+                      <TableHead>Sector</TableHead>
+                      <TableHead>Stage</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {historicalMADeals.map((deal, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-mono text-sm">{deal.quarter} {deal.year}</TableCell>
+                        <TableCell className="font-medium">{deal.target}</TableCell>
+                        <TableCell>{deal.acquirer}</TableCell>
+                        <TableCell className="text-right font-bold text-green-500">${deal.dealValue}B</TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant={deal.premium >= 100 ? "destructive" : deal.premium >= 60 ? "default" : "secondary"}>
+                            {deal.premium}%
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{deal.sector}</Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{deal.stage}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>

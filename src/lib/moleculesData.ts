@@ -1152,13 +1152,18 @@ export const additionalMolecules: MoleculeProfile[] = [
   }
 ];
 
-// Helper function to calculate overall scores for all molecules
+// Helper function to calculate overall scores for all molecules using the true LPI3 model
+import { calculateLPI3ForMolecule } from './lpi3Model';
+
 export function calculateMoleculeOverallScores(molecules: MoleculeProfile[]): MoleculeProfile[] {
-  return molecules.map(mol => ({
-    ...mol,
-    overallScore: mol.scores.meetingEndpoints * 0.25 +
-                  mol.scores.nextPhase * 0.25 +
-                  mol.scores.approval * 0.30 +
-                  (1 - mol.scores.dropoutRanking / 5) * 0.20
-  }));
+  return molecules.map(mol => {
+    // Use the LPI3 ML-based model for consistent scoring across the app
+    const lpi3Prediction = calculateLPI3ForMolecule(mol);
+    const lpiScore = Math.round(lpi3Prediction.calibratedProbability * 100);
+    
+    return {
+      ...mol,
+      overallScore: lpiScore
+    };
+  });
 }
