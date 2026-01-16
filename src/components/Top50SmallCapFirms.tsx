@@ -119,6 +119,80 @@ const companies: SmallCapCompany[] = [
   { rank: 48, ticker: "CADL", name: "Candel Therapeutics", focus: "Viral immunotherapies for cancer", pipeline: "CAN-2409 (prostate cancer), others", stage: "Phase 3", whyTarget: "Oncolytic virus platform", marketCap: "~$100-200M", category: "Platform / Technology" },
   { rank: 49, ticker: "MGX", name: "Metagenomi", focus: "Gene editing tools (beyond CRISPR)", pipeline: "Platform + internal programs", stage: "Preclinical", whyTarget: "Next-gen editing tools, IP estate", marketCap: "~$200-400M", category: "Platform / Technology" },
   { rank: 50, ticker: "PRME", name: "Prime Medicine", focus: "Prime editing (precise gene editing)", pipeline: "PM359 (liver), others", stage: "Preclinical/Phase 1", whyTarget: "David Liu lab spinout, differentiated editing", marketCap: "~$500M-1B", category: "Platform / Technology" },
+  
+  // CATEGORY 11: TOP M&A TARGETS 2025-2026
+  { rank: 51, ticker: "CLDX", name: "Celldex Therapeutics", focus: "Mast cell/chronic urticaria", pipeline: "Barzolvolimab (CSU, anti-KIT)", stage: "Phase 3", whyTarget: "Breakthrough therapy, validated mechanism, large market", marketCap: "~$2-4B", category: "Top M&A Targets 2025" },
+  { rank: 52, ticker: "COGT", name: "Cogent Biosciences", focus: "Precision hematology", pipeline: "Bezuclastinib (KIT inhibitor for SM/GIST)", stage: "Phase 2/3", whyTarget: "Best-in-class potential, multiple indications", marketCap: "~$1-2B", category: "Top M&A Targets 2025" },
+  { rank: 53, ticker: "GPCR", name: "Structure Therapeutics", focus: "Oral GLP-1 receptor agonists", pipeline: "GSBR-1290 (obesity/T2D)", stage: "Phase 2", whyTarget: "Oral obesity drug in hot GLP-1 space", marketCap: "~$1.5-3B", category: "Top M&A Targets 2025" },
+  { rank: 54, ticker: "RXRX", name: "Recursion Pharmaceuticals", focus: "AI-powered drug discovery", pipeline: "REC-994 (cerebral cavernous malformations), others", stage: "Phase 2", whyTarget: "Leading AI/ML drug discovery platform", marketCap: "~$2-4B", category: "Platform / Technology" },
+  { rank: 55, ticker: "OLMA", name: "Olema Oncology", focus: "Estrogen receptor antagonist", pipeline: "Palazestrant (ER+ breast cancer)", stage: "Phase 3", whyTarget: "Oral SERD for breast cancer, large market", marketCap: "~$1-2B", category: "Oncology - Solid Tumors" },
+  
+  // ADDITIONAL IMMUNOLOGY TARGETS
+  { rank: 56, ticker: "IMVT", name: "Immunovant", focus: "FcRn inhibitors for autoimmune", pipeline: "Batoclimab (thyroid eye disease, MG)", stage: "Phase 3", whyTarget: "Oral FcRn inhibitor, multiple indications", marketCap: "~$2-4B", category: "Immunology & Autoimmune" },
+  { rank: 57, ticker: "ANAB", name: "AnaptysBio", focus: "Antibody discovery for inflammation", pipeline: "Rosnilimab (anti-PD-1 agonist)", stage: "Phase 2", whyTarget: "Novel mechanism, inflammatory diseases", marketCap: "~$800M-1.5B", category: "Immunology & Autoimmune" },
+  { rank: 58, ticker: "VERA", name: "Vera Therapeutics", focus: "IgA nephropathy treatments", pipeline: "Atacicept (IgAN)", stage: "Phase 3", whyTarget: "Validated target in nephrology", marketCap: "~$1-2B", category: "Immunology & Autoimmune" },
+  { rank: 59, ticker: "TVTX", name: "Travere Therapeutics", focus: "Rare kidney diseases", pipeline: "Sparsentan (IgAN), FILSPARI approved", stage: "Commercial", whyTarget: "Approved product, rare disease focus", marketCap: "~$1-2B", category: "Rare Diseases / Orphan Drugs" },
+  
+  // ADDITIONAL ONCOLOGY TARGETS
+  { rank: 60, ticker: "MDXH", name: "MDxHealth", focus: "Precision urology diagnostics", pipeline: "SelectMDx, ConfirmMDx (prostate cancer)", stage: "Commercial", whyTarget: "Diagnostic platform, prostate cancer focus", marketCap: "~$200-400M", category: "Platform / Technology" },
+  { rank: 61, ticker: "ABCL", name: "Arcus Biosciences", focus: "Immuno-oncology combinations", pipeline: "Domvanalimab (anti-TIGIT), quemliclustat", stage: "Phase 3", whyTarget: "Gilead partnership, multiple I-O assets", marketCap: "~$2-4B", category: "Oncology - Solid Tumors" },
+  { rank: 62, ticker: "TYRA", name: "Tyra Biosciences", focus: "Precision oncology for FGFR", pipeline: "TYRA-300 (bladder cancer)", stage: "Phase 1/2", whyTarget: "Next-gen FGFR inhibitor, CNS penetrant", marketCap: "~$800M-1.5B", category: "Oncology - Solid Tumors" },
+  { rank: 63, ticker: "MIRM", name: "Mirum Pharmaceuticals", focus: "Rare liver diseases", pipeline: "LIVMARLI (approved), maralixibat", stage: "Commercial", whyTarget: "Commercial rare disease assets", marketCap: "~$1-2B", category: "Rare Diseases / Orphan Drugs" },
+  { rank: 64, ticker: "AURA", name: "Aura Biosciences", focus: "Ocular oncology", pipeline: "Belzupacap sarotalocan (eye melanoma)", stage: "Phase 3", whyTarget: "Novel VLP platform, orphan indication", marketCap: "~$400-800M", category: "Oncology - Solid Tumors" },
+  
+  // ADDITIONAL CNS/NEUROLOGY TARGETS
+  { rank: 65, ticker: "AXSM", name: "Axsome Therapeutics", focus: "CNS disorders", pipeline: "Auvelity (approved MDD), Sunosi", stage: "Commercial", whyTarget: "Multiple approved products, CNS leader", marketCap: "~$3-5B", category: "Neurology / CNS" },
+  { rank: 66, ticker: "MNMD", name: "Mind Medicine", focus: "Psychedelic-derived medicines", pipeline: "MM120 (GAD), MM402 (autism)", stage: "Phase 2/3", whyTarget: "Novel mechanism, mental health focus", marketCap: "~$500M-1B", category: "Neurology / CNS" },
+  { rank: 67, ticker: "CRTX", name: "Cortexyme", focus: "Neurodegenerative diseases", pipeline: "Atuzaginstat (Alzheimer's)", stage: "Phase 2/3", whyTarget: "Novel mechanism targeting P. gingivalis", marketCap: "~$50-150M", category: "Neurology / CNS" },
+  { rank: 68, ticker: "SWTX", name: "SpringWorks Therapeutics", focus: "Rare diseases and cancer", pipeline: "Nirogacestat (approved desmoid), mirdametinib", stage: "Commercial", whyTarget: "Approved orphan drug, pipeline potential", marketCap: "~$3-5B", category: "Rare Diseases / Orphan Drugs" },
+  
+  // ADDITIONAL METABOLIC/OBESITY TARGETS
+  { rank: 69, ticker: "PTGX", name: "Protagonist Therapeutics", focus: "Peptide-based medicines", pipeline: "Rusfertide (PV), PN-235 (obesity)", stage: "Phase 3", whyTarget: "Platform + obesity asset, validated peptides", marketCap: "~$1-2B", category: "Metabolic / Cardiometabolic" },
+  { rank: 70, ticker: "ERAS", name: "Erasca", focus: "RAS/MAPK oncology", pipeline: "Naporafenib (RAS-driven cancers)", stage: "Phase 1/2", whyTarget: "Broad RAS platform, solid pipeline", marketCap: "~$300-600M", category: "Oncology - Solid Tumors" },
+  { rank: 71, ticker: "AMAM", name: "Ambrx Biopharma", focus: "Site-specific ADCs", pipeline: "ARX517 (prostate), ARX788 (HER2)", stage: "Phase 2/3", whyTarget: "Precision ADC platform, multiple assets", marketCap: "~$500M-1B", category: "Oncology - Solid Tumors" },
+  { rank: 72, ticker: "TERN", name: "Terns Pharmaceuticals", focus: "NASH and obesity", pipeline: "TERN-501 (THR-β agonist)", stage: "Phase 2", whyTarget: "Differentiated NASH mechanism", marketCap: "~$300-600M", category: "Metabolic / Cardiometabolic" },
+  
+  // ADDITIONAL GENE THERAPY/CELL THERAPY
+  { rank: 73, ticker: "QURE", name: "uniQure", focus: "AAV gene therapy", pipeline: "AMT-130 (Huntington's), hemophilia B", stage: "Phase 1/2", whyTarget: "HD gene therapy leader, validated platform", marketCap: "~$500M-1B", category: "Gene Therapy / Gene Editing" },
+  { rank: 74, ticker: "SGMO", name: "Sangamo Therapeutics", focus: "Gene therapy and cell therapy", pipeline: "Fabry disease, hemophilia A programs", stage: "Phase 1/2", whyTarget: "ZFN platform, Pfizer partnerships", marketCap: "~$200-400M", category: "Gene Therapy / Gene Editing" },
+  { rank: 75, ticker: "CLVR", name: "Clever Leaves", focus: "Cannabinoid production", pipeline: "GMP cannabinoid manufacturing", stage: "Commercial", whyTarget: "GMP cannabinoid supply chain", marketCap: "~$50-100M", category: "Platform / Technology" },
+  { rank: 76, ticker: "ABUS", name: "Arbutus Biopharma", focus: "HBV cure strategies", pipeline: "AB-729 (RNA interference), AB-101", stage: "Phase 2", whyTarget: "HBV functional cure potential", marketCap: "~$200-400M", category: "Infectious Disease / Vaccines" },
+  
+  // ADDITIONAL HEMATOLOGY TARGETS
+  { rank: 77, ticker: "BLUE", name: "bluebird bio", focus: "Gene therapy for rare disease", pipeline: "Lyfgenia (sickle cell), Zynteglo (beta-thal)", stage: "Commercial", whyTarget: "Approved gene therapies, commercial challenges", marketCap: "~$200-500M", category: "Gene Therapy / Gene Editing" },
+  { rank: 78, ticker: "IMTX", name: "Immatics", focus: "TCR-based immunotherapies", pipeline: "IMA401, IMA501 (solid tumors)", stage: "Phase 1/2", whyTarget: "TCR platform, BMS/Genmab partnerships", marketCap: "~$1-2B", category: "Oncology - Solid Tumors" },
+  { rank: 79, ticker: "APLS", name: "Apellis Pharmaceuticals", focus: "Complement inhibitors", pipeline: "Pegcetacoplan (PNH, GA)", stage: "Commercial", whyTarget: "Commercial complement franchise", marketCap: "~$4-7B", category: "Rare Diseases / Orphan Drugs" },
+  { rank: 80, ticker: "PCVX", name: "Vaxcyte", focus: "Next-gen pneumococcal vaccines", pipeline: "VAX-31 (pneumonia), VAX-24", stage: "Phase 3", whyTarget: "Best-in-class vaccine potential, large market", marketCap: "~$8-12B", category: "Infectious Disease / Vaccines" },
+  
+  // ADDITIONAL INFLAMMATION/FIBROSIS
+  { rank: 81, ticker: "FGEN", name: "FibroGen", focus: "HIF-PHI for anemia", pipeline: "Roxadustat (anemia)", stage: "Commercial", whyTarget: "Approved HIF inhibitor, turnaround potential", marketCap: "~$200-500M", category: "Inflammation / Fibrosis" },
+  { rank: 82, ticker: "AMTI", name: "Applied Molecular Transport", focus: "Oral biologics delivery", pipeline: "AMT-101 (ulcerative colitis)", stage: "Phase 2", whyTarget: "Oral biologic platform, GI focus", marketCap: "~$100-250M", category: "Platform / Technology" },
+  { rank: 83, ticker: "YMAB", name: "Y-mAbs Therapeutics", focus: "Antibodies for pediatric cancer", pipeline: "Danyelza (neuroblastoma), omburtamab", stage: "Commercial", whyTarget: "Approved pediatric oncology drug", marketCap: "~$400-800M", category: "Oncology - Hematologic" },
+  { rank: 84, ticker: "ALPN", name: "Alpine Immune Sciences", focus: "Engineered immunotherapies", pipeline: "Povetacicept (IgAN, lupus)", stage: "Phase 2", whyTarget: "Dual BAFF/APRIL targeting, nephrology", marketCap: "~$800M-1.5B", category: "Immunology & Autoimmune" },
+  
+  // ADDITIONAL RARE DISEASE TARGETS
+  { rank: 85, ticker: "RARE", name: "Ultragenyx Pharmaceutical", focus: "Rare diseases", pipeline: "Multiple approved products, gene therapy", stage: "Commercial", whyTarget: "Diversified rare disease portfolio", marketCap: "~$4-7B", category: "Rare Diseases / Orphan Drugs" },
+  { rank: 86, ticker: "ARDX", name: "Ardelyx", focus: "GI diseases", pipeline: "IBSRELA (IBS-C), XPHOZAH (hyperphosphatemia)", stage: "Commercial", whyTarget: "Two approved products, profitable path", marketCap: "~$1.5-3B", category: "Metabolic / Cardiometabolic" },
+  { rank: 87, ticker: "DCPH", name: "Deciphera Pharmaceuticals", focus: "Kinase inhibitors for cancer", pipeline: "QINLOCK (GIST), vimseltinib", stage: "Commercial", whyTarget: "Approved GIST drug, pipeline expansion", marketCap: "~$1-2B", category: "Oncology - Solid Tumors" },
+  { rank: 88, ticker: "TALK", name: "Talkspace", focus: "Digital mental health", pipeline: "Telehealth therapy platform", stage: "Commercial", whyTarget: "Digital health leader, B2B growth", marketCap: "~$100-300M", category: "Platform / Technology" },
+  
+  // STRATEGIC ACQUISITION CANDIDATES
+  { rank: 89, ticker: "ACCD", name: "Accolade", focus: "Healthcare navigation", pipeline: "Personalized healthcare platform", stage: "Commercial", whyTarget: "Healthcare tech consolidation play", marketCap: "~$400-800M", category: "Platform / Technology" },
+  { rank: 90, ticker: "AVXL", name: "Anavex Life Sciences", focus: "Sigma-1 receptor agonists", pipeline: "Blarcamesine (Alzheimer's, Rett)", stage: "Phase 2/3", whyTarget: "Novel CNS mechanism, multiple trials", marketCap: "~$400-800M", category: "Neurology / CNS" },
+  { rank: 91, ticker: "GTHX", name: "G1 Therapeutics", focus: "Cell cycle inhibitors", pipeline: "Cosela (approved chemoprotection)", stage: "Commercial", whyTarget: "Approved supportive care drug", marketCap: "~$200-400M", category: "Oncology - Solid Tumors" },
+  { rank: 92, ticker: "KURA", name: "Kura Oncology", focus: "Precision oncology", pipeline: "Ziftomenib (menin inhibitor AML)", stage: "Phase 2", whyTarget: "Competitive with revumenib, AML focus", marketCap: "~$1-2B", category: "Oncology - Hematologic" },
+  
+  // EMERGING BIOTECH TARGETS
+  { rank: 93, ticker: "VERV", name: "Verve Therapeutics", focus: "Gene editing for cardiovascular", pipeline: "VERVE-101 (PCSK9), VERVE-102 (ANGPTL3)", stage: "Phase 1", whyTarget: "One-time cardiovascular gene editing", marketCap: "~$400-800M", category: "Gene Therapy / Gene Editing" },
+  { rank: 94, ticker: "DAWN", name: "Day One Biopharmaceuticals", focus: "Pediatric oncology", pipeline: "Tovorafenib (pediatric LGG)", stage: "Commercial", whyTarget: "Approved pediatric brain tumor drug", marketCap: "~$1-2B", category: "Oncology - Solid Tumors" },
+  { rank: 95, ticker: "ADCT", name: "ADC Therapeutics", focus: "Antibody drug conjugates", pipeline: "ZYNLONTA (approved DLBCL)", stage: "Commercial", whyTarget: "Approved ADC, platform value", marketCap: "~$500M-1B", category: "Oncology - Hematologic" },
+  { rank: 96, ticker: "XNCR", name: "Xencor", focus: "Engineered antibodies", pipeline: "Vudalimab, plamotamab", stage: "Phase 2/3", whyTarget: "XmAb platform, multiple partnerships", marketCap: "~$1-2B", category: "Platform / Technology" },
+  
+  // ADDITIONAL HIGH-POTENTIAL TARGETS
+  { rank: 97, ticker: "NTLA", name: "Intellia Therapeutics", focus: "In vivo CRISPR gene editing", pipeline: "NTLA-2001 (ATTR), NTLA-2002 (HAE)", stage: "Phase 3", whyTarget: "Leading in vivo CRISPR platform", marketCap: "~$2-4B", category: "Gene Therapy / Gene Editing" },
+  { rank: 98, ticker: "BEAM", name: "Beam Therapeutics", focus: "Base editing gene therapy", pipeline: "BEAM-101 (SCD), others", stage: "Phase 1/2", whyTarget: "Next-gen CRISPR (base editing)", marketCap: "~$1-2B", category: "Gene Therapy / Gene Editing" },
+  { rank: 99, ticker: "SRPT", name: "Sarepta Therapeutics", focus: "Gene therapy for DMD", pipeline: "Elevidys (approved DMD), multiple DMD drugs", stage: "Commercial", whyTarget: "DMD gene therapy leader, rare disease", marketCap: "~$8-12B", category: "Rare Diseases / Orphan Drugs" },
+  { rank: 100, ticker: "REGN", name: "Regeneron Pharmaceuticals", focus: "Large-cap biotech (reference)", pipeline: "Eylea, Dupixent, Libtayo", stage: "Commercial", whyTarget: "Reference company - strategic acquirer not target", marketCap: "~$80-100B", category: "Platform / Technology", note: "Large cap reference - unlikely M&A target" },
 ];
 
 const categories = [
@@ -132,6 +206,7 @@ const categories = [
   { name: "Inflammation / Fibrosis", icon: FlaskConical, color: "bg-amber-500" },
   { name: "Gene Therapy / Gene Editing", icon: Dna, color: "bg-cyan-500" },
   { name: "Platform / Technology", icon: Microscope, color: "bg-indigo-500" },
+  { name: "Top M&A Targets 2025", icon: TrendingUp, color: "bg-emerald-500" },
 ];
 
 const maCriteria = [

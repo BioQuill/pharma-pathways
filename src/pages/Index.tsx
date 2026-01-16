@@ -2165,7 +2165,7 @@ const Index = () => {
               </TabsTrigger>
               <TabsTrigger value="top-50-smallcap" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Building2 className="h-4 w-4" />
-                Top 50 Small Cap Firms
+                Top 100 Small Cap Firms
               </TabsTrigger>
               <TabsTrigger value="watchlist" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
                 <Star className="h-4 w-4" />
