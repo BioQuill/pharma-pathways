@@ -31,7 +31,17 @@ import {
   Calendar,
   DollarSign,
   Percent,
-  History
+  History,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  Scale,
+  FileWarning,
+  Gavel,
+  Wallet,
+  Store,
+  AlertOctagon,
+  Trophy
 } from "lucide-react";
 import { exportDomToPDF } from "@/lib/pdfGenerator";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line, ComposedChart, Area, ScatterChart, Scatter, ZAxis } from "recharts";
@@ -233,6 +243,230 @@ const hotSectors = [
   { name: "CNS", reason: "High unmet need, rare epilepsies validated" },
 ];
 
+// M&A Due Diligence Red Flags
+interface DueDiligenceCategory {
+  name: string;
+  icon: typeof AlertTriangle;
+  color: string;
+  items: { flag: string; severity: 'critical' | 'major' | 'moderate' }[];
+}
+
+const dueDiligenceRedFlags: DueDiligenceCategory[] = [
+  {
+    name: "Regulatory",
+    icon: FileWarning,
+    color: "text-red-500",
+    items: [
+      { flag: "FDA clinical holds", severity: "critical" },
+      { flag: "Complete Response Letters (CRLs)", severity: "critical" },
+      { flag: "Manufacturing issues", severity: "major" },
+      { flag: "Whistleblower complaints", severity: "major" },
+    ]
+  },
+  {
+    name: "IP/Legal",
+    icon: Gavel,
+    color: "text-orange-500",
+    items: [
+      { flag: "Weak patent estate", severity: "major" },
+      { flag: "Third-party IP challenges", severity: "critical" },
+      { flag: "Litigation ongoing", severity: "major" },
+      { flag: "Freedom-to-operate issues", severity: "critical" },
+    ]
+  },
+  {
+    name: "Financial",
+    icon: Wallet,
+    color: "text-amber-500",
+    items: [
+      { flag: "Complex capital structure", severity: "major" },
+      { flag: "Oppressive debt terms", severity: "major" },
+      { flag: "Litigation liabilities", severity: "moderate" },
+      { flag: "Related-party transactions", severity: "moderate" },
+    ]
+  },
+  {
+    name: "Commercial",
+    icon: Store,
+    color: "text-yellow-500",
+    items: [
+      { flag: "Unrealistic peak sales models", severity: "major" },
+      { flag: "No market access strategy", severity: "major" },
+      { flag: "Reimbursement challenges", severity: "moderate" },
+      { flag: "Competitive threats", severity: "moderate" },
+    ]
+  },
+];
+
+// Post-Merger Integration Challenges
+const integrationFailureReasons = [
+  { reason: "Cultural mismatch", percentage: 30, severity: "critical" as const },
+  { reason: "Key employee departure", percentage: 25, severity: "critical" as const },
+  { reason: "Clinical program setbacks", percentage: 20, severity: "major" as const },
+  { reason: "Regulatory surprises", percentage: 15, severity: "major" as const },
+  { reason: "Commercial underperformance", percentage: 10, severity: "moderate" as const },
+  { reason: "Integration costs exceed expectations", percentage: 10, severity: "moderate" as const },
+];
+
+const integrationSuccessFactors = [
+  "Clear strategic rationale",
+  "Strong clinical data",
+  "Experienced acquired team stays",
+  "Realistic synergy expectations",
+  "Smooth FDA interactions",
+];
+
+// M&A Monitoring Sources
+const monitoringDataSources = [
+  { source: "SEC Filings", details: "13D, 13G (activist stakes), 8-K (material events)" },
+  { source: "Conference Presentations", details: "Management at investor conferences" },
+  { source: "Analyst Coverage", details: "Initiations, upgrades citing M&A" },
+  { source: "News", details: "Bloomberg, Reuters, BioPharma Dive, FierceBiotech" },
+  { source: "Clinical Trial Databases", details: "ClinicalTrials.gov (data readouts)" },
+  { source: "Patent Databases", details: "USPTO, EPO (freedom to operate)" },
+];
+
+const leadingIndicators = [
+  { indicator: "Activist investor 13D filing (>5% stake, pushing agenda)", bullish: true },
+  { indicator: "Strategic review announced", bullish: true },
+  { indicator: "CFO or CEO departure (often precedes deal)", bullish: true },
+  { indicator: "Hiring of M&A advisor (investment bank)", bullish: true },
+  { indicator: "Board changes (adding transaction experience)", bullish: true },
+  { indicator: "Partnership renegotiations", bullish: true },
+  { indicator: "Large insider buying", bullish: true },
+];
+
+// M&A Outlook 2025-2026
+const bullishFactors = [
+  "Big Pharma patent cliffs accelerating (Humira, Keytruda, others)",
+  "Record cash on Big Pharma balance sheets",
+  "Biotech valuations depressed (buying opportunity)",
+  "Successful 2023-2024 deals validate market",
+  "Obesity/GLP-1 mania creating competition",
+  "Gene therapy proving out (commercial validation)",
+  "Cell therapy off-the-shelf solutions maturing",
+];
+
+const bearishFactors = [
+  "Interest rates (though declining now)",
+  "IRA drug pricing concerns (lower ROI projections)",
+  "FDA scrutiny increasing",
+  "Failed Phase 3 trials damaging sector confidence",
+  "Geopolitical tensions (China partnerships)",
+];
+
+// M&A Probability Scoring Model
+interface MAProbabilityScore {
+  ticker: string;
+  name: string;
+  category: string;
+  stage: string;
+  marketCap: string;
+  clinicalDataScore: number; // 0-25
+  marketOpportunityScore: number; // 0-25
+  strategicFitScore: number; // 0-25
+  financialPositionScore: number; // 0-25
+  totalScore: number; // 0-100
+  rank: number;
+}
+
+// Calculate M&A probability scores for each company
+const calculateMAProbabilityScores = (companies: SmallCapCompany[]): MAProbabilityScore[] => {
+  const scoredCompanies = companies.map(company => {
+    // Clinical Data Score (0-25)
+    let clinicalDataScore = 0;
+    const stage = company.stage.toLowerCase();
+    if (stage.includes("approved") || stage.includes("commercial")) clinicalDataScore = 25;
+    else if (stage.includes("phase 3")) clinicalDataScore = 22;
+    else if (stage.includes("phase 2b")) clinicalDataScore = 18;
+    else if (stage.includes("phase 2")) clinicalDataScore = 15;
+    else if (stage.includes("phase 1/2")) clinicalDataScore = 12;
+    else if (stage.includes("phase 1")) clinicalDataScore = 8;
+    else clinicalDataScore = 4;
+    
+    // Bonus for breakthrough therapy, orphan status mentioned
+    if (company.whyTarget.toLowerCase().includes("breakthrough")) clinicalDataScore = Math.min(25, clinicalDataScore + 3);
+    if (company.whyTarget.toLowerCase().includes("orphan")) clinicalDataScore = Math.min(25, clinicalDataScore + 2);
+    
+    // Market Opportunity Score (0-25)
+    let marketOpportunityScore = 0;
+    const hotSectorNames = ["obesity", "metabolic", "nash", "glp-1", "immunology", "autoimmune", "oncology", "cns", "rare"];
+    const focusLower = company.focus.toLowerCase();
+    const categoryLower = company.category.toLowerCase();
+    hotSectorNames.forEach(sector => {
+      if (focusLower.includes(sector) || categoryLower.includes(sector)) {
+        marketOpportunityScore += 4;
+      }
+    });
+    marketOpportunityScore = Math.min(25, marketOpportunityScore);
+    
+    // Bonus for "large market", "unmet need", "first-in-class", "best-in-class"
+    if (company.whyTarget.toLowerCase().includes("large")) marketOpportunityScore = Math.min(25, marketOpportunityScore + 3);
+    if (company.whyTarget.toLowerCase().includes("unmet")) marketOpportunityScore = Math.min(25, marketOpportunityScore + 2);
+    if (company.whyTarget.toLowerCase().includes("first-in-class")) marketOpportunityScore = Math.min(25, marketOpportunityScore + 3);
+    if (company.whyTarget.toLowerCase().includes("best-in-class")) marketOpportunityScore = Math.min(25, marketOpportunityScore + 3);
+    
+    // Strategic Fit Score (0-25)
+    let strategicFitScore = 0;
+    if (company.whyTarget.toLowerCase().includes("platform")) strategicFitScore += 5;
+    if (company.whyTarget.toLowerCase().includes("partnership") || company.whyTarget.toLowerCase().includes("partner")) strategicFitScore += 4;
+    if (company.whyTarget.toLowerCase().includes("validated")) strategicFitScore += 4;
+    if (company.whyTarget.toLowerCase().includes("oral")) strategicFitScore += 3;
+    if (company.whyTarget.toLowerCase().includes("differentiated")) strategicFitScore += 3;
+    if (company.whyTarget.toLowerCase().includes("novel")) strategicFitScore += 2;
+    if (company.category === "Top M&A Targets 2025") strategicFitScore += 8;
+    strategicFitScore = Math.min(25, strategicFitScore);
+    
+    // Financial Position Score (0-25)
+    let financialPositionScore = 0;
+    const marketCapStr = company.marketCap;
+    // Sweet spot is $500M-$3B
+    if (marketCapStr.includes("500M") || marketCapStr.includes("700M") || marketCapStr.includes("800M")) {
+      financialPositionScore = 22;
+    } else if (marketCapStr.includes("1-2B") || marketCapStr.includes("1.5-3B") || marketCapStr.includes("2-4B")) {
+      financialPositionScore = 25;
+    } else if (marketCapStr.includes("3-5B") || marketCapStr.includes("4-7B")) {
+      financialPositionScore = 18;
+    } else if (marketCapStr.includes("200") || marketCapStr.includes("300") || marketCapStr.includes("400")) {
+      financialPositionScore = 20;
+    } else if (marketCapStr.includes("100") || marketCapStr.includes("50")) {
+      financialPositionScore = 15;
+    } else if (marketCapStr.includes("5-8B") || marketCapStr.includes("8-12B")) {
+      financialPositionScore = 10;
+    } else {
+      financialPositionScore = 12;
+    }
+    
+    // Penalty for notes suggesting already acquired or too large
+    if (company.note?.toLowerCase().includes("acquired")) financialPositionScore = 5;
+    if (company.note?.toLowerCase().includes("unlikely")) financialPositionScore = 8;
+    
+    const totalScore = clinicalDataScore + marketOpportunityScore + strategicFitScore + financialPositionScore;
+    
+    return {
+      ticker: company.ticker,
+      name: company.name,
+      category: company.category,
+      stage: company.stage,
+      marketCap: company.marketCap,
+      clinicalDataScore,
+      marketOpportunityScore,
+      strategicFitScore,
+      financialPositionScore,
+      totalScore,
+      rank: 0, // Will be set after sorting
+    };
+  });
+  
+  // Sort by total score and assign ranks
+  scoredCompanies.sort((a, b) => b.totalScore - a.totalScore);
+  scoredCompanies.forEach((c, idx) => {
+    c.rank = idx + 1;
+  });
+  
+  return scoredCompanies;
+};
+
 // Historical M&A deal data for visualization
 interface HistoricalMADeal {
   year: number;
@@ -396,7 +630,10 @@ export const Top50SmallCapFirms = () => {
     return Object.entries(ranges).map(([name, value]) => ({ name, value }));
   }, []);
 
-  // Historical M&A data calculations
+  // M&A Probability Scores
+  const maProbabilityScores = useMemo(() => {
+    return calculateMAProbabilityScores(companies);
+  }, []);
   const dealsByYear = useMemo(() => {
     const years = [2020, 2021, 2022, 2023, 2024];
     return years.map(year => {
@@ -551,22 +788,30 @@ export const Top50SmallCapFirms = () => {
 
       {/* View Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4 lg:w-[650px]">
+        <TabsList className="grid w-full grid-cols-6 lg:w-[900px]">
           <TabsTrigger value="list" className="gap-2">
             <Building2 className="h-4 w-4" />
-            Company List
+            <span className="hidden sm:inline">Companies</span>
           </TabsTrigger>
           <TabsTrigger value="charts" className="gap-2">
             <BarChart3 className="h-4 w-4" />
-            Market Charts
+            <span className="hidden sm:inline">Charts</span>
           </TabsTrigger>
           <TabsTrigger value="history" className="gap-2">
             <History className="h-4 w-4" />
-            M&A History
+            <span className="hidden sm:inline">M&A History</span>
+          </TabsTrigger>
+          <TabsTrigger value="redflags" className="gap-2">
+            <AlertTriangle className="h-4 w-4" />
+            <span className="hidden sm:inline">Red Flags</span>
+          </TabsTrigger>
+          <TabsTrigger value="scoring" className="gap-2">
+            <Trophy className="h-4 w-4" />
+            <span className="hidden sm:inline">M&A Scores</span>
           </TabsTrigger>
           <TabsTrigger value="compare" className="gap-2">
             <GitCompare className="h-4 w-4" />
-            Compare ({selectedForComparison.length})
+            <span className="hidden sm:inline">Compare ({selectedForComparison.length})</span>
           </TabsTrigger>
         </TabsList>
 
@@ -1247,6 +1492,463 @@ export const Top50SmallCapFirms = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* RED FLAGS TAB */}
+        <TabsContent value="redflags" className="space-y-6">
+          {/* Due Diligence Red Flags Header */}
+          <Card className="border-red-500/30 bg-gradient-to-br from-red-500/5 to-background">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-red-500">
+                <AlertTriangle className="h-6 w-6" />
+                M&A Due Diligence Red Flags
+              </CardTitle>
+              <CardDescription>Critical warning signs that could derail an acquisition or lead to failed integration</CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Red Flags by Category */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {dueDiligenceRedFlags.map(category => {
+              const Icon = category.icon;
+              return (
+                <Card key={category.name}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Icon className={`h-5 w-5 ${category.color}`} />
+                      {category.name} Red Flags
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {category.items.map((item, idx) => (
+                      <div key={idx} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
+                        <XCircle className={`h-5 w-5 mt-0.5 ${
+                          item.severity === 'critical' ? 'text-red-500' :
+                          item.severity === 'major' ? 'text-orange-500' : 'text-amber-500'
+                        }`} />
+                        <div className="flex-1">
+                          <p className="font-medium">{item.flag}</p>
+                          <Badge variant="outline" className={`mt-1 ${
+                            item.severity === 'critical' ? 'border-red-500/50 text-red-500' :
+                            item.severity === 'major' ? 'border-orange-500/50 text-orange-500' : 
+                            'border-amber-500/50 text-amber-500'
+                          }`}>
+                            {item.severity}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Post-Merger Integration Challenges */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-500">
+                  <AlertOctagon className="h-5 w-5" />
+                  Why M&A Fails
+                </CardTitle>
+                <CardDescription>Common reasons for post-merger integration failures</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={integrationFailureReasons} layout="vertical">
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis type="number" tickFormatter={(v) => `${v}%`} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                      <YAxis dataKey="reason" type="category" width={150} stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                      <Tooltip
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background border rounded-lg p-3 shadow-lg">
+                                <p className="font-semibold">{data.reason}</p>
+                                <p className="text-sm text-red-500">Failure Rate: {data.percentage}%</p>
+                                <Badge variant="outline" className={`mt-1 ${
+                                  data.severity === 'critical' ? 'text-red-500' : 
+                                  data.severity === 'major' ? 'text-orange-500' : 'text-amber-500'
+                                }`}>
+                                  {data.severity}
+                                </Badge>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Bar dataKey="percentage" radius={[0, 4, 4, 0]}>
+                        {integrationFailureReasons.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.severity === 'critical' ? 'hsl(0, 84%, 60%)' : 
+                                  entry.severity === 'major' ? 'hsl(24, 95%, 53%)' : 'hsl(45, 93%, 47%)'}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-green-500">
+                  <CheckCircle2 className="h-5 w-5" />
+                  Success Factors
+                </CardTitle>
+                <CardDescription>What makes M&A integration succeed</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {integrationSuccessFactors.map((factor, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    <p className="font-medium">{factor}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* M&A Monitoring Guide */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Search className="h-5 w-5 text-primary" />
+                  How to Monitor M&A Activity
+                </CardTitle>
+                <CardDescription>Key data sources for tracking potential deals</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Source</TableHead>
+                      <TableHead>What to Monitor</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {monitoringDataSources.map((source, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">{source.source}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{source.details}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                  Leading Indicators of M&A
+                </CardTitle>
+                <CardDescription>Early signals that a deal may be coming</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {leadingIndicators.map((indicator, idx) => (
+                  <div key={idx} className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg">
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <p className="text-sm">{indicator.indicator}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* M&A Outlook 2025-2026 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Biotech M&A Outlook 2025-2026
+              </CardTitle>
+              <CardDescription>Net Assessment: 2025-2026 will be active M&A years. Expect 15-25 deals {">"} $1B, 50-75 deals $100M-$1B.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <h4 className="font-semibold text-green-500 mb-3 flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Bullish Factors
+                  </h4>
+                  <div className="space-y-2">
+                    {bullishFactors.map((factor, idx) => (
+                      <div key={idx} className="flex items-start gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>{factor}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-red-500 mb-3 flex items-center gap-2">
+                    <XCircle className="h-4 w-4" />
+                    Bearish Factors
+                  </h4>
+                  <div className="space-y-2">
+                    {bearishFactors.map((factor, idx) => (
+                      <div key={idx} className="flex items-start gap-2 text-sm">
+                        <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                        <span>{factor}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* M&A SCORING TAB */}
+        <TabsContent value="scoring" className="space-y-6">
+          {/* Scoring Header */}
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-background">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-primary" />
+                M&A Probability Scoring Model
+              </CardTitle>
+              <CardDescription>
+                Companies ranked by likelihood of acquisition based on clinical data, market opportunity, strategic fit, and financial position (0-100 score)
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Top 10 M&A Targets */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-amber-500" />
+                Top 10 Most Likely M&A Targets (2025)
+              </CardTitle>
+              <CardDescription>Based on clinical data, market opportunity, strategic fit, and financial position</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                {maProbabilityScores.slice(0, 10).map((company, idx) => (
+                  <Card key={company.ticker} className={`${idx < 3 ? 'border-amber-500/50 bg-amber-500/5' : ''}`}>
+                    <CardContent className="pt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge variant={idx < 3 ? "default" : "secondary"} className={idx < 3 ? 'bg-amber-500' : ''}>
+                          #{company.rank}
+                        </Badge>
+                        <span className="text-2xl font-bold text-primary">{company.totalScore}</span>
+                      </div>
+                      <a 
+                        href={`https://finance.yahoo.com/quote/${company.ticker}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono font-bold text-primary hover:underline flex items-center gap-1"
+                      >
+                        {company.ticker}
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                      <p className="text-sm text-muted-foreground line-clamp-1">{company.name}</p>
+                      <Badge variant="outline" className="mt-2 text-xs">{company.category.split(' ')[0]}</Badge>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Scoring Breakdown Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Scale className="h-5 w-5 text-primary" />
+                Top 20 Companies - Score Breakdown
+              </CardTitle>
+              <CardDescription>Breakdown of M&A attractiveness scores by component</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[500px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={maProbabilityScores.slice(0, 20)} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis type="number" domain={[0, 100]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis dataKey="ticker" type="category" width={60} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <Tooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-background border rounded-lg p-3 shadow-lg">
+                              <p className="font-semibold">{data.ticker} - {data.name}</p>
+                              <p className="text-sm text-muted-foreground">{data.category}</p>
+                              <div className="mt-2 space-y-1 text-sm">
+                                <p>Clinical Data: <span className="font-bold text-blue-500">{data.clinicalDataScore}/25</span></p>
+                                <p>Market Opportunity: <span className="font-bold text-green-500">{data.marketOpportunityScore}/25</span></p>
+                                <p>Strategic Fit: <span className="font-bold text-purple-500">{data.strategicFitScore}/25</span></p>
+                                <p>Financial Position: <span className="font-bold text-amber-500">{data.financialPositionScore}/25</span></p>
+                                <p className="font-bold text-primary pt-1 border-t">Total: {data.totalScore}/100</p>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="clinicalDataScore" name="Clinical Data" stackId="a" fill="hsl(217, 91%, 60%)" />
+                    <Bar dataKey="marketOpportunityScore" name="Market Opportunity" stackId="a" fill="hsl(142, 71%, 45%)" />
+                    <Bar dataKey="strategicFitScore" name="Strategic Fit" stackId="a" fill="hsl(262, 83%, 58%)" />
+                    <Bar dataKey="financialPositionScore" name="Financial Position" stackId="a" fill="hsl(45, 93%, 47%)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Full Ranking Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-primary" />
+                Complete M&A Probability Rankings
+              </CardTitle>
+              <CardDescription>All 100 companies ranked by M&A probability score</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+                <Table>
+                  <TableHeader className="sticky top-0 bg-background z-10">
+                    <TableRow>
+                      <TableHead className="w-[60px]">Rank</TableHead>
+                      <TableHead className="w-[80px]">Ticker</TableHead>
+                      <TableHead>Company</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Stage</TableHead>
+                      <TableHead className="text-center">Clinical</TableHead>
+                      <TableHead className="text-center">Market</TableHead>
+                      <TableHead className="text-center">Strategic</TableHead>
+                      <TableHead className="text-center">Financial</TableHead>
+                      <TableHead className="text-center font-bold">Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {maProbabilityScores.map((company) => (
+                      <TableRow key={company.ticker} className={company.rank <= 10 ? 'bg-amber-500/5' : ''}>
+                        <TableCell>
+                          <Badge variant={company.rank <= 3 ? "default" : company.rank <= 10 ? "secondary" : "outline"} 
+                                 className={company.rank <= 3 ? 'bg-amber-500' : ''}>
+                            #{company.rank}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <a 
+                            href={`https://finance.yahoo.com/quote/${company.ticker}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono font-bold text-primary hover:underline flex items-center gap-1"
+                          >
+                            {company.ticker}
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        </TableCell>
+                        <TableCell className="font-medium">{company.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-xs">{company.category.split('/')[0].trim()}</Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{company.stage}</TableCell>
+                        <TableCell className="text-center">
+                          <span className={`font-medium ${company.clinicalDataScore >= 20 ? 'text-green-500' : company.clinicalDataScore >= 15 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                            {company.clinicalDataScore}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className={`font-medium ${company.marketOpportunityScore >= 20 ? 'text-green-500' : company.marketOpportunityScore >= 15 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                            {company.marketOpportunityScore}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className={`font-medium ${company.strategicFitScore >= 20 ? 'text-green-500' : company.strategicFitScore >= 15 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                            {company.strategicFitScore}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className={`font-medium ${company.financialPositionScore >= 20 ? 'text-green-500' : company.financialPositionScore >= 15 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                            {company.financialPositionScore}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className={`font-bold text-lg ${company.totalScore >= 80 ? 'text-green-500' : company.totalScore >= 60 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+                            {company.totalScore}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Scoring Methodology */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Scoring Methodology</CardTitle>
+              <CardDescription>How each component is scored (0-25 points each, max 100 total)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                  <h4 className="font-semibold text-blue-500 mb-2">Clinical Data (0-25)</h4>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Approved/Commercial: 25</li>
+                    <li>• Phase 3: 22</li>
+                    <li>• Phase 2b: 18</li>
+                    <li>• Phase 2: 15</li>
+                    <li>• Phase 1/2: 12</li>
+                    <li>• +3 for BTD status</li>
+                    <li>• +2 for orphan designation</li>
+                  </ul>
+                </div>
+                <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                  <h4 className="font-semibold text-green-500 mb-2">Market Opportunity (0-25)</h4>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Hot sectors: +4 each</li>
+                    <li>• (Obesity, NASH, GLP-1, etc.)</li>
+                    <li>• Large market: +3</li>
+                    <li>• Unmet need: +2</li>
+                    <li>• First-in-class: +3</li>
+                    <li>• Best-in-class: +3</li>
+                  </ul>
+                </div>
+                <div className="p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                  <h4 className="font-semibold text-purple-500 mb-2">Strategic Fit (0-25)</h4>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Platform company: +5</li>
+                    <li>• Existing partnership: +4</li>
+                    <li>• Validated mechanism: +4</li>
+                    <li>• Oral formulation: +3</li>
+                    <li>• Differentiated: +3</li>
+                    <li>• Top M&A Target 2025: +8</li>
+                  </ul>
+                </div>
+                <div className="p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                  <h4 className="font-semibold text-amber-500 mb-2">Financial Position (0-25)</h4>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Sweet spot ($1-4B): 25</li>
+                    <li>• Good range ($500M-$700M): 22</li>
+                    <li>• Smaller ($200-400M): 20</li>
+                    <li>• Large ($3-5B): 18</li>
+                    <li>• Very small ({"<"}$200M): 15</li>
+                    <li>• Too large or acquired: 5-10</li>
+                  </ul>
+                </div>
               </div>
             </CardContent>
           </Card>
