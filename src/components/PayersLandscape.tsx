@@ -4,57 +4,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  Globe, 
-  Building2, 
-  DollarSign, 
-  Shield, 
-  Users, 
-  TrendingUp, 
-  Search,
-  ArrowUpDown,
-  ChevronDown,
-  ChevronUp,
-  Landmark,
-  Stethoscope,
-  Pill,
-  MapPin,
-  Clock,
-  CreditCard,
-  Scale,
-  FileText,
-  Download
+  Globe, Building2, DollarSign, Shield, Users, TrendingUp, Search, ArrowUpDown,
+  ChevronDown, ChevronUp, Landmark, Stethoscope, Pill, MapPin, Clock, CreditCard,
+  Scale, FileText, Download
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { exportPayersToExcel, exportPayersPDF } from "@/lib/payersExport";
 
 // ============ DATA TYPES ============
-interface PayerDetail {
-  aspect: string;
-  detail: string;
-}
-
-interface Payer {
-  name: string;
-  tier: string;
-  details: PayerDetail[];
-}
-
+interface PayerDetail { aspect: string; detail: string; }
+interface Payer { name: string; tier: string; details: PayerDetail[]; }
 interface CountrySystem {
-  country: string;
-  flag: string;
-  region: string;
-  systemType: string;
-  details: PayerDetail[];
-  payers?: Payer[];
+  country: string; flag: string; region: string; systemType: string;
+  details: PayerDetail[]; payers?: Payer[];
   subSections?: { title: string; details: PayerDetail[] }[];
 }
 
 // ============ US PAYERS DATA ============
 const usPayers: Payer[] = [
   {
-    name: "UnitedHealth Group / UnitedHealthcare",
-    tier: "Tier 1: Mega-Payer",
+    name: "UnitedHealth Group / UnitedHealthcare", tier: "Tier 1: Mega-Payer",
     details: [
       { aspect: "Revenue", detail: "$324 billion (2022)" },
       { aspect: "Covered Lives", detail: "50+ million (across all products)" },
@@ -72,8 +42,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "Elevance Health (formerly Anthem)",
-    tier: "Tier 1: Mega-Payer",
+    name: "Elevance Health (formerly Anthem)", tier: "Tier 1: Mega-Payer",
     details: [
       { aspect: "Revenue", detail: "$40.8 billion (2023)" },
       { aspect: "Covered Lives", detail: "6.4+ million" },
@@ -89,8 +58,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "CVS Health / Aetna",
-    tier: "Tier 1: Mega-Payer",
+    name: "CVS Health / Aetna", tier: "Tier 1: Mega-Payer",
     details: [
       { aspect: "Revenue", detail: "$300+ billion (combined CVS + Aetna)" },
       { aspect: "Covered Lives", detail: "30+ million" },
@@ -105,8 +73,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "Cigna / Express Scripts",
-    tier: "Tier 1: Mega-Payer",
+    name: "Cigna / Express Scripts", tier: "Tier 1: Mega-Payer",
     details: [
       { aspect: "Revenue", detail: "~$180 billion (Cigna + Express Scripts parent)" },
       { aspect: "Covered Lives", detail: "20+ million health insurance" },
@@ -119,8 +86,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "Health Care Service Corporation (HCSC)",
-    tier: "Tier 1: Mega-Payer",
+    name: "Health Care Service Corporation (HCSC)", tier: "Tier 1: Mega-Payer",
     details: [
       { aspect: "Coverage", detail: "Illinois, Oklahoma, Texas, New Mexico (BCBS plans)" },
       { aspect: "Covered Lives", detail: "5.2+ million" },
@@ -130,8 +96,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "Humana",
-    tier: "Tier 2: Specialty/Niche",
+    name: "Humana", tier: "Tier 2: Specialty/Niche",
     details: [
       { aspect: "Revenue", detail: "$110.55 billion (2024)" },
       { aspect: "Covered Lives", detail: "14.8+ million medical members" },
@@ -145,8 +110,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "Centene",
-    tier: "Tier 2: Specialty/Niche",
+    name: "Centene", tier: "Tier 2: Specialty/Niche",
     details: [
       { aspect: "Revenue", detail: "$35-40 billion" },
       { aspect: "Covered Lives", detail: "25+ million (majority Medicaid)" },
@@ -160,8 +124,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "Molina Healthcare",
-    tier: "Tier 2: Specialty/Niche",
+    name: "Molina Healthcare", tier: "Tier 2: Specialty/Niche",
     details: [
       { aspect: "Revenue", detail: "$35.84 billion (2024)" },
       { aspect: "Covered Lives", detail: "5.8+ million" },
@@ -174,8 +137,7 @@ const usPayers: Payer[] = [
     ],
   },
   {
-    name: "Kaiser Permanente",
-    tier: "Tier 2: Integrated Delivery",
+    name: "Kaiser Permanente", tier: "Tier 2: Integrated Delivery",
     details: [
       { aspect: "Covered Lives", detail: "12.5+ million" },
       { aspect: "Market Share", detail: "6% nationally" },
@@ -183,6 +145,7 @@ const usPayers: Payer[] = [
       { aspect: "Geographic Footprint", detail: "8 states (CA, CO, GA, HI, MD, OH, OR, WA)" },
       { aspect: "Financial Model", detail: "Members pay premiums; Kaiser owns and operates hospitals/clinics" },
       { aspect: "Control", detail: "Own payment and provider systems = direct alignment of financial incentives" },
+      { aspect: "Internal Model", detail: "Members pay by premium; providers salaried or capitated" },
       { aspect: "Average Payment to Providers", detail: "Salaried physician model or capitated per-member rates" },
     ],
   },
@@ -190,15 +153,17 @@ const usPayers: Payer[] = [
 
 const usGovernmentPrograms = [
   {
-    name: "Medicare (CMS)",
+    name: "Medicare (Centers for Medicare & Medicaid Services - CMS)",
     details: [
       { aspect: "Type", detail: "Federal government single-payer program (age 65+, disabled, ESRD)" },
       { aspect: "Beneficiaries", detail: "68 million (as of 2025)" },
       { aspect: "Program Components", detail: "Part A (hospital), Part B (physician), Part D (drugs), Part C (MA private plans)" },
       { aspect: "Funding Source", detail: "Government (payroll taxes 2.9%, general revenue)" },
       { aspect: "Payment Terms", detail: "14-30 days (very reliable; government program)" },
+      { aspect: "Reimbursement Method", detail: "Prospective Payment System (PPS): DRG-based hospital rates; RBRVS physician fee schedule" },
       { aspect: "Hospital Payment", detail: "DRG (Diagnosis-Related Group) bundled payment per admission" },
       { aspect: "Physician Payment", detail: "RBRVS (Resource-Based Relative Value Scale) fee schedule; conversion factor adjusted annually" },
+      { aspect: "Budget Mechanism", detail: "Annual Congressional appropriations; mandatory spending" },
       { aspect: "Payment Pressure", detail: "Reimbursement rates typically LOWER than commercial (70-80% of commercial rates)" },
       { aspect: "Growth Rate", detail: "Part A: 3.2% CAGR; Part B: 2.5% CAGR (2024-2030 projection)" },
     ],
@@ -208,12 +173,15 @@ const usGovernmentPrograms = [
     details: [
       { aspect: "Type", detail: "Federal-state partnership (joint funding)" },
       { aspect: "Beneficiaries", detail: "90+ million (post-expansion)" },
+      { aspect: "Enrollment", detail: "Varies by state expansion status" },
       { aspect: "Funding Source", detail: "Federal government (50-77% depending on state) + State government (23-50%)" },
-      { aspect: "Payout Model", detail: "Managed Care (72%): state contracts with MCOs (capitation model)" },
+      { aspect: "Payout Model", detail: "Managed Care (72% of beneficiaries): state contracts with MCOs (capitation model)" },
       { aspect: "MCO Capitation", detail: "Fixed PMPM (per-member-per-month) payment to Medicaid MCOs" },
-      { aspect: "Fee-for-Service", detail: "28% of Medicaid: state directly pays providers" },
+      { aspect: "Fee-for-Service (FFS)", detail: "28% of Medicaid: state directly pays providers" },
       { aspect: "Payment Terms", detail: "Highly variable by state: 30-60 days average" },
       { aspect: "Reimbursement Rates", detail: "State-defined: typically LOWEST of all payers (40-60% of commercial)" },
+      { aspect: "Budget Mechanism", detail: "State-dependent; annual budget cycles" },
+      { aspect: "Prior Authorization", detail: "Extensive (MCOs and some FFS states)" },
       { aspect: "Medicaid MCO Spending", detail: "$376+ billion in FY2021 (52% of total Medicaid spend)" },
       { aspect: "Top MCO Operators", detail: "Centene (largest), Molina, Elevance, UnitedHealth, CVS Health" },
     ],
@@ -230,95 +198,122 @@ const usPBMs = [
 // ============ EUROPEAN DATA ============
 const europeanSystems: CountrySystem[] = [
   {
-    country: "United Kingdom",
-    flag: "🇬🇧",
-    region: "Europe",
+    country: "United Kingdom", flag: "🇬🇧", region: "Europe",
     systemType: "Single-payer, government-run Beveridge model",
     details: [
       { aspect: "Coverage", detail: "Universal (>99% population covered)" },
       { aspect: "Funding Source", detail: "Taxation (primarily income tax; dedicated 0.2% National Insurance increase, 2022)" },
       { aspect: "Annual Budget (2024-25)", detail: "£168 billion allocated to NHS" },
-      { aspect: "Patient Cost", detail: "Free at point of use (except prescriptions, dental, vision)" },
+      { aspect: "Patient Cost", detail: "Free at point of use (except prescriptions, dental, vision - modest co-pays)" },
+      { aspect: "Payer Structure", detail: "NHS England (national), devolved systems (Scotland, Wales, N. Ireland)" },
+      { aspect: "Key Payers", detail: "NHS Trusts (hospital systems), GP Practices (primary care)" },
+      { aspect: "Payment Model to Providers", detail: "Capitated + activity-based funding mix" },
       { aspect: "Hospital Payment", detail: "National Tariff (fixed DRG-like rates); some block contracts" },
-      { aspect: "GP Payment", detail: "Capitation (per registered patient) + quality bonuses (QOF)" },
-      { aspect: "NICE Assessment", detail: "Cost-effectiveness threshold £20-30K/QALY" },
+      { aspect: "GP Payment", detail: "Capitation (per registered patient) + quality bonuses (QOF) + performance incentives" },
+      { aspect: "Prescribing", detail: "NHS price controls; manufacturers negotiate with NICE" },
+      { aspect: "NICE Assessment", detail: "Appraisal of new drugs/devices for formulary inclusion; cost-effectiveness threshold £20-30K/QALY" },
       { aspect: "Payment Terms", detail: "Monthly capitation to practices; quarterly/annual to trusts" },
       { aspect: "Private Sector Role", detail: "Supplemental (10.5% population has private voluntary insurance)" },
+      { aspect: "Decision Authority", detail: "NICE (health technology assessment); NHS England (formulary/contracts)" },
+      { aspect: "Budget Pressure", detail: "Chronic underfunding; 3-5 year spending plans defined by Parliament" },
+      { aspect: "Waiting Times", detail: "Long for elective procedures (median 2-3 months for some procedures)" },
     ],
   },
   {
-    country: "Germany",
-    flag: "🇩🇪",
-    region: "Europe",
-    systemType: "Multi-payer Bismarck model; sickness funds",
+    country: "Germany", flag: "🇩🇪", region: "Europe",
+    systemType: "Multi-payer Bismarck model; sickness funds (Krankenkassen)",
     details: [
-      { aspect: "Coverage", detail: "~99% (85% public sickness funds; 15% private)" },
-      { aspect: "Payer Count", detail: "124 non-profit sickness funds (occupational/regional)" },
-      { aspect: "Funding Source", detail: "Employer-employee contributions (15% of salary, split equally) + gov subsidies" },
-      { aspect: "Average Contribution", detail: "~15% of monthly salary (€350-400/month avg)" },
-      { aspect: "Hospital Payment", detail: "G-DRG system (standardized nationally)" },
+      { aspect: "Coverage", detail: "~99% population (85% public sickness funds; 15% private)" },
+      { aspect: "Payer Count", detail: "124 non-profit sickness funds (small, often occupational/regional)" },
+      { aspect: "Funding Source", detail: "Employer-employee contributions (15% of salary, split equally) + government subsidies" },
+      { aspect: "Average Contribution", detail: "~15% of monthly salary (€350-400/month average worker)" },
+      { aspect: "Payer Organizations", detail: "AOK (largest multi-regional), Techniker Krankenkasse, Barmer, etc." },
+      { aspect: "Risk Pooling", detail: "Central risk adjustment: funds redistributed by sickness profile" },
+      { aspect: "Payment to Providers", detail: "DRG system for hospitals (2004 G-DRG reform); FFS for ambulatory" },
+      { aspect: "Hospital Payment", detail: "Base rate per DRG + quality/efficiency adjustments; high standardization" },
       { aspect: "Physician Payment", detail: "Fee-for-service (ambulatory); government-set fee schedule" },
-      { aspect: "IQWiG Threshold", detail: "No fixed threshold (~€80K-100K/QALY implied)" },
-      { aspect: "AMNOG Process", detail: "Manufacturers negotiate rebates within 6 months of launch" },
-      { aspect: "Payment Terms", detail: "Quarterly settlements for capitated funds; FFS 30-45 days" },
-      { aspect: "Patient Co-Pays", detail: "€10 per prescription (capped at 2% of gross income)" },
+      { aspect: "Decision Authority", detail: "G-BA (Gemeinsamer Bundesausschuss) = joint committee of insurers, providers, patients" },
+      { aspect: "IQWiG Assessment", detail: "Health Institute for Quality and Efficiency (stringent cost-effectiveness reviews)" },
+      { aspect: "Cost-Effectiveness Threshold", detail: "No fixed threshold (IQWiG: flexibility case-by-case, but ~€80K-100K/QALY implied)" },
+      { aspect: "AMNOG Process", detail: "Arzneimittel Neue Optionen Medizin: manufacturers negotiate rebates within 6 months of launch" },
+      { aspect: "Payment Terms", detail: "Quarterly settlements for capitated funds; FFS invoicing 30-45 days" },
+      { aspect: "Patient Co-Pays", detail: "€10 per prescription (capped at 2% of gross income; chronic illness exemptions)" },
+      { aspect: "Budget Mechanism", detail: "Annual target spending growth negotiated between insurers + providers; deficit sharing" },
     ],
   },
   {
-    country: "France",
-    flag: "🇫🇷",
-    region: "Europe",
-    systemType: "Bismarck social insurance with Mutuelles",
+    country: "France", flag: "🇫🇷", region: "Europe",
+    systemType: "Bismarck social insurance (Protection Maladie Universelle - PUMA)",
     details: [
-      { aspect: "Coverage", detail: "~100% universal (mandatory scheme)" },
-      { aspect: "Primary Payer", detail: "CNAMTS (main social health insurance)" },
-      { aspect: "Secondary Payers", detail: "Mutuelles (~90% population has one)" },
+      { aspect: "Coverage", detail: "~100% universal coverage through mandatory scheme" },
+      { aspect: "Primary Payer", detail: "CNAMTS (Caisse Nationale de l'Assurance Maladie des Travailleurs Salariés) - main social health insurance" },
+      { aspect: "Secondary Payers", detail: "Mutuelles (semi-private supplemental insurers, ~90% population has one)" },
+      { aspect: "Funding Source", detail: "Payroll deductions + government subsidies (for unemployed, elderly)" },
       { aspect: "CNAMTS Budget (2024)", detail: "€206 billion" },
       { aspect: "Contribution Rate", detail: "8% employee + 8% employer (16% total)" },
-      { aspect: "Payment Terms", detail: "5 days reimbursement via Carte Vitale; provider 30-45 days" },
-      { aspect: "Hospital Payment", detail: "T2A (activity-based payment similar to DRG)" },
-      { aspect: "GP Gatekeeper", detail: "Yes; required referral for specialist access" },
+      { aspect: "Patient Payment Model", detail: "Smart card (Carte Vitale): state reimburses 70-100% depending on condition; patient pays balance upfront or to mutuelle" },
+      { aspect: "Payment Terms", detail: "5 days for reimbursement to patient (via Carte Vitale); provider invoicing 30-45 days" },
+      { aspect: "Hospital Payment", detail: "Tariff (T2A - activity-based payment similar to DRG); base + adjustments" },
+      { aspect: "Physician Payment", detail: "FFS with government-negotiated fees; specialists typically charge higher (balance billing common)" },
+      { aspect: "GP Gatekeeper", detail: "Yes; required referral for specialist access (except some specialties)" },
+      { aspect: "Pharmaceutical Pricing", detail: "Government negotiates prices; ANSM (National Medicines Authority) reviews safety/efficacy" },
+      { aspect: "Budget Pressure", detail: "Chronic deficits; government cost controls; reduced reimbursement rates over time" },
+      { aspect: "Mutuelle Role", detail: "Private supplemental insurers cover co-pays, balance billing; semi-regulated, non-profit primarily" },
+      { aspect: "Decision Authority", detail: "CNAMTS (coverage/pricing); Government (budget caps); ALTA (pharmaceutical committee)" },
     ],
   },
   {
-    country: "Netherlands",
-    flag: "🇳🇱",
-    region: "Europe",
-    systemType: "Bismarck-based privately delivered (regulated)",
+    country: "Netherlands", flag: "🇳🇱", region: "Europe",
+    systemType: "Bismarck-based but privately delivered (private insurers, government-regulated)",
     details: [
       { aspect: "Coverage", detail: "~100% mandatory basic private health insurance" },
-      { aspect: "Payers", detail: "4-5 major private insurers (regulated): Achmea, VGZ, others" },
-      { aspect: "Funding Source", detail: "Individual premiums (€100-300/month) + gov subsidies" },
-      { aspect: "Hospital Payment", detail: "DRG-based with competition-driven pricing" },
-      { aspect: "Co-Pays", detail: "Low annual deductible (~€385); capped at 2% income" },
-      { aspect: "Supplemental Insurance", detail: "~70% population buys private top-up" },
+      { aspect: "Payers", detail: "4-5 major private insurers (regulated): Ziekenhuisverzekeraar, Achmea, VGZ, others" },
+      { aspect: "Funding Source", detail: "Individual premiums (€100-300/month) + government subsidies for low-income" },
+      { aspect: "Mandatory Insurance", detail: "Requirement for all residents 18+; penalty for non-compliance" },
+      { aspect: "Benefit Package", detail: "Government-defined minimum benefit package; insurers must offer" },
+      { aspect: "Risk Adjustment", detail: "Central risk equalization: funds redistributed by health risk profile" },
+      { aspect: "Payment to Providers", detail: "Mix: DRG for hospital admission + FFS for ambulatory" },
+      { aspect: "Hospital Payment", detail: "DRG-based (Netherlands adapted DRG system); competition-driven pricing some procedures" },
+      { aspect: "Physician Payment", detail: "Capitation (GPs) + FFS (specialists)" },
+      { aspect: "Co-Pays", detail: "Low annual deductible (~€385); modest co-pays capped at 2% income" },
+      { aspect: "Competition", detail: "Insurers compete on price/quality; consumers can switch (annual open enrollment)" },
+      { aspect: "Payment Terms", detail: "Monthly capitation to GPs; quarterly DRG settlements to hospitals" },
+      { aspect: "Supplemental Insurance", detail: "~70% population buys private top-up for amenities (private room, dental, vision)" },
     ],
   },
   {
-    country: "Spain",
-    flag: "🇪🇸",
-    region: "Europe",
-    systemType: "Single-payer, publicly-funded (NHS-like)",
+    country: "Spain", flag: "🇪🇸", region: "Europe",
+    systemType: "Single-payer, publicly-funded (similar to NHS)",
     details: [
-      { aspect: "Coverage", detail: "~100% universal" },
-      { aspect: "Payer", detail: "Regional Health Services in 17 autonomous communities" },
-      { aspect: "Patient Cost", detail: "Free at point of use (prescriptions €3-10)" },
-      { aspect: "Decentralization", detail: "Regional variation in quality/access" },
-      { aspect: "Private Sector", detail: "~18% population has private insurance" },
+      { aspect: "Coverage", detail: "~100% universal (legal/undocumented residents get emergency only since 2012)" },
+      { aspect: "Payer", detail: "Regional Health Services (Consejerías de Salud) in 17 autonomous communities" },
+      { aspect: "Funding Source", detail: "Taxation + government budget allocations" },
+      { aspect: "Patient Cost", detail: "Free at point of use (minor co-pays: prescriptions €3-10 depending on age)" },
+      { aspect: "Decentralization", detail: "Regional variation in quality/access (some regions superior)" },
+      { aspect: "Payment to Providers", detail: "Mostly salary-based (public hospitals); some FFS (private contracted)" },
+      { aspect: "Hospital Payment", detail: "Capitated regional budgets; internal allocation by regional health authorities" },
+      { aspect: "Physician Payment", detail: "Salaried (most are public employees)" },
+      { aspect: "Private Sector", detail: "~18% population has private insurance (supplemental, not replacement)" },
+      { aspect: "Payment Terms", detail: "Annual capitated budgets to regions; monthly to facilities" },
+      { aspect: "Decision Authority", detail: "Regional health authorities + Ministry of Health (national standards)" },
+      { aspect: "Generic Prescribing", detail: "Encouraged; reference pricing system for generics" },
     ],
   },
   {
-    country: "Italy",
-    flag: "🇮🇹",
-    region: "Europe",
-    systemType: "Single-payer (SSN - Servizio Sanitario Nazionale)",
+    country: "Italy", flag: "🇮🇹", region: "Europe",
+    systemType: "Single-payer (Servizio Sanitario Nazionale - SSN)",
     details: [
-      { aspect: "Coverage", detail: "~100% universal" },
-      { aspect: "Structure", detail: "20 regional health services" },
-      { aspect: "Patient Cost", detail: "Mostly free (co-pays by income: €5-25)" },
-      { aspect: "Hospital Payment", detail: "Regional DRG-like system" },
-      { aspect: "Private Sector", detail: "~12% has private supplemental" },
-      { aspect: "Regional Variation", detail: "North better-funded than South" },
+      { aspect: "Coverage", detail: "~100% universal (residents)" },
+      { aspect: "Payer Structure", detail: "Regional variation: 20 regional health services" },
+      { aspect: "Funding Source", detail: "Taxation + government budget allocations" },
+      { aspect: "Patient Cost", detail: "Mostly free (minor co-pays by income level: €5-25 per visit; prescriptions); regional variation" },
+      { aspect: "Payment to Providers", detail: "Mix: capitation (primary care) + DRG (hospital) + FFS (specialists)" },
+      { aspect: "Hospital Payment", detail: "Regional DRG-like system (variable by region)" },
+      { aspect: "Private Sector", detail: "~12% population has private supplemental insurance" },
+      { aspect: "Regional Autonomy", detail: "Significant: wealthy regions (North) better-funded than South" },
+      { aspect: "Decision Authority", detail: "Regional health authorities; Ministry of Health (national standards)" },
+      { aspect: "Waiting Times", detail: "Variable by region; North shorter (2-4 weeks); South longer (8-12 weeks+)" },
+      { aspect: "Payment Terms", detail: "Annual capitated budgets to regions; quarterly to facilities" },
     ],
   },
 ];
@@ -326,92 +321,105 @@ const europeanSystems: CountrySystem[] = [
 // ============ APAC & EMERGING MARKETS ============
 const apacSystems: CountrySystem[] = [
   {
-    country: "Canada",
-    flag: "🇨🇦",
-    region: "Americas",
+    country: "Canada", flag: "🇨🇦", region: "Americas",
     systemType: "Single-payer, government-run (10 provinces + 3 territories)",
     details: [
       { aspect: "Coverage", detail: "~100% universal (medically necessary services)" },
-      { aspect: "Payer", detail: "Provincial Health Ministries" },
-      { aspect: "Funding Source", detail: "Provincial taxation + federal transfer payments" },
-      { aspect: "Annual Budget (Ontario 2024-25)", detail: "$70+ billion" },
-      { aspect: "Patient Cost", detail: "Free at point of use for physician/hospital; drugs mostly private" },
-      { aspect: "Hospital Payment", detail: "Global capitated annual budgets per hospital" },
-      { aspect: "CADTH Assessment", detail: "No fixed cost-effectiveness threshold" },
-      { aspect: "Private Supplement", detail: "~60% population for dental, vision, drugs" },
-      { aspect: "Prescription Drugs", detail: "Out-of-pocket or private insurance primary" },
+      { aspect: "Payer", detail: "Provincial Health Ministries (e.g., Ontario Health Services, etc.)" },
+      { aspect: "Funding Source", detail: "Provincial taxation + federal transfer payments (matching basis)" },
+      { aspect: "Annual Budget (Ontario 2024-25)", detail: "$70+ billion (largest province)" },
+      { aspect: "Patient Cost", detail: "Free at point of use for physician/hospital care; drugs mostly private responsibility" },
+      { aspect: "Payment Model", detail: "Capitation to physicians (primary care) + FFS (specialist); hospital global budgets" },
+      { aspect: "Hospital Payment", detail: "Global capitated annual budgets per hospital (with case-mix adjustments)" },
+      { aspect: "Physician Payment", detail: "FFS with provincial fee schedule (negotiated); caps on billing" },
+      { aspect: "Pharmaceutical", detail: "Provincial formularies; coverage through private insurance or out-of-pocket" },
+      { aspect: "CADTH Assessment", detail: "Canadian Agency for Drugs & Technologies in Health; no fixed cost-effectiveness threshold" },
+      { aspect: "Payment Terms", detail: "Monthly capitation to physicians; quarterly hospital settlements" },
+      { aspect: "Private Supplement", detail: "Employer-based supplemental insurance (~60% population) for dental, vision, drugs" },
+      { aspect: "Decision Authority", detail: "CADTH (health technology assessment); provincial health ministries (formulary)" },
+      { aspect: "Budget Mechanism", detail: "Annual provincial budgets; fixed spending growth rates (typically 2-3% CAGR)" },
+      { aspect: "Prescription Drugs", detail: "Out-of-pocket or private insurance primary; limited public coverage (low-income programs)" },
     ],
   },
   {
-    country: "Australia",
-    flag: "🇦🇺",
-    region: "APAC",
+    country: "Australia", flag: "🇦🇺", region: "APAC",
     systemType: "Mixed: government single-payer + private insurance",
     details: [
-      { aspect: "Coverage", detail: "~100% universal (Medicare); 47% also have private (2024)" },
+      { aspect: "Coverage", detail: "~100% universal (Medicare for publicly-funded care); 47% also have private insurance (2024)" },
+      { aspect: "Primary Payer", detail: "Medicare (government): universal coverage managed by Services Australia" },
       { aspect: "Medicare Budget (2024-25)", detail: "AUD $34.5 billion" },
-      { aspect: "Patient Cost", detail: "Small co-pays: GP ~$20-35; prescription $5-10" },
-      { aspect: "PBAC Assessment", detail: "Cost-effectiveness threshold AUD $50K/QALY" },
-      { aspect: "Payment Terms", detail: "Medicare rebate: 10-14 days; private: 10-21 days" },
+      { aspect: "Patient Cost", detail: "Small co-pays: GP visit (patient pays ~$20-35; Medicare rebates ~$40-50); prescription $5-10" },
+      { aspect: "Payment Model", detail: "FFS to providers with rebate caps; hospital DRG-like (Diagnosis-Related Groups)" },
+      { aspect: "Private Insurance", detail: "Complementary: covers co-gaps, private hospital choice, dentistry, vision" },
+      { aspect: "Hospital Payment", detail: "Public hospitals: casemix-adjusted block grants; private: insurer negotiations" },
+      { aspect: "Physician Payment", detail: "FFS with Medicare rebate schedule (providers can charge above rebate = balance billing)" },
+      { aspect: "PBAC Assessment", detail: "Pharmaceutical Benefits Advisory Committee; cost-effectiveness threshold AUD $50K/QALY" },
+      { aspect: "Payment Terms", detail: "Medicare rebate: 10-14 days processing; private insurer claims: 10-21 days" },
+      { aspect: "Decision Authority", detail: "PBAC (pharmaceutical); Medicare (coverage); state health departments" },
+      { aspect: "Budget Mechanism", detail: "Annual Australian Government budget allocation; PBS (pharmaceutical) price negotiations" },
     ],
   },
   {
-    country: "Japan",
-    flag: "🇯🇵",
-    region: "APAC",
-    systemType: "Bismarck multi-payer (employment-based + government)",
+    country: "Japan", flag: "🇯🇵", region: "APAC",
+    systemType: "Bismarck multi-payer (employment-based + government schemes for unemployed/elderly)",
     details: [
       { aspect: "Coverage", detail: "~100% universal" },
-      { aspect: "Payers", detail: "1,500+ insurance societies" },
-      { aspect: "Funding Source", detail: "Employer-employee contributions (8-10%) + gov subsidies" },
-      { aspect: "Patient Co-Pay", detail: "30% (working-age); 10% (elderly 70+, low-income)" },
-      { aspect: "Hospital Payment", detail: "DPC system (Japanese version of DRG)" },
-      { aspect: "Payment Terms", detail: "Monthly invoicing; settlement 45-60 days" },
+      { aspect: "Payers", detail: "1,500+ insurance societies (employment-based) + Kokumin Kenko Hoken (national insurance for self-employed/unemployed)" },
+      { aspect: "Funding Source", detail: "Employer-employee contributions (8-10% total) + government subsidies" },
+      { aspect: "Patient Co-Pay", detail: "30% co-pay (working-age); 10% (elderly 70+, low-income)" },
+      { aspect: "Hospital Payment", detail: "Diagnostic Procedure Combination (DPC) system (Japanese version of DRG, similar structure)" },
+      { aspect: "Physician Payment", detail: "FFS with government-negotiated fee schedule (rebased every 2 years)" },
+      { aspect: "Drug Approval/Pricing", detail: "PMDA (regulatory); MHLW (pricing); reference pricing system" },
+      { aspect: "Payment Terms", detail: "Monthly invoicing; settlement typically 45-60 days" },
+      { aspect: "Decision Authority", detail: "Ministry of Health, Labour & Welfare (MHLW); Central Social Insurance Council" },
       { aspect: "Generic Prescribing", detail: "Encouraged; generic prices typically 70% of brand" },
+      { aspect: "Aging Population Impact", detail: "Healthcare spending rising 3-4% annually; cost control emphasis" },
     ],
   },
   {
-    country: "South Korea",
-    flag: "🇰🇷",
-    region: "APAC",
-    systemType: "Unified National Health Insurance (since 2000)",
+    country: "South Korea", flag: "🇰🇷", region: "APAC",
+    systemType: "Multi-payer bismarck model (unified National Health Insurance since 2000)",
     details: [
       { aspect: "Coverage", detail: "~100% universal" },
-      { aspect: "Primary Payer", detail: "NHIS (unified since merger of 350+ societies)" },
-      { aspect: "Funding Source", detail: "Employer-employee contributions (6.12%) + gov subsidies (20%)" },
+      { aspect: "Primary Payer", detail: "National Health Insurance Service (NHIS, unified since merger of 350+ insurance societies)" },
+      { aspect: "Secondary Payer", detail: "Medical Aid Program (Medicaid-like, for low-income)" },
+      { aspect: "Funding Source", detail: "Employer-employee contributions (6.12% total) + government subsidies (20% of budget)" },
       { aspect: "Patient Co-Pay", detail: "30% hospital; 30% physician office" },
+      { aspect: "Hospital Payment", detail: "DRG-like system (Korean version, called 'relative value scale')" },
+      { aspect: "Physician Payment", detail: "FFS with national fee schedule (government-set)" },
+      { aspect: "HUEBNER (Price Review)", detail: "Committee reviewing drug pricing/reimbursement" },
       { aspect: "Payment Terms", detail: "Monthly billing; settlement 30-60 days" },
-      { aspect: "Generic Substitution", detail: "Pharmacist substitution permitted" },
+      { aspect: "Budget Constraint", detail: "Government expenditure target annually adjusted" },
+      { aspect: "Generic Substitution", detail: "Pharmacist substitution permitted (encourages generics)" },
     ],
   },
   {
-    country: "India",
-    flag: "🇮🇳",
-    region: "APAC",
-    systemType: "Highly fragmented: government + private + out-of-pocket (60% OOP)",
+    country: "India", flag: "🇮🇳", region: "APAC",
+    systemType: "Highly fragmented: government schemes + private insurance + out-of-pocket (60% OOP)",
     details: [
-      { aspect: "Coverage", detail: "~40% universal programs; ~50% private/informal" },
-      { aspect: "Out-of-Pocket", detail: "60% of total healthcare spend (very high vs OECD 20%)" },
-      { aspect: "Catastrophic Impact", detail: "Medical expenses drive 40% of poverty" },
-      { aspect: "Private Insurance Players", detail: "Star Health, Apollo DKV, Max Bupa, HDFC Ergo, ICICI Lombard, Niva Bupa (30+ IRDAI-registered)" },
-      { aspect: "Private Coverage", detail: "15-20% urban middle class; claim settlement 10-21 days" },
-      { aspect: "Manufacturer Strategy", detail: "Volume-based pricing for PM-JAY + government; premium for private; ultra-low for CGHS" },
+      { aspect: "Coverage", detail: "~40% universal government programs; ~50% private insurance/informal" },
+      { aspect: "Out-of-Pocket (% of Total)", detail: "60% (very high vs. OECD 20%)" },
+      { aspect: "Catastrophic Impact", detail: "Medical expenses drive 40% of poverty in India" },
+      { aspect: "Private Insurance Players", detail: "Star Health, Apollo DKV, Max Bupa, HDFC Ergo, ICICI Lombard, Aditya Birla, Niva Bupa, others (30+ IRDAI-registered)" },
+      { aspect: "Private Coverage", detail: "15-20% urban middle class; claim settlement 10-21 days (variable by insurer)" },
+      { aspect: "Co-Pays", detail: "Variable; high deductibles common" },
       { aspect: "Key Challenge", detail: "Fragmentation = complex payer negotiations for pharma" },
+      { aspect: "Manufacturer Strategy", detail: "Volume-based pricing for PM-JAY + government; premium pricing for private insurers; ultra-low cost for CGHS" },
     ],
     subSections: [
       {
-        title: "PM-JAY (Pradhan Mantri Jan Arogya Yojana)",
+        title: "1. PM-JAY (Pradhan Mantri Jan Arogya Yojana)",
         details: [
           { aspect: "Coverage", detail: "500M+ people (largest by population)" },
           { aspect: "Beneficiaries", detail: "Rural/urban poor households" },
           { aspect: "Benefit", detail: "Rs. 5 lakh (≈USD 6,000) per household/year" },
           { aspect: "Hospitals", detail: "Empaneled public + private" },
-          { aspect: "Payment Model", detail: "Government reimburses hospitals (negotiated rates, Rs. 30K-500K per procedure)" },
+          { aspect: "Payment Model", detail: "Government reimburses hospitals (negotiated rates, typically Rs. 30K-500K per procedure)" },
           { aspect: "Payment Terms", detail: "15-30 days to hospitals (government)" },
         ],
       },
       {
-        title: "CGHS (Central Government Health Scheme)",
+        title: "2. CGHS (Central Government Health Scheme)",
         details: [
           { aspect: "Coverage", detail: "4.7 million central government employees + pensioners" },
           { aspect: "Beneficiaries", detail: "Government employees, pensioners, dependents" },
@@ -423,7 +431,7 @@ const apacSystems: CountrySystem[] = [
         ],
       },
       {
-        title: "ESICS (Employees State Insurance)",
+        title: "3. ESICS (Employees State Insurance Scheme)",
         details: [
           { aspect: "Coverage", detail: "35M+ workers in organized sector + dependents" },
           { aspect: "Contribution", detail: "3.25% employee + 4.75% employer" },
@@ -432,7 +440,7 @@ const apacSystems: CountrySystem[] = [
         ],
       },
       {
-        title: "State Government Schemes",
+        title: "4. State Government Schemes",
         details: [
           { aspect: "Variation", detail: "Each state runs own insurance scheme (Tamil Nadu, Karnataka, etc.)" },
           { aspect: "Coverage", detail: "Varies; typically low-income populations" },
@@ -441,17 +449,19 @@ const apacSystems: CountrySystem[] = [
     ],
   },
   {
-    country: "China",
-    flag: "🇨🇳",
-    region: "APAC",
+    country: "China", flag: "🇨🇳", region: "APAC",
     systemType: "Government-directed multi-payer (public insurance mandated)",
     details: [
       { aspect: "Coverage", detail: "~97% population (three main schemes)" },
+      { aspect: "NHSA Structure", detail: "Unified employer-employee + government employee + resident insurance (merged 2018)" },
       { aspect: "NHSA Coverage", detail: "1.35 billion people" },
-      { aspect: "Contribution", detail: "2.6% employee + 7.5% employer" },
-      { aspect: "Patient Co-Pay", detail: "10-30% depending on service/province" },
-      { aspect: "VBP Mechanism", detail: "Government bulk price negotiations → 50-70% price cuts" },
-      { aspect: "Payment Terms", detail: "30-90 days (often delayed)" },
+      { aspect: "Contribution", detail: "2.6% employee + 7.5% employer (employer main payer)" },
+      { aspect: "Patient Co-Pay", detail: "10-30% (varies by service/province)" },
+      { aspect: "Payment to Providers", detail: "Capitation + DRG-like (bundled by disease/procedure)" },
+      { aspect: "VBP Mechanism", detail: "Government negotiates bulk prices with manufacturers; volume commitments → 50-70% price cuts" },
+      { aspect: "VBP Scope", detail: "National VBP + provincial variations" },
+      { aspect: "VBP Impact", detail: "Manufacturers often forced into ultra-competitive pricing" },
+      { aspect: "Payment Terms", detail: "30-90 days (highly variable; government delayed payments common)" },
       { aspect: "Hospital Payment", detail: "Capitated per diem + DRG-like adjustments; negotiated contracts" },
       { aspect: "Pharmaceutical Approval", detail: "NMPA regulatory; NHSA price negotiation (separate process); HEOR increasingly required" },
       { aspect: "Price Negotiations", detail: "NHSA conducts annual national negotiations; VBP drives volume targets" },
@@ -478,43 +488,104 @@ const apacSystems: CountrySystem[] = [
     ],
   },
   {
-    country: "Brazil",
-    flag: "🇧🇷",
-    region: "Americas",
-    systemType: "Mixed: government single-payer (SUS) + private (30%)",
+    country: "Brazil", flag: "🇧🇷", region: "Americas",
+    systemType: "Mixed: government single-payer (SUS) + private insurance (30% population)",
     details: [
-      { aspect: "Coverage", detail: "100% universal (SUS); 47M+ private supplement" },
+      { aspect: "Coverage", detail: "100% universal (SUS); 47M+ private insurance supplemental" },
+      { aspect: "Primary Payer", detail: "SUS (Sistema Único de Saúde - unified government health system)" },
       { aspect: "SUS Budget (2024)", detail: "BRL 230+ billion (≈USD 45-50 billion)" },
+      { aspect: "Funding Source", detail: "General government taxation (federal + state + municipal funding)" },
       { aspect: "Patient Cost", detail: "Free at point of use (SUS)" },
-      { aspect: "CONITEC Assessment", detail: "180-day assessment; no fixed threshold" },
-      { aspect: "Payment Terms (SUS)", detail: "90+ days (delays common; state-dependent 30-180 days)" },
-      { aspect: "Private Insurance", detail: "Bradesco, Unimed, Itaú, SulAmérica (80+ active); 15-30 day payments" },
-      { aspect: "Pharmaceutical Pricing", detail: "Government price controls by CMED" },
+      { aspect: "SUS Structure", detail: "Decentralized: federal funding; state/municipal administration" },
+      { aspect: "Payment Model", detail: "Prospective capitation to primary care + DRG-like bundled payments to hospitals" },
+      { aspect: "Hospital Payment", detail: "APACs (Authorized Patient Procedures): bundled rates per procedure/diagnosis; highly standardized" },
+      { aspect: "Physician Payment", detail: "FFS (SUS fee schedule, typically very low) for specialty; capitation for primary" },
+      { aspect: "ANVISA (Regulatory)", detail: "Federal regulatory body; drug approval process" },
+      { aspect: "Payment Terms (SUS)", detail: "90+ days (government payment delays common; state-dependent 30-180 days)" },
+      { aspect: "Pharmaceutical Pricing", detail: "Government price controls; negotiations by CMED (Câmara de Regulação do Mercado de Medicamentos)" },
+      { aspect: "Generic Policy", detail: "Strong generic program; reference pricing" },
+      { aspect: "Budget Pressure", detail: "SUS chronically underfunded; pharmaceutical spending caps implemented" },
+      { aspect: "Key Challenge for Pharma", detail: "Government price controls + delayed SUS payments = preference for private insurance channel" },
+    ],
+    subSections: [
+      {
+        title: "CONITEC (Health Technology Assessment)",
+        details: [
+          { aspect: "Role", detail: "Appraises new health technologies (drugs/devices) for SUS inclusion" },
+          { aspect: "Process", detail: "180-day assessment (can be expedited)" },
+          { aspect: "Cost-Effectiveness", detail: "No fixed threshold; considers budget impact + unmet need" },
+          { aspect: "RWE Use", detail: "Increasingly important for CONITEC decisions (VBP implementation rising)" },
+        ],
+      },
+      {
+        title: "Private Insurance",
+        details: [
+          { aspect: "Players", detail: "Bradesco Seguros, Unimed, Itaú Seguros, SulAmérica, others (80+ active)" },
+          { aspect: "Coverage", detail: "Complementary (co-insurance, private hospitals, amenities)" },
+          { aspect: "Payment Terms", detail: "15-30 days (more reliable than SUS)" },
+        ],
+      },
     ],
   },
   {
-    country: "Mexico",
-    flag: "🇲🇽",
-    region: "Americas",
-    systemType: "Mixed: government (Seguro Social) + private",
+    country: "Mexico", flag: "🇲🇽", region: "Americas",
+    systemType: "Mixed: government (Seguro Social) + subsidy-based (Seguro Popular) + private",
     details: [
-      { aspect: "Coverage", detail: "~95% (government 60%; private 20%; uninsured 15%)" },
-      { aspect: "IMSS Coverage", detail: "60M+ workers + dependents" },
-      { aspect: "ISSSTE", detail: "9M+ government employees + dependents" },
-      { aspect: "INSABI", detail: "50M+ uninsured/self-employed" },
+      { aspect: "Coverage", detail: "~95% (government schemes 60%; private 20%; uninsured 15%)" },
       { aspect: "Payment Terms", detail: "30-60 days (government), 10-21 days (private)" },
+      { aspect: "COFEPRIS (Regulatory)", detail: "Drug approval; regulatory authority" },
+      { aspect: "Pharmaceutical Pricing", detail: "Government negotiation for public procurement" },
+    ],
+    subSections: [
+      {
+        title: "1. IMSS (Instituto Mexicano del Seguro Social)",
+        details: [
+          { aspect: "Coverage", detail: "60M+ workers + dependents" },
+          { aspect: "Funding", detail: "Payroll tax (6.25% employee, employer variable)" },
+          { aspect: "Integrated Model", detail: "Insurance + healthcare delivery (owns hospitals/clinics)" },
+          { aspect: "Payment Model", detail: "Capitated per-member rates (internal budgets)" },
+        ],
+      },
+      {
+        title: "2. ISSSTE (Government Employee Insurance)",
+        details: [
+          { aspect: "Coverage", detail: "9M+ government employees + dependents" },
+          { aspect: "Integrated", detail: "Insurance + delivery" },
+        ],
+      },
+      {
+        title: "3. INSABI (Previously Seguro Popular)",
+        details: [
+          { aspect: "Coverage", detail: "50M+ uninsured/self-employed" },
+          { aspect: "Funding", detail: "Federal subsidies" },
+          { aspect: "Payment Model", detail: "Capitated rates per affiliation" },
+        ],
+      },
+      {
+        title: "Private Insurance",
+        details: [
+          { aspect: "Players", detail: "AXA, MAPFRE, Seguros Monterrey, others" },
+          { aspect: "Coverage", detail: "Upper-income; complementary + some replacement" },
+        ],
+      },
     ],
   },
   {
-    country: "Russia",
-    flag: "🇷🇺",
-    region: "Europe/Asia",
+    country: "Russia", flag: "🇷🇺", region: "Europe/Asia",
     systemType: "Bismarck-based government-managed (state-controlled)",
     details: [
       { aspect: "Coverage", detail: "~99% universal (compulsory health insurance)" },
+      { aspect: "Primary Payer", detail: "Federal Health Insurance Fund (FOMIS) + 83 regional funds" },
       { aspect: "Funding Source", detail: "Payroll tax (5.1% employer contribution) + government budget" },
-      { aspect: "Private Sector", detail: "Growing (~15%); high out-of-pocket for private care" },
+      { aspect: "Patient Cost", detail: "Mostly free; modest co-pays for some services" },
+      { aspect: "Payment Model", detail: "Capitated per-person to regional funds; then capitated to providers" },
+      { aspect: "Hospital Payment", detail: "Global capitated budgets by region" },
+      { aspect: "Physician Payment", detail: "Salaried (mostly public system)" },
+      { aspect: "Private Sector", detail: "Growing (~15% population); out-of-pocket spending high for private care" },
+      { aspect: "Pharmaceutical", detail: "Government price controls; generic substitution encouraged" },
       { aspect: "Payment Terms", detail: "30-90 days (variable; often delayed)" },
+      { aspect: "Decision Authority", detail: "Ministry of Health; regional health authorities" },
+      { aspect: "Budget Constraint", detail: "Government spending limits; chronically underfunded for capital/technology" },
     ],
   },
 ];
@@ -522,83 +593,104 @@ const apacSystems: CountrySystem[] = [
 // ============ MENA ============
 const menaSystems: CountrySystem[] = [
   {
-    country: "United Arab Emirates",
-    flag: "🇦🇪",
-    region: "MENA",
-    systemType: "Mixed public-private",
+    country: "United Arab Emirates", flag: "🇦🇪", region: "MENA",
+    systemType: "Mixed; government health system (Emiratis) + private insurance (expatriates)",
     details: [
-      { aspect: "Coverage", detail: "95%+ (Emiratis: government; expatriates: private insurance)" },
-      { aspect: "Government Coverage", detail: "Emirati citizens ~90% government-funded" },
-      { aspect: "Private Players", detail: "Al Fardan, ADIB, Daman, AXA, ENAYA" },
-      { aspect: "Typical Copay", detail: "10-20%" },
-      { aspect: "Payment Terms", detail: "Government 30-60 days; private 15-30 days" },
-      { aspect: "Pharmaceutical Pricing", detail: "AMAAS reference prices; manufacturers negotiate rebates" },
+      { aspect: "Coverage", detail: "95%+ (Emiratis mostly through government; expatriates through employers/private)" },
+      { aspect: "Abu Dhabi Health Insurance (ADHI)", detail: "Mandatory health insurance scheme for Abu Dhabi (public + private coverage)" },
+      { aspect: "Dubai Health Authority", detail: "Sets regulations; private insurance mandate for expatriates" },
+      { aspect: "Pharmaceutical Pricing", detail: "AMAAS (Unified Pharmaceutical Pricing) sets reference prices; manufacturers negotiate rebates" },
+    ],
+    subSections: [
+      {
+        title: "Government (Emirates)",
+        details: [
+          { aspect: "Payer", detail: "Ministry of Health & Prevention (MOHAP) + Emirates Health Services" },
+          { aspect: "Coverage", detail: "Emirati citizens + some low-income residents" },
+          { aspect: "Cost", detail: "Very subsidized (~90% government-funded)" },
+          { aspect: "Payment Model", detail: "Government budget allocation" },
+          { aspect: "Payment Terms", detail: "30-60 days" },
+        ],
+      },
+      {
+        title: "Private Insurance",
+        details: [
+          { aspect: "Coverage", detail: "Majority of expatriate workforce" },
+          { aspect: "Players", detail: "Al Fardan, ADIB, Daman, AXA, ENAYA, others" },
+          { aspect: "Typical Copay", detail: "10-20%" },
+          { aspect: "Payment Terms", detail: "30-45 days" },
+        ],
+      },
     ],
   },
   {
-    country: "Saudi Arabia",
-    flag: "🇸🇦",
-    region: "MENA",
-    systemType: "Government single-payer dominant (90%+)",
+    country: "Saudi Arabia", flag: "🇸🇦", region: "MENA",
+    systemType: "Government single-payer dominant (90%+ public system)",
     details: [
+      { aspect: "Coverage", detail: "Mostly Saudi nationals through government; limited private insurance (5%)" },
       { aspect: "Primary Payer", detail: "Ministry of Health & Prevention (MOHP)" },
       { aspect: "Funding Source", detail: "Government budget (oil revenues)" },
-      { aspect: "Patient Cost", detail: "Heavily subsidized for Saudis (~10%)" },
+      { aspect: "Patient Cost", detail: "Heavily subsidized for Saudis (~10% patient cost); foreign workers pay higher rates" },
+      { aspect: "Payment to Providers", detail: "Salary-based (mostly public hospitals owned by government)" },
+      { aspect: "Private Sector", detail: "Small private hospital network (Aramco, joint ventures)" },
+      { aspect: "Pharmaceutical Pricing", detail: "Government price negotiations; reference pricing" },
       { aspect: "Payment Terms", detail: "30-90 days (government)" },
-      { aspect: "Vision 2030", detail: "Opening private sector; still early stage" },
+      { aspect: "Vision 2030 Reform", detail: "Opening private sector, encouraging insurance adoption; still early stage" },
     ],
   },
   {
-    country: "Egypt",
-    flag: "🇪🇬",
-    region: "MENA",
+    country: "Egypt", flag: "🇪🇬", region: "MENA",
     systemType: "Government single-payer + private (limited)",
     details: [
-      { aspect: "Coverage", detail: "60-70% government; 15-20% private; 15-25% uninsured" },
-      { aspect: "Out-of-Pocket", detail: "High (30-40% total healthcare spending)" },
-      { aspect: "Payment Terms", detail: "60-120 days (government); 30-45 days (private)" },
+      { aspect: "Coverage", detail: "60-70% through government schemes; 15-20% private insurance; 15-25% uninsured" },
+      { aspect: "Funding Source", detail: "Government budget (stretched, underfunded)" },
+      { aspect: "Patient Cost", detail: "Minimal for government programs (highly subsidized)" },
+      { aspect: "Payment to Providers", detail: "Salary-based (public hospitals); FFS (private sector)" },
+      { aspect: "Out-of-Pocket", detail: "High (30-40% total healthcare spending); catastrophic burden" },
+      { aspect: "Payment Terms", detail: "60-120 days (government, often delayed; private 30-45 days)" },
       { aspect: "Pharmaceutical Pricing", detail: "Government price caps (very stringent); generics dominant" },
+    ],
+    subSections: [
+      {
+        title: "Government Programs",
+        details: [
+          { aspect: "Social Health Insurance", detail: "Covers formal sector employees + families" },
+          { aspect: "Curative Care Program", detail: "For low-income uninsured" },
+        ],
+      },
     ],
   },
 ];
 
 // ============ COMPARATIVE MATRIX ============
 interface ComparisonRow {
-  characteristic: string;
-  usa: string;
-  uk: string;
-  germany: string;
-  france: string;
-  canada: string;
-  japan: string;
-  india: string;
-  china: string;
-  brazil: string;
+  characteristic: string; usa: string; uk: string; germany: string; france: string;
+  canada: string; japan: string; india: string; china: string; brazil: string;
 }
 
 const comparativeMatrix: ComparisonRow[] = [
   { characteristic: "Coverage Type", usa: "Multi-payer fragmented", uk: "Single-payer government", germany: "Multi-payer social insurance", france: "Multi-payer social insurance", canada: "Single-payer government", japan: "Multi-payer social insurance", india: "Fragmented multi-payer", china: "Government-directed", brazil: "Mixed government/private" },
   { characteristic: "Coverage %", usa: "90% (15M uninsured)", uk: "99%+", germany: "99%+", france: "100%", canada: "100%", japan: "100%", india: "~40% universal; ~60% OOP", china: "~97%", brazil: "100% SUS; 30% private" },
-  { characteristic: "Primary Funding", usa: "Private 60%; Gov 40%", uk: "Government 100%", germany: "Employer-employee; Gov", france: "Employer-employee; Gov", canada: "Government (provincial)", japan: "Employer-employee", india: "Gov schemes + OOP + private", china: "Government (employer-driven)", brazil: "Government (mostly)" },
-  { characteristic: "Main Payer Entity", usa: "UnitedHealth, Anthem, CVS, Cigna, Medicare, Medicaid", uk: "NHS England (national)", germany: "124 sickness funds + G-BA", france: "CNAMTS + 20 mutuelles", canada: "10 provincial health ministries", japan: "1,500+ insurers (employment-based)", india: "CGHS, ESI, PM-JAY, state schemes", china: "NHSA (unified, government)", brazil: "SUS (federal + state + municipal)" },
-  { characteristic: "Hospital Payment", usa: "DRG + FFS + bundled", uk: "Global budget + activity", germany: "G-DRG system", france: "T2A (activity-based)", canada: "Global budget + case-mix", japan: "DPC system (DRG-like)", india: "Highly variable", china: "Capitated + DRG-like", brazil: "APACs (bundled)" },
-  { characteristic: "Physician Payment", usa: "RBRVS + FFS + Capitation", uk: "Capitation (GPs) + FFS", germany: "FFS with fee schedule", france: "FFS with gov fee schedule", canada: "Capitation + FFS", japan: "FFS with negotiated schedule", india: "FFS (private); varied (gov)", china: "FFS with fee schedule", brazil: "FFS (SUS, very low)" },
-  { characteristic: "Avg Payment Period", usa: "30-45 days", uk: "Monthly (reliable)", germany: "30-45 days", france: "5 days (Carte Vitale)", canada: "Monthly (reliable)", japan: "45-60 days", india: "15-30d (private); 30-90+ (public)", china: "30-90 days (delayed)", brazil: "90+ days (delays)" },
-  { characteristic: "Patient Cost at Visit", usa: "Copay $20-100+", uk: "Minimal (£9.90 Rx)", germany: "€10-25 (cap 2%)", france: "Co-pay 20-30%", canada: "Modest (low copay)", japan: "30% (working-age)", india: "Highly variable; high OOP", china: "10-30%", brazil: "Free (SUS)" },
+  { characteristic: "Primary Funding", usa: "Private 60%; Gov 40%", uk: "Government 100%", germany: "Employer-employee; Gov subsidies", france: "Employer-employee; Gov subsidies", canada: "Government (provincial tax)", japan: "Employer-employee contributions", india: "Gov schemes + OOP + private", china: "Government (employer-driven)", brazil: "Government (mostly)" },
+  { characteristic: "Main Payer Entity", usa: "UnitedHealth, Anthem, CVS, Cigna, Medicare, Medicaid, private insurers", uk: "NHS England (national)", germany: "124 sickness funds + G-BA", france: "CNAMTS + 20 mutuelles", canada: "10 provincial health ministries", japan: "1,500+ insurers (employment-based)", india: "CGHS, ESI, PM-JAY, state schemes", china: "NHSA (unified, government)", brazil: "SUS (federal + state + municipal)" },
+  { characteristic: "Hospital Payment", usa: "DRG (Medicare standard-setter); FFS + bundled (commercial)", uk: "Global budget + activity-based", germany: "G-DRG system (standardized nationally)", france: "T2A (activity-based tariff)", canada: "Global budget + case-mix", japan: "DPC system (DRG-like)", india: "Highly variable; negotiated rates", china: "Capitated + DRG-like bundled", brazil: "APACs (bundled procedures)" },
+  { characteristic: "Physician Payment", usa: "RBRVS (Medicare) + FFS + Capitation (managed care)", uk: "Capitation (GPs) + FFS (specialists)", germany: "FFS with fee schedule", france: "FFS with government fee schedule", canada: "Capitation (GPs) + FFS (specialists)", japan: "FFS with negotiated schedule", india: "FFS (private); varied (government)", china: "FFS with fee schedule", brazil: "FFS (SUS, very low)" },
+  { characteristic: "Avg Payment Period", usa: "30-45 days", uk: "Monthly (reliable)", germany: "30-45 days", france: "5 days (Carte Vitale); 30-45 invoicing", canada: "Monthly (reliable)", japan: "45-60 days", india: "15-30d (private); 30-90+ (public)", china: "30-90 days (often delayed)", brazil: "90+ days (government delays common)" },
+  { characteristic: "Patient Cost at Visit", usa: "Variable (copay $20-100+)", uk: "Minimal (prescription £9.90)", germany: "€10-25 (capped at 2% income)", france: "Co-pay varies (20-30%)", canada: "Modest (low copay)", japan: "30% (working-age)", india: "Highly variable; high OOP", china: "10-30% depending on service", brazil: "Free (SUS)" },
   { characteristic: "Formulary Authority", usa: "PBM + Insurer (fragmented)", uk: "NICE", germany: "G-BA + IQWiG", france: "ANSM + CNAMTS", canada: "CADTH + provincial", japan: "PMDA + insurers", india: "Multiple (govt schemes)", china: "NHSA (VBP negotiations)", brazil: "CONITEC + ANVISA" },
-  { characteristic: "Prior Authorization", usa: "Extensive (60%+ specialty)", uk: "Limited (regional variation)", germany: "Moderate (specialty drugs)", france: "Moderate", canada: "Moderate", japan: "Limited", india: "Extensive (private insurers)", china: "Yes (government controls)", brazil: "Variable by state" },
-  { characteristic: "Price Control", usa: "Minimal (payers negotiate)", uk: "Strong (NICE)", germany: "Strong (IQWiG rebates)", france: "Gov price negotiation", canada: "CADTH (flexible)", japan: "Gov fee schedule", india: "Gov price caps", china: "Very strong (VBP)", brazil: "Strong (CMED caps)" },
-  { characteristic: "Generic Penetration", usa: "50-60%", uk: "80%+", germany: "70%+", france: "60%+", canada: "60%+", japan: "70%+", india: "20-30%", china: "40-50%", brazil: "60%+" },
-  { characteristic: "Preferred Drug Lists", usa: "Yes (tiered formularies)", uk: "NHS formulary (NICE-approved)", germany: "German formulary (ref pricing)", france: "ANSM list", canada: "Provincial formularies (CADTH)", japan: "Insurance society lists", india: "Yes (each scheme)", china: "Yes (NHSA national list)", brazil: "Positive list (SUS)" },
-  { characteristic: "Budget Mechanism", usa: "Annual (payer-specific)", uk: "Parliament + 3-5yr plans", germany: "Target spending negotiated", france: "Annual government budget", canada: "Provincial annual budgets", japan: "Annual negotiation", india: "Annual (scheme-specific)", china: "Annual (central planning)", brazil: "Annual (federal + state)" },
-  { characteristic: "Spending Growth (CAGR)", usa: "4-5%", uk: "2-3%", germany: "3-4%", france: "3-4%", canada: "2-3%", japan: "2-3%", india: "8-10%", china: "5-7%", brazil: "4-6%" },
-  { characteristic: "Private Sector Dependence", usa: "HIGH (40% pharma revenue)", uk: "MINIMAL (10% NHS burden)", germany: "MODERATE (15-20% private)", france: "MODERATE (10-15% private)", canada: "MODERATE (employer-based ~60%)", japan: "MINIMAL (supplemental <10%)", india: "HIGH (60%+ healthcare private OOP)", china: "MINIMAL (supplemental growing)", brazil: "MODERATE (30% private insurance)" },
-  { characteristic: "Negotiating Power vs Pharma", usa: "Moderate-High", uk: "Very High", germany: "High", france: "High", canada: "High", japan: "Moderate", india: "Moderate-Low", china: "Very High", brazil: "High" },
-  { characteristic: "RWE Requirements", usa: "FDA + AMCP 29 criteria", uk: "NICE pragmatic framework", germany: "IQWiG stringent ROBINS-I", france: "Gov negotiation data", canada: "CADTH pragmatic guidance", japan: "Limited (emerging)", india: "Minimal (not standardized)", china: "NHSA VBP data-driven", brazil: "CONITEC value-based" },
-  { characteristic: "HTA Body", usa: "ICER (independent)", uk: "NICE", germany: "G-BA/IQWiG", france: "ANSM + CNAMTS", canada: "CADTH", japan: "PMDA + insurers", india: "NITI Aayog (emerging)", china: "NHSA (government)", brazil: "CONITEC" },
-  { characteristic: "Drug Approval Timeline", usa: "30-180 days", uk: "90d (NICE); 6-9mo full", germany: "6 months (AMNOG)", france: "5 days post-ANSM", canada: "6-12 months (CADTH)", japan: "12+ months", india: "Variable 30-90d + 6mo schemes", china: "6mo (NMPA); 1yr (NHSA)", brazil: "180 days (CONITEC)" },
-  { characteristic: "Cost-Effectiveness Threshold", usa: "Flexible ($100-150K/QALY ICER)", uk: "Strong (£20-30K/QALY)", germany: "Moderate (~€80-100K implied)", france: "Flexible (gov negotiation)", canada: "Flexible (no fixed threshold)", japan: "None (service-based)", india: "Not standardized", china: "Budget-driven (VBP)", brazil: "Flexible (unmet need focus)" },
-  { characteristic: "Orphan Drug Policy", usa: "Premium pricing; accelerated", uk: "£100K+/QALY flexibility", germany: "Exemptions from normal", france: "Gov compassion provisions", canada: "Flexibility for rare", japan: "Insurance listing flexibility", india: "Limited (cost barrier)", china: "Limited (affordability)", brazil: "Limited (cost control)" },
+  { characteristic: "Prior Authorization", usa: "Extensive (60%+ specialty drugs)", uk: "Limited (regional variation)", germany: "Moderate (specialty drugs)", france: "Moderate", canada: "Moderate", japan: "Limited", india: "Extensive (private insurers)", china: "Yes (government controls)", brazil: "Variable by state" },
+  { characteristic: "Price Control", usa: "Minimal (payers negotiate individually)", uk: "Strong (NICE cost-effectiveness)", germany: "Strong (IQWiG, G-BA rebates)", france: "Government price negotiation", canada: "CADTH recommendations (flexible)", japan: "Government fee schedule", india: "Government price caps", china: "Very strong (VBP mechanism)", brazil: "Strong (CMED price caps)" },
+  { characteristic: "Generic Penetration", usa: "50-60% (by volume)", uk: "80%+", germany: "70%+", france: "60%+", canada: "60%+", japan: "70%+", india: "20-30%", china: "40-50%", brazil: "60%+" },
+  { characteristic: "Preferred Drug Lists", usa: "Yes (tiered formularies)", uk: "NHS formulary (NICE-approved)", germany: "German formulary (reference pricing)", france: "ANSM list", canada: "Provincial formularies (CADTH-informed)", japan: "Insurance society lists", india: "Yes (each scheme)", china: "Yes (NHSA national list)", brazil: "Positive list (SUS)" },
+  { characteristic: "Budget Mechanism", usa: "Annual (payer-specific)", uk: "Parliament + 3-5 year plans", germany: "Target spending growth negotiated", france: "Annual government budget", canada: "Provincial annual budgets", japan: "Annual negotiation", india: "Annual (scheme-specific)", china: "Annual (central planning)", brazil: "Annual (federal + state)" },
+  { characteristic: "Spending Growth (CAGR)", usa: "4-5%", uk: "2-3%", germany: "3-4%", france: "3-4%", canada: "2-3%", japan: "2-3%", india: "8-10% (growing)", china: "5-7%", brazil: "4-6%" },
+  { characteristic: "Private Sector Dependence", usa: "HIGH (40% of pharma revenue)", uk: "MINIMAL (10% NHS burden)", germany: "MODERATE (15-20% private insurance)", france: "MODERATE (10-15% private insurance)", canada: "MODERATE (employer-based supplement ~60%)", japan: "MINIMAL (supplemental <10%)", india: "HIGH (60%+ healthcare private OOP)", china: "MINIMAL (supplemental growing)", brazil: "MODERATE (30% private insurance)" },
+  { characteristic: "Negotiating Power vs Pharma", usa: "MODERATE-HIGH (fragmented = less monopsony power)", uk: "VERY HIGH (single payer)", germany: "HIGH (unified sickness funds)", france: "HIGH (centralized negotiation)", canada: "HIGH (CADTH framework)", japan: "MODERATE (multiple insurers)", india: "MODERATE-LOW (fragmented)", china: "VERY HIGH (government monopsony)", brazil: "HIGH (CONITEC + price caps)" },
+  { characteristic: "RWE Requirements", usa: "FDA relevance/reliability + AMCP 29 criteria", uk: "NICE pragmatic framework", germany: "IQWiG stringent ROBINS-I", france: "Government negotiation data", canada: "CADTH pragmatic guidance", japan: "Limited RWE framework (emerging)", india: "Minimal (not standardized)", china: "NHSA VBP data-driven", brazil: "CONITEC value-based" },
+  { characteristic: "HTA Body", usa: "ICER (independent)", uk: "NICE", germany: "G-BA/IQWiG", france: "ANSM + CNAMTS", canada: "CADTH", japan: "PMDA + insurers (developing)", india: "NITI Aayog (emerging)", china: "NHSA (government)", brazil: "CONITEC" },
+  { characteristic: "Drug Approval Timeline", usa: "30-180 days (FFS reimbursement varies)", uk: "90 days (NICE); 6-9 months full assessment", germany: "6 months (AMNOG negotiation)", france: "5 days (reimbursement after ANSM approval)", canada: "6-12 months (CADTH)", japan: "12+ months (insurance listing)", india: "Variable (30-90d regulation; 6+ months schemes)", china: "6 months (NMPA); 1 year (NHSA)", brazil: "180 days (CONITEC)" },
+  { characteristic: "Cost-Effectiveness Threshold", usa: "Flexible ($100-150K/QALY via ICER)", uk: "Strong (£20-30K/QALY)", germany: "Moderate (IQWiG case-by-case, ~€80-100K implied)", france: "Flexible (government negotiation)", canada: "Flexible (no fixed threshold)", japan: "None (service-based)", india: "Not standardized", china: "Budget-driven (VBP)", brazil: "Flexible (unmet need focus)" },
+  { characteristic: "Orphan Drug Policy", usa: "Premium pricing; accelerated FDA approval", uk: "NICE: £100K+/QALY flexibility", germany: "G-BA: exemptions from normal process", france: "Government compassion provisions", canada: "CADTH: flexibility for rare disease", japan: "Insurance listing flexibility", india: "Limited (cost barrier)", china: "Limited (affordability focus)", brazil: "Limited (cost control)" },
 ];
 
 // ============ STRATEGIC IMPLICATIONS ============
@@ -606,26 +698,26 @@ const strategicImplications = {
   highPaying: [
     { region: "USA (commercial insurance)", detail: "List prices 2-3x Europe; negotiation possible" },
     { region: "Germany (sickness funds)", detail: "Reference pricing but bundling flexibility" },
-    { region: "France (CNAMTS + mutuelles)", detail: "Multi-layer supports pricing" },
+    { region: "France (CNAMTS + mutuelles)", detail: "Multi-layer (primary + supplemental) supports pricing" },
   ],
   governmentDominant: [
     { region: "UK (NHS)", detail: "NICE threshold capping; limited negotiation room" },
     { region: "China (NHSA)", detail: "VBP volume commitments → 50-70% price cuts" },
-    { region: "Brazil (SUS)", detail: "CONITEC budget impact; government payment delays" },
+    { region: "Brazil (SUS)", detail: "CONITEC budget impact analysis; government payment delays" },
   ],
   fragmented: [
-    { region: "India", detail: "6+ different gov schemes + private → need segmentation strategy" },
-    { region: "USA", detail: "Negotiate separately with Medicare/Medicaid, commercial, PBMs" },
+    { region: "India", detail: "6+ different government schemes + private insurers → need market segmentation strategy" },
+    { region: "USA", detail: "Negotiate separately with Medicare/Medicaid, commercial payers, PBMs" },
   ],
   fastestGrowing: [
     { region: "India (PM-JAY expansion, CGHS reforms)", detail: "8-10% CAGR" },
-    { region: "China (growing private alongside government)", detail: "5-7% CAGR" },
-    { region: "Brazil (private insurance uptake rising)", detail: "4-6% CAGR" },
+    { region: "China (growing private insurance alongside government)", detail: "5-7% CAGR" },
+    { region: "Brazil (private insurance uptake rising among middle class)", detail: "4-6% CAGR" },
   ],
   paymentReliability: [
     { rank: "Excellent (14-30 days)", regions: "USA Medicare, Canada, Japan" },
     { rank: "Good (30-45 days)", regions: "Most EU countries, private insurers globally" },
-    { rank: "Challenging (60-120+ days)", regions: "Brazil (SUS), India (gov), China, Russia" },
+    { rank: "Challenging (60-120+ days)", regions: "Brazil (SUS), India (government schemes), China, Russia" },
   ],
 };
 
@@ -744,12 +836,11 @@ export const PayersLandscape = () => {
                 United States — Fragmented Multi-Payer System
               </CardTitle>
               <CardDescription>
-                Market Size: $1.57T (2025) • Model: Multi-payer (government + commercial + self-funded) • Private 60%; Government 40%
+                Market Size: $1.57T (2025) • Model: Multi-payer (government + commercial + self-funded) • Market Concentration: 97% highly concentrated • Private 60%; Government 40%
               </CardDescription>
             </CardHeader>
           </Card>
 
-          {/* US Payers */}
           <Accordion type="multiple" className="space-y-2">
             {usPayers
               .filter(p => !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.tier.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -804,9 +895,9 @@ export const PayersLandscape = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Pill className="h-5 w-5 text-primary" />
-                Tier 4: Pharmacy Benefit Managers (PBMs)
+                Tier 4: Pharmacy Benefit Managers (PBMs) — Critical for Drug Coverage
               </CardTitle>
-              <CardDescription>Critical for drug coverage decisions</CardDescription>
+              <CardDescription>Secondary payers for drugs</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="overflow-x-auto">
@@ -835,8 +926,8 @@ export const PayersLandscape = () => {
                 <h4 className="font-semibold mb-2">PBM Payment Terms</h4>
                 <div className="grid gap-2 md:grid-cols-3 text-sm">
                   <div><span className="font-medium">Wholesaler:</span> Net 28-45 days</div>
-                  <div><span className="font-medium">Pharmacy:</span> 1-5 days to patient; insurer 30-45 days</div>
-                  <div><span className="font-medium">Manufacturer:</span> Net 90 days (chargebacks, rebates quarterly)</div>
+                  <div><span className="font-medium">Pharmacy:</span> 1-5 days to patient; insurer reimbursement 30-45 days</div>
+                  <div><span className="font-medium">Manufacturer:</span> Net 90 days (Chargebacks, rebates processed quarterly)</div>
                 </div>
               </div>
             </CardContent>
@@ -867,8 +958,14 @@ export const PayersLandscape = () => {
                     <Badge variant="outline" className="text-xs">{system.systemType.split(",")[0]}</Badge>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="space-y-4">
                   <DetailTable details={system.details} />
+                  {system.subSections?.map((sub, si) => (
+                    <div key={si} className="ml-4 border-l-2 border-primary/30 pl-4">
+                      <h4 className="font-semibold text-sm mb-2">{sub.title}</h4>
+                      <DetailTable details={sub.details} compact />
+                    </div>
+                  ))}
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -883,6 +980,7 @@ export const PayersLandscape = () => {
                 <Globe className="h-5 w-5 text-primary" />
                 Asia-Pacific, Americas & Emerging Markets
               </CardTitle>
+              <CardDescription>Canada, Australia, Japan, South Korea, India, China, Brazil, Mexico, Russia</CardDescription>
             </CardHeader>
           </Card>
 
@@ -919,9 +1017,9 @@ export const PayersLandscape = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
-                Middle East & North Africa (MENA)
+                Middle East & North Africa (MENA) — Varied Models
               </CardTitle>
-              <CardDescription>Varied models: Government-dominant to mixed public-private</CardDescription>
+              <CardDescription>Government-dominant to mixed public-private systems</CardDescription>
             </CardHeader>
           </Card>
 
@@ -937,8 +1035,14 @@ export const PayersLandscape = () => {
                     <Badge variant="outline" className="text-xs">{system.systemType.split("(")[0].trim()}</Badge>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="space-y-4">
                   <DetailTable details={system.details} />
+                  {system.subSections?.map((sub, si) => (
+                    <div key={si} className="ml-4 border-l-2 border-primary/30 pl-4">
+                      <h4 className="font-semibold text-sm mb-2">{sub.title}</h4>
+                      <DetailTable details={sub.details} compact />
+                    </div>
+                  ))}
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -953,7 +1057,7 @@ export const PayersLandscape = () => {
                 <Scale className="h-5 w-5 text-primary" />
                 Comparative Payer Characteristics Matrix
               </CardTitle>
-              <CardDescription>Side-by-side comparison across 9 major markets</CardDescription>
+              <CardDescription>Side-by-side comparison across 9 major markets (22 characteristics)</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -1007,7 +1111,6 @@ export const PayersLandscape = () => {
               <CardDescription>By Payer Region & Payment Dynamics</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* High-Paying Regions */}
               <div>
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <DollarSign className="h-4 w-4 text-green-600" />
@@ -1023,7 +1126,6 @@ export const PayersLandscape = () => {
                 </div>
               </div>
 
-              {/* Government-Dominant */}
               <div>
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <Shield className="h-4 w-4 text-red-600" />
@@ -1039,7 +1141,6 @@ export const PayersLandscape = () => {
                 </div>
               </div>
 
-              {/* Fragmented */}
               <div>
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <Users className="h-4 w-4 text-orange-600" />
@@ -1055,7 +1156,6 @@ export const PayersLandscape = () => {
                 </div>
               </div>
 
-              {/* Fastest-Growing */}
               <div>
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <TrendingUp className="h-4 w-4 text-blue-600" />
@@ -1071,7 +1171,6 @@ export const PayersLandscape = () => {
                 </div>
               </div>
 
-              {/* Payment Reliability */}
               <div>
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <Clock className="h-4 w-4 text-purple-600" />
@@ -1093,9 +1192,8 @@ export const PayersLandscape = () => {
                 </div>
               </div>
 
-              {/* Key Takeaways */}
               <div className="bg-muted/50 border rounded-lg p-4">
-                <h3 className="font-semibold mb-3">KEY TAKEAWAYS FOR STRATEGY</h3>
+                <h3 className="font-semibold mb-3">CONCLUSION: KEY TAKEAWAYS FOR STRATEGY</h3>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-start gap-2">
                     <span className="text-primary font-bold">•</span>
@@ -1107,19 +1205,19 @@ export const PayersLandscape = () => {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary font-bold">•</span>
-                    <span><strong>Multi-Payer Europe</strong> = Moderate prices; benefits from HTA body harmonization</span>
+                    <span><strong>Multi-Payer Europe</strong> = Moderate prices; benefits from HTA body harmonization (NICE/G-BA/CADTH precedents)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary font-bold">•</span>
-                    <span><strong>Government-Dominant APAC</strong> = Ultra-low prices but high volume potential</span>
+                    <span><strong>Government-Dominant APAC</strong> = Ultra-low prices (VBP China, PM-JAY India) but high volume potential</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary font-bold">•</span>
-                    <span><strong>Payment reliability</strong> varies inversely with cost control (government price control = delayed payment)</span>
+                    <span><strong>Payment Reliability</strong> varies inversely with cost control (government price control = delayed payment)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary font-bold">•</span>
-                    <span><strong>RWE Requirements</strong> increasingly standardized (FDA/EMA/NICE/CADTH converging) but still region-specific</span>
+                    <span><strong>RWE Requirements</strong> increasingly standardized (FDA/EMA/NICE/CADTH converging) but still region-specific in application</span>
                   </li>
                 </ul>
               </div>
