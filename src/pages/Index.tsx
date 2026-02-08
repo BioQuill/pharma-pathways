@@ -28,7 +28,9 @@ import {
   Activity,
   Star,
   LayoutDashboard,
-  Building2
+  Building2,
+  DollarSign,
+  Landmark
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
@@ -73,6 +75,8 @@ import { WatchlistPanel } from "@/components/WatchlistPanel";
 import { PortfolioDashboard } from "@/components/PortfolioDashboard";
 import { Top100BlockbusterDrugs } from "@/components/Top100BlockbusterDrugs";
 import { Top50SmallCapFirms } from "@/components/Top50SmallCapFirms";
+import { PricingAccessDashboard } from "@/components/PricingAccessDashboard";
+import { PayersLandscape } from "@/components/PayersLandscape";
 import { 
   calculateProbabilityScores,
   generateMarketProjections, 
@@ -2203,6 +2207,14 @@ const Index = () => {
                 <TrendingUp className="h-4 w-4" />
                 Peak Sales Index
               </TabsTrigger>
+              <TabsTrigger value="pricing-access" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <DollarSign className="h-4 w-4" />
+                Pricing & Access
+              </TabsTrigger>
+              <TabsTrigger value="payers" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
+                <Landmark className="h-4 w-4" />
+                Payers
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -3264,6 +3276,16 @@ const Index = () => {
           {/* Top 50 Small Cap Firms Tab */}
           <TabsContent value="top-50-smallcap" className="space-y-6">
             <Top50SmallCapFirms />
+          </TabsContent>
+
+          {/* Pricing & Access Tab */}
+          <TabsContent value="pricing-access" className="space-y-6">
+            <PricingAccessDashboard />
+          </TabsContent>
+
+          {/* Payers Tab */}
+          <TabsContent value="payers" className="space-y-6">
+            <PayersLandscape />
           </TabsContent>
         </Tabs>
 
