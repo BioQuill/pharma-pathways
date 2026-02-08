@@ -2,12 +2,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, TrendingUp, Globe, Shield, FileText } from "lucide-react";
 import { DrugPricingData } from "@/components/DrugPricingData";
+import { PriceIndexChart } from "@/components/PriceIndexChart";
+import { IRAImpactModeling } from "@/components/IRAImpactModeling";
 
 export const PricingAccessDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Drug-Level Pricing Intelligence */}
       <DrugPricingData />
+
+      {/* International Price Index Bar Chart */}
+      <PriceIndexChart />
+
+      {/* IRA Impact Modeling */}
+      <IRAImpactModeling />
 
       <Card className="border-primary/20">
         <CardHeader>
