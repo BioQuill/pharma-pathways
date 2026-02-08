@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   Globe, 
   Building2, 
@@ -20,10 +21,12 @@ import {
   Clock,
   CreditCard,
   Scale,
-  FileText
+  FileText,
+  Download
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { exportPayersToExcel, exportPayersPDF } from "@/lib/payersExport";
 
 // ============ DATA TYPES ============
 interface PayerDetail {
@@ -390,6 +393,9 @@ const apacSystems: CountrySystem[] = [
       { aspect: "Coverage", detail: "~40% universal programs; ~50% private/informal" },
       { aspect: "Out-of-Pocket", detail: "60% of total healthcare spend (very high vs OECD 20%)" },
       { aspect: "Catastrophic Impact", detail: "Medical expenses drive 40% of poverty" },
+      { aspect: "Private Insurance Players", detail: "Star Health, Apollo DKV, Max Bupa, HDFC Ergo, ICICI Lombard, Niva Bupa (30+ IRDAI-registered)" },
+      { aspect: "Private Coverage", detail: "15-20% urban middle class; claim settlement 10-21 days" },
+      { aspect: "Manufacturer Strategy", detail: "Volume-based pricing for PM-JAY + government; premium for private; ultra-low for CGHS" },
       { aspect: "Key Challenge", detail: "Fragmentation = complex payer negotiations for pharma" },
     ],
     subSections: [
@@ -399,6 +405,8 @@ const apacSystems: CountrySystem[] = [
           { aspect: "Coverage", detail: "500M+ people (largest by population)" },
           { aspect: "Beneficiaries", detail: "Rural/urban poor households" },
           { aspect: "Benefit", detail: "Rs. 5 lakh (≈USD 6,000) per household/year" },
+          { aspect: "Hospitals", detail: "Empaneled public + private" },
+          { aspect: "Payment Model", detail: "Government reimburses hospitals (negotiated rates, Rs. 30K-500K per procedure)" },
           { aspect: "Payment Terms", detail: "15-30 days to hospitals (government)" },
         ],
       },
@@ -406,8 +414,12 @@ const apacSystems: CountrySystem[] = [
         title: "CGHS (Central Government Health Scheme)",
         details: [
           { aspect: "Coverage", detail: "4.7 million central government employees + pensioners" },
+          { aspect: "Beneficiaries", detail: "Government employees, pensioners, dependents" },
           { aspect: "Operating Cities", detail: "80 cities" },
+          { aspect: "Wellness Centers", detail: "80+ CGHS clinics across India" },
           { aspect: "Empaneled Hospitals", detail: "2,486 private hospitals + government facilities" },
+          { aspect: "Contribution", detail: "Rs. 200-500/month (employee); pension deduction for retirees" },
+          { aspect: "Payment Terms", detail: "Monthly capitation to CGHS centers; quarterly to empaneled hospitals" },
         ],
       },
       {
@@ -415,6 +427,15 @@ const apacSystems: CountrySystem[] = [
         details: [
           { aspect: "Coverage", detail: "35M+ workers in organized sector + dependents" },
           { aspect: "Contribution", detail: "3.25% employee + 4.75% employer" },
+          { aspect: "Benefits", detail: "Hospitalization, outpatient, maternity, disability" },
+          { aspect: "Payment Model", detail: "Government insurance corporation directly provides services (captive system)" },
+        ],
+      },
+      {
+        title: "State Government Schemes",
+        details: [
+          { aspect: "Variation", detail: "Each state runs own insurance scheme (Tamil Nadu, Karnataka, etc.)" },
+          { aspect: "Coverage", detail: "Varies; typically low-income populations" },
         ],
       },
     ],
@@ -431,7 +452,29 @@ const apacSystems: CountrySystem[] = [
       { aspect: "Patient Co-Pay", detail: "10-30% depending on service/province" },
       { aspect: "VBP Mechanism", detail: "Government bulk price negotiations → 50-70% price cuts" },
       { aspect: "Payment Terms", detail: "30-90 days (often delayed)" },
+      { aspect: "Hospital Payment", detail: "Capitated per diem + DRG-like adjustments; negotiated contracts" },
+      { aspect: "Pharmaceutical Approval", detail: "NMPA regulatory; NHSA price negotiation (separate process); HEOR increasingly required" },
+      { aspect: "Price Negotiations", detail: "NHSA conducts annual national negotiations; VBP drives volume targets" },
+      { aspect: "Private Insurance Role", detail: "Supplementary; growing (wealthy individuals, high-cost procedures)" },
       { aspect: "Key Challenge for Pharma", detail: "VBP volume requirements + price compression = very low Chinese prices vs. Western markets" },
+    ],
+    subSections: [
+      {
+        title: "URMI (Urban Resident Medical Insurance)",
+        details: [
+          { aspect: "Coverage", detail: "400M+ non-employed urban residents" },
+          { aspect: "Contribution", detail: "Individual premium or government subsidy (poverty-targeted)" },
+          { aspect: "Patient Co-Pay", detail: "20-40%" },
+        ],
+      },
+      {
+        title: "NRMI (New Rural Cooperative Medical Insurance)",
+        details: [
+          { aspect: "Coverage", detail: "700M+ rural residents" },
+          { aspect: "Government Subsidy", detail: "Primary funding mechanism (government-supported)" },
+          { aspect: "Patient Co-Pay", detail: "20-40%" },
+        ],
+      },
     ],
   },
   {
@@ -537,16 +580,24 @@ const comparativeMatrix: ComparisonRow[] = [
   { characteristic: "Coverage Type", usa: "Multi-payer fragmented", uk: "Single-payer government", germany: "Multi-payer social insurance", france: "Multi-payer social insurance", canada: "Single-payer government", japan: "Multi-payer social insurance", india: "Fragmented multi-payer", china: "Government-directed", brazil: "Mixed government/private" },
   { characteristic: "Coverage %", usa: "90% (15M uninsured)", uk: "99%+", germany: "99%+", france: "100%", canada: "100%", japan: "100%", india: "~40% universal; ~60% OOP", china: "~97%", brazil: "100% SUS; 30% private" },
   { characteristic: "Primary Funding", usa: "Private 60%; Gov 40%", uk: "Government 100%", germany: "Employer-employee; Gov", france: "Employer-employee; Gov", canada: "Government (provincial)", japan: "Employer-employee", india: "Gov schemes + OOP + private", china: "Government (employer-driven)", brazil: "Government (mostly)" },
+  { characteristic: "Main Payer Entity", usa: "UnitedHealth, Anthem, CVS, Cigna, Medicare, Medicaid", uk: "NHS England (national)", germany: "124 sickness funds + G-BA", france: "CNAMTS + 20 mutuelles", canada: "10 provincial health ministries", japan: "1,500+ insurers (employment-based)", india: "CGHS, ESI, PM-JAY, state schemes", china: "NHSA (unified, government)", brazil: "SUS (federal + state + municipal)" },
   { characteristic: "Hospital Payment", usa: "DRG + FFS + bundled", uk: "Global budget + activity", germany: "G-DRG system", france: "T2A (activity-based)", canada: "Global budget + case-mix", japan: "DPC system (DRG-like)", india: "Highly variable", china: "Capitated + DRG-like", brazil: "APACs (bundled)" },
   { characteristic: "Physician Payment", usa: "RBRVS + FFS + Capitation", uk: "Capitation (GPs) + FFS", germany: "FFS with fee schedule", france: "FFS with gov fee schedule", canada: "Capitation + FFS", japan: "FFS with negotiated schedule", india: "FFS (private); varied (gov)", china: "FFS with fee schedule", brazil: "FFS (SUS, very low)" },
   { characteristic: "Avg Payment Period", usa: "30-45 days", uk: "Monthly (reliable)", germany: "30-45 days", france: "5 days (Carte Vitale)", canada: "Monthly (reliable)", japan: "45-60 days", india: "15-30d (private); 30-90+ (public)", china: "30-90 days (delayed)", brazil: "90+ days (delays)" },
   { characteristic: "Patient Cost at Visit", usa: "Copay $20-100+", uk: "Minimal (£9.90 Rx)", germany: "€10-25 (cap 2%)", france: "Co-pay 20-30%", canada: "Modest (low copay)", japan: "30% (working-age)", india: "Highly variable; high OOP", china: "10-30%", brazil: "Free (SUS)" },
+  { characteristic: "Formulary Authority", usa: "PBM + Insurer (fragmented)", uk: "NICE", germany: "G-BA + IQWiG", france: "ANSM + CNAMTS", canada: "CADTH + provincial", japan: "PMDA + insurers", india: "Multiple (govt schemes)", china: "NHSA (VBP negotiations)", brazil: "CONITEC + ANVISA" },
+  { characteristic: "Prior Authorization", usa: "Extensive (60%+ specialty)", uk: "Limited (regional variation)", germany: "Moderate (specialty drugs)", france: "Moderate", canada: "Moderate", japan: "Limited", india: "Extensive (private insurers)", china: "Yes (government controls)", brazil: "Variable by state" },
   { characteristic: "Price Control", usa: "Minimal (payers negotiate)", uk: "Strong (NICE)", germany: "Strong (IQWiG rebates)", france: "Gov price negotiation", canada: "CADTH (flexible)", japan: "Gov fee schedule", india: "Gov price caps", china: "Very strong (VBP)", brazil: "Strong (CMED caps)" },
   { characteristic: "Generic Penetration", usa: "50-60%", uk: "80%+", germany: "70%+", france: "60%+", canada: "60%+", japan: "70%+", india: "20-30%", china: "40-50%", brazil: "60%+" },
+  { characteristic: "Preferred Drug Lists", usa: "Yes (tiered formularies)", uk: "NHS formulary (NICE-approved)", germany: "German formulary (ref pricing)", france: "ANSM list", canada: "Provincial formularies (CADTH)", japan: "Insurance society lists", india: "Yes (each scheme)", china: "Yes (NHSA national list)", brazil: "Positive list (SUS)" },
+  { characteristic: "Budget Mechanism", usa: "Annual (payer-specific)", uk: "Parliament + 3-5yr plans", germany: "Target spending negotiated", france: "Annual government budget", canada: "Provincial annual budgets", japan: "Annual negotiation", india: "Annual (scheme-specific)", china: "Annual (central planning)", brazil: "Annual (federal + state)" },
   { characteristic: "Spending Growth (CAGR)", usa: "4-5%", uk: "2-3%", germany: "3-4%", france: "3-4%", canada: "2-3%", japan: "2-3%", india: "8-10%", china: "5-7%", brazil: "4-6%" },
+  { characteristic: "Private Sector Dependence", usa: "HIGH (40% pharma revenue)", uk: "MINIMAL (10% NHS burden)", germany: "MODERATE (15-20% private)", france: "MODERATE (10-15% private)", canada: "MODERATE (employer-based ~60%)", japan: "MINIMAL (supplemental <10%)", india: "HIGH (60%+ healthcare private OOP)", china: "MINIMAL (supplemental growing)", brazil: "MODERATE (30% private insurance)" },
   { characteristic: "Negotiating Power vs Pharma", usa: "Moderate-High", uk: "Very High", germany: "High", france: "High", canada: "High", japan: "Moderate", india: "Moderate-Low", china: "Very High", brazil: "High" },
+  { characteristic: "RWE Requirements", usa: "FDA + AMCP 29 criteria", uk: "NICE pragmatic framework", germany: "IQWiG stringent ROBINS-I", france: "Gov negotiation data", canada: "CADTH pragmatic guidance", japan: "Limited (emerging)", india: "Minimal (not standardized)", china: "NHSA VBP data-driven", brazil: "CONITEC value-based" },
   { characteristic: "HTA Body", usa: "ICER (independent)", uk: "NICE", germany: "G-BA/IQWiG", france: "ANSM + CNAMTS", canada: "CADTH", japan: "PMDA + insurers", india: "NITI Aayog (emerging)", china: "NHSA (government)", brazil: "CONITEC" },
   { characteristic: "Drug Approval Timeline", usa: "30-180 days", uk: "90d (NICE); 6-9mo full", germany: "6 months (AMNOG)", france: "5 days post-ANSM", canada: "6-12 months (CADTH)", japan: "12+ months", india: "Variable 30-90d + 6mo schemes", china: "6mo (NMPA); 1yr (NHSA)", brazil: "180 days (CONITEC)" },
+  { characteristic: "Cost-Effectiveness Threshold", usa: "Flexible ($100-150K/QALY ICER)", uk: "Strong (£20-30K/QALY)", germany: "Moderate (~€80-100K implied)", france: "Flexible (gov negotiation)", canada: "Flexible (no fixed threshold)", japan: "None (service-based)", india: "Not standardized", china: "Budget-driven (VBP)", brazil: "Flexible (unmet need focus)" },
   { characteristic: "Orphan Drug Policy", usa: "Premium pricing; accelerated", uk: "£100K+/QALY flexibility", germany: "Exemptions from normal", france: "Gov compassion provisions", canada: "Flexibility for rare", japan: "Insurance listing flexibility", india: "Limited (cost barrier)", china: "Limited (affordability)", brazil: "Limited (cost control)" },
 ];
 
@@ -605,18 +656,40 @@ export const PayersLandscape = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeRegion, setActiveRegion] = useState("us");
 
+  const handleExportExcel = () => {
+    exportPayersToExcel(comparativeMatrix, strategicImplications);
+  };
+
+  const handleExportPDF = () => {
+    exportPayersPDF('payers-landscape-content', 'global-payers-landscape.pdf');
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="payers-landscape-content">
       {/* Header */}
       <Card className="border-primary/20">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <Landmark className="h-6 w-6 text-primary" />
-            Comprehensive Global Payers Landscape: Comparative Analysis
-          </CardTitle>
-          <CardDescription className="text-base">
-            Operational Models, Budgets, Funding, Payment Terms (2024-2025)
-          </CardDescription>
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Landmark className="h-6 w-6 text-primary" />
+                Comprehensive Global Payers Landscape: Comparative Analysis
+              </CardTitle>
+              <CardDescription className="text-base mt-1">
+                Operational Models, Budgets, Funding, Payment Terms (2024-2025)
+              </CardDescription>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handleExportExcel} className="gap-1.5">
+                <Download className="h-3.5 w-3.5" />
+                Export Excel
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleExportPDF} className="gap-1.5">
+                <FileText className="h-3.5 w-3.5" />
+                Export PDF
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-4">

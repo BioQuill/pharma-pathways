@@ -1,10 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, TrendingUp, Globe, Shield, FileText } from "lucide-react";
+import { DrugPricingData } from "@/components/DrugPricingData";
 
 export const PricingAccessDashboard = () => {
   return (
     <div className="space-y-6">
+      {/* Drug-Level Pricing Intelligence */}
+      <DrugPricingData />
+
       <Card className="border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
