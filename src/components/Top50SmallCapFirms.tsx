@@ -41,10 +41,18 @@ import {
   Wallet,
   Store,
   AlertOctagon,
-  Trophy
+  Trophy,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  FileSpreadsheet,
+  FileText,
+  Eye
 } from "lucide-react";
 import { exportDomToPDF } from "@/lib/pdfGenerator";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, LineChart, Line, ComposedChart, Area, ScatterChart, Scatter, ZAxis } from "recharts";
+import { CompanyDetailModal } from "@/components/CompanyDetailModal";
+import { exportMARankingsToExcel, exportRedFlagsToExcel, exportCombinedMAReport } from "@/lib/maExport";
 
 interface SmallCapCompany {
   rank: number;
@@ -558,6 +566,17 @@ export const Top50SmallCapFirms = () => {
   const [stageFilter, setStageFilter] = useState<string>("all");
   const [activeTab, setActiveTab] = useState("list");
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
+  
+  // Company detail modal state
+  const [selectedCompanyTicker, setSelectedCompanyTicker] = useState<string | null>(null);
+  
+  // M&A Scores filtering and sorting state
+  const [scoreCategoryFilter, setScoreCategoryFilter] = useState<string>("all");
+  const [scoreStageFilter, setScoreStageFilter] = useState<string>("all");
+  const [scoreSearchQuery, setScoreSearchQuery] = useState("");
+  const [scoreMinTotal, setScoreMinTotal] = useState<number>(0);
+  const [scoreSortField, setScoreSortField] = useState<string>("totalScore");
+  const [scoreSortDirection, setScoreSortDirection] = useState<"asc" | "desc">("desc");
 
   const filteredCompanies = companies.filter(company => {
     const matchesSearch = 
@@ -634,6 +653,69 @@ export const Top50SmallCapFirms = () => {
   const maProbabilityScores = useMemo(() => {
     return calculateMAProbabilityScores(companies);
   }, []);
+
+  // Filtered and sorted M&A scores
+  const filteredMAProbabilityScores = useMemo(() => {
+    let filtered = [...maProbabilityScores];
+    
+    // Apply search
+    if (scoreSearchQuery) {
+      const q = scoreSearchQuery.toLowerCase();
+      filtered = filtered.filter(s => 
+        s.ticker.toLowerCase().includes(q) || 
+        s.name.toLowerCase().includes(q)
+      );
+    }
+    
+    // Apply category filter
+    if (scoreCategoryFilter !== "all") {
+      filtered = filtered.filter(s => s.category === scoreCategoryFilter);
+    }
+    
+    // Apply stage filter
+    if (scoreStageFilter !== "all") {
+      filtered = filtered.filter(s => s.stage.toLowerCase().includes(scoreStageFilter.toLowerCase()));
+    }
+    
+    // Apply min score filter
+    if (scoreMinTotal > 0) {
+      filtered = filtered.filter(s => s.totalScore >= scoreMinTotal);
+    }
+    
+    // Apply sorting
+    filtered.sort((a, b) => {
+      const aVal = a[scoreSortField as keyof typeof a] as number;
+      const bVal = b[scoreSortField as keyof typeof b] as number;
+      return scoreSortDirection === "desc" ? bVal - aVal : aVal - bVal;
+    });
+    
+    return filtered;
+  }, [maProbabilityScores, scoreSearchQuery, scoreCategoryFilter, scoreStageFilter, scoreMinTotal, scoreSortField, scoreSortDirection]);
+
+  // Selected company for modal
+  const selectedCompanyScore = useMemo(() => {
+    if (!selectedCompanyTicker) return null;
+    return maProbabilityScores.find(s => s.ticker === selectedCompanyTicker) || null;
+  }, [selectedCompanyTicker, maProbabilityScores]);
+
+  const selectedCompanyInfo = useMemo(() => {
+    if (!selectedCompanyTicker) return null;
+    return companies.find(c => c.ticker === selectedCompanyTicker) || null;
+  }, [selectedCompanyTicker]);
+
+  const toggleScoreSort = (field: string) => {
+    if (scoreSortField === field) {
+      setScoreSortDirection(prev => prev === "desc" ? "asc" : "desc");
+    } else {
+      setScoreSortField(field);
+      setScoreSortDirection("desc");
+    }
+  };
+
+  const getSortIcon = (field: string) => {
+    if (scoreSortField !== field) return <ArrowUpDown className="h-3 w-3" />;
+    return scoreSortDirection === "desc" ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />;
+  };
   const dealsByYear = useMemo(() => {
     const years = [2020, 2021, 2022, 2023, 2024];
     return years.map(year => {
@@ -1502,11 +1584,19 @@ export const Top50SmallCapFirms = () => {
           {/* Due Diligence Red Flags Header */}
           <Card className="border-red-500/30 bg-gradient-to-br from-red-500/5 to-background">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-500">
-                <AlertTriangle className="h-6 w-6" />
-                M&A Due Diligence Red Flags
-              </CardTitle>
-              <CardDescription>Critical warning signs that could derail an acquisition or lead to failed integration</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-red-500">
+                    <AlertTriangle className="h-6 w-6" />
+                    M&A Due Diligence Red Flags
+                  </CardTitle>
+                  <CardDescription className="mt-1">Critical warning signs that could derail an acquisition or lead to failed integration</CardDescription>
+                </div>
+                <Button variant="outline" size="sm" className="gap-2" onClick={() => exportRedFlagsToExcel(dueDiligenceRedFlags)}>
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Export Excel
+                </Button>
+              </div>
             </CardHeader>
           </Card>
 
@@ -1713,17 +1803,100 @@ export const Top50SmallCapFirms = () => {
 
         {/* M&A SCORING TAB */}
         <TabsContent value="scoring" className="space-y-6">
-          {/* Scoring Header */}
+          {/* Scoring Header with Export */}
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-background">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-6 w-6 text-primary" />
-                M&A Probability Scoring Model
-              </CardTitle>
-              <CardDescription>
-                Companies ranked by likelihood of acquisition based on clinical data, market opportunity, strategic fit, and financial position (0-100 score)
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-6 w-6 text-primary" />
+                    M&A Probability Scoring Model
+                  </CardTitle>
+                  <CardDescription className="mt-1">
+                    Companies ranked by likelihood of acquisition based on clinical data, market opportunity, strategic fit, and financial position (0-100 score)
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="gap-2" onClick={() => exportMARankingsToExcel(maProbabilityScores)}>
+                    <FileSpreadsheet className="h-4 w-4" />
+                    Rankings Excel
+                  </Button>
+                  <Button variant="outline" size="sm" className="gap-2" onClick={() => exportCombinedMAReport(maProbabilityScores, dueDiligenceRedFlags)}>
+                    <Download className="h-4 w-4" />
+                    Full Report
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
+          </Card>
+
+          {/* Filters for M&A Scores */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex flex-wrap gap-4">
+                <div className="flex-1 min-w-[180px]">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search ticker or company..."
+                      value={scoreSearchQuery}
+                      onChange={(e) => setScoreSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <Select value={scoreCategoryFilter} onValueChange={setScoreCategoryFilter}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Filter by category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map(cat => (
+                      <SelectItem key={cat.name} value={cat.name}>{cat.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={scoreStageFilter} onValueChange={setScoreStageFilter}>
+                  <SelectTrigger className="w-[160px]">
+                    <SelectValue placeholder="Filter by stage" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Stages</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="phase 3">Phase 3</SelectItem>
+                    <SelectItem value="phase 2">Phase 2</SelectItem>
+                    <SelectItem value="phase 1">Phase 1</SelectItem>
+                    <SelectItem value="preclinical">Preclinical</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={String(scoreMinTotal)} onValueChange={(v) => setScoreMinTotal(Number(v))}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue placeholder="Min score" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">Any Score</SelectItem>
+                    <SelectItem value="40">Score ≥ 40</SelectItem>
+                    <SelectItem value="50">Score ≥ 50</SelectItem>
+                    <SelectItem value="60">Score ≥ 60</SelectItem>
+                    <SelectItem value="70">Score ≥ 70</SelectItem>
+                    <SelectItem value="80">Score ≥ 80</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="mt-3 text-sm text-muted-foreground">
+                Showing {filteredMAProbabilityScores.length} of {maProbabilityScores.length} companies
+                {(scoreCategoryFilter !== "all" || scoreStageFilter !== "all" || scoreMinTotal > 0 || scoreSearchQuery) && (
+                  <Button variant="ghost" size="sm" className="ml-2 h-6 text-xs" onClick={() => {
+                    setScoreCategoryFilter("all");
+                    setScoreStageFilter("all");
+                    setScoreMinTotal(0);
+                    setScoreSearchQuery("");
+                  }}>
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            </CardContent>
           </Card>
 
           {/* Top 10 M&A Targets */}
@@ -1738,7 +1911,7 @@ export const Top50SmallCapFirms = () => {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                 {maProbabilityScores.slice(0, 10).map((company, idx) => (
-                  <Card key={company.ticker} className={`${idx < 3 ? 'border-amber-500/50 bg-amber-500/5' : ''}`}>
+                  <Card key={company.ticker} className={`cursor-pointer hover:border-primary/50 transition-colors ${idx < 3 ? 'border-amber-500/50 bg-amber-500/5' : ''}`} onClick={() => setSelectedCompanyTicker(company.ticker)}>
                     <CardContent className="pt-4">
                       <div className="flex items-center justify-between mb-2">
                         <Badge variant={idx < 3 ? "default" : "secondary"} className={idx < 3 ? 'bg-amber-500' : ''}>
@@ -1817,30 +1990,63 @@ export const Top50SmallCapFirms = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-primary" />
-                Complete M&A Probability Rankings
+                {scoreCategoryFilter !== "all" || scoreStageFilter !== "all" || scoreMinTotal > 0 || scoreSearchQuery
+                  ? "Filtered M&A Probability Rankings"
+                  : "Complete M&A Probability Rankings"}
               </CardTitle>
-              <CardDescription>All 100 companies ranked by M&A probability score</CardDescription>
+              <CardDescription>
+                {filteredMAProbabilityScores.length} companies • Click any row to view detailed breakdown • Click headers to sort
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
                 <Table>
                   <TableHeader className="sticky top-0 bg-background z-10">
                     <TableRow>
-                      <TableHead className="w-[60px]">Rank</TableHead>
+                      <TableHead className="w-[60px]">
+                        <Button variant="ghost" size="sm" className="gap-1 h-7 px-1" onClick={() => toggleScoreSort("rank")}>
+                          Rank {getSortIcon("rank")}
+                        </Button>
+                      </TableHead>
                       <TableHead className="w-[80px]">Ticker</TableHead>
                       <TableHead>Company</TableHead>
                       <TableHead>Category</TableHead>
                       <TableHead>Stage</TableHead>
-                      <TableHead className="text-center">Clinical</TableHead>
-                      <TableHead className="text-center">Market</TableHead>
-                      <TableHead className="text-center">Strategic</TableHead>
-                      <TableHead className="text-center">Financial</TableHead>
-                      <TableHead className="text-center font-bold">Total</TableHead>
+                      <TableHead className="text-center">
+                        <Button variant="ghost" size="sm" className="gap-1 h-7 px-1" onClick={() => toggleScoreSort("clinicalDataScore")}>
+                          Clinical {getSortIcon("clinicalDataScore")}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <Button variant="ghost" size="sm" className="gap-1 h-7 px-1" onClick={() => toggleScoreSort("marketOpportunityScore")}>
+                          Market {getSortIcon("marketOpportunityScore")}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <Button variant="ghost" size="sm" className="gap-1 h-7 px-1" onClick={() => toggleScoreSort("strategicFitScore")}>
+                          Strategic {getSortIcon("strategicFitScore")}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <Button variant="ghost" size="sm" className="gap-1 h-7 px-1" onClick={() => toggleScoreSort("financialPositionScore")}>
+                          Financial {getSortIcon("financialPositionScore")}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="text-center">
+                        <Button variant="ghost" size="sm" className="gap-1 h-7 px-1 font-bold" onClick={() => toggleScoreSort("totalScore")}>
+                          Total {getSortIcon("totalScore")}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {maProbabilityScores.map((company) => (
-                      <TableRow key={company.ticker} className={company.rank <= 10 ? 'bg-amber-500/5' : ''}>
+                    {filteredMAProbabilityScores.map((company) => (
+                      <TableRow 
+                        key={company.ticker} 
+                        className={`cursor-pointer hover:bg-primary/5 ${company.rank <= 10 ? 'bg-amber-500/5' : ''}`}
+                        onClick={() => setSelectedCompanyTicker(company.ticker)}
+                      >
                         <TableCell>
                           <Badge variant={company.rank <= 3 ? "default" : company.rank <= 10 ? "secondary" : "outline"} 
                                  className={company.rank <= 3 ? 'bg-amber-500' : ''}>
@@ -1853,6 +2059,7 @@ export const Top50SmallCapFirms = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="font-mono font-bold text-primary hover:underline flex items-center gap-1"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {company.ticker}
                             <ExternalLink className="h-3 w-3" />
@@ -1887,6 +2094,11 @@ export const Top50SmallCapFirms = () => {
                           <span className={`font-bold text-lg ${company.totalScore >= 80 ? 'text-green-500' : company.totalScore >= 60 ? 'text-amber-500' : 'text-muted-foreground'}`}>
                             {company.totalScore}
                           </span>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                            <Eye className="h-4 w-4" />
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -2127,6 +2339,14 @@ export const Top50SmallCapFirms = () => {
           </p>
         </CardContent>
       </Card>
+
+      {/* Company Detail Modal */}
+      <CompanyDetailModal
+        open={!!selectedCompanyTicker}
+        onOpenChange={(open) => { if (!open) setSelectedCompanyTicker(null); }}
+        score={selectedCompanyScore}
+        companyInfo={selectedCompanyInfo}
+      />
     </div>
   );
 };
