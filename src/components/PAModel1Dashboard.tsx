@@ -3,7 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Scale, Globe, TrendingUp, Shield, Stethoscope, Activity, Brain, Pill, Heart, Eye, FlaskConical } from "lucide-react";
+import { Scale, Globe, TrendingUp, Shield, Stethoscope, Activity, Brain, Pill, Heart, Eye, FlaskConical, Calculator } from "lucide-react";
+import { taSpecificScoringData } from "@/lib/taSpecificScoringData";
+import { MWPSPICalculator } from "@/components/MWPSPICalculator";
 
 // ============ TYPES ============
 interface ScoringItem { label: string; points: string; detail?: string; }
@@ -765,8 +767,9 @@ export const PAModel1Dashboard = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-muted/50 p-1">
-          <TabsTrigger value="core" className="gap-1.5"><Globe className="h-3.5 w-3.5" /> Core Framework (7 Markets)</TabsTrigger>
+         <TabsTrigger value="core" className="gap-1.5"><Globe className="h-3.5 w-3.5" /> Core Framework (7 Markets)</TabsTrigger>
           <TabsTrigger value="ta" className="gap-1.5"><Stethoscope className="h-3.5 w-3.5" /> TA-Specific Models (13 TAs)</TabsTrigger>
+          <TabsTrigger value="calculator" className="gap-1.5"><Calculator className="h-3.5 w-3.5" /> Interactive Calculator</TabsTrigger>
         </TabsList>
 
         {/* CORE FRAMEWORK */}
@@ -843,69 +846,159 @@ export const PAModel1Dashboard = () => {
         {/* TA-SPECIFIC */}
         <TabsContent value="ta" className="space-y-4">
           <Accordion type="multiple" className="space-y-2">
-            {taWeightsData.map((ta, idx) => (
-              <AccordionItem key={idx} value={`ta-${idx}`} className="border rounded-lg px-4">
-                <AccordionTrigger className="hover:no-underline">
-                  <span className="font-semibold">{ta.name}</span>
-                </AccordionTrigger>
-                <AccordionContent className="space-y-4">
-                  {/* Market Weights Table */}
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-2 font-semibold">Market</th>
-                          <th className="text-center p-2 font-semibold text-blue-600">Clinical</th>
-                          <th className="text-center p-2 font-semibold text-green-600">Economic</th>
-                          <th className="text-center p-2 font-semibold text-orange-600">Access</th>
-                          <th className="text-center p-2 font-semibold text-purple-600">Political</th>
-                          <th className="text-left p-2 font-semibold">Notes</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ta.markets.map((m, i) => (
-                          <tr key={i} className="border-b hover:bg-muted/30">
-                            <td className="p-2 font-medium">{m.market}</td>
-                            <td className="p-2 text-center text-blue-600 font-semibold">{m.clinical}%</td>
-                            <td className="p-2 text-center text-green-600 font-semibold">{m.economic}%</td>
-                            <td className="p-2 text-center text-orange-600 font-semibold">{m.access}%</td>
-                            <td className="p-2 text-center text-purple-600 font-semibold">{m.political}%</td>
-                            <td className="p-2 text-muted-foreground">{m.notes}</td>
+            {taWeightsData.map((ta, idx) => {
+              const taScoring = taSpecificScoringData.find(s => s.taName === ta.name);
+              return (
+                <AccordionItem key={idx} value={`ta-${idx}`} className="border rounded-lg px-4">
+                  <AccordionTrigger className="hover:no-underline">
+                    <span className="font-semibold">{ta.name}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="space-y-4">
+                    {/* Market Weights Table */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b bg-muted/50">
+                            <th className="text-left p-2 font-semibold">Market</th>
+                            <th className="text-center p-2 font-semibold text-blue-600">Clinical</th>
+                            <th className="text-center p-2 font-semibold text-green-600">Economic</th>
+                            <th className="text-center p-2 font-semibold text-orange-600">Access</th>
+                            <th className="text-center p-2 font-semibold text-purple-600">Political</th>
+                            <th className="text-left p-2 font-semibold">Notes</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody>
+                          {ta.markets.map((m, i) => (
+                            <tr key={i} className="border-b hover:bg-muted/30">
+                              <td className="p-2 font-medium">{m.market}</td>
+                              <td className="p-2 text-center text-blue-600 font-semibold">{m.clinical}%</td>
+                              <td className="p-2 text-center text-green-600 font-semibold">{m.economic}%</td>
+                              <td className="p-2 text-center text-orange-600 font-semibold">{m.access}%</td>
+                              <td className="p-2 text-center text-purple-600 font-semibold">{m.political}%</td>
+                              <td className="p-2 text-muted-foreground">{m.notes}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
 
-                  {/* Adjustments */}
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                      <h5 className="font-semibold text-sm text-green-700 dark:text-green-400 mb-2">Add to Final Score</h5>
-                      <div className="space-y-1">
-                        {ta.adjustments.add.map((a, i) => (
-                          <div key={i} className="flex items-start gap-2 text-xs bg-green-50 dark:bg-green-950/20 rounded p-1.5 border border-green-200">
-                            <Badge variant="outline" className="text-[9px] shrink-0 text-green-600 border-green-300">{a.points}</Badge>
-                            <span>{a.item}</span>
-                          </div>
-                        ))}
+                    {/* TA-Specific Scoring Breakdowns */}
+                    {taScoring && (
+                      <div className="space-y-3">
+                        <h4 className="font-semibold text-sm border-b pb-1">Detailed Scoring by Market</h4>
+                        <Accordion type="multiple" className="space-y-1">
+                          {taScoring.marketScorings.map((ms, mi) => (
+                            <AccordionItem key={mi} value={`ta-${idx}-market-${mi}`} className="border rounded px-3">
+                              <AccordionTrigger className="hover:no-underline py-2 text-sm">
+                                <span className="font-medium">{ms.market}</span>
+                              </AccordionTrigger>
+                              <AccordionContent className="space-y-3 pb-3">
+                                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                                  {/* Clinical */}
+                                  <div>
+                                    <h6 className="text-xs font-bold text-blue-600 mb-1">Clinical Scoring</h6>
+                                    {ms.clinicalScoring.map((s, si) => (
+                                      <div key={si} className="mb-2">
+                                        <p className="text-[10px] font-semibold text-muted-foreground">{s.title} ({s.maxPoints})</p>
+                                        {s.items.map((item, ii) => (
+                                          <div key={ii} className="flex items-start gap-1 text-[10px] pl-1 border-l border-blue-200 py-0.5 ml-1">
+                                            <Badge variant="outline" className="text-[8px] shrink-0 px-1">{item.points}</Badge>
+                                            <div>
+                                              <span className="font-medium">{item.label}</span>
+                                              {item.detail && <span className="text-muted-foreground block">{item.detail}</span>}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ))}
+                                  </div>
+                                  {/* Economic */}
+                                  <div>
+                                    <h6 className="text-xs font-bold text-green-600 mb-1">Economic Scoring</h6>
+                                    {ms.economicScoring.map((s, si) => (
+                                      <div key={si} className="mb-2">
+                                        <p className="text-[10px] font-semibold text-muted-foreground">{s.title} ({s.maxPoints})</p>
+                                        {s.items.map((item, ii) => (
+                                          <div key={ii} className="flex items-start gap-1 text-[10px] pl-1 border-l border-green-200 py-0.5 ml-1">
+                                            <Badge variant="outline" className="text-[8px] shrink-0 px-1">{item.points}</Badge>
+                                            <div>
+                                              <span className="font-medium">{item.label}</span>
+                                              {item.detail && <span className="text-muted-foreground block">{item.detail}</span>}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ))}
+                                  </div>
+                                  {/* Access */}
+                                  <div>
+                                    <h6 className="text-xs font-bold text-orange-600 mb-1">Access Scoring</h6>
+                                    {ms.accessScoring.map((s, si) => (
+                                      <div key={si} className="mb-2">
+                                        <p className="text-[10px] font-semibold text-muted-foreground">{s.title} ({s.maxPoints})</p>
+                                        {s.items.map((item, ii) => (
+                                          <div key={ii} className="flex items-start gap-1 text-[10px] pl-1 border-l border-orange-200 py-0.5 ml-1">
+                                            <Badge variant="outline" className="text-[8px] shrink-0 px-1">{item.points}</Badge>
+                                            <div>
+                                              <span className="font-medium">{item.label}</span>
+                                              {item.detail && <span className="text-muted-foreground block">{item.detail}</span>}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                                {/* Probability Bands if available */}
+                                {ms.probabilityBands && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {ms.probabilityBands.map((b, bi) => (
+                                      <Badge key={bi} variant="outline" className="text-[9px]">{b.range}: {b.label} — {b.description}</Badge>
+                                    ))}
+                                  </div>
+                                )}
+                              </AccordionContent>
+                            </AccordionItem>
+                          ))}
+                        </Accordion>
+                      </div>
+                    )}
+
+                    {/* Adjustments */}
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <h5 className="font-semibold text-sm text-green-700 dark:text-green-400 mb-2">Add to Final Score</h5>
+                        <div className="space-y-1">
+                          {ta.adjustments.add.map((a, i) => (
+                            <div key={i} className="flex items-start gap-2 text-xs bg-green-50 dark:bg-green-950/20 rounded p-1.5 border border-green-200">
+                              <Badge variant="outline" className="text-[9px] shrink-0 text-green-600 border-green-300">{a.points}</Badge>
+                              <span>{a.item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-sm text-red-700 dark:text-red-400 mb-2">Subtract from Final Score</h5>
+                        <div className="space-y-1">
+                          {ta.adjustments.subtract.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2 text-xs bg-red-50 dark:bg-red-950/20 rounded p-1.5 border border-red-200">
+                              <Badge variant="outline" className="text-[9px] shrink-0 text-red-600 border-red-300">{s.points}</Badge>
+                              <span>{s.item}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <h5 className="font-semibold text-sm text-red-700 dark:text-red-400 mb-2">Subtract from Final Score</h5>
-                      <div className="space-y-1">
-                        {ta.adjustments.subtract.map((s, i) => (
-                          <div key={i} className="flex items-start gap-2 text-xs bg-red-50 dark:bg-red-950/20 rounded p-1.5 border border-red-200">
-                            <Badge variant="outline" className="text-[9px] shrink-0 text-red-600 border-red-300">{s.points}</Badge>
-                            <span>{s.item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
+        </TabsContent>
+
+        {/* CALCULATOR */}
+        <TabsContent value="calculator" className="space-y-4">
+          <MWPSPICalculator />
         </TabsContent>
       </Tabs>
     </div>
