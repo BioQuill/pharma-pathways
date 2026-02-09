@@ -3,7 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BarChart3, Calculator, Globe, TrendingUp, Target, Lightbulb, FileText, FlaskConical, Info } from "lucide-react";
+import { BarChart3, Calculator, Globe, TrendingUp, Target, Lightbulb, FileText, FlaskConical, Info, Sliders } from "lucide-react";
+import { Model2Calculator } from "@/components/Model2Calculator";
+import { Model2PDFExport } from "@/components/Model2PDFExport";
 
 // ============ STEP 1: HISTORICAL BASE RATES (20 TAs) ============
 const historicalBaseRates = [
@@ -509,17 +511,22 @@ export const PAModel2Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" id="model2-dashboard-content">
       {/* Header */}
       <Card className="border-primary/20">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <BarChart3 className="h-6 w-6 text-primary" />
-            PA Index-2 & Model 2: Comparative Payer Likelihood Matrix
-          </CardTitle>
-          <CardDescription className="text-base">
-            Uses historical approval rates combined with molecule-specific comparator benchmarking across 20 therapeutic areas and 8 global markets
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <BarChart3 className="h-6 w-6 text-primary" />
+                PA Index-2 & Model 2: Comparative Payer Likelihood Matrix
+              </CardTitle>
+              <CardDescription className="text-base mt-1">
+                Uses historical approval rates combined with molecule-specific comparator benchmarking across 20 therapeutic areas and 8 global markets
+              </CardDescription>
+            </div>
+            <Model2PDFExport />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="bg-muted/50 rounded-lg p-4 border font-mono text-sm text-center">
@@ -540,6 +547,9 @@ export const PAModel2Dashboard = () => {
           </TabsTrigger>
           <TabsTrigger value="adjustments" className="gap-1.5 text-xs font-semibold">
             <Calculator className="h-3.5 w-3.5" /> Market Adjustments
+          </TabsTrigger>
+          <TabsTrigger value="calculator" className="gap-1.5 text-xs font-semibold">
+            <Sliders className="h-3.5 w-3.5" /> Interactive Calculator
           </TabsTrigger>
           <TabsTrigger value="guidance" className="gap-1.5 text-xs font-semibold">
             <Info className="h-3.5 w-3.5" /> Usage Guidance
@@ -850,7 +860,12 @@ export const PAModel2Dashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* ===== TAB 4: USAGE GUIDANCE ===== */}
+        {/* ===== TAB 4: INTERACTIVE CALCULATOR ===== */}
+        <TabsContent value="calculator" className="space-y-4">
+          <Model2Calculator />
+        </TabsContent>
+
+        {/* ===== TAB 5: USAGE GUIDANCE ===== */}
         <TabsContent value="guidance" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card className="border-green-200">
