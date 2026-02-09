@@ -702,6 +702,122 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
       ],
     },
   },
+  {
+    name: "14. Psychiatry/Mental Health",
+    markets: [
+      { market: "US Commercial", clinical: 30, economic: 30, access: 25, political: 15, notes: "Mental Health Parity Act; suicide prevention priority; prior auth restricted" },
+      { market: "US Medicare", clinical: 30, economic: 30, access: 25, political: 15, notes: "Elderly depression; dementia-related agitation; Part D coverage" },
+      { market: "UK NICE", clinical: 35, economic: 40, access: 15, political: 10, notes: "NHS mental health crisis; IAPT services; cost-effectiveness strict" },
+      { market: "Germany G-BA", clinical: 35, economic: 30, access: 25, political: 10, notes: "Patient QoL central; psychotherapy integration; evidence requirements" },
+      { market: "Japan MHLW", clinical: 30, economic: 30, access: 25, political: 15, notes: "Suicide prevention national priority; cultural stigma challenges" },
+      { market: "China NHSA", clinical: 25, economic: 35, access: 30, political: 10, notes: "Mental health emerging priority; affordability critical; limited coverage" },
+      { market: "India PM-JAY", clinical: 15, economic: 50, access: 25, political: 10, notes: "Severe mental illness only; outpatient psychiatric care excluded mostly" },
+      { market: "Brazil CONITEC", clinical: 25, economic: 40, access: 25, political: 10, notes: "CAPS (psychosocial centers) integration; budget constraints" },
+    ],
+    adjustments: {
+      add: [
+        { item: "Rapid-acting (<1 week onset)", points: "+12 (TRD, acute suicidality)" },
+        { item: "Suicide ideation/attempt reduction documented", points: "+15 (US/Japan national priorities)" },
+        { item: "Novel mechanism (non-monoaminergic: NMDA, kappa-opioid, psychedelics, orexin)", points: "+12" },
+        { item: "No weight gain/metabolic syndrome", points: "+10 (vs. SGAs like olanzapine, quetiapine)" },
+        { item: "No sexual dysfunction", points: "+8 (vs. SSRIs)" },
+        { item: "Pediatric/adolescent indication (12-17)", points: "+10 (high unmet need)" },
+        { item: "Postpartum depression (zuranolone precedent)", points: "+12 (high priority)" },
+        { item: "Cognitive enhancement (schizophrenia)", points: "+15 (major unmet need, no approved drugs)" },
+        { item: "Negative symptom efficacy (schizophrenia)", points: "+12 (high unmet need)" },
+      ],
+      subtract: [
+        { item: "No functional improvement (symptom scores only)", points: "-10 (FDA, payers expect return to work)" },
+        { item: "REMS requirement (clinic-based, monitoring)", points: "-10 (esketamine burden)" },
+        { item: "Sedation/cognitive impairment as AE", points: "-8 (functional barrier)" },
+        { item: "Weight gain >7% body weight", points: "-10 (metabolic syndrome, adherence)" },
+        { item: "Extrapyramidal symptoms (EPS) risk", points: "-10 (antipsychotic side effect)" },
+        { item: "QTc prolongation (black box)", points: "-12 (cardiac monitoring, drug interactions)" },
+        { item: "Abuse potential/controlled substance", points: "-12 (DEA restrictions, stigma)" },
+        { item: "Discontinuation syndrome (withdrawal)", points: "-8 (SNRIs, benzodiazepines)" },
+        { item: "Black box warning (suicidality in youth)", points: "-15 (antidepressant class effect)" },
+      ],
+    },
+  },
+  {
+    name: "15. Transplantation & Cell/Gene Therapy",
+    markets: [
+      { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Breakthrough therapies; curative intent; ultra-high cost tolerance; outcomes-based contracts" },
+      { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B cell/gene therapy; NCD pathway; CED" },
+      { market: "UK NICE", clinical: 45, economic: 20, access: 20, political: 15, notes: "Transformative benefit; managed access; installment payments (Zolgensma precedent)" },
+      { market: "Germany G-BA", clinical: 50, economic: 15, access: 25, political: 10, notes: "NUB hospital innovation fund; orphan exemptions; long-term outcomes critical" },
+      { market: "Japan MHLW", clinical: 40, economic: 20, access: 25, political: 15, notes: "SAKIGAKE fast-track; regenerative medicine priority; conditional approval pathway" },
+      { market: "China NHSA", clinical: 35, economic: 25, access: 30, political: 10, notes: "Emerging cell/gene therapy; affordability major barrier; limited coverage" },
+      { market: "India PM-JAY", clinical: 25, economic: 35, access: 30, political: 10, notes: "Mostly excluded (ultra-high cost); bone marrow transplant covered; gene therapy OOP" },
+      { market: "Brazil CONITEC", clinical: 35, economic: 25, access: 30, political: 10, notes: "Judicial pathway (court orders); SUS cannot afford; private insurance limited" },
+    ],
+    adjustments: {
+      add: [
+        { item: "Curative intent (functional cure, disease elimination)", points: "+25 (highest priority, all markets)" },
+        { item: "Pediatric genetic/inherited disease (SMA, LCA, beta-thal, sickle cell)", points: "+20 (lifetime benefit, ethical imperative)" },
+        { item: "Single-dose, lifelong benefit (no re-treatment)", points: "+18" },
+        { item: "First gene therapy for indication", points: "+15 (breakthrough innovation)" },
+        { item: "CAR-T with durable CR (>5 years DFS documented)", points: "+15 (hematologic malignancies)" },
+        { item: "In vivo gene therapy (vs. ex vivo cell processing)", points: "+10 (scalability, logistics)" },
+        { item: "Outcomes-based contract precedent (Zolgensma, Luxturna, Yescarta)", points: "+12 (risk-sharing)" },
+        { item: "RMAT designation (US)", points: "+12 (regulatory + reimbursement advantages)" },
+        { item: "SAKIGAKE designation (Japan)", points: "+12 (conditional approval, fast-track, premium pricing)" },
+        { item: "Long-term registry data (>5 years follow-up)", points: "+10 (durability evidence)" },
+        { item: "Orphan designation (rare disease)", points: "+10 (regulatory incentives, pricing flexibility)" },
+        { item: "No conditioning chemotherapy required", points: "+8 (vs. CAR-T myeloablation)" },
+        { item: "Automated manufacturing (off-the-shelf allogeneic vs. autologous)", points: "+10 (scalability)" },
+      ],
+      subtract: [
+        { item: "Short durability (<5 years, re-dosing needed)", points: "-20 (negates cure narrative, cost multiplies)" },
+        { item: "Ultra-high cost (>$3M) without clear lifetime savings", points: "-15 (payer resistance)" },
+        { item: "Manufacturing complexity (patient-specific autologous CAR-T)", points: "-8 (scalability limited, 5-10% failures)" },
+        { item: "Limited to <10 specialized centers globally", points: "-12 (access barrier, health equity concerns)" },
+        { item: "No long-term data (<2 years follow-up, accelerated approval)", points: "-15 (uncertainty premium)" },
+        { item: "Safety signal (insertional mutagenesis, CRS, neurotoxicity)", points: "-12 (black box, monitoring)" },
+        { item: "Requires intensive conditioning (myeloablative chemo)", points: "-8 (toxicity, limits eligible patients)" },
+        { item: "Competing gene therapy or curative alternative in development", points: "-15 (market share uncertainty)" },
+        { item: "No outcomes-based contract offered (manufacturer refuses risk-sharing)", points: "-10 (payer impasse)" },
+        { item: "Manufacturing failure rate >10% (patient-specific CAR-T)", points: "-10 (efficacy/access barrier)" },
+        { item: "Allogeneic cell therapy with GVHD risk", points: "-12 (immunosuppression burden)" },
+      ],
+    },
+  },
+  {
+    name: "16. Pediatrics (Cross-Cutting)",
+    markets: [
+      { market: "US Commercial", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +10% base bonus; applies on top of underlying TA weights" },
+      { market: "UK NICE", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +15% base bonus; NHS children's health priority" },
+      { market: "Germany G-BA", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +12% base bonus; PIP studies mandatory" },
+      { market: "Japan MHLW", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +10% base bonus" },
+      { market: "China NHSA", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +8% base bonus; one-child policy legacy" },
+      { market: "India PM-JAY", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +12% base bonus" },
+      { market: "Brazil CONITEC", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +10% base bonus" },
+    ],
+    adjustments: {
+      add: [
+        { item: "Pediatric Rare Disease PRV (US)", points: "+10 (voucher value ~$100M incentivizes development)" },
+        { item: "BPCA/PREA 6-month exclusivity extension (US)", points: "+8 (revenue incentive)" },
+        { item: "Curative therapy preventing lifetime disability (SMA, LCA, beta-thal, sickle cell)", points: "+20" },
+        { item: "Prevents intellectual disability or developmental delay", points: "+15 (PKU, SMA, lysosomal storage)" },
+        { item: "First pediatric therapy for condition (no approved treatment)", points: "+15 (high unmet need)" },
+        { item: "Pediatric formulation (age-appropriate dosing, liquid, chewable, sprinkle)", points: "+8" },
+        { item: "Medicaid EPSDT mandate compliance (US)", points: "+10 (guaranteed coverage)" },
+        { item: "Orphan designation (many pediatric diseases are rare)", points: "+10 (7-year exclusivity)" },
+        { item: "Prevents early mortality (<18 years fatal disease)", points: "+18 (SMA type 1, Duchenne, Batten)" },
+        { item: "Strong patient advocacy organization (family foundations)", points: "+8" },
+        { item: "Newborn screening integration (PKU, SMA, SCID)", points: "+12 (early diagnosis)" },
+      ],
+      subtract: [
+        { item: "No pediatric studies (extrapolated from adults only)", points: "-10 (G-BA/NICE penalize)" },
+        { item: "Safety signal in pediatric population (black box for children)", points: "-15" },
+        { item: "Requires frequent invasive procedures (weekly IV, intrathecal)", points: "-8 (child burden)" },
+        { item: "No age-appropriate formulation (adult tablets for 5-year-old)", points: "-10 (dosing errors, adherence)" },
+        { item: "Limited to specialized centers (<10 pediatric centers US)", points: "-10 (access barrier)" },
+        { item: "School disruption (frequent hospitalizations, clinic visits)", points: "-6 (family burden)" },
+        { item: "Adolescent non-adherence risk (13-17 years)", points: "-6 (psychiatric meds, contraception)" },
+      ],
+    },
+  },
 ];
 
 // ============ HELPER COMPONENTS ============
@@ -768,7 +884,7 @@ export const PAModel1Dashboard = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-muted/50 p-1">
          <TabsTrigger value="core" className="gap-1.5"><Globe className="h-3.5 w-3.5" /> Core Framework (7 Markets)</TabsTrigger>
-          <TabsTrigger value="ta" className="gap-1.5"><Stethoscope className="h-3.5 w-3.5" /> TA-Specific Models (13 TAs)</TabsTrigger>
+          <TabsTrigger value="ta" className="gap-1.5"><Stethoscope className="h-3.5 w-3.5" /> TA-Specific Models (16 TAs)</TabsTrigger>
           <TabsTrigger value="calculator" className="gap-1.5"><Calculator className="h-3.5 w-3.5" /> Interactive Calculator</TabsTrigger>
         </TabsList>
 
