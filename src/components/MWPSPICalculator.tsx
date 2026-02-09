@@ -29,6 +29,9 @@ const therapeuticAreas = [
   { id: "rheumatology", label: "Rheumatology", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
   { id: "ophthalmology", label: "Ophthalmology", adjustments: { us: { clinical: 35, economic: 25, access: 25, political: 15 } } },
   { id: "uro_nephro", label: "Urology/Nephrology", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
+  { id: "psychiatry", label: "Psychiatry/Mental Health", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
+  { id: "transplant", label: "Transplantation & Cell/Gene Therapy", adjustments: { us: { clinical: 40, economic: 20, access: 25, political: 15 } } },
+  { id: "pediatrics", label: "Pediatrics (Cross-Cutting)", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
 ];
 
 function getProbabilityBand(score: number) {

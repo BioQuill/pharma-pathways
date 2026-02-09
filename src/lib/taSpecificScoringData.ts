@@ -1374,4 +1374,373 @@ export const taSpecificScoringData: TASpecificScoring[] = [
       },
     ],
   },
+  {
+    taName: "14. Psychiatry/Mental Health",
+    marketScorings: [
+      {
+        market: "US Markets",
+        clinicalScoring: [
+          { title: "Major Depressive Disorder (MDD)", maxPoints: "0-30", items: [
+            { label: "Remission rate (MADRS/HAMD ≤7)", points: "0-12", detail: "≥45% remission week 6-8: 12 | 35-45%: 9 | 25-35%: 6 | <25%: 3" },
+            { label: "Response rate (≥50% symptom reduction)", points: "0-8", detail: "≥60%: 8 | 50-60%: 6 | 40-50%: 4" },
+            { label: "Onset of action", points: "0-6", detail: "Week 1 significant: 6 | Week 2: 4 | Week 4-6 (standard): 2" },
+            { label: "Functional recovery (SDS, Sheehan)", points: "0-4" },
+          ]},
+          { title: "Treatment-Resistant Depression (TRD)", maxPoints: "0-30", items: [
+            { label: "Remission in TRD population", points: "0-15", detail: "≥30% remission: 15 | 20-30%: 11 | 15-20%: 7 | <15%: 3" },
+            { label: "Rapid onset (<1 week)", points: "0-8" },
+            { label: "Suicide ideation reduction (C-SSRS)", points: "0-7" },
+          ]},
+          { title: "Schizophrenia", maxPoints: "0-30", items: [
+            { label: "Symptom improvement (PANSS total)", points: "0-12", detail: "≥30-point reduction: 12 | 20-30: 9 | 10-20: 6" },
+            { label: "Negative symptom improvement", points: "0-8", detail: "High unmet need" },
+            { label: "Cognitive function (MATRICS)", points: "0-6" },
+            { label: "Relapse prevention", points: "0-4", detail: "Hospitalization reduction" },
+          ]},
+          { title: "Bipolar Disorder", maxPoints: "0-30", items: [
+            { label: "Mood stabilization (YMRS, MADRS)", points: "0-10" },
+            { label: "Time to relapse prevention", points: "0-8" },
+            { label: "Mixed episodes efficacy", points: "0-6" },
+            { label: "Rapid cycling control", points: "0-6" },
+          ]},
+          { title: "Anxiety Disorders (GAD, Social, Panic)", maxPoints: "0-27", items: [
+            { label: "HAM-A score reduction", points: "0-10" },
+            { label: "Response rate >50%", points: "0-6" },
+            { label: "Functional improvement", points: "0-6" },
+            { label: "Non-benzodiazepine (safety advantage)", points: "0-5" },
+          ]},
+          { title: "PTSD", maxPoints: "0-26", items: [
+            { label: "CAPS-5 improvement", points: "0-12" },
+            { label: "Functional recovery", points: "0-8" },
+            { label: "Sleep/nightmare improvement", points: "0-6" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-30", items: [
+            { label: "ICER threshold", points: "0-12", detail: "MDD/anxiety <$75K/QALY: 12; $75-125K: 8 | TRD <$100K: 12; $100-150K: 8 | Schizophrenia <$125K: 11; $125-175K: 7 | SMI <$150K: 10" },
+            { label: "Budget impact", points: "0-10", detail: "MDD (21M US adults) >$2B/payer: 2 | Schizophrenia (2.8M) <$500M: 10 | TRD (~5M) <$800M: 8 | Rare psychiatric <$100M: 10" },
+            { label: "Cost offsets", points: "0-8", detail: "Hospitalization reduction (psychotic episodes): 5 | Suicide attempt prevention: 4 | ER visit reduction: 3 | Productivity improvement: 2" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-25", items: [
+            { label: "Mental Health Parity Act compliance", points: "0-10", detail: "Cannot impose stricter PA than medical/surgical: 10 | Step therapy limited: 8 | Parity violations (enforcement weak): 5" },
+            { label: "Prescriber access", points: "0-8", detail: "Primary care prescribing allowed: 8 | Psychiatrist-only: 4 | Highly restricted (REMS): 2" },
+            { label: "APA Guidelines inclusion", points: "0-5", detail: "First/second-line: 5 | Third-line or later: 2" },
+            { label: "Prior authorization", points: "0-2", detail: "Minimal (acute treatment): 2 | Extensive (chronic, multiple failures required): 0" },
+          ]},
+          { title: "Special Considerations", maxPoints: "0 to -22", items: [
+            { label: "REMS Requirements", points: "0 to -10", detail: "Esketamine (in-clinic, monitoring): -8 | Clozapine-level (registry, ANC): -10" },
+            { label: "Controlled substance scheduling", points: "-8 to -12", detail: "Schedule IV (benzodiazepines): -8 | Schedule III-II: -12" },
+          ]},
+        ],
+      },
+      {
+        market: "UK NICE",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-35", items: [
+            { label: "QALY gain", points: "0-20", detail: "Severe depression/psychosis >1.5 QALYs: 20 | Moderate depression/anxiety 1-1.5: 14 | Mild conditions <1: 8" },
+            { label: "Suicide prevention impact", points: "0-8", detail: "High societal value" },
+            { label: "Functioning improvement (WSAS)", points: "0-7" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-40", items: [
+            { label: "ICER vs. £20-30K", points: "0-30", detail: "<£20K: 30 | £20-30K: 24 | £30-50K (severe mental illness flexibility): 15 | >£50K: 4" },
+            { label: "Budget impact NHS", points: "0-10", detail: "Depression (4M UK treated) >£500M: 2 | Schizophrenia (~220K) <£100M: 10 | TRD (~800K) <£200M: 8" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-15", items: [
+            { label: "NICE mental health guideline inclusion", points: "0-8" },
+            { label: "IAPT integration", points: "0-7", detail: "Medication complements therapy pathway: 7 | Medication-only, no integration: 3" },
+          ]},
+        ],
+      },
+      {
+        market: "Germany G-BA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-35", items: [
+            { label: "Additional benefit", points: "0-20", detail: "Considerable (3) - major remission + function: 20 | Minor (4) - symptom improvement: 15 | Non-quantifiable (5): 8" },
+            { label: "Patient-relevant endpoints", points: "0-10", detail: "Remission/recovery: 8 | Function (work, relationships): 6 | QoL: 4" },
+            { label: "Safety/tolerability", points: "0-5", detail: "vs. sedation, weight gain, EPS of older drugs" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-30", items: [
+            { label: "Price vs. comparator", points: "0-15" },
+            { label: "Budget impact", points: "0-10" },
+            { label: "Cost-effectiveness", points: "0-5" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-25", items: [
+            { label: "Psychotherapy combination evidence", points: "0-10", detail: "German standard combines medication + therapy" },
+            { label: "Long-term data (>6 months)", points: "0-8", detail: "Chronic disease" },
+            { label: "Prescriber network (psychiatrists, GPs)", points: "0-7" },
+          ]},
+        ],
+      },
+      {
+        market: "China NHSA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-25", items: [
+            { label: "Symptom improvement (Chinese population)", points: "0-12" },
+            { label: "Chinese clinical trial data", points: "0-10" },
+            { label: "Suicide prevention (national priority)", points: "0-3" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-35", items: [
+            { label: "VBP price cut", points: "0-25", detail: "Antidepressants/antipsychotics 50-60%: 25 | Novel mechanisms 40-50%: 20 | <40%: 10" },
+            { label: "Affordability (chronic use)", points: "0-10", detail: "<¥5K/year: 10 | ¥5-10K: 7 | >¥10K: 3" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-30", items: [
+            { label: "Volume commitment", points: "0-20" },
+            { label: "Hospital network", points: "0-10" },
+          ]},
+        ],
+      },
+    ],
+  },
+  {
+    taName: "15. Transplantation & Cell/Gene Therapy",
+    marketScorings: [
+      {
+        market: "US Markets",
+        clinicalScoring: [
+          { title: "Curative/Transformative Benefit", maxPoints: "0-20", items: [
+            { label: "Single-dose lifelong disease elimination (gene therapy)", points: "20" },
+            { label: "Durable DFS >10 years (CAR-T hematologic)", points: "18" },
+            { label: "Major disease modification, treatment-free >5 years", points: "15" },
+            { label: "Symptom improvement, ongoing management", points: "10" },
+            { label: "Modest/uncertain benefit", points: "5" },
+          ]},
+          { title: "Durability of Effect", maxPoints: "0-15", items: [
+            { label: "Documented >10 years follow-up", points: "15" },
+            { label: "5-10 years demonstrated", points: "12" },
+            { label: "2-5 years", points: "9" },
+            { label: "<2 years (re-dosing needed)", points: "3" },
+            { label: "Unknown durability (<2 years, accelerated)", points: "1" },
+          ]},
+          { title: "Unmet Need Severity", maxPoints: "0-10", items: [
+            { label: "Fatal pediatric disease, no alternative (SMA type 1, Duchenne)", points: "0-10" },
+            { label: "Life-threatening, limited alternatives (sickle cell, beta-thal)", points: "0-8" },
+            { label: "Severe disability, some alternatives (hemophilia A with inhibitors)", points: "0-6" },
+            { label: "Chronic manageable condition (T1DM)", points: "0-4" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-20", items: [
+            { label: "Curative cost vs. lifetime disease cost", points: "0-12", detail: "One-time << lifetime (SMA $2.1M vs. $4-5M): 12 | Approximately equal: 8 | Exceeds lifetime: 4 | >$5M without clear savings: 2" },
+            { label: "Outcomes-based contracting feasibility", points: "0-5", detail: "Installment/annuity model: 5 | Outcomes-based rebates: 5 | Performance-based: 4 | None offered: 0" },
+            { label: "Budget impact (per payer)", points: "0-3", detail: "Ultra-rare <500 patients <$50M: 3 | Rare 500-2K $50-200M: 2 | Moderate 2-10K: 1 | Large >10K: 0" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Regulatory Pathway", maxPoints: "0-12", items: [
+            { label: "RMAT + Breakthrough", points: "12" },
+            { label: "RMAT only", points: "10" },
+            { label: "Breakthrough Therapy", points: "9" },
+            { label: "Priority Review", points: "7" },
+            { label: "Accelerated Approval", points: "6" },
+            { label: "Standard approval", points: "3" },
+          ]},
+          { title: "Medicare Coverage", maxPoints: "0-8", items: [
+            { label: "NCD unconditional national coverage", points: "8" },
+            { label: "CED (Coverage with Evidence Development)", points: "6" },
+            { label: "LCD variable", points: "3" },
+            { label: "No NCD (uncertain)", points: "1" },
+          ]},
+          { title: "Specialized Centers/REMS", maxPoints: "0-3", items: [
+            { label: "Quality assurance (positive for outcomes)", points: "3" },
+            { label: "No restriction, broad availability", points: "2" },
+            { label: "Access barrier (rural, underserved)", points: "1" },
+          ]},
+          { title: "Outcomes-Based Contracts", maxPoints: "0-2", items: [
+            { label: "Multiple payers signed (Zolgensma, Luxturna precedent)", points: "2" },
+            { label: "Limited payer uptake", points: "1" },
+            { label: "No outcomes-based model", points: "0" },
+          ]},
+        ],
+      },
+      {
+        market: "UK NICE",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-45", items: [
+            { label: "Transformative benefit (HST-like flexibility)", points: "0-25", detail: "Curative intent, ultra-rare <5K UK: 25 | Disease-modifying, rare <20K: 20 | Significant QoL, not curative: 12 | Palliative/temporary: 8" },
+            { label: "QALY gain (with transformative flexibility)", points: "0-15", detail: "Pediatric cure lifetime >20 QALYs: 15 | Adult cure >10: 12 | Disease modification 5-10: 9 | Symptom improvement <5: 5" },
+            { label: "Durability demonstrated", points: "0-5", detail: ">10 years: 5 | 5-10: 4 | 2-5: 2 | <2 years: 1" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-20", items: [
+            { label: "QALY-based value with curative flexibility", points: "0-15", detail: "<£100K/QALY (pediatric cure): 15 | £100-300K (ultra-rare curative): 12 | £300-500K (exceptional): 9 | £500K-1M (highly selective): 5 | >£1M: 2" },
+            { label: "Managed Access/Installment Payment", points: "0-5", detail: "NHS installment over 5 years (Zolgensma): 5 | Outcomes-based MAA: 4 | Standard: 1" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-20", items: [
+            { label: "Managed Access Agreement (MAA)", points: "0-10", detail: "MAA with outcomes monitoring (CDF model): 10 | Conditional recommendation: 7 | Standard TA: 4" },
+            { label: "NHS Installment Payment Model", points: "0-7", detail: "Installments over 5 years agreed: 7 | Negotiation ongoing: 4 | No installment: 1" },
+            { label: "Specialized Center Network", points: "0-3", detail: "10-15 UK centers: 3 | <5 centers: 1" },
+          ]},
+        ],
+      },
+      {
+        market: "Germany G-BA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-50", items: [
+            { label: "Hospital Innovation (NUB) Benefit", points: "0-30", detail: "ATMP: 30 | Gene therapy curative: 28 | CAR-T oncology: 26 | Cell therapy non-curative: 20 | Organ transplant innovation: 18" },
+            { label: "Patient-relevant outcomes", points: "0-15", detail: "OS, functional cure: 15 | DFS: 12 | Major functional improvement: 10 | QoL: 8" },
+            { label: "Long-term evidence", points: "0-5", detail: ">5 years: 5 | 2-5: 3 | <2 years: 1" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-15", items: [
+            { label: "NUB Funding (Hospital Innovation)", points: "0-10", detail: "Innovation fund covers: 10 | DRG add-on: 8 | No special funding: 3" },
+            { label: "Long-term cost-offset", points: "0-5", detail: "Cure eliminates lifetime cost: 5 | Disease modification: 3 | Unclear: 1" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-25", items: [
+            { label: "NUB Approval", points: "0-15", detail: "Approved NUB funding: 15 | DRG add-on: 12 | No special reimbursement: 3" },
+            { label: "G-BA Conditional Approval", points: "0-7", detail: "Conditional approval, registry required: 7 | Standard: 4" },
+            { label: "University Hospital Access", points: "0-3", detail: "20-30 German centers: 3 | <10 centers: 1" },
+          ]},
+        ],
+      },
+      {
+        market: "China NHSA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-35", items: [
+            { label: "Clinical benefit (curative intent)", points: "0-18", detail: "Functional cure: 18 | Major disease modification: 14 | Symptom improvement: 8" },
+            { label: "Chinese trial or international data", points: "0-12", detail: "Phase III China: 12 | Phase II China + international III: 8 | International only (ultra-rare exception): 5" },
+            { label: "Disease burden in China", points: "0-5", detail: "High prevalence (thalassemia Southern China): 5 | Moderate (hemophilia): 3 | Low (rare genetic): 2" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-25", items: [
+            { label: "Affordability", points: "0-15", detail: "<¥500K (~$70K): 15 | ¥500K-1M: 10 | ¥1-2M: 5 | >¥2M: 1 (likely excluded)" },
+            { label: "Compassionate Access/Government Subsidy", points: "0-10", detail: "Rare disease fund co-pay: 10 | Provincial subsidy: 7 | Manufacturer assistance: 4 | No subsidy: 0" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-30", items: [
+            { label: "Volume commitment", points: "0-20" },
+            { label: "Hospital network", points: "0-10" },
+          ]},
+        ],
+      },
+    ],
+  },
+  {
+    taName: "16. Pediatrics (Cross-Cutting)",
+    marketScorings: [
+      {
+        market: "US Markets",
+        clinicalScoring: [
+          { title: "Developmental Milestones", maxPoints: "0-15", items: [
+            { label: "Motor (sitting, walking, running)", points: "0-8" },
+            { label: "Cognitive (language, learning)", points: "0-7" },
+            { label: "Social (peer interaction)", points: "0-5" },
+          ]},
+          { title: "Prevention of Permanent Disability", maxPoints: "0-7", items: [
+            { label: "Prevents intellectual disability (SMA, PKU)", points: "7" },
+            { label: "Prevents blindness (LCA gene therapy)", points: "7" },
+            { label: "Prevents growth stunting", points: "5" },
+          ]},
+          { title: "Family Impact", maxPoints: "0-7", items: [
+            { label: "Caregiver burden reduction (parents return to work)", points: "0-5" },
+            { label: "Sibling QoL improvement", points: "0-2" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Lifetime Cost-Avoidance", maxPoints: "0-15%", items: [
+            { label: "Pediatric intervention preventing 60-80 years disease costs", points: "+10-15%", detail: "ICER flexibility; e.g., SMA gene therapy $2.1M vs. $5M+ lifetime care" },
+          ]},
+          { title: "Budget Impact", maxPoints: "0-8", items: [
+            { label: "Smaller patient populations (pediatric subset)", points: "+8", detail: "Pediatric T1DM 200K vs. total T1DM 1.9M; Pediatric oncology ~10K vs. adult 1.9M/year" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Regulatory Advantages", maxPoints: "0-18", items: [
+            { label: "Pediatric Rare Disease PRV", points: "0-10", detail: "PRV granted (~$100M value): 10; not eligible: 0" },
+            { label: "BPCA/PREA 6-month exclusivity extension", points: "+8" },
+          ]},
+          { title: "Payer Coverage", maxPoints: "0-12", items: [
+            { label: "Medicaid EPSDT mandate", points: "0-8", detail: "Mandates medically necessary pediatric services: 8; broader than adult Medicaid" },
+            { label: "Children's hospitals (specialized networks)", points: "0-4" },
+          ]},
+          { title: "Ethical/Political Priority", maxPoints: "0-5", items: [
+            { label: "Strong patient advocacy (SMA, Duchenne, Rett, Batten)", points: "5" },
+            { label: "Public/media support", points: "4" },
+            { label: "Ethical imperative", points: "3" },
+          ]},
+        ],
+      },
+      {
+        market: "UK NICE",
+        clinicalScoring: [
+          { title: "Pediatric Overlay", maxPoints: "0-15", items: [
+            { label: "Lifetime QALYs (70+ years from pediatric cure)", points: "0-10", detail: "Gene therapy childhood genetic disease: 10 | Chronic disease management (T1DM): 6 | Acute treatment: 2" },
+            { label: "Societal Value (NHS children's health priority)", points: "0-5", detail: "NHS prioritizes children: 5 | NICE HST pathway more flexible for pediatric ultra-rare: 5" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "Favorable", items: [
+            { label: "QALY calculation includes lifetime (70+ years)", points: "Net favorable", detail: "Inherently benefits pediatric therapies; no explicit pediatric discount on ICER threshold" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "NHS Children's Health Priority", maxPoints: "0-10", items: [
+            { label: "Pediatric formulations mandated", points: "10" },
+            { label: "NICE HST pathway (ultra-rare pediatric)", points: "10" },
+            { label: "Managed access more favorable for children", points: "8" },
+          ]},
+        ],
+      },
+      {
+        market: "Germany G-BA",
+        clinicalScoring: [
+          { title: "Pediatric Overlay", maxPoints: "0-12", items: [
+            { label: "Pediatric Studies Conducted", points: "0-7", detail: "Dedicated pediatric Phase III: 7 | PK/PD studies: 5 | Extrapolated from adults: 0" },
+            { label: "Long-term growth/development data", points: "0-5", detail: "5-year follow-up: 5 | 2-year: 3 | <1 year: 1" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "Favorable", items: [
+            { label: "Pediatric studies reduce uncertainty", points: "Favorable", detail: "Improves benefit assessment; orphan drugs (many pediatric rare diseases) get automatic benefit, no AMNOG" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-8", items: [
+            { label: "Pediatric studies mandatory (PIP completed)", points: "0-8", detail: "PIP completed: 8 | Waived: 0" },
+          ]},
+        ],
+      },
+      {
+        market: "China NHSA",
+        clinicalScoring: [
+          { title: "Pediatric Overlay", maxPoints: "0-8", items: [
+            { label: "One-child policy legacy (high priority)", points: "0-5", detail: "Severe pediatric disease: 5 | Moderate: 3" },
+            { label: "Chinese pediatric trial", points: "0-3" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "Limited", items: [
+            { label: "Affordability critical even for children", points: "No premium", detail: "No significant price premium for pediatric vs. adult formulations in practice" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-6", items: [
+            { label: "Children prioritized (one-child legacy)", points: "0-6" },
+            { label: "Limited pediatric formulary coverage historically", points: "-2", detail: "Improving but still gap" },
+          ]},
+        ],
+      },
+    ],
+  },
 ];
