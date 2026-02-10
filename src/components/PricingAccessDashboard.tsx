@@ -17,7 +17,7 @@ export const PricingAccessDashboard = () => {
     <div className="space-y-4">
       {/* Top Navigation Bar */}
       <Tabs value={topTab} onValueChange={setTopTab} className="w-full">
-        <TabsList className="w-full justify-start h-auto gap-1 bg-muted/50 p-1">
+        <TabsList className="w-full justify-start h-auto gap-1 bg-sky-100 dark:bg-sky-950/30 p-1">
           <TabsTrigger value="overview" className="gap-1.5 font-semibold">
             <DollarSign className="h-3.5 w-3.5" /> Pricing & Access Overview
           </TabsTrigger>
