@@ -253,7 +253,7 @@ export default function Methodology() {
           </div>
 
           <Tabs defaultValue="algorithm" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-4 mb-8 bg-sky-100 dark:bg-sky-950/30">
               <TabsTrigger value="algorithm">Algorithm</TabsTrigger>
               <TabsTrigger value="features">Feature Engineering</TabsTrigger>
               <TabsTrigger value="calibration">Calibration</TabsTrigger>
