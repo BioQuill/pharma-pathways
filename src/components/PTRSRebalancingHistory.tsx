@@ -312,7 +312,7 @@ const PTRSRebalancingHistory: React.FC<PTRSRebalancingHistoryProps> = ({ molecul
         </div>
 
         <Tabs defaultValue="timeline" className="space-y-4">
-          <TabsList>
+          <TabsList className="bg-sky-100 dark:bg-sky-950/30">
             <TabsTrigger value="timeline">Performance Timeline</TabsTrigger>
             <TabsTrigger value="events">Event History</TabsTrigger>
             <TabsTrigger value="analysis">Trigger Analysis</TabsTrigger>

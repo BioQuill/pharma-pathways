@@ -818,7 +818,7 @@ export const PayersLandscape = () => {
 
       {/* Regional Tabs */}
       <Tabs value={activeRegion} onValueChange={setActiveRegion} className="w-full">
-        <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-muted/50 p-1">
+        <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-sky-100 dark:bg-sky-950/30 p-1">
           <TabsTrigger value="us" className="gap-1.5"><span>🇺🇸</span> United States</TabsTrigger>
           <TabsTrigger value="europe" className="gap-1.5"><span>🇪🇺</span> Europe</TabsTrigger>
           <TabsTrigger value="apac" className="gap-1.5"><Globe className="h-3.5 w-3.5" /> APAC & Emerging</TabsTrigger>

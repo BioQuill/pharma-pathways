@@ -137,7 +137,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 bg-sky-100 dark:bg-sky-950/30">
             <TabsTrigger value="export" className="gap-2">
               <Filter className="h-4 w-4" />
               Filtered Export

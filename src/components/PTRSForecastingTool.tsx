@@ -395,7 +395,7 @@ const PTRSForecastingTool: React.FC<PTRSForecastingToolProps> = ({ molecules }) 
             </div>
 
             <Tabs defaultValue="forecast">
-              <TabsList>
+              <TabsList className="bg-sky-100 dark:bg-sky-950/30">
                 <TabsTrigger value="forecast">Forecast Chart</TabsTrigger>
                 <TabsTrigger value="milestones">Milestones</TabsTrigger>
                 <TabsTrigger value="comparison">Portfolio Comparison</TabsTrigger>

@@ -870,7 +870,7 @@ export const Top50SmallCapFirms = () => {
 
       {/* View Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6 lg:w-[900px]">
+        <TabsList className="grid w-full grid-cols-6 lg:w-[900px] bg-sky-100 dark:bg-sky-950/30">
           <TabsTrigger value="list" className="gap-2">
             <Building2 className="h-4 w-4" />
             <span className="hidden sm:inline">Companies</span>

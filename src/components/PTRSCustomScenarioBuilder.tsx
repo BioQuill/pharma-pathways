@@ -317,7 +317,7 @@ export const PTRSCustomScenarioBuilder = ({ molecules }: PTRSCustomScenarioBuild
   return (
     <div className="space-y-6" ref={reportRef}>
       <Tabs defaultValue="builder" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-3 bg-sky-100 dark:bg-sky-950/30">
           <TabsTrigger value="builder">Scenario Builder</TabsTrigger>
           <TabsTrigger value="library">Scenario Library</TabsTrigger>
           <TabsTrigger value="results">Analysis Results</TabsTrigger>

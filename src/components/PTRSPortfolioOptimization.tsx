@@ -527,7 +527,7 @@ export const PTRSPortfolioOptimization = ({ molecules }: PTRSPortfolioOptimizati
 
           <Tabs defaultValue="allocation" className="w-full">
             <div className="flex items-center justify-between mb-4">
-              <TabsList>
+              <TabsList className="bg-sky-100 dark:bg-sky-950/30">
                 <TabsTrigger value="allocation">Allocation</TabsTrigger>
                 <TabsTrigger value="riskreturn">Risk/Return</TabsTrigger>
                 <TabsTrigger value="diversification">Diversification</TabsTrigger>

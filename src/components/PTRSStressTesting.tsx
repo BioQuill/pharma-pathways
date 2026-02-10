@@ -474,7 +474,7 @@ export const PTRSStressTesting: React.FC<PTRSStressTestingProps> = ({ molecules 
           </div>
 
           <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)}>
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 bg-sky-100 dark:bg-sky-950/30">
               <TabsTrigger value="impact">Impact Analysis</TabsTrigger>
               <TabsTrigger value="distribution">Distribution Shift</TabsTrigger>
               <TabsTrigger value="comparison">Scenario Comparison</TabsTrigger>
