@@ -882,7 +882,7 @@ export const PAModel1Dashboard = () => {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-muted/50 p-1">
+        <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-sky-100 dark:bg-sky-950/30 p-1">
          <TabsTrigger value="core" className="gap-1.5"><Globe className="h-3.5 w-3.5" /> Core Framework (7 Markets)</TabsTrigger>
           <TabsTrigger value="ta" className="gap-1.5"><Stethoscope className="h-3.5 w-3.5" /> TA-Specific Models (16 TAs)</TabsTrigger>
           <TabsTrigger value="calculator" className="gap-1.5"><Calculator className="h-3.5 w-3.5" /> Interactive Calculator</TabsTrigger>
