@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DollarSign, TrendingUp, Globe, Shield, FileText, Scale, BarChart3 } from "lucide-react";
+import { DollarSign, TrendingUp, Globe, Shield, FileText, Scale, BarChart3, GitBranch } from "lucide-react";
 import { DrugPricingData } from "@/components/DrugPricingData";
 import { PriceIndexChart } from "@/components/PriceIndexChart";
 import { IRAImpactModeling } from "@/components/IRAImpactModeling";
 import { PAModel1Dashboard } from "@/components/PAModel1Dashboard";
 import { PAModel2Dashboard } from "@/components/PAModel2Dashboard";
+import { ModelsDecisionFramework } from "@/components/ModelsDecisionFramework";
 
 export const PricingAccessDashboard = () => {
   const [topTab, setTopTab] = useState("overview");
@@ -25,6 +26,9 @@ export const PricingAccessDashboard = () => {
           </TabsTrigger>
           <TabsTrigger value="model2" className="gap-1.5 font-semibold">
             <BarChart3 className="h-3.5 w-3.5" /> PA Index-2 & Model 2
+          </TabsTrigger>
+          <TabsTrigger value="framework" className="gap-1.5 font-semibold">
+            <GitBranch className="h-3.5 w-3.5" /> Models Decision Framework
           </TabsTrigger>
         </TabsList>
 
@@ -228,6 +232,11 @@ export const PricingAccessDashboard = () => {
         {/* Model 2 Tab */}
         <TabsContent value="model2">
           <PAModel2Dashboard />
+        </TabsContent>
+
+        {/* Models Decision Framework Tab */}
+        <TabsContent value="framework">
+          <ModelsDecisionFramework />
         </TabsContent>
       </Tabs>
     </div>

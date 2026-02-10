@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -62,7 +62,35 @@ const defaultAdjustments: AdjustmentToggle[] = [
   { label: "Biosimilar/Generic Imminent", value: -13, enabled: false },
 ];
 
-export const Model2Calculator = () => {
+export interface CalculatorState {
+  selectedTA: string;
+  isPediatric: boolean;
+  ratios: {
+    clinicalBenefit: number;
+    safetyProfile: number;
+    icer: number;
+    targetPopulation: number;
+    priceVsSoc: number;
+    evidenceQuality: number;
+  };
+  compositeScore: number;
+  totalAdjustment: number;
+  marketResults: {
+    market: string;
+    baseRate: number;
+    pedBonus: number;
+    adjustedBase: number;
+    compositeResult: number;
+    final: number;
+  }[];
+  activeAdjustments: string[];
+}
+
+interface Model2CalculatorProps {
+  onStateChange?: (state: CalculatorState) => void;
+}
+
+export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
   const [selectedTA, setSelectedTA] = useState("oncology");
   const [isPediatric, setIsPediatric] = useState(false);
 
@@ -98,6 +126,21 @@ export const Model2Calculator = () => {
       return { market: marketLabels[key], baseRate, pedBonus, adjustedBase, compositeResult: Math.round(compositeResult), final };
     });
   }, [ta, compositeScore, totalAdjustment, isPediatric]);
+
+  // Emit state to parent
+  useEffect(() => {
+    if (onStateChange) {
+      onStateChange({
+        selectedTA: ta.label,
+        isPediatric,
+        ratios,
+        compositeScore,
+        totalAdjustment,
+        marketResults,
+        activeAdjustments: adjustments.filter(a => a.enabled).map(a => a.label),
+      });
+    }
+  }, [selectedTA, isPediatric, ratios, compositeScore, totalAdjustment, marketResults, adjustments, onStateChange, ta.label]);
 
   const updateRatio = (key: keyof typeof ratios, value: number) => {
     setRatios((prev) => ({ ...prev, [key]: value }));
