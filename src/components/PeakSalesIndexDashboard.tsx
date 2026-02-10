@@ -467,7 +467,7 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="market" className="w-full">
-              <TabsList className="grid grid-cols-4 mb-4">
+              <TabsList className="grid grid-cols-4 mb-4 bg-sky-100 dark:bg-sky-950/30">
                 <TabsTrigger value="market">Market (25%)</TabsTrigger>
                 <TabsTrigger value="clinical">Clinical (20%)</TabsTrigger>
                 <TabsTrigger value="commercial">Commercial (18%)</TabsTrigger>
