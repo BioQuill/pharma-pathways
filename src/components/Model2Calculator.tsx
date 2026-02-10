@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Calculator, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react";
+import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Pill } from "lucide-react";
+import { getAllMolecules, mapTAToModel2Id, deriveModel2Ratios } from "@/lib/allMoleculesList";
 
 const therapeuticAreas = [
   { id: "oncology", label: "1. Oncology/Hematology", rates: { usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 } },
@@ -91,6 +92,9 @@ interface Model2CalculatorProps {
 }
 
 export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
+  const allMolecules = useMemo(() => getAllMolecules(), []);
+  const [selectedMolecule, setSelectedMolecule] = useState("manual");
+
   const [selectedTA, setSelectedTA] = useState("oncology");
   const [isPediatric, setIsPediatric] = useState(false);
 
@@ -103,6 +107,18 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
     priceVsSoc: 1.0,
     evidenceQuality: 1.0,
   });
+
+  // When a molecule is selected, auto-populate ratios and TA
+  const handleMoleculeSelect = (molId: string) => {
+    setSelectedMolecule(molId);
+    if (molId === "manual") return;
+    const mol = allMolecules.find(m => m.id === molId);
+    if (!mol) return;
+    const taId = mapTAToModel2Id(mol.therapeuticArea);
+    if (taId) setSelectedTA(taId);
+    const derived = deriveModel2Ratios(mol);
+    setRatios(derived);
+  };
 
   const [adjustments, setAdjustments] = useState<AdjustmentToggle[]>(defaultAdjustments);
 
@@ -176,6 +192,27 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div>
+              <Label className="text-sm font-semibold flex items-center gap-1.5">
+                <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
+              </Label>
+              <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
+                <SelectTrigger className="mt-1"><SelectValue placeholder="Manual input" /></SelectTrigger>
+                <SelectContent className="max-h-[300px]">
+                  <SelectItem value="manual">— Manual Input —</SelectItem>
+                  {allMolecules.map(m => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name} ({m.therapeuticArea})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedMolecule !== "manual" && (
+                <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200 mt-1.5">
+                  TA and ratios auto-populated. Adjust sliders to fine-tune.
+                </p>
+              )}
+            </div>
             <div>
               <Label className="text-sm font-semibold">Therapeutic Area</Label>
               <Select value={selectedTA} onValueChange={setSelectedTA}>
