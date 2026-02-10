@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -510,6 +510,11 @@ const whenNotModel2 = [
 // ============ MAIN COMPONENT ============
 export const PAModel2Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [calculatorResults, setCalculatorResults] = useState<any>(null);
+
+  const handleCalculatorStateChange = useCallback((state: any) => {
+    setCalculatorResults(state);
+  }, []);
 
   return (
     <div className="space-y-6" id="model2-dashboard-content">
@@ -527,7 +532,7 @@ export const PAModel2Dashboard = () => {
               </CardDescription>
             </div>
             <div className="flex gap-2">
-              <Model2ExcelExport />
+              <Model2ExcelExport calculatorResults={calculatorResults} />
               <Model2PDFExport />
             </div>
           </div>
@@ -866,7 +871,7 @@ export const PAModel2Dashboard = () => {
 
         {/* ===== TAB 4: INTERACTIVE CALCULATOR ===== */}
         <TabsContent value="calculator" className="space-y-4">
-          <Model2Calculator />
+          <Model2Calculator onStateChange={handleCalculatorStateChange} />
         </TabsContent>
 
         {/* ===== TAB 5: USAGE GUIDANCE ===== */}
