@@ -547,7 +547,7 @@ export const PAModel2Dashboard = () => {
 
       {/* Tabbed navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full justify-start h-auto gap-1 bg-muted/50 p-1 flex-wrap">
+        <TabsList className="w-full justify-start h-auto gap-1 bg-sky-100 dark:bg-sky-950/30 p-1 flex-wrap">
           <TabsTrigger value="overview" className="gap-1.5 text-xs font-semibold">
             <Globe className="h-3.5 w-3.5" /> Base Rates & Methodology
           </TabsTrigger>
