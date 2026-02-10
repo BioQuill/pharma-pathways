@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, TrendingUp, Target } from "lucide-react";
+import { Calculator, TrendingUp, Target, Pill } from "lucide-react";
+import { getAllMolecules, mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
 
 const markets = [
   { id: "us", label: "🇺🇸 United States", clinical: 25, economic: 35, access: 25, political: 15 },
@@ -43,6 +44,9 @@ function getProbabilityBand(score: number) {
 }
 
 export const MWPSPICalculator = () => {
+  const allMolecules = useMemo(() => getAllMolecules(), []);
+  const [selectedMolecule, setSelectedMolecule] = useState("manual");
+
   const [selectedMarket, setSelectedMarket] = useState("us");
   const [selectedTA, setSelectedTA] = useState("oncology");
   const [clinicalScore, setClinicalScore] = useState([50]);
@@ -50,6 +54,21 @@ export const MWPSPICalculator = () => {
   const [accessScore, setAccessScore] = useState([50]);
   const [politicalScore, setPoliticalScore] = useState([50]);
   const [adjustmentPoints, setAdjustmentPoints] = useState([0]);
+
+  // When a molecule is selected, auto-populate scores and TA
+  const handleMoleculeSelect = (molId: string) => {
+    setSelectedMolecule(molId);
+    if (molId === "manual") return;
+    const mol = allMolecules.find(m => m.id === molId);
+    if (!mol) return;
+    const taId = mapTAToModel1Id(mol.therapeuticArea);
+    if (taId) setSelectedTA(taId);
+    const scores = deriveModel1Scores(mol);
+    setClinicalScore([scores.clinical]);
+    setEconomicScore([scores.economic]);
+    setAccessScore([scores.access]);
+    setPoliticalScore([scores.political]);
+  };
 
   const market = markets.find(m => m.id === selectedMarket)!;
 
@@ -81,8 +100,31 @@ export const MWPSPICalculator = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Market & TA Selection */}
-        <div className="grid gap-4 md:grid-cols-2">
+        {/* Molecule Selection */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold flex items-center gap-1.5">
+              <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
+            </label>
+            <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
+              <SelectTrigger>
+                <SelectValue placeholder="Manual input" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                <SelectItem value="manual">— Manual Input —</SelectItem>
+                {allMolecules.map(m => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name} ({m.therapeuticArea})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedMolecule !== "manual" && (
+              <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
+                Scores auto-populated from molecule data. Adjust sliders to fine-tune.
+              </p>
+            )}
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold">Select Market</label>
             <Select value={selectedMarket} onValueChange={setSelectedMarket}>
