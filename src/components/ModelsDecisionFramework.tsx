@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { GitBranch, Target, Layers, AlertTriangle, CheckCircle, ArrowRight, Lightbulb, BarChart3, Scale, Zap, Shield, TrendingUp } from "lucide-react";
+import { DecisionFrameworkPDFExport } from "@/components/DecisionFrameworkPDFExport";
+import { TriangulationCalculator } from "@/components/TriangulationCalculator";
 
 const triangulationScenarios = [
   { scenario: "High Confidence", model1: "75% (High)", model2: "78% (High)", interpretation: "Models converge; strong consensus", action: "Proceed with confidence; prioritize market entry", color: "bg-green-50 dark:bg-green-950/20 border-green-200" },
@@ -87,19 +89,27 @@ const decisionBands = [
 
 export const ModelsDecisionFramework = () => {
   return (
-    <div className="space-y-6">
+    <div id="decision-framework-content" className="space-y-6">
       {/* Header */}
       <Card className="border-primary/20">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <GitBranch className="h-6 w-6 text-primary" />
-            Unified Models 1 & 2 Decision Framework
-          </CardTitle>
-          <CardDescription className="text-base mt-1">
-            Integrated workflow for model selection, triangulation, and practical application across portfolio prioritization, market entry, and rescue strategies
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <GitBranch className="h-6 w-6 text-primary" />
+                Unified Models 1 & 2 Decision Framework
+              </CardTitle>
+              <CardDescription className="text-base mt-1">
+                Integrated workflow for model selection, triangulation, and practical application across portfolio prioritization, market entry, and rescue strategies
+              </CardDescription>
+            </div>
+            <DecisionFrameworkPDFExport />
+          </div>
         </CardHeader>
       </Card>
+
+      {/* Interactive Triangulation Calculator */}
+      <TriangulationCalculator />
 
       <Accordion type="multiple" defaultValue={["step1"]} className="space-y-3">
         {/* STEP 1: Decision Tree */}
