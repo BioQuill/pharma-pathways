@@ -1280,7 +1280,7 @@ export const PeakSalesIndexDashboard = ({ molecules }: PeakSalesIndexDashboardPr
 
       {/* Tabs */}
       <Tabs defaultValue="calculator" className="w-full">
-        <TabsList className="mb-4 flex-wrap">
+        <TabsList className="mb-4 flex-wrap bg-sky-100 dark:bg-sky-950/30">
           <TabsTrigger value="calculator" className="gap-2">
             <Calculator className="h-4 w-4" />
             Interactive Calculator

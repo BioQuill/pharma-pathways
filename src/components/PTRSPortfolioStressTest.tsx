@@ -215,7 +215,7 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
 
           {results.length > 0 && (
             <Tabs defaultValue="overview">
-              <TabsList className="mb-4">
+              <TabsList className="mb-4 bg-sky-100 dark:bg-sky-950/30">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="vulnerability">Vulnerability Map</TabsTrigger>
                 <TabsTrigger value="scenarios">Scenario Analysis</TabsTrigger>

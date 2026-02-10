@@ -312,7 +312,7 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="overview">
-            <TabsList className="mb-4">
+            <TabsList className="mb-4 bg-sky-100 dark:bg-sky-950/30">
               <TabsTrigger value="overview">Model Overview</TabsTrigger>
               <TabsTrigger value="factors">5 Factors</TabsTrigger>
               <TabsTrigger value="sources">Data Sources</TabsTrigger>

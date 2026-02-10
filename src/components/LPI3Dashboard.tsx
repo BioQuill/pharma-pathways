@@ -297,7 +297,7 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <Tabs defaultValue="algorithm">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-4 bg-sky-100 dark:bg-sky-950/30">
               <TabsTrigger value="algorithm">Algorithm</TabsTrigger>
               <TabsTrigger value="features">Features</TabsTrigger>
               <TabsTrigger value="calibration">Calibration</TabsTrigger>

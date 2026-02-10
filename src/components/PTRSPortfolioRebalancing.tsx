@@ -447,7 +447,7 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="configure" className="space-y-4">
-          <TabsList className="grid grid-cols-3 w-full max-w-md">
+          <TabsList className="grid grid-cols-3 w-full max-w-md bg-sky-100 dark:bg-sky-950/30">
             <TabsTrigger value="configure">Configure</TabsTrigger>
             <TabsTrigger value="analysis" disabled={!analysisResults}>Analysis</TabsTrigger>
             <TabsTrigger value="recommendations" disabled={!analysisResults}>Actions</TabsTrigger>

@@ -215,7 +215,7 @@ export function TACompositeIndexDashboard() {
 
       {/* Charts and Heatmap Tabs */}
       <Tabs defaultValue="comparison" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-5 bg-sky-100 dark:bg-sky-950/30">
           <TabsTrigger value="comparison" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             Success Rates

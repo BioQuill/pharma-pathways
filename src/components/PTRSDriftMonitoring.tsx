@@ -350,7 +350,7 @@ const PTRSDriftMonitoring: React.FC<PTRSDriftMonitoringProps> = ({ molecules }) 
         </Card>
 
         <Tabs defaultValue="overview">
-          <TabsList>
+          <TabsList className="bg-sky-100 dark:bg-sky-950/30">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="distribution">Drift Distribution</TabsTrigger>
             <TabsTrigger value="trends">Historical Trends</TabsTrigger>
