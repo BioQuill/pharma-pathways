@@ -339,7 +339,7 @@ const MonteCarloConvergenceAnalysis: React.FC<MonteCarloConvergenceAnalysisProps
               )}
 
               <Tabs defaultValue="ciwidth">
-                <TabsList className="mb-4">
+                <TabsList className="mb-4 bg-sky-100 dark:bg-sky-950/30">
                   <TabsTrigger value="ciwidth">CI Width Convergence</TabsTrigger>
                   <TabsTrigger value="mean">Mean Stability</TabsTrigger>
                   <TabsTrigger value="stderr">Standard Error</TabsTrigger>

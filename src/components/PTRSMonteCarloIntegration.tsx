@@ -413,7 +413,7 @@ export const PTRSMonteCarloIntegration: React.FC<PTRSMonteCarloIntegrationProps>
 
       {/* Tabs for different views */}
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-3 bg-sky-100 dark:bg-sky-950/30">
           <TabsTrigger value="distribution" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
             Distribution
