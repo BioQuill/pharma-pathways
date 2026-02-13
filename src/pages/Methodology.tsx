@@ -189,16 +189,16 @@ export default function Methodology() {
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-0">
               <Link to="/" className="flex-1 max-w-[200px]">
-                <button className="w-full py-3 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                <button className="w-full py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
                   Platform
                 </button>
               </Link>
               <Link to="/pricing" className="flex-1 max-w-[200px]">
-                <button className="w-full py-3 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                <button className="w-full py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
                   Pricing
                 </button>
               </Link>
-              <button className="flex-1 max-w-[200px] py-3 text-center font-bold text-black bg-orange-400/30 border-r border-orange-400/30">
+              <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-black bg-orange-400/30 border-r border-orange-400/30">
                 Methodology
               </button>
             </nav>
