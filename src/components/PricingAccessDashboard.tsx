@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DollarSign, TrendingUp, Globe, Shield, FileText, Scale, BarChart3, GitBranch, Layers } from "lucide-react";
+import { DollarSign, TrendingUp, Globe, Shield, FileText, Scale, BarChart3, GitBranch, Layers, Users } from "lucide-react";
 import { DrugPricingData } from "@/components/DrugPricingData";
 import { PriceIndexChart } from "@/components/PriceIndexChart";
 import { IRAImpactModeling } from "@/components/IRAImpactModeling";
@@ -10,6 +10,7 @@ import { PAModel1Dashboard } from "@/components/PAModel1Dashboard";
 import { PAModel2Dashboard } from "@/components/PAModel2Dashboard";
 import { ModelsDecisionFramework } from "@/components/ModelsDecisionFramework";
 import { PAModelComparisonMode } from "@/components/PAModelComparisonMode";
+import { PABatchComparison } from "@/components/PABatchComparison";
 
 interface PricingAccessDashboardProps {
   molecules?: any[];
@@ -37,6 +38,9 @@ export const PricingAccessDashboard = ({ molecules }: PricingAccessDashboardProp
           </TabsTrigger>
           <TabsTrigger value="comparison" className="gap-1.5 font-semibold">
             <Layers className="h-3.5 w-3.5" /> Combined Comparison
+          </TabsTrigger>
+          <TabsTrigger value="batch" className="gap-1.5 font-semibold">
+            <Users className="h-3.5 w-3.5" /> Batch Comparison
           </TabsTrigger>
         </TabsList>
 
@@ -250,6 +254,11 @@ export const PricingAccessDashboard = ({ molecules }: PricingAccessDashboardProp
         {/* Combined Comparison Tab */}
         <TabsContent value="comparison">
           <PAModelComparisonMode />
+        </TabsContent>
+
+        {/* Batch Comparison Tab */}
+        <TabsContent value="batch">
+          <PABatchComparison />
         </TabsContent>
       </Tabs>
     </div>
