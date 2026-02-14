@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
@@ -52,6 +52,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
   const fallbackMolecules = useMemo(() => getAllMolecules(), []);
   const allMolecules = molecules && molecules.length > 0 ? molecules : fallbackMolecules;
   const [selectedMolecule, setSelectedMolecule] = useState("manual");
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const [selectedMarket, setSelectedMarket] = useState("us");
   const [selectedTA, setSelectedTA] = useState("oncology");
@@ -157,7 +158,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
               </SelectContent>
             </Select>
           </div>
-          <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2">
+          <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
             <Calculator className="h-4 w-4" />
             Calculate
           </Button>
@@ -246,7 +247,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
         </div>
 
         {/* Result */}
-        <div className="bg-muted/50 rounded-lg p-4 border space-y-3">
+        <div ref={resultRef} className="bg-muted/50 rounded-lg p-4 border space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" />
