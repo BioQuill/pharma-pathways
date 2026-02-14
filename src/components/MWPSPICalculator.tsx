@@ -121,7 +121,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
                 <SelectItem value="manual">— Manual Input —</SelectItem>
                 {allMolecules.map(m => (
                   <SelectItem key={m.id} value={m.id}>
-                    {m.name} ({m.therapeuticArea})
+                    {m.name} ({m.indication})
                   </SelectItem>
                 ))}
               </SelectContent>
