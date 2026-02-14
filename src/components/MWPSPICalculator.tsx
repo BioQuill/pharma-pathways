@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calculator, TrendingUp, Target, Pill } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { getAllMolecules, mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
 
 const markets = [
@@ -106,7 +107,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Molecule Selection */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-4 items-end">
           <div className="space-y-2">
             <label className="text-sm font-semibold flex items-center gap-1.5">
               <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
@@ -156,6 +157,10 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
               </SelectContent>
             </Select>
           </div>
+          <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2">
+            <Calculator className="h-4 w-4" />
+            Calculate
+          </Button>
         </div>
 
         {/* Weight Display */}
