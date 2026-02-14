@@ -99,6 +99,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   const [selectedTA, setSelectedTA] = useState("oncology");
+  const [selectedMarket, setSelectedMarket] = useState("usComm");
   const [isPediatric, setIsPediatric] = useState(false);
 
   // 6 ratio dimensions
@@ -185,48 +186,67 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Configuration */}
+      {/* Inline 4-column selector row */}
+      <div className="grid gap-4 md:grid-cols-4 items-end">
+        <div className="space-y-2">
+          <label className="text-sm font-semibold flex items-center gap-1.5">
+            <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
+          </label>
+          <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
+            <SelectTrigger>
+              <SelectValue placeholder="Manual input" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              <SelectItem value="manual">— Manual Input —</SelectItem>
+              {allMolecules.map(m => (
+                <SelectItem key={m.id} value={m.id}>
+                  {m.name} ({m.indication})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {selectedMolecule !== "manual" && (
+            <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
+              TA and ratios auto-populated. Adjust sliders to fine-tune.
+            </p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-semibold">Select Market</label>
+          <Select value={selectedMarket} onValueChange={setSelectedMarket}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(marketLabels).map(([key, label]) => (
+                <SelectItem key={key} value={key}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-semibold">Select Therapeutic Area</label>
+          <Select value={selectedTA} onValueChange={setSelectedTA}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {therapeuticAreas.map((t) => (
+                <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
+          <Calculator className="h-4 w-4" />
+          Calculate
+        </Button>
+      </div>
+
+      {/* Pediatric toggle + Composite Score */}
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Calculator className="h-5 w-5 text-primary" />
-              Molecule Configuration
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label className="text-sm font-semibold flex items-center gap-1.5">
-                <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
-              </Label>
-              <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Manual input" /></SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  <SelectItem value="manual">— Manual Input —</SelectItem>
-                  {allMolecules.map(m => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.name} ({m.indication})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedMolecule !== "manual" && (
-                <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200 mt-1.5">
-                  TA and ratios auto-populated. Adjust sliders to fine-tune.
-                </p>
-              )}
-            </div>
-            <div>
-              <Label className="text-sm font-semibold">Therapeutic Area</Label>
-              <Select value={selectedTA} onValueChange={setSelectedTA}>
-                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {therapeuticAreas.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <CardContent className="pt-4 space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-semibold">Pediatric Indication (Bonus Modifier)</Label>
               <Switch checked={isPediatric} onCheckedChange={setIsPediatric} />
@@ -236,10 +256,6 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
                 Pediatric bonus applied: US +10%, UK +15%, Germany +12%, Japan +10%, China +8%, India +12%, Brazil +10%
               </p>
             )}
-            <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2 w-full mt-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
-              <Calculator className="h-4 w-4" />
-              Calculate
-            </Button>
           </CardContent>
         </Card>
 
