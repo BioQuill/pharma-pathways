@@ -6,8 +6,9 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Calculator, ArrowRight, AlertTriangle, CheckCircle, TrendingUp, Pill } from "lucide-react";
+import { Calculator, ArrowRight, AlertTriangle, CheckCircle, TrendingUp, Pill, Download } from "lucide-react";
 import { getAllMolecules } from "@/lib/allMoleculesList";
+import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
 
 export const TriangulationCalculator = () => {
   const allMolecules = useMemo(() => getAllMolecules(), []);
@@ -216,9 +217,106 @@ export const TriangulationCalculator = () => {
           </CardContent>
         </Card>
 
-        {/* Weight Visualization */}
+        {/* Export PDF + Weight Visualization */}
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+          <p className="text-xs font-semibold">Weight Distribution</p>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5"
+            onClick={async () => {
+              const molName = selectedMolecule !== "manual"
+                ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
+                : "Manual Input";
+              const molIndication = selectedMolecule !== "manual"
+                ? allMolecules.find(m => m.id === selectedMolecule)?.indication || ""
+                : "";
+              const doc = (
+                <Document>
+                  <Page size="A4" style={pdfStyles.page}>
+                    <View style={pdfStyles.header}>
+                      <Text style={pdfStyles.headerTitle}>Triangulation Calculator Report</Text>
+                      <Text style={pdfStyles.headerSubtitle}>Generated {formatReportDate()} • BiOQUILL Analytics Platform</Text>
+                    </View>
+                    <View style={pdfStyles.section}>
+                      <Text style={pdfStyles.sectionTitle}>Analysis Configuration</Text>
+                      <View style={pdfStyles.card}>
+                        <Text style={pdfStyles.label}>Molecule</Text>
+                        <Text style={pdfStyles.value}>{molName}{molIndication ? ` (${molIndication})` : ""}</Text>
+                      </View>
+                      <View style={pdfStyles.grid2}>
+                        <View style={[pdfStyles.col, pdfStyles.card]}>
+                          <Text style={pdfStyles.label}>First-in-Class</Text>
+                          <Text style={pdfStyles.value}>{isFirstInClass ? "Yes" : "No"}</Text>
+                        </View>
+                        <View style={[pdfStyles.col, pdfStyles.card]}>
+                          <Text style={pdfStyles.label}>Weight Scheme</Text>
+                          <Text style={pdfStyles.value}>W₁={results.w1} / W₂={results.w2}</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={pdfStyles.section}>
+                      <Text style={pdfStyles.sectionTitle}>Input Probabilities</Text>
+                      <View style={pdfStyles.grid2}>
+                        <View style={[pdfStyles.col, pdfStyles.card]}>
+                          <Text style={pdfStyles.label}>Model 1 (MWPSPI)</Text>
+                          <Text style={pdfStyles.value}>{model1Prob}%</Text>
+                        </View>
+                        <View style={[pdfStyles.col, pdfStyles.card]}>
+                          <Text style={pdfStyles.label}>Model 2 (Benchmark)</Text>
+                          <Text style={pdfStyles.value}>{model2Prob}%</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={pdfStyles.section}>
+                      <Text style={pdfStyles.sectionTitle}>Triangulation Result</Text>
+                      <View style={{ padding: 16, borderRadius: 8, backgroundColor: results.weighted >= 75 ? '#dcfce7' : results.weighted >= 60 ? '#dbeafe' : results.weighted >= 45 ? '#fef9c3' : '#fee2e2', alignItems: 'center', marginBottom: 12 }}>
+                        <Text style={{ fontSize: 36, fontWeight: 'bold', color: getScoreColor(results.weighted) }}>{results.weighted.toFixed(1)}%</Text>
+                        <Text style={{ fontSize: 10, color: '#6b7280' }}>Confidence-Weighted Probability</Text>
+                      </View>
+                      <View style={pdfStyles.grid3}>
+                        <View style={[pdfStyles.col, pdfStyles.card]}>
+                          <Text style={pdfStyles.label}>Divergence</Text>
+                          <Text style={pdfStyles.value}>{results.divergence}pp</Text>
+                        </View>
+                        <View style={[pdfStyles.col, pdfStyles.card]}>
+                          <Text style={pdfStyles.label}>Decision Band</Text>
+                          <Text style={pdfStyles.value}>{band.label}</Text>
+                        </View>
+                        <View style={[pdfStyles.col, pdfStyles.card]}>
+                          <Text style={pdfStyles.label}>Confidence</Text>
+                          <Text style={pdfStyles.value}>{results.confidence}</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={pdfStyles.methodologyNote}>
+                      <Text style={pdfStyles.methodologyTitle}>Formula</Text>
+                      <Text style={pdfStyles.methodologyText}>
+                        ({model1Prob}% × {results.w1}) + ({model2Prob}% × {results.w2}) = {results.weighted.toFixed(1)}%
+                      </Text>
+                    </View>
+                    <View style={pdfStyles.section}>
+                      <Text style={pdfStyles.sectionTitle}>Interpretation</Text>
+                      <View style={pdfStyles.card}>
+                        <Text style={{ fontSize: 9, marginBottom: 4 }}>{results.interpretation}</Text>
+                        <Text style={{ fontSize: 9, fontWeight: 'bold' }}>Action: {results.action}</Text>
+                      </View>
+                    </View>
+                    <View style={pdfStyles.footer}>
+                      <Text>BiOQUILL Analytics • Triangulation Calculator</Text>
+                      <Text>Confidential — For Internal Use Only</Text>
+                    </View>
+                  </Page>
+                </Document>
+              );
+              await generateAndDownloadPDF(doc, `Triangulation-Report-${molName.replace(/\s+/g, '-')}-${formatReportDate().replace(/\s+/g, '-')}.pdf`);
+            }}
+          >
+            <Download className="h-3.5 w-3.5" />
+            Export PDF
+          </Button>
+        </div>
         <div className="p-3 bg-muted/20 rounded-lg">
-          <p className="text-xs font-semibold mb-2">Weight Distribution</p>
           <div className="flex items-center gap-2">
             <span className="text-xs w-20">Model 1 ({(results.w1 * 100).toFixed(0)}%)</span>
             <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden flex">
