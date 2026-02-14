@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Pill } from "lucide-react";
+import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Pill, Download } from "lucide-react";
 import { getAllMolecules, mapTAToModel2Id, deriveModel2Ratios } from "@/lib/allMoleculesList";
+import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
 
 const therapeuticAreas = [
   { id: "oncology", label: "1. Oncology/Hematology", rates: { usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 } },
@@ -379,9 +380,102 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
               </tbody>
             </table>
           </div>
-          <div className="flex justify-center gap-4 mt-4">
-            <Badge className="bg-green-100 text-green-800 border-green-200 text-xs">Cap: 95% max</Badge>
-            <Badge className="bg-red-100 text-red-800 border-red-200 text-xs">Floor: 5% min</Badge>
+          <div className="flex items-center justify-between mt-4 flex-wrap gap-2">
+            <div className="flex gap-4">
+              <Badge className="bg-green-100 text-green-800 border-green-200 text-xs">Cap: 95% max</Badge>
+              <Badge className="bg-red-100 text-red-800 border-red-200 text-xs">Floor: 5% min</Badge>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5"
+              onClick={async () => {
+                const molName = selectedMolecule !== "manual"
+                  ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
+                  : "Manual Input";
+                const molIndication = selectedMolecule !== "manual"
+                  ? allMolecules.find(m => m.id === selectedMolecule)?.indication || ""
+                  : "";
+                const doc = (
+                  <Document>
+                    <Page size="A4" orientation="landscape" style={pdfStyles.page}>
+                      <View style={pdfStyles.header}>
+                        <Text style={pdfStyles.headerTitle}>Comparative Payer Likelihood Report</Text>
+                        <Text style={pdfStyles.headerSubtitle}>Generated {formatReportDate()} • BiOQUILL Analytics Platform</Text>
+                      </View>
+                      <View style={pdfStyles.section}>
+                        <Text style={pdfStyles.sectionTitle}>Analysis Configuration</Text>
+                        <View style={pdfStyles.grid2}>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Molecule</Text>
+                            <Text style={pdfStyles.value}>{molName}{molIndication ? ` (${molIndication})` : ""}</Text>
+                          </View>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Therapeutic Area</Text>
+                            <Text style={pdfStyles.value}>{ta.label}</Text>
+                          </View>
+                        </View>
+                        <View style={pdfStyles.grid2}>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Pediatric Indication</Text>
+                            <Text style={pdfStyles.value}>{isPediatric ? "Yes" : "No"}</Text>
+                          </View>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Composite Score</Text>
+                            <Text style={[pdfStyles.value, { color: getScoreColor(compositeScore * 50) }]}>{compositeScore.toFixed(2)}</Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View style={pdfStyles.section}>
+                        <Text style={pdfStyles.sectionTitle}>Comparator Ratios</Text>
+                        <View style={pdfStyles.grid3}>
+                          {[
+                            { label: "Clinical Benefit", val: ratios.clinicalBenefit },
+                            { label: "Safety Profile", val: ratios.safetyProfile },
+                            { label: "ICER", val: ratios.icer },
+                            { label: "Target Population", val: ratios.targetPopulation },
+                            { label: "Price vs. SOC", val: ratios.priceVsSoc },
+                            { label: "Evidence Quality", val: ratios.evidenceQuality },
+                          ].map((r, i) => (
+                            <View key={i} style={[pdfStyles.col, pdfStyles.card]}>
+                              <Text style={pdfStyles.label}>{r.label}</Text>
+                              <Text style={pdfStyles.value}>{r.val.toFixed(2)}</Text>
+                            </View>
+                          ))}
+                        </View>
+                      </View>
+                      <View style={pdfStyles.section}>
+                        <Text style={pdfStyles.sectionTitle}>Market Results</Text>
+                        {marketResults.map((r, i) => (
+                          <View key={i} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4, borderBottom: '1 solid #e5e7eb' }}>
+                            <Text style={{ fontSize: 9, flex: 2 }}>{r.market}</Text>
+                            <Text style={{ fontSize: 9, flex: 1, textAlign: 'center' }}>Base: {r.baseRate}%</Text>
+                            <Text style={{ fontSize: 9, flex: 1, textAlign: 'center' }}>× {compositeScore.toFixed(2)} = {r.compositeResult}%</Text>
+                            <Text style={{ fontSize: 11, flex: 1, textAlign: 'right', fontWeight: 'bold', color: getScoreColor(r.final) }}>{r.final}%</Text>
+                          </View>
+                        ))}
+                      </View>
+                      {adjustments.filter(a => a.enabled).length > 0 && (
+                        <View style={pdfStyles.section}>
+                          <Text style={pdfStyles.sectionTitle}>Active Adjustments (Total: {totalAdjustment >= 0 ? '+' : ''}{totalAdjustment}%)</Text>
+                          {adjustments.filter(a => a.enabled).map((a, i) => (
+                            <Text key={i} style={{ fontSize: 9, marginBottom: 2 }}>• {a.label}: {a.value > 0 ? '+' : ''}{a.value}%</Text>
+                          ))}
+                        </View>
+                      )}
+                      <View style={pdfStyles.footer}>
+                        <Text>BiOQUILL Analytics • Model 2 Calculator</Text>
+                        <Text>Confidential — For Internal Use Only</Text>
+                      </View>
+                    </Page>
+                  </Document>
+                );
+                await generateAndDownloadPDF(doc, `Model2-Report-${molName.replace(/\s+/g, '-')}-${formatReportDate().replace(/\s+/g, '-')}.pdf`);
+              }}
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export PDF
+            </Button>
           </div>
         </CardContent>
       </Card>
