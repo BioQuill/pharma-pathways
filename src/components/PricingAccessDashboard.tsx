@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DollarSign, TrendingUp, Globe, Shield, FileText, Scale, BarChart3, GitBranch } from "lucide-react";
+import { DollarSign, TrendingUp, Globe, Shield, FileText, Scale, BarChart3, GitBranch, Layers } from "lucide-react";
 import { DrugPricingData } from "@/components/DrugPricingData";
 import { PriceIndexChart } from "@/components/PriceIndexChart";
 import { IRAImpactModeling } from "@/components/IRAImpactModeling";
 import { PAModel1Dashboard } from "@/components/PAModel1Dashboard";
 import { PAModel2Dashboard } from "@/components/PAModel2Dashboard";
 import { ModelsDecisionFramework } from "@/components/ModelsDecisionFramework";
+import { PAModelComparisonMode } from "@/components/PAModelComparisonMode";
 
 interface PricingAccessDashboardProps {
   molecules?: any[];
@@ -33,6 +34,9 @@ export const PricingAccessDashboard = ({ molecules }: PricingAccessDashboardProp
           </TabsTrigger>
           <TabsTrigger value="framework" className="gap-1.5 font-semibold">
             <GitBranch className="h-3.5 w-3.5" /> Models Decision Framework
+          </TabsTrigger>
+          <TabsTrigger value="comparison" className="gap-1.5 font-semibold">
+            <Layers className="h-3.5 w-3.5" /> Combined Comparison
           </TabsTrigger>
         </TabsList>
 
@@ -241,6 +245,11 @@ export const PricingAccessDashboard = ({ molecules }: PricingAccessDashboardProp
         {/* Models Decision Framework Tab */}
         <TabsContent value="framework">
           <ModelsDecisionFramework />
+        </TabsContent>
+
+        {/* Combined Comparison Tab */}
+        <TabsContent value="comparison">
+          <PAModelComparisonMode />
         </TabsContent>
       </Tabs>
     </div>
