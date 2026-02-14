@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
@@ -94,6 +94,7 @@ interface Model2CalculatorProps {
 export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
   const allMolecules = useMemo(() => getAllMolecules(), []);
   const [selectedMolecule, setSelectedMolecule] = useState("manual");
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const [selectedTA, setSelectedTA] = useState("oncology");
   const [isPediatric, setIsPediatric] = useState(false);
@@ -202,7 +203,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
                   <SelectItem value="manual">— Manual Input —</SelectItem>
                   {allMolecules.map(m => (
                     <SelectItem key={m.id} value={m.id}>
-                      {m.name} ({m.therapeuticArea})
+                      {m.name} ({m.indication})
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -233,6 +234,10 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
                 Pediatric bonus applied: US +10%, UK +15%, Germany +12%, Japan +10%, China +8%, India +12%, Brazil +10%
               </p>
             )}
+            <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2 w-full mt-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
+              <Calculator className="h-4 w-4" />
+              Calculate
+            </Button>
           </CardContent>
         </Card>
 
@@ -324,6 +329,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
       </Card>
 
       {/* Results Table */}
+      <div ref={resultRef}>
       <Card className="border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -379,6 +385,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, TrendingUp, Target, Pill } from "lucide-react";
+import { Calculator, TrendingUp, Target, Pill, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getAllMolecules, mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
+import { Document, Page, Text, View, StyleSheet, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
 
 const markets = [
   { id: "us", label: "🇺🇸 United States", clinical: 25, economic: 35, access: 25, political: 15 },
@@ -248,7 +249,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
 
         {/* Result */}
         <div ref={resultRef} className="bg-muted/50 rounded-lg p-4 border space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" />
               <span className="font-semibold text-lg">MWPSPI Score</span>
@@ -259,9 +260,101 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
             </div>
           </div>
 
-          <Badge className={`text-sm px-3 py-1 ${band.color}`}>
-            {band.label} — {band.description}
-          </Badge>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <Badge className={`text-sm px-3 py-1 ${band.color}`}>
+              {band.label} — {band.description}
+            </Badge>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5"
+              onClick={async () => {
+                const molName = selectedMolecule !== "manual"
+                  ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
+                  : "Manual Input";
+                const molIndication = selectedMolecule !== "manual"
+                  ? allMolecules.find(m => m.id === selectedMolecule)?.indication || ""
+                  : "";
+                const marketObj = markets.find(m => m.id === selectedMarket)!;
+                const taObj = therapeuticAreas.find(t => t.id === selectedTA)!;
+                const doc = (
+                  <Document>
+                    <Page size="A4" style={pdfStyles.page}>
+                      <View style={pdfStyles.header}>
+                        <Text style={pdfStyles.headerTitle}>MWPSPI Calculator Report</Text>
+                        <Text style={pdfStyles.headerSubtitle}>Generated {formatReportDate()} • BiOQUILL Analytics Platform</Text>
+                      </View>
+                      <View style={pdfStyles.section}>
+                        <Text style={pdfStyles.sectionTitle}>Analysis Configuration</Text>
+                        <View style={pdfStyles.card}>
+                          <Text style={pdfStyles.label}>Molecule</Text>
+                          <Text style={pdfStyles.value}>{molName}{molIndication ? ` (${molIndication})` : ""}</Text>
+                        </View>
+                        <View style={pdfStyles.grid2}>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Market</Text>
+                            <Text style={pdfStyles.value}>{marketObj.label}</Text>
+                          </View>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Therapeutic Area</Text>
+                            <Text style={pdfStyles.value}>{taObj.label}</Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View style={pdfStyles.section}>
+                        <Text style={pdfStyles.sectionTitle}>MWPSPI Score</Text>
+                        <View style={{ padding: 16, borderRadius: 8, backgroundColor: mwpspi >= 80 ? '#dcfce7' : mwpspi >= 60 ? '#dbeafe' : mwpspi >= 40 ? '#fef9c3' : '#fee2e2', alignItems: 'center', marginBottom: 12 }}>
+                          <Text style={{ fontSize: 36, fontWeight: 'bold', color: getScoreColor(mwpspi) }}>{mwpspi}</Text>
+                          <Text style={{ fontSize: 10, color: '#6b7280' }}>/100 — {band.label}</Text>
+                        </View>
+                      </View>
+                      <View style={pdfStyles.section}>
+                        <Text style={pdfStyles.sectionTitle}>Score Breakdown</Text>
+                        <View style={pdfStyles.grid2}>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Clinical Score</Text>
+                            <Text style={pdfStyles.value}>{clinicalScore[0]}% → {clinicalContribution} pts (W: {marketObj.clinical}%)</Text>
+                          </View>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Economic Score</Text>
+                            <Text style={pdfStyles.value}>{economicScore[0]}% → {economicContribution} pts (W: {marketObj.economic}%)</Text>
+                          </View>
+                        </View>
+                        <View style={pdfStyles.grid2}>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Access Score</Text>
+                            <Text style={pdfStyles.value}>{accessScore[0]}% → {accessContribution} pts (W: {marketObj.access}%)</Text>
+                          </View>
+                          <View style={[pdfStyles.col, pdfStyles.card]}>
+                            <Text style={pdfStyles.label}>Political Score</Text>
+                            <Text style={pdfStyles.value}>{politicalScore[0]}% → {politicalContribution} pts (W: {marketObj.political}%)</Text>
+                          </View>
+                        </View>
+                        <View style={pdfStyles.card}>
+                          <Text style={pdfStyles.label}>Payer-Specific Adjustment</Text>
+                          <Text style={pdfStyles.value}>{adjustmentPoints[0] > 0 ? "+" : ""}{adjustmentPoints[0]} pts</Text>
+                        </View>
+                      </View>
+                      <View style={pdfStyles.methodologyNote}>
+                        <Text style={pdfStyles.methodologyTitle}>Formula</Text>
+                        <Text style={pdfStyles.methodologyText}>
+                          ({clinicalScore[0]}% × {marketObj.clinical}W) + ({economicScore[0]}% × {marketObj.economic}W) + ({accessScore[0]}% × {marketObj.access}W) + ({politicalScore[0]}% × {marketObj.political}W) + ({adjustmentPoints[0]}) = {mwpspi}
+                        </Text>
+                      </View>
+                      <View style={pdfStyles.footer}>
+                        <Text>BiOQUILL Analytics • MWPSPI Calculator</Text>
+                        <Text>Confidential — For Internal Use Only</Text>
+                      </View>
+                    </Page>
+                  </Document>
+                );
+                await generateAndDownloadPDF(doc, `MWPSPI-Report-${molName.replace(/\s+/g, '-')}-${formatReportDate().replace(/\s+/g, '-')}.pdf`);
+              }}
+            >
+              <Download className="h-3.5 w-3.5" />
+              Export PDF
+            </Button>
+          </div>
 
           <div className="font-mono text-xs text-muted-foreground border-t pt-2">
             <p>Calculation: ({clinicalScore[0]}% × {market.clinical}W) + ({economicScore[0]}% × {market.economic}W) + ({accessScore[0]}% × {market.access}W) + ({politicalScore[0]}% × {market.political}W) + ({adjustmentPoints[0]})</p>

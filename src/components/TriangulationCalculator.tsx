@@ -1,15 +1,33 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Calculator, ArrowRight, AlertTriangle, CheckCircle, TrendingUp } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Calculator, ArrowRight, AlertTriangle, CheckCircle, TrendingUp, Pill } from "lucide-react";
+import { getAllMolecules } from "@/lib/allMoleculesList";
 
 export const TriangulationCalculator = () => {
+  const allMolecules = useMemo(() => getAllMolecules(), []);
+  const [selectedMolecule, setSelectedMolecule] = useState("manual");
+  const resultRef = useRef<HTMLDivElement>(null);
+
   const [model1Prob, setModel1Prob] = useState(72);
   const [model2Prob, setModel2Prob] = useState(68);
   const [isFirstInClass, setIsFirstInClass] = useState(false);
+
+  const handleMoleculeSelect = (molId: string) => {
+    setSelectedMolecule(molId);
+    if (molId === "manual") return;
+    const mol = allMolecules.find(m => m.id === molId);
+    if (!mol) return;
+    // Derive approximate Model 1 & Model 2 probabilities from molecule scores
+    const score = mol.overallScore || 50;
+    setModel1Prob(Math.min(95, Math.max(5, Math.round(score * 0.9 + 10))));
+    setModel2Prob(Math.min(95, Math.max(5, Math.round(score * 0.85 + 8))));
+  };
 
   const results = useMemo(() => {
     const w1 = isFirstInClass ? 0.6 : 0.4;
@@ -73,6 +91,37 @@ export const TriangulationCalculator = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Molecule Selection & Calculate */}
+        <div className="grid gap-4 md:grid-cols-3 items-end">
+          <div className="space-y-2 md:col-span-2">
+            <Label className="text-sm font-semibold flex items-center gap-1.5">
+              <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
+            </Label>
+            <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
+              <SelectTrigger>
+                <SelectValue placeholder="Manual input" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                <SelectItem value="manual">— Manual Input —</SelectItem>
+                {allMolecules.map(m => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name} ({m.indication})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedMolecule !== "manual" && (
+              <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
+                Model probabilities auto-populated from molecule data. Adjust sliders to fine-tune.
+              </p>
+            )}
+          </div>
+          <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
+            <Calculator className="h-4 w-4" />
+            Calculate
+          </Button>
+        </div>
+
         {/* Inputs */}
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-3">
@@ -115,7 +164,7 @@ export const TriangulationCalculator = () => {
         </div>
 
         {/* Results */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div ref={resultRef} className="grid gap-4 md:grid-cols-3">
           <Card className="bg-muted/30">
             <CardContent className="p-4 text-center">
               <p className="text-xs text-muted-foreground mb-1">Formula</p>
