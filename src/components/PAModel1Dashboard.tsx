@@ -852,7 +852,11 @@ const WeightsBar = ({ clinical, economic, access, political }: { clinical: numbe
 );
 
 // ============ MAIN COMPONENT ============
-export const PAModel1Dashboard = () => {
+interface PAModel1DashboardProps {
+  molecules?: any[];
+}
+
+export const PAModel1Dashboard = ({ molecules }: PAModel1DashboardProps) => {
   const [activeTab, setActiveTab] = useState("core");
 
   return (
@@ -1114,7 +1118,7 @@ export const PAModel1Dashboard = () => {
 
         {/* CALCULATOR */}
         <TabsContent value="calculator" className="space-y-4">
-          <MWPSPICalculator />
+          <MWPSPICalculator molecules={molecules} />
         </TabsContent>
       </Tabs>
     </div>

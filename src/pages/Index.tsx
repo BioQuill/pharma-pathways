@@ -3280,7 +3280,7 @@ const Index = () => {
 
           {/* Pricing & Access Tab */}
           <TabsContent value="pricing-access" className="space-y-6">
-            <PricingAccessDashboard />
+            <PricingAccessDashboard molecules={allMolecules} />
           </TabsContent>
 
           {/* Payers Tab */}

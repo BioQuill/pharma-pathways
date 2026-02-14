@@ -43,8 +43,13 @@ function getProbabilityBand(score: number) {
   return { label: "Very Low", color: "bg-red-100 text-red-800 border-red-200", description: "Likely denial" };
 }
 
-export const MWPSPICalculator = () => {
-  const allMolecules = useMemo(() => getAllMolecules(), []);
+interface MWPSPICalculatorProps {
+  molecules?: any[];
+}
+
+export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
+  const fallbackMolecules = useMemo(() => getAllMolecules(), []);
+  const allMolecules = molecules && molecules.length > 0 ? molecules : fallbackMolecules;
   const [selectedMolecule, setSelectedMolecule] = useState("manual");
 
   const [selectedMarket, setSelectedMarket] = useState("us");
