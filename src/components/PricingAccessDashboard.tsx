@@ -10,7 +10,11 @@ import { PAModel1Dashboard } from "@/components/PAModel1Dashboard";
 import { PAModel2Dashboard } from "@/components/PAModel2Dashboard";
 import { ModelsDecisionFramework } from "@/components/ModelsDecisionFramework";
 
-export const PricingAccessDashboard = () => {
+interface PricingAccessDashboardProps {
+  molecules?: any[];
+}
+
+export const PricingAccessDashboard = ({ molecules }: PricingAccessDashboardProps) => {
   const [topTab, setTopTab] = useState("overview");
 
   return (
@@ -226,7 +230,7 @@ export const PricingAccessDashboard = () => {
 
         {/* Model 1 Tab */}
         <TabsContent value="model1">
-          <PAModel1Dashboard />
+          <PAModel1Dashboard molecules={molecules} />
         </TabsContent>
 
         {/* Model 2 Tab */}
