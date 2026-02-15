@@ -24,9 +24,11 @@ import { extendedImmunologyMolecules } from './extendedImmunologyMolecules';
 import { extendedInfectiousMolecules } from './extendedInfectiousMolecules';
 import { extendedPsychiatryMolecules } from './extendedPsychiatryMolecules';
 import { extendedRheumatologyMolecules } from './extendedRheumatologyMolecules';
+import { coreMolecules } from './coreMolecules';
 
 export const getAllMolecules = (): MoleculeProfile[] => {
   return [
+    ...coreMolecules,
     ...additionalMolecules,
     ...endocrinologyMolecules,
     ...obesityMolecules,
