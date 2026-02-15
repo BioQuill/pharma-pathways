@@ -362,7 +362,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-muted/50">
+                <tr className="border-b bg-sky-600 text-white">
                   <th className="text-left p-3 font-semibold">Market</th>
                   <th className="text-center p-3 font-semibold">Base Rate</th>
                   {isPediatric && <th className="text-center p-3 font-semibold">Ped. Bonus</th>}
@@ -388,7 +388,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
                       </span>
                     </td>
                     <td className="p-3 text-center">
-                      <Badge variant="outline" className={`text-sm font-bold ${getProbColor(r.final)}`}>
+                      <Badge className="text-sm font-bold bg-sky-600 text-white border-sky-500 hover:bg-sky-700">
                         {r.final}%
                       </Badge>
                     </td>
