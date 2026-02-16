@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Pill, Download, FileSpreadsheet } from "lucide-react";
+import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Pill, Download, FileSpreadsheet, ChevronDown, X } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { getAllMolecules, mapTAToModel2Id, deriveModel2Ratios } from "@/lib/allMoleculesList";
 import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const therapeuticAreas = [
   { id: "oncology", label: "1. Oncology/Hematology", rates: { usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 } },
@@ -98,7 +100,18 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
   const [selectedMolecule, setSelectedMolecule] = useState("manual");
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const [selectedTA, setSelectedTA] = useState("oncology");
+  const [selectedTAs, setSelectedTAs] = useState<string[]>(["oncology"]);
+
+  const toggleTA = (taId: string) => {
+    setSelectedTAs(prev => {
+      if (prev.includes(taId)) {
+        if (prev.length === 1) return prev;
+        return prev.filter(id => id !== taId);
+      }
+      if (prev.length >= 5) return prev;
+      return [...prev, taId];
+    });
+  };
   const [selectedMarket, setSelectedMarket] = useState("usComm");
   const [isPediatric, setIsPediatric] = useState(false);
 
@@ -119,14 +132,31 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
     const mol = allMolecules.find(m => m.id === molId);
     if (!mol) return;
     const taId = mapTAToModel2Id(mol.therapeuticArea);
-    if (taId) setSelectedTA(taId);
+    if (taId) setSelectedTAs([taId]);
     const derived = deriveModel2Ratios(mol);
     setRatios(derived);
   };
 
   const [adjustments, setAdjustments] = useState<AdjustmentToggle[]>(defaultAdjustments);
 
-  const ta = therapeuticAreas.find((t) => t.id === selectedTA)!;
+  // Average rates across selected TAs
+  const aggregatedTA = useMemo(() => {
+    const selected = therapeuticAreas.filter(t => selectedTAs.includes(t.id));
+    if (selected.length === 0) return therapeuticAreas[0];
+    if (selected.length === 1) return selected[0];
+    const avgRates = {} as Record<string, number>;
+    const rateKeys = Object.keys(selected[0].rates) as (keyof typeof selected[0]['rates'])[];
+    for (const key of rateKeys) {
+      avgRates[key] = Math.round(selected.reduce((sum, t) => sum + t.rates[key], 0) / selected.length);
+    }
+    return {
+      id: selected.map(t => t.id).join('+'),
+      label: selected.map(t => t.label).join(' + '),
+      rates: avgRates as typeof selected[0]['rates'],
+    };
+  }, [selectedTAs]);
+
+  const ta = aggregatedTA;
 
   const compositeScore = useMemo(() => {
     const vals = Object.values(ratios);
@@ -151,7 +181,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
   useEffect(() => {
     if (onStateChange) {
       onStateChange({
-        selectedTA: ta.label,
+        selectedTA: selectedTAs.map(id => therapeuticAreas.find(t => t.id === id)?.label || id).join(', '),
         isPediatric,
         ratios,
         compositeScore,
@@ -160,7 +190,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
         activeAdjustments: adjustments.filter(a => a.enabled).map(a => a.label),
       });
     }
-  }, [selectedTA, isPediatric, ratios, compositeScore, totalAdjustment, marketResults, adjustments, onStateChange, ta.label]);
+  }, [selectedTAs, isPediatric, ratios, compositeScore, totalAdjustment, marketResults, adjustments, onStateChange]);
 
   const updateRatio = (key: keyof typeof ratios, value: number) => {
     setRatios((prev) => ({ ...prev, [key]: value }));
@@ -225,17 +255,54 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
           </Select>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-semibold">Select Therapeutic Area</label>
-          <Select value={selectedTA} onValueChange={setSelectedTA}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {therapeuticAreas.map((t) => (
-                <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <label className="text-sm font-semibold">Select Therapeutic Area(s) <span className="text-xs text-muted-foreground font-normal">(1–5)</span></label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" role="combobox" className="w-full justify-between h-10 font-normal">
+                <span className="truncate text-sm">
+                  {selectedTAs.length === 1
+                    ? therapeuticAreas.find(t => t.id === selectedTAs[0])?.label
+                    : `${selectedTAs.length} TAs selected`}
+                </span>
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-72 p-2 max-h-[300px] overflow-y-auto" align="start">
+              <div className="space-y-1">
+                {therapeuticAreas.map(t => (
+                  <label
+                    key={t.id}
+                    className={`flex items-center gap-2 rounded px-2 py-1.5 text-sm cursor-pointer hover:bg-muted/50 ${selectedTAs.includes(t.id) ? 'bg-primary/5' : ''}`}
+                  >
+                    <Checkbox
+                      checked={selectedTAs.includes(t.id)}
+                      onCheckedChange={() => toggleTA(t.id)}
+                      disabled={!selectedTAs.includes(t.id) && selectedTAs.length >= 5}
+                    />
+                    {t.label}
+                  </label>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+          {selectedTAs.length > 1 && (
+            <div className="flex flex-wrap gap-1">
+              {selectedTAs.map(taId => {
+                const taItem = therapeuticAreas.find(t => t.id === taId);
+                return (
+                  <Badge key={taId} variant="secondary" className="text-xs gap-1">
+                    {taItem?.label}
+                    <X className="h-3 w-3 cursor-pointer" onClick={() => toggleTA(taId)} />
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+          {selectedTAs.length > 1 && (
+            <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
+              Base rates averaged across {selectedTAs.length} therapeutic areas.
+            </p>
+          )}
         </div>
         <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
           <Calculator className="h-4 w-4" />

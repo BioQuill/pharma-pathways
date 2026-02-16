@@ -3,11 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, TrendingUp, Target, Pill, Download, FileSpreadsheet } from "lucide-react";
+import { Calculator, TrendingUp, Target, Pill, Download, FileSpreadsheet, ChevronDown, X } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { Button } from "@/components/ui/button";
 import { getAllMolecules, mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
 import { Document, Page, Text, View, StyleSheet, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const markets = [
   { id: "us", label: "🇺🇸 United States", clinical: 25, economic: 35, access: 25, political: 15 },
@@ -57,7 +59,18 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
   const resultRef = useRef<HTMLDivElement>(null);
 
   const [selectedMarket, setSelectedMarket] = useState("us");
-  const [selectedTA, setSelectedTA] = useState("oncology");
+  const [selectedTAs, setSelectedTAs] = useState<string[]>(["oncology"]);
+
+  const toggleTA = (taId: string) => {
+    setSelectedTAs(prev => {
+      if (prev.includes(taId)) {
+        if (prev.length === 1) return prev; // min 1
+        return prev.filter(id => id !== taId);
+      }
+      if (prev.length >= 5) return prev; // max 5
+      return [...prev, taId];
+    });
+  };
   const [clinicalScore, setClinicalScore] = useState([50]);
   const [economicScore, setEconomicScore] = useState([50]);
   const [accessScore, setAccessScore] = useState([50]);
@@ -71,7 +84,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
     const mol = allMolecules.find(m => m.id === molId);
     if (!mol) return;
     const taId = mapTAToModel1Id(mol.therapeuticArea);
-    if (taId) setSelectedTA(taId);
+    if (taId) setSelectedTAs([taId]);
     const scores = deriveModel1Scores(mol);
     setClinicalScore([scores.clinical]);
     setEconomicScore([scores.economic]);
@@ -148,17 +161,49 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-semibold">Select Therapeutic Area</label>
-            <Select value={selectedTA} onValueChange={setSelectedTA}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {therapeuticAreas.map(ta => (
-                  <SelectItem key={ta.id} value={ta.id}>{ta.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <label className="text-sm font-semibold">Select Therapeutic Area(s) <span className="text-xs text-muted-foreground font-normal">(1–5)</span></label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" className="w-full justify-between h-10 font-normal">
+                  <span className="truncate text-sm">
+                    {selectedTAs.length === 1
+                      ? therapeuticAreas.find(t => t.id === selectedTAs[0])?.label
+                      : `${selectedTAs.length} TAs selected`}
+                  </span>
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-72 p-2 max-h-[300px] overflow-y-auto" align="start">
+                <div className="space-y-1">
+                  {therapeuticAreas.map(ta => (
+                    <label
+                      key={ta.id}
+                      className={`flex items-center gap-2 rounded px-2 py-1.5 text-sm cursor-pointer hover:bg-muted/50 ${selectedTAs.includes(ta.id) ? 'bg-primary/5' : ''}`}
+                    >
+                      <Checkbox
+                        checked={selectedTAs.includes(ta.id)}
+                        onCheckedChange={() => toggleTA(ta.id)}
+                        disabled={!selectedTAs.includes(ta.id) && selectedTAs.length >= 5}
+                      />
+                      {ta.label}
+                    </label>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+            {selectedTAs.length > 1 && (
+              <div className="flex flex-wrap gap-1">
+                {selectedTAs.map(taId => {
+                  const ta = therapeuticAreas.find(t => t.id === taId);
+                  return (
+                    <Badge key={taId} variant="secondary" className="text-xs gap-1">
+                      {ta?.label}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => toggleTA(taId)} />
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
           </div>
           <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
             <Calculator className="h-4 w-4" />
@@ -277,7 +322,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
                   ? allMolecules.find(m => m.id === selectedMolecule)?.indication || ""
                   : "";
                 const marketObj = markets.find(m => m.id === selectedMarket)!;
-                const taObj = therapeuticAreas.find(t => t.id === selectedTA)!;
+                const taLabels = selectedTAs.map(id => therapeuticAreas.find(t => t.id === id)?.label).filter(Boolean).join(', ');
                 const doc = (
                   <Document>
                     <Page size="A4" style={pdfStyles.page}>
@@ -297,8 +342,8 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
                             <Text style={pdfStyles.value}>{marketObj.label}</Text>
                           </View>
                           <View style={[pdfStyles.col, pdfStyles.card]}>
-                            <Text style={pdfStyles.label}>Therapeutic Area</Text>
-                            <Text style={pdfStyles.value}>{taObj.label}</Text>
+                           <Text style={pdfStyles.label}>Therapeutic Area(s)</Text>
+                           <Text style={pdfStyles.value}>{taLabels}</Text>
                           </View>
                         </View>
                       </View>
@@ -364,11 +409,11 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
                   ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
                   : "Manual Input";
                 const marketObj = markets.find(m => m.id === selectedMarket)!;
-                const taObj = therapeuticAreas.find(t => t.id === selectedTA)!;
+                const taLabels2 = selectedTAs.map(id => therapeuticAreas.find(t => t.id === id)?.label).filter(Boolean).join(', ');
                 const data = [{
                   'Molecule': molName,
                   'Market': marketObj.label,
-                  'Therapeutic Area': taObj.label,
+                  'Therapeutic Area(s)': taLabels2,
                   'Clinical Score': clinicalScore[0],
                   'Clinical Weight': marketObj.clinical,
                   'Clinical Contribution': parseFloat(clinicalContribution),
