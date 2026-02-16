@@ -291,9 +291,9 @@ export const TriangulationCalculator = () => {
                       </View>
                     </View>
                     <View style={pdfStyles.methodologyNote}>
-                      <Text style={pdfStyles.methodologyTitle}>Formula</Text>
+                      <Text style={pdfStyles.methodologyTitle}>Note</Text>
                       <Text style={pdfStyles.methodologyText}>
-                        ({model1Prob}% × {results.w1}) + ({model2Prob}% × {results.w2}) = {results.weighted.toFixed(1)}%
+                        Proprietary calculation methodology. Detailed formulas and model architecture are confidential and not included in customer-facing reports.
                       </Text>
                     </View>
                     <View style={pdfStyles.section}>

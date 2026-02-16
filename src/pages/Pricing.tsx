@@ -301,7 +301,7 @@ const pricingTiers: PricingTier[] = [
       "Unlimited molecule access",
       "All 20 therapeutic areas",
       "Full API integration",
-      "Custom LPI model training",
+      "Custom scoring configurations",
       "White-label reporting",
       "SSO & team management",
       "On-premise deployment option",
@@ -798,6 +798,9 @@ export default function Pricing() {
               </table>
             </CardContent>
           </Card>
+          <p className="text-xs text-muted-foreground text-center mt-3 italic">
+            All tiers provide analytical outputs and scores only. Proprietary model formulas, index architectures, calculation weights, and methodology details are confidential and not included in reports or platform access.
+          </p>
         </div>
 
         {/* Value Proposition */}
@@ -988,9 +991,10 @@ export default function Pricing() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Absolutely. Enterprise clients can access custom LPI model training on their proprietary data, 
+                  Absolutely. Enterprise clients can access custom scoring configurations, 
                   white-label reporting, and on-premise deployment options. Contact our sales team to discuss 
-                  your specific requirements.
+                  your specific requirements. Note: proprietary model formulas, index architectures, and scoring 
+                  methodologies remain confidential and are not included in any tier.
                 </p>
               </CardContent>
             </Card>
