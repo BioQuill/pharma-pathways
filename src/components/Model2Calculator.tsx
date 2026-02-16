@@ -422,7 +422,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
             Final Probability by Market
           </CardTitle>
           <CardDescription>
-            Formula: (Base Rate{isPediatric ? ' + Pediatric Bonus' : ''}) × Composite Score ({compositeScore.toFixed(2)}) + Adjustments ({totalAdjustment >= 0 ? '+' : ''}{totalAdjustment}%)
+            Probability calculated using proprietary benchmarking methodology across {marketResults.length} markets
           </CardDescription>
         </CardHeader>
         <CardContent>

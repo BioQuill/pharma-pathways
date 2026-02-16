@@ -382,9 +382,9 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
                         </View>
                       </View>
                       <View style={pdfStyles.methodologyNote}>
-                        <Text style={pdfStyles.methodologyTitle}>Formula</Text>
+                        <Text style={pdfStyles.methodologyTitle}>Note</Text>
                         <Text style={pdfStyles.methodologyText}>
-                          ({clinicalScore[0]}% × {marketObj.clinical}W) + ({economicScore[0]}% × {marketObj.economic}W) + ({accessScore[0]}% × {marketObj.access}W) + ({politicalScore[0]}% × {marketObj.political}W) + ({adjustmentPoints[0]}) = {mwpspi}
+                          Proprietary scoring methodology. Detailed formulas, weights, and model architecture are confidential and not included in customer-facing reports.
                         </Text>
                       </View>
                       <View style={pdfStyles.footer}>
