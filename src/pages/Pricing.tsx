@@ -18,23 +18,24 @@ const ROICalculator = () => {
   const [failedDealRate, setFailedDealRate] = useState([25]);
   const [improvementRate, setImprovementRate] = useState([30]);
 
-  // Calculate ROI metrics
+  // Calculate ROI metrics (values in $K)
   const annualDeals = portfolioSize[0];
-  const avgDealValueM = avgDealValue[0];
+  const avgDealValueK = avgDealValue[0]; // in thousands
   const currentFailRate = failedDealRate[0] / 100;
   const improvementPct = improvementRate[0] / 100;
 
   const currentFailedDeals = Math.round(annualDeals * currentFailRate);
-  const currentLosses = currentFailedDeals * avgDealValueM;
+  const currentLossesK = currentFailedDeals * avgDealValueK;
   
   const improvedFailRate = currentFailRate * (1 - improvementPct);
   const improvedFailedDeals = Math.round(annualDeals * improvedFailRate);
-  const improvedLosses = improvedFailedDeals * avgDealValueM;
+  const improvedLossesK = improvedFailedDeals * avgDealValueK;
   
-  const annualSavings = currentLosses - improvedLosses;
-  const bioquillCost = 0.2; // $200K enterprise cost in millions
-  const netROI = annualSavings - bioquillCost;
-  const roiMultiple = netROI > 0 ? Math.round((netROI / bioquillCost) * 10) / 10 : 0;
+  const annualSavingsK = currentLossesK - improvedLossesK;
+  const bioquillCostK = 200; // $200K enterprise cost
+  const netROIK = annualSavingsK - bioquillCostK;
+  const formatK = (v: number) => v >= 1000 ? `$${(v / 1000).toFixed(1)}M` : `$${v}K`;
+  const roiMultiple = netROIK > 0 ? Math.round((netROIK / bioquillCostK) * 10) / 10 : 0;
 
   return (
     <Card className="border-primary/20 bg-gradient-to-br from-background to-primary/5">
@@ -69,16 +70,19 @@ const ROICalculator = () => {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <Label>Average Deal Value</Label>
-                <span className="font-bold text-primary">${avgDealValue[0]}M</span>
+                <span className="font-bold text-primary">{formatK(avgDealValue[0])}</span>
               </div>
               <Slider 
                 value={avgDealValue} 
                 onValueChange={setAvgDealValue} 
-                min={10} 
+                min={2.5} 
                 max={500} 
-                step={10}
+                step={2.5}
                 className="w-full"
               />
+              <p className="text-xs text-muted-foreground">
+                Range: $2.5K – $500K (e.g., 10 deals at $2.5K + 10 deals at $200K)
+              </p>
             </div>
 
             <div className="space-y-3">
@@ -122,9 +126,9 @@ const ROICalculator = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-red-600 font-medium">Current Annual Losses</p>
-                    <p className="text-xs text-muted-foreground">{currentFailedDeals} failed deals × ${avgDealValueM}M</p>
+                    <p className="text-xs text-muted-foreground">{currentFailedDeals} failed deals × {formatK(avgDealValueK)}</p>
                   </div>
-                  <div className="text-2xl font-bold text-red-600">${currentLosses}M</div>
+                  <div className="text-2xl font-bold text-red-600">{formatK(currentLossesK)}</div>
                 </div>
               </CardContent>
             </Card>
@@ -134,9 +138,9 @@ const ROICalculator = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-[hsl(142,76%,36%)] font-medium">Improved Annual Losses</p>
-                    <p className="text-xs text-muted-foreground">{improvedFailedDeals} failed deals × ${avgDealValueM}M</p>
+                    <p className="text-xs text-muted-foreground">{improvedFailedDeals} failed deals × {formatK(avgDealValueK)}</p>
                   </div>
-                  <div className="text-2xl font-bold text-[hsl(142,76%,36%)]">${improvedLosses}M</div>
+                  <div className="text-2xl font-bold text-[hsl(142,76%,36%)]">{formatK(improvedLossesK)}</div>
                 </div>
               </CardContent>
             </Card>
@@ -148,7 +152,7 @@ const ROICalculator = () => {
                     <p className="text-xs text-primary font-medium">Annual Savings</p>
                     <p className="text-xs text-muted-foreground">Reduced failed acquisitions</p>
                   </div>
-                  <div className="text-2xl font-bold text-primary">${annualSavings}M</div>
+                  <div className="text-2xl font-bold text-primary">{formatK(annualSavingsK)}</div>
                 </div>
               </CardContent>
             </Card>
@@ -162,7 +166,7 @@ const ROICalculator = () => {
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold">{roiMultiple}x</div>
-                    <div className="text-sm opacity-90">${netROI.toFixed(1)}M net</div>
+                    <div className="text-sm opacity-90">{formatK(netROIK)} net</div>
                   </div>
                 </div>
               </CardContent>
