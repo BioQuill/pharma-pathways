@@ -37,6 +37,7 @@ const therapeuticAreas = [
   { id: "uro_nephro", label: "Urology/Nephrology", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
   { id: "psychiatry", label: "Psychiatry/Mental Health", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
   { id: "transplant", label: "Transplantation & Cell/Gene Therapy", adjustments: { us: { clinical: 40, economic: 20, access: 25, political: 15 } } },
+  { id: "pain", label: "Pain Management/Anesthesia", adjustments: { us: { clinical: 30, economic: 25, access: 25, political: 20 } } },
   { id: "pediatrics", label: "Pediatrics (Cross-Cutting)", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
 ];
 

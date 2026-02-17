@@ -9,9 +9,17 @@ export interface TAMarketScoring {
   probabilityBands?: { range: string; label: string; description: string }[];
 }
 
+export interface TAAdjustmentItem {
+  label: string;
+  points: string;
+  detail?: string;
+}
+
 export interface TASpecificScoring {
   taName: string;
   marketScorings: TAMarketScoring[];
+  addAdjustments?: TAAdjustmentItem[];
+  subtractAdjustments?: TAAdjustmentItem[];
 }
 
 export const taSpecificScoringData: TASpecificScoring[] = [
@@ -1635,6 +1643,17 @@ export const taSpecificScoringData: TASpecificScoring[] = [
         ],
       },
     ],
+    subtractAdjustments: [
+      { label: "Short durability (<5 years, re-dosing needed)", points: "-20", detail: "Negates cure narrative" },
+      { label: "Ultra-high cost (>$3M) without clear lifetime savings", points: "-15", detail: "Payer resistance even for rare diseases" },
+      { label: "Manufacturing complexity (patient-specific CAR-T)", points: "-8", detail: "Scalability concerns, manufacturing failure risk" },
+      { label: "Limited to 5-10 specialized centers globally", points: "-12", detail: "Access barrier, health equity concerns" },
+      { label: "No long-term data (accelerated approval, <2 years follow-up)", points: "-15", detail: "Uncertainty in durability, safety" },
+      { label: "Safety signal (insertional mutagenesis, cytokine storm)", points: "-12", detail: "Black box warning potential" },
+      { label: "Requires conditioning chemotherapy (CAR-T, gene therapy)", points: "-8", detail: "Toxicity, hospitalization burden" },
+      { label: "Competing gene therapy/curative alternative", points: "-15", detail: "Market share erosion, price pressure" },
+      { label: "No outcomes-based contract (payer demands, manufacturer refuses)", points: "-10", detail: "Impasse with payers on value demonstration" },
+    ],
   },
   {
     taName: "16. Pediatrics (Cross-Cutting)",
@@ -1741,6 +1760,206 @@ export const taSpecificScoringData: TASpecificScoring[] = [
           ]},
         ],
       },
+    ],
+  },
+  {
+    taName: "17. Pain Management/Anesthesia",
+    marketScorings: [
+      {
+        market: "US Markets",
+        clinicalScoring: [
+          { title: "Pain Reduction (NRS, VAS)", maxPoints: "0-12", items: [
+            { label: "≥50% pain reduction vs. baseline", points: "12" },
+            { label: "30-50% pain reduction", points: "9" },
+            { label: "20-30% pain reduction", points: "6" },
+            { label: "<20% pain reduction", points: "3" },
+          ]},
+          { title: "Function Improvement (WOMAC, ODI, BPI)", maxPoints: "0-10", items: [
+            { label: "Major functional improvement (return to work, ADLs)", points: "10" },
+            { label: "Moderate improvement", points: "7" },
+            { label: "Minimal improvement", points: "4" },
+          ]},
+          { title: "Non-Opioid Mechanism", maxPoints: "0-5", items: [
+            { label: "Novel non-opioid (NGF mAb, sodium channel, CGRP)", points: "5" },
+            { label: "NSAID/acetaminophen", points: "2" },
+            { label: "Opioid (unless cancer/acute)", points: "-5", detail: "Penalty due to opioid crisis" },
+          ]},
+          { title: "Abuse-Deterrent Formulation (opioids)", maxPoints: "0-3", items: [
+            { label: "ADF valued", points: "3" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "ICER Threshold", maxPoints: "0-10", items: [
+            { label: "Non-opioid chronic pain <$100K/QALY", points: "10" },
+            { label: "$100-150K/QALY", points: "7" },
+            { label: "Cancer pain <$150K", points: "10" },
+            { label: "Opioid (abuse-deterrent) <$125K", points: "8" },
+          ]},
+          { title: "Opioid Epidemic Impact", maxPoints: "0-8", items: [
+            { label: "Non-opioid alternative (reduces addiction risk)", points: "8" },
+            { label: "Abuse-deterrent opioid", points: "5" },
+            { label: "Standard opioid", points: "0" },
+          ]},
+          { title: "Budget Impact", maxPoints: "0-7", items: [
+            { label: "Chronic pain (100M+ US patients) >$2B/payer", points: "2" },
+            { label: "Cancer pain (niche) <$100M", points: "7" },
+            { label: "Acute pain (episodic) <$500M", points: "5" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "DEA Scheduling (opioids)", maxPoints: "0-8", items: [
+            { label: "Non-controlled (Schedule 0)", points: "8" },
+            { label: "Schedule III-V", points: "5" },
+            { label: "Schedule II (morphine, oxycodone)", points: "2", detail: "REMS, prescribing limits" },
+          ]},
+          { title: "REMS Requirements", maxPoints: "0-5", items: [
+            { label: "No REMS", points: "5" },
+            { label: "REMS (opioid ADFs)", points: "2", detail: "Prescriber training, patient counseling burden" },
+          ]},
+          { title: "Guideline Alignment (CDC, APS)", maxPoints: "0-7", items: [
+            { label: "Recommended non-opioid first-line", points: "7" },
+            { label: "Second/third-line", points: "4" },
+            { label: "Opioid reserved for cancer/acute", points: "2" },
+          ]},
+          { title: "Prior Authorization", maxPoints: "0-5", items: [
+            { label: "Minimal (non-opioid, acute)", points: "5" },
+            { label: "Extensive (chronic opioid)", points: "2" },
+          ]},
+        ],
+        probabilityBands: [
+          { range: "80-100", label: "Very High", description: "Non-opioid, first-line guideline, <$100K ICER" },
+          { range: "60-79", label: "High", description: "Non-opioid or ADF, guideline-aligned" },
+          { range: "40-59", label: "Moderate", description: "Mixed profile, step therapy likely" },
+          { range: "20-39", label: "Low", description: "Opioid without ADF, high ICER, REMS" },
+        ],
+      },
+      {
+        market: "UK NICE",
+        clinicalScoring: [
+          { title: "QALY Gain", maxPoints: "0-20", items: [
+            { label: "Chronic non-cancer pain >1 QALY", points: "20" },
+            { label: "Cancer pain: palliative benefit", points: "15" },
+            { label: "Acute pain <0.5 QALY", points: "8" },
+          ]},
+          { title: "Pain/Function Improvement", maxPoints: "0-10", items: [
+            { label: "≥30% pain reduction + function", points: "10" },
+          ]},
+          { title: "Opioid-Sparing Effect", maxPoints: "0-5", items: [
+            { label: "Reduces opioid use", points: "5" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "ICER vs. £20-30K", maxPoints: "0-30", items: [
+            { label: "<£20K/QALY", points: "30" },
+            { label: "£20-30K", points: "24" },
+            { label: "£30-40K", points: "12" },
+            { label: ">£40K", points: "3" },
+          ]},
+          { title: "Opioid Reduction Benefit", maxPoints: "0-10", items: [
+            { label: "NHS stewardship priority", points: "10" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "NICE Chronic Pain Guideline", maxPoints: "0-8", items: [
+            { label: "Recommended intervention", points: "8" },
+          ]},
+          { title: "Opioid Stewardship Compliance", maxPoints: "0-7", items: [
+            { label: "Non-opioid preferred", points: "7" },
+          ]},
+        ],
+      },
+      {
+        market: "Germany G-BA",
+        clinicalScoring: [
+          { title: "Additional Benefit", maxPoints: "0-20", items: [
+            { label: "Minor benefit (4) - pain/function typical", points: "16" },
+            { label: "Non-quantifiable (5)", points: "9" },
+          ]},
+          { title: "Patient-Relevant Endpoints", maxPoints: "0-16", items: [
+            { label: "Pain reduction (VAS)", points: "0-6" },
+            { label: "Function (WOMAC, SF-36)", points: "0-6" },
+            { label: "Quality of Life", points: "0-4" },
+          ]},
+          { title: "Safety vs. Opioids", maxPoints: "0-5", items: [
+            { label: "Lower abuse potential", points: "5" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Price vs. Comparator", maxPoints: "0-15", items: [
+            { label: "Parity or justified premium", points: "0-15" },
+          ]},
+          { title: "Budget Impact", maxPoints: "0-10", items: [
+            { label: "Manageable sickness fund impact", points: "0-10" },
+          ]},
+          { title: "Opioid Prescribing Regulations", maxPoints: "0-5", items: [
+            { label: "Compliance with pain management protocols", points: "0-5" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-15", items: [
+            { label: "Immediate access pre-negotiation", points: "0-10" },
+            { label: "Head-to-head evidence", points: "0-5" },
+          ]},
+        ],
+      },
+      {
+        market: "China NHSA",
+        clinicalScoring: [
+          { title: "Pain Reduction (Chinese Population)", maxPoints: "0-12", items: [
+            { label: "≥50% reduction in Chinese RCT", points: "12" },
+            { label: "30-50%", points: "8" },
+            { label: "<30%", points: "4" },
+          ]},
+          { title: "Cancer vs. Chronic Non-Cancer Pain", maxPoints: "0-10", items: [
+            { label: "Cancer pain prioritized", points: "10" },
+            { label: "Chronic non-cancer", points: "5" },
+          ]},
+          { title: "Chinese Trial Data", maxPoints: "0-3", items: [
+            { label: "Chinese Phase III", points: "3" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "VBP Price Cut", maxPoints: "0-25", items: [
+            { label: "NSAIDs/generics 60-70% cut", points: "25" },
+            { label: "Novel non-opioid 40-50% cut", points: "20" },
+            { label: "Opioids (controlled) 50-60% cut", points: "15" },
+          ]},
+          { title: "Affordability", maxPoints: "0-10", items: [
+            { label: "Chronic use cost <¥5K/year", points: "10" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Opioid Control", maxPoints: "0-15", items: [
+            { label: "Non-opioid: favorable", points: "15" },
+            { label: "Opioid: strict control", points: "5" },
+          ]},
+          { title: "Volume Commitment", maxPoints: "0-15", items: [
+            { label: "VBP volume guarantee", points: "0-15" },
+          ]},
+        ],
+      },
+    ],
+    addAdjustments: [
+      { label: "Novel non-opioid mechanism (first-in-class)", points: "+15", detail: "NGF mAb, Nav1.7/1.8, CGRP" },
+      { label: "Abuse-deterrent formulation (opioid)", points: "+10", detail: "Tamper-resistant, extraction-resistant" },
+      { label: "Non-Schedule II (Schedule III-V or non-controlled)", points: "+12", detail: "Prescribing ease" },
+      { label: "Dual pain + function improvement", points: "+8", detail: "Not just NRS reduction" },
+      { label: "Cancer pain indication", points: "+10", detail: "Opioid alternatives high unmet need" },
+      { label: "Neuropathic pain efficacy", points: "+8", detail: "DPNP, PHN, high prevalence" },
+      { label: "Rapid onset (acute pain <30 minutes)", points: "+6", detail: "ER, post-surgical" },
+      { label: "Long-acting (chronic pain, once-daily)", points: "+8", detail: "vs. q4-6h dosing" },
+      { label: "Topical/localized (vs. systemic)", points: "+7", detail: "Lower systemic exposure, side effects" },
+    ],
+    subtractAdjustments: [
+      { label: "Schedule II opioid (without ADF)", points: "-15", detail: "Opioid crisis, REMS, prescribing limits" },
+      { label: "REMS requirement", points: "-10", detail: "Prescriber/patient burden" },
+      { label: "Addiction potential (non-opioid but abuse risk)", points: "-12", detail: "Gabapentinoids precedent" },
+      { label: "Black box warning (CV risk NSAIDs, GI bleeding)", points: "-10" },
+      { label: "No functional improvement (pain score only)", points: "-8", detail: "FDA, payers expect function" },
+      { label: "Requires frequent dosing (q4h chronic pain)", points: "-6", detail: "Adherence, burden" },
+      { label: "Systemic side effects (sedation, constipation, nausea)", points: "-8", detail: "Opioid burden" },
+      { label: "Competing non-opioid with better profile", points: "-10", detail: "Market access difficult" },
+      { label: "Cancer pain: inferior to morphine equivalents", points: "-12", detail: "Standard of care" },
     ],
   },
 ];

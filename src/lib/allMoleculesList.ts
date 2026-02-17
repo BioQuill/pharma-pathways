@@ -77,7 +77,7 @@ export const mapTAToModel1Id = (ta: string): string | null => {
     "Transplant & Cell/Gene Therapy": "transplant",
     "Rare Diseases/Orphan": "oncology", // fallback
     "Women's Health": "oncology", // fallback
-    "Pain Management/Anesthesia": "oncology", // fallback
+    "Pain Management/Anesthesia": "pain",
     "Obesity": "endocrinology",
     "Type 2 Diabetes": "endocrinology",
   };
