@@ -75,8 +75,8 @@ export const mapTAToModel1Id = (ta: string): string | null => {
     "Nephrology/Renal": "uro_nephro",
     "Psychiatry/Mental Health": "psychiatry",
     "Transplant & Cell/Gene Therapy": "transplant",
-    "Rare Diseases/Orphan": "oncology", // fallback
-    "Women's Health": "oncology", // fallback
+    "Rare Diseases/Orphan": "rareDisease",
+    "Women's Health": "womensHealth",
     "Pain Management/Anesthesia": "pain",
     "Obesity": "endocrinology",
     "Type 2 Diabetes": "endocrinology",

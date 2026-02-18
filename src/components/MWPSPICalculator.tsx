@@ -38,6 +38,9 @@ const therapeuticAreas = [
   { id: "psychiatry", label: "Psychiatry/Mental Health", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
   { id: "transplant", label: "Transplantation & Cell/Gene Therapy", adjustments: { us: { clinical: 40, economic: 20, access: 25, political: 15 } } },
   { id: "pain", label: "Pain Management/Anesthesia", adjustments: { us: { clinical: 30, economic: 25, access: 25, political: 20 } } },
+  { id: "rareDisease", label: "Rare Diseases/Orphan Drugs", adjustments: { us: { clinical: 40, economic: 20, access: 25, political: 15 } } },
+  { id: "vaccines", label: "Vaccines & Virology", adjustments: { us: { clinical: 35, economic: 25, access: 25, political: 15 } } },
+  { id: "womensHealth", label: "Women's Health", adjustments: { us: { clinical: 25, economic: 30, access: 25, political: 20 } } },
   { id: "pediatrics", label: "Pediatrics (Cross-Cutting)", adjustments: { us: { clinical: 30, economic: 30, access: 25, political: 15 } } },
 ];
 

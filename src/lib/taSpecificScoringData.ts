@@ -1962,4 +1962,374 @@ export const taSpecificScoringData: TASpecificScoring[] = [
       { label: "Cancer pain: inferior to morphine equivalents", points: "-12", detail: "Standard of care" },
     ],
   },
+  {
+    taName: "18. Rare Diseases/Orphan Drugs",
+    marketScorings: [
+      {
+        market: "US Markets",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-40", items: [
+            { label: "Disease modification/functional improvement", points: "0-18", detail: "Curative/near-cure: 18 | Major functional improvement: 14 | Stabilization of progressive disease: 10 | Symptomatic relief only: 5" },
+            { label: "Survival benefit", points: "0-12", detail: "≥24mo OS improvement: 12 | 12-24mo: 9 | 6-12mo: 6 | <6mo: 3" },
+            { label: "Biomarker/surrogate endpoint validation", points: "0-7", detail: "Validated surrogate (enzyme level, substrate reduction): 7 | Exploratory biomarker: 4" },
+            { label: "Natural history improvement", points: "0-3", detail: "Documented vs. untreated natural history: 3" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-20", items: [
+            { label: "ICER threshold (rare disease flexibility)", points: "0-10", detail: "<$500K/QALY (rare willingness): 10 | $500K-1M: 7 | $1-2M (ultra-rare gene therapy): 5 | >$2M: 2" },
+            { label: "Budget impact (small populations)", points: "0-5", detail: "Ultra-rare <1K patients <$50M/payer: 5 | Rare 1-10K $50-200M: 3 | Moderate 10-50K >$200M: 1" },
+            { label: "Cost offsets (hospitalization, supportive care)", points: "0-5", detail: "Documented lifetime cost reduction: 5" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-30", items: [
+            { label: "Orphan Drug Act designation", points: "0-12", detail: "7-year market exclusivity: 12; tax credits, fee waivers" },
+            { label: "Breakthrough Therapy/RMAT designation", points: "0-8", detail: "BTD: 8; RMAT: 8; Priority Review: 6; Accelerated: 5" },
+            { label: "Specialty pharmacy/REMS", points: "0-5", detail: "Manageable distribution: 5; complex REMS: 2" },
+            { label: "Prior authorization", points: "0-5", detail: "Minimal for orphan: 5; moderate: 3" },
+          ]},
+        ],
+        probabilityBands: [
+          { range: "80-100", label: "Very High", description: "Orphan + curative + <$500K ICER" },
+          { range: "60-79", label: "High", description: "Orphan + disease modification + manageable budget" },
+          { range: "40-59", label: "Moderate", description: "Orphan + symptomatic + high cost" },
+          { range: "20-39", label: "Low", description: "Limited benefit, ultra-high cost" },
+        ],
+      },
+      {
+        market: "UK NICE",
+        clinicalScoring: [
+          { title: "Clinical Value (HST Pathway)", maxPoints: "0-45", items: [
+            { label: "Transformative benefit", points: "0-25", detail: "Curative intent, ultra-rare <5K UK: 25 | Disease-modifying: 20 | Significant QoL: 12" },
+            { label: "QALY gain (lifetime)", points: "0-15", detail: "Pediatric cure >20 QALYs: 15 | Adult cure >10: 12 | Disease modification 5-10: 9" },
+            { label: "Durability demonstrated", points: "0-5", detail: ">10 years: 5 | 5-10: 4 | <5: 2" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-25", items: [
+            { label: "ICER with HST flexibility", points: "0-20", detail: "<£100K/QALY: 20 | £100-300K (ultra-rare): 15 | £300-500K (exceptional): 10 | >£500K: 3" },
+            { label: "Managed Access Agreement", points: "0-5", detail: "MAA with outcomes monitoring: 5" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-20", items: [
+            { label: "HST pathway eligibility", points: "0-12", detail: "Ultra-rare <5K patients: 12 | Rare >5K: 6" },
+            { label: "NHS specialist centers", points: "0-8", detail: "Existing network: 8; new centers needed: 3" },
+          ]},
+        ],
+      },
+      {
+        market: "Germany G-BA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-50", items: [
+            { label: "Orphan exemption (automatic benefit)", points: "0-30", detail: "Orphan drug <€50M revenue: automatic benefit, no AMNOG: 30 | Revenue exceeds threshold: standard assessment" },
+            { label: "Patient-relevant outcomes", points: "0-12", detail: "OS, functional cure: 12 | DFS/QoL: 8" },
+            { label: "Evidence quality (single-arm accepted)", points: "0-8", detail: "Phase III: 8 | Phase II single-arm (acceptable for orphan): 5" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-20", items: [
+            { label: "Price vs. disease burden", points: "0-15", detail: "Justified premium for orphan: 15 | Ultra-high without justification: 5" },
+            { label: "Budget impact (small population)", points: "0-5", detail: "<€50M: 5 | >€100M: 1" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-20", items: [
+            { label: "Orphan exemption from AMNOG", points: "0-15", detail: "Automatic benefit: 15; no comparator required" },
+            { label: "University hospital access", points: "0-5" },
+          ]},
+        ],
+      },
+      {
+        market: "China NHSA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-30", items: [
+            { label: "Clinical benefit", points: "0-15", detail: "Major improvement: 15 | Moderate: 10 | Minimal: 5" },
+            { label: "Chinese trial/international data", points: "0-10", detail: "Chinese Phase III: 10 | International with exception: 6" },
+            { label: "Disease burden in China", points: "0-5", detail: "High prevalence: 5 | Low: 2" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-30", items: [
+            { label: "Affordability", points: "0-20", detail: "<¥500K: 20 | ¥500K-1M: 12 | >¥1M: 3 (likely excluded)" },
+            { label: "Rare disease fund co-pay", points: "0-10", detail: "Government subsidy: 10 | Provincial only: 5 | None: 0" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-30", items: [
+            { label: "Rare disease catalogue inclusion", points: "0-20", detail: "National rare disease list: 20 | Not listed: 5" },
+            { label: "Hospital network", points: "0-10" },
+          ]},
+        ],
+      },
+    ],
+    addAdjustments: [
+      { label: "First-in-class/only treatment for condition", points: "+20", detail: "No alternative therapy available" },
+      { label: "Pediatric rare disease", points: "+15", detail: "High unmet need, regulatory incentives" },
+      { label: "Gene therapy curative intent", points: "+18", detail: "One-time treatment, lifetime benefit" },
+      { label: "Newborn screening integration", points: "+12", detail: "Early diagnosis enables early treatment" },
+      { label: "Patient advocacy strong (NORD, Eurordis)", points: "+8", detail: "Regulatory and payer influence" },
+      { label: "Ultra-orphan (<1 in 50,000)", points: "+10", detail: "Additional regulatory flexibility" },
+    ],
+    subtractAdjustments: [
+      { label: "No natural history data for comparison", points: "-12", detail: "Difficult to demonstrate benefit" },
+      { label: "Single-arm trial without historical control", points: "-10", detail: "Evidence uncertainty" },
+      { label: "Ultra-high cost (>$2M) without outcomes-based contract", points: "-15", detail: "Payer resistance" },
+      { label: "No long-term durability data (<3 years)", points: "-10", detail: "Gene therapy uncertainty" },
+      { label: "Manufacturing complexity (patient-specific)", points: "-8", detail: "Supply chain risk" },
+      { label: "Limited to <5 specialized centers", points: "-12", detail: "Access barrier, health equity" },
+    ],
+  },
+  {
+    taName: "19. Vaccines & Virology",
+    marketScorings: [
+      {
+        market: "US Markets",
+        clinicalScoring: [
+          { title: "Preventive Vaccines", maxPoints: "0-35", items: [
+            { label: "Efficacy (vaccine efficacy %)", points: "0-15", detail: "≥90% VE: 15 | 70-90%: 12 | 50-70%: 8 | <50%: 3" },
+            { label: "Safety/reactogenicity profile", points: "0-10", detail: "Mild AEs only: 10 | Moderate: 7 | Serious SAEs: 2" },
+            { label: "Duration of protection", points: "0-6", detail: ">10 years: 6 | 5-10: 4 | 1-5: 2 | <1 year (annual): 1" },
+            { label: "Breadth of coverage (serotypes/strains)", points: "0-4", detail: "Pan-strain/universal: 4 | Multi-valent: 3 | Limited: 1" },
+          ]},
+          { title: "Therapeutic Antivirals", maxPoints: "0-30", items: [
+            { label: "Viral clearance/suppression", points: "0-12", detail: "Cure (HCV SVR12 >95%): 12 | Viral suppression (HIV): 10" },
+            { label: "Resistance barrier", points: "0-8", detail: "High genetic barrier: 8 | Moderate: 5 | Low: 2" },
+            { label: "Safety profile", points: "0-6" },
+            { label: "Duration of therapy", points: "0-4", detail: "Short course (8 weeks): 4 | Standard: 2" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-25", items: [
+            { label: "ACIP recommendation pathway", points: "0-10", detail: "Universal recommendation: 10 | Risk-group: 7 | Permissive: 4" },
+            { label: "Cost per QALY/life-year saved", points: "0-8", detail: "Cost-saving: 8 | <$50K/QALY: 7 | $50-150K: 4 | >$150K: 1" },
+            { label: "Budget impact (population-level)", points: "0-7", detail: "Pediatric universal <$500M: 7 | Adult high-risk <$1B: 5 | Universal adult >$2B: 2" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-30", items: [
+            { label: "ACIP universal recommendation", points: "0-12", detail: "Universal: 12 (guaranteed coverage); risk-group: 8; permissive: 4" },
+            { label: "VFC (Vaccines for Children) inclusion", points: "0-8", detail: "Included: 8 (Medicaid/uninsured covered)" },
+            { label: "Pharmacy administration (vs. clinic)", points: "0-6", detail: "Pharmacy-administered: 6 (broader access)" },
+            { label: "Cold chain requirements", points: "0-4", detail: "Room temperature: 4 | Standard cold chain: 3 | Ultra-cold: 1" },
+          ]},
+        ],
+        probabilityBands: [
+          { range: "80-100", label: "Very High", description: "ACIP universal + cost-saving + high efficacy" },
+          { range: "60-79", label: "High", description: "ACIP risk-group + cost-effective" },
+          { range: "40-59", label: "Moderate", description: "Permissive recommendation, moderate efficacy" },
+          { range: "20-39", label: "Low", description: "Limited recommendation, high cost per dose" },
+        ],
+      },
+      {
+        market: "UK NICE",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-40", items: [
+            { label: "Vaccine efficacy", points: "0-20", detail: "≥90%: 20 | 70-90%: 15 | 50-70%: 8" },
+            { label: "Disease burden prevented", points: "0-12", detail: "High mortality/morbidity: 12 | Moderate: 8 | Low: 4" },
+            { label: "Herd immunity contribution", points: "0-8", detail: "Documented population-level impact: 8" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-35", items: [
+            { label: "Cost per QALY", points: "0-25", detail: "<£20K: 25 | £20-30K: 20 | £30-40K: 10 | >£40K: 3" },
+            { label: "NHS budget impact", points: "0-10", detail: "<£100M: 10 | >£500M: 2" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-15", items: [
+            { label: "JCVI (Joint Committee) recommendation", points: "0-10", detail: "Universal: 10 | Risk-group: 7 | Not recommended: 0" },
+            { label: "NHS immunization programme integration", points: "0-5", detail: "Existing infrastructure: 5" },
+          ]},
+        ],
+      },
+      {
+        market: "Germany G-BA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-40", items: [
+            { label: "STIKO recommendation", points: "0-22", detail: "Universal recommendation: 22 | Risk-group: 15 | Occupational: 8" },
+            { label: "Efficacy data quality", points: "0-12", detail: "Phase III RCT: 12 | Immunogenicity bridging: 6" },
+            { label: "Safety profile", points: "0-6" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-30", items: [
+            { label: "Cost-effectiveness", points: "0-20", detail: "Cost-saving: 20 | Favorable ICER: 15 | Borderline: 8" },
+            { label: "Sickness fund coverage", points: "0-10", detail: "STIKO = mandatory coverage: 10" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-20", items: [
+            { label: "STIKO recommendation = guaranteed coverage", points: "0-15", detail: "Universal: 15 | Risk-group: 10" },
+            { label: "Distribution infrastructure", points: "0-5" },
+          ]},
+        ],
+      },
+      {
+        market: "China NHSA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-30", items: [
+            { label: "Efficacy (Chinese population data)", points: "0-15", detail: "Phase III China: 15 | Bridging: 8" },
+            { label: "Disease burden relevance", points: "0-10", detail: "Hepatitis B, HPV priority: 10 | Others: 5" },
+            { label: "Chinese CDC recommendation", points: "0-5" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-35", items: [
+            { label: "Price per dose", points: "0-25", detail: "NIP (free): government procurement: 25 | Non-NIP <¥500/dose: 20 | >¥1000: 5" },
+            { label: "Local manufacturing", points: "0-10", detail: "Domestic production: 10 | Import: 3" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-25", items: [
+            { label: "National Immunization Program (NIP)", points: "0-15", detail: "NIP inclusion: 15 (free, universal) | Non-NIP: 5" },
+            { label: "CDC distribution network", points: "0-10" },
+          ]},
+        ],
+      },
+    ],
+    addAdjustments: [
+      { label: "ACIP/STIKO/JCVI universal recommendation", points: "+15", detail: "Guaranteed coverage in respective markets" },
+      { label: "Pandemic preparedness (influenza, coronavirus)", points: "+12", detail: "Government stockpile, emergency use" },
+      { label: "mRNA platform (rapid variant adaptation)", points: "+10", detail: "COVID precedent, platform flexibility" },
+      { label: "Combination vaccine (fewer injections)", points: "+8", detail: "Adherence, schedule simplification" },
+      { label: "Room temperature stable", points: "+6", detail: "Cold chain advantage, global access" },
+      { label: "Single-dose regimen", points: "+8", detail: "vs. multi-dose schedule" },
+    ],
+    subtractAdjustments: [
+      { label: "Ultra-cold chain requirement (-70°C)", points: "-12", detail: "Distribution/storage barrier" },
+      { label: "Waning immunity requiring frequent boosters", points: "-10", detail: "Annual/semi-annual dosing" },
+      { label: "Safety signal (myocarditis, GBS, anaphylaxis)", points: "-15", detail: "Public trust, regulatory scrutiny" },
+      { label: "No ACIP/STIKO recommendation", points: "-20", detail: "Coverage not guaranteed" },
+      { label: "Narrow serotype coverage vs. existing", points: "-8", detail: "Inferior to current vaccines" },
+      { label: "No pediatric indication data", points: "-10", detail: "Key population excluded" },
+    ],
+  },
+  {
+    taName: "20. Women's Health",
+    marketScorings: [
+      {
+        market: "US Markets",
+        clinicalScoring: [
+          { title: "Reproductive Health", maxPoints: "0-30", items: [
+            { label: "Contraception efficacy", points: "0-10", detail: "Pearl Index <1: 10 | 1-3: 7 | 3-5: 4" },
+            { label: "Menopause symptom relief (VMS)", points: "0-8", detail: "≥75% reduction hot flashes: 8 | 50-75%: 6 | <50%: 3" },
+            { label: "Endometriosis pain reduction", points: "0-8", detail: "≥50% pain reduction: 8 | 30-50%: 5" },
+            { label: "Fertility treatment success", points: "0-4", detail: "Pregnancy rate improvement: 4" },
+          ]},
+          { title: "Pregnancy-Related", maxPoints: "0-25", items: [
+            { label: "Preeclampsia prevention", points: "0-10", detail: ">30% RRR: 10 | 15-30%: 7 | <15%: 3" },
+            { label: "Postpartum depression (PPD) remission", points: "0-8", detail: "≥50% remission: 8 (zuranolone precedent)" },
+            { label: "Preterm birth prevention", points: "0-7", detail: ">30% reduction: 7" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-25", items: [
+            { label: "ICER threshold", points: "0-10", detail: "<$100K/QALY: 10 | $100-150K: 7 | >$150K: 3" },
+            { label: "Budget impact", points: "0-8", detail: "Contraception (cost-saving): 8 | Menopause (large population >$1B): 3 | Endometriosis (<$500M): 6" },
+            { label: "ACA mandate coverage (contraception)", points: "0-7", detail: "ACA: no cost-sharing for contraception: 7" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-25", items: [
+            { label: "ACA women's preventive services mandate", points: "0-10", detail: "Contraception covered: 10 | Screening: 8" },
+            { label: "ACOG guideline alignment", points: "0-8", detail: "Recommended: 8 | Mentioned: 5" },
+            { label: "OB/GYN prescriber access", points: "0-4" },
+            { label: "Prior authorization", points: "0-3", detail: "Minimal: 3; step therapy: 1" },
+          ]},
+        ],
+        probabilityBands: [
+          { range: "80-100", label: "Very High", description: "ACA mandated + high efficacy + cost-saving" },
+          { range: "60-79", label: "High", description: "Guideline-aligned + moderate ICER" },
+          { range: "40-59", label: "Moderate", description: "Elective/cosmetic overlap, step therapy" },
+          { range: "20-39", label: "Low", description: "Medicare excluded, political barriers" },
+        ],
+      },
+      {
+        market: "UK NICE",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-35", items: [
+            { label: "QALY gain", points: "0-20", detail: "Endometriosis/severe menopause >1.5 QALYs: 20 | Contraception lifetime: 15 | Mild menopause <1: 8" },
+            { label: "Symptom improvement", points: "0-10", detail: "Major QoL impact: 10" },
+            { label: "Safety vs. HRT (menopause)", points: "0-5", detail: "Non-hormonal alternative: 5" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-40", items: [
+            { label: "ICER vs. £20-30K", points: "0-30", detail: "<£20K: 30 | £20-30K: 24 | £30-40K: 12 | >£40K: 3" },
+            { label: "Budget impact", points: "0-10", detail: "<£100M: 10 | >£500M: 2" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-15", items: [
+            { label: "NICE women's health guideline", points: "0-8", detail: "Recommended: 8" },
+            { label: "Primary care/GP infrastructure", points: "0-7" },
+          ]},
+        ],
+      },
+      {
+        market: "Germany G-BA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-35", items: [
+            { label: "Additional benefit", points: "0-20", detail: "Minor benefit (4) - symptom improvement: 18 | Non-quantifiable (5): 10" },
+            { label: "Patient-relevant (QoL, function)", points: "0-10", detail: "VMS reduction, pain relief: 10" },
+            { label: "Safety profile", points: "0-5", detail: "Non-hormonal safety advantage: 5" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-30", items: [
+            { label: "Price vs. comparator", points: "0-15" },
+            { label: "Budget impact", points: "0-10" },
+            { label: "Cost-effectiveness", points: "0-5" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-25", items: [
+            { label: "Immediate access", points: "0-10" },
+            { label: "Gynecology guideline alignment", points: "0-10" },
+            { label: "Head-to-head evidence", points: "0-5" },
+          ]},
+        ],
+      },
+      {
+        market: "China NHSA",
+        clinicalScoring: [
+          { title: "Clinical Value", maxPoints: "0-25", items: [
+            { label: "Clinical efficacy", points: "0-12", detail: "Major symptom improvement: 12" },
+            { label: "Chinese trial data", points: "0-10", detail: "Phase III China: 10" },
+            { label: "Unmet need", points: "0-3" },
+          ]},
+        ],
+        economicScoring: [
+          { title: "Economic Value", maxPoints: "0-35", items: [
+            { label: "VBP price cut", points: "0-25", detail: "Contraception/HRT generics 60-70%: 25 | Novel mechanisms 40-50%: 20" },
+            { label: "Affordability", points: "0-10", detail: "Chronic use cost manageable: 10" },
+          ]},
+        ],
+        accessScoring: [
+          { title: "Access Factors", maxPoints: "0-30", items: [
+            { label: "Volume commitment", points: "0-20" },
+            { label: "Hospital/clinic network", points: "0-10" },
+          ]},
+        ],
+      },
+    ],
+    addAdjustments: [
+      { label: "ACA-mandated contraception coverage (US)", points: "+12", detail: "No cost-sharing required" },
+      { label: "Non-hormonal mechanism (menopause, endometriosis)", points: "+15", detail: "NK3 receptor antagonist, GnRH antagonist; safety advantage vs. HRT" },
+      { label: "Oral vs. injectable/implant", points: "+8", detail: "Patient preference, reversibility" },
+      { label: "Rapid onset (PPD: <1 week)", points: "+10", detail: "Zuranolone precedent, critical unmet need" },
+      { label: "Dual indication (endometriosis + uterine fibroids)", points: "+8", detail: "Broader market, single drug" },
+      { label: "Fertility preservation indication", points: "+10", detail: "Growing market, high willingness to pay" },
+    ],
+    subtractAdjustments: [
+      { label: "Medicare exclusion (obesity drugs, fertility)", points: "-20", detail: "Major coverage gap for elderly women" },
+      { label: "Political/religious coverage exemptions", points: "-15", detail: "Employer religious objections (Hobby Lobby precedent)" },
+      { label: "Cosmetic/elective perception", points: "-12", detail: "Payer classification risk" },
+      { label: "Hormonal side effects (thrombosis, cancer risk)", points: "-10", detail: "Black box concerns" },
+      { label: "Requires fertility specialist (IVF adjunct)", points: "-8", detail: "Limited access, high cost" },
+      { label: "No male comparator/traditional endpoint", points: "-6", detail: "Regulatory endpoint challenges" },
+    ],
+  },
 ];
