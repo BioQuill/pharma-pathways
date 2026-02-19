@@ -818,6 +818,136 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
       ],
     },
   },
+  {
+    name: "17. Pain Management/Anesthesia",
+    markets: [
+      { market: "US Commercial", clinical: 30, economic: 25, access: 25, political: 20, notes: "Opioid crisis; DEA scheduling; REMS; non-opioid alternatives prioritized" },
+      { market: "US Medicare", clinical: 30, economic: 25, access: 25, political: 20, notes: "Elderly chronic pain; Part D opioid restrictions; non-opioid preference" },
+      { market: "UK NICE", clinical: 35, economic: 40, access: 15, political: 10, notes: "Chronic pain guidelines; opioid stewardship; cost-effectiveness" },
+      { market: "Germany G-BA", clinical: 35, economic: 30, access: 25, political: 10, notes: "Pain management protocols; opioid prescribing regulations" },
+      { market: "Japan MHLW", clinical: 30, economic: 30, access: 25, political: 15, notes: "Cultural opioid avoidance; non-opioid mechanisms preferred" },
+      { market: "China NHSA", clinical: 25, economic: 35, access: 30, political: 10, notes: "Opioid control strict; cancer pain prioritized; chronic pain limited" },
+      { market: "India PM-JAY", clinical: 20, economic: 45, access: 25, political: 10, notes: "Acute/cancer pain covered; chronic pain management limited" },
+      { market: "Brazil CONITEC", clinical: 25, economic: 40, access: 25, political: 10, notes: "Opioid access for cancer pain; chronic pain budget barrier" },
+    ],
+    adjustments: {
+      add: [
+        { item: "Novel non-opioid mechanism (first-in-class: NGF mAb, Nav1.7/1.8, CGRP)", points: "+15" },
+        { item: "Abuse-deterrent formulation (opioid)", points: "+10 (tamper-resistant, extraction-resistant)" },
+        { item: "Non-Schedule II (Schedule III-V or non-controlled)", points: "+12 (prescribing ease)" },
+        { item: "Dual pain + function improvement", points: "+8 (not just NRS reduction)" },
+        { item: "Cancer pain indication", points: "+10 (opioid alternatives high unmet need)" },
+        { item: "Neuropathic pain efficacy (DPNP, PHN)", points: "+8 (high prevalence)" },
+        { item: "Rapid onset (acute pain <30 minutes)", points: "+6 (ER, post-surgical)" },
+        { item: "Long-acting (chronic pain, once-daily)", points: "+8 (vs. q4-6h)" },
+        { item: "Topical/localized (vs. systemic)", points: "+7 (lower systemic exposure)" },
+      ],
+      subtract: [
+        { item: "Schedule II opioid (without ADF)", points: "-15 (opioid crisis, REMS, prescribing limits)" },
+        { item: "REMS requirement", points: "-10 (prescriber/patient burden)" },
+        { item: "Addiction potential (non-opioid but abuse risk)", points: "-12 (gabapentinoids precedent)" },
+        { item: "Black box warning (CV risk NSAIDs, GI bleeding)", points: "-10" },
+        { item: "No functional improvement (pain score only)", points: "-8 (FDA, payers expect function)" },
+        { item: "Requires frequent dosing (q4h chronic pain)", points: "-6 (adherence, burden)" },
+        { item: "Systemic side effects (sedation, constipation, nausea)", points: "-8 (opioid burden)" },
+        { item: "Competing non-opioid with better profile", points: "-10 (market access difficult)" },
+        { item: "Cancer pain: inferior to morphine equivalents", points: "-12 (standard of care)" },
+      ],
+    },
+  },
+  {
+    name: "18. Rare Diseases/Orphan Drugs",
+    markets: [
+      { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Orphan Drug Act; 7-year exclusivity; high willingness to pay; ultra-rare pricing flexibility" },
+      { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B/D coverage; CED pathway for gene therapy; PRV incentives" },
+      { market: "UK NICE", clinical: 45, economic: 20, access: 20, political: 15, notes: "HST pathway for ultra-rare; managed access agreements; £100-300K ICER flexibility" },
+      { market: "Germany G-BA", clinical: 50, economic: 15, access: 25, political: 10, notes: "Orphan exemption from AMNOG (<€50M revenue); automatic benefit assumed" },
+      { market: "Japan MHLW", clinical: 40, economic: 20, access: 25, political: 15, notes: "Orphan drug designation; innovation premium; SAKIGAKE pathway" },
+      { market: "China NHSA", clinical: 35, economic: 25, access: 30, political: 10, notes: "National rare disease catalogue; affordability major barrier; provincial subsidies" },
+      { market: "India PM-JAY", clinical: 25, economic: 35, access: 30, political: 10, notes: "Mostly excluded (ultra-high cost); catastrophic coverage limited" },
+      { market: "Brazil CONITEC", clinical: 35, economic: 25, access: 30, political: 10, notes: "Judicial pathway (court orders); SUS budget constraints; patient advocacy strong" },
+    ],
+    adjustments: {
+      add: [
+        { item: "First-in-class/only treatment for condition", points: "+20 (no alternative therapy available)" },
+        { item: "Pediatric rare disease", points: "+15 (high unmet need, regulatory incentives)" },
+        { item: "Gene therapy curative intent", points: "+18 (one-time treatment, lifetime benefit)" },
+        { item: "Newborn screening integration", points: "+12 (early diagnosis enables early treatment)" },
+        { item: "Patient advocacy strong (NORD, Eurordis)", points: "+8 (regulatory and payer influence)" },
+        { item: "Ultra-orphan (<1 in 50,000)", points: "+10 (additional regulatory flexibility)" },
+      ],
+      subtract: [
+        { item: "No natural history data for comparison", points: "-12 (difficult to demonstrate benefit)" },
+        { item: "Single-arm trial without historical control", points: "-10 (evidence uncertainty)" },
+        { item: "Ultra-high cost (>$2M) without outcomes-based contract", points: "-15 (payer resistance)" },
+        { item: "No long-term durability data (<3 years)", points: "-10 (gene therapy uncertainty)" },
+        { item: "Manufacturing complexity (patient-specific)", points: "-8 (supply chain risk)" },
+        { item: "Limited to <5 specialized centers", points: "-12 (access barrier, health equity)" },
+      ],
+    },
+  },
+  {
+    name: "19. Vaccines & Virology",
+    markets: [
+      { market: "US Commercial", clinical: 35, economic: 25, access: 30, political: 10, notes: "ACIP recommendations = guaranteed coverage; VFC program; pharmacy administration" },
+      { market: "US Medicare", clinical: 35, economic: 25, access: 30, political: 10, notes: "Part D vaccines (IRA); adult immunization growing; no cost-sharing" },
+      { market: "UK NICE", clinical: 40, economic: 35, access: 15, political: 10, notes: "JCVI recommendation = NHS coverage; cost per QALY strict; NIP integration" },
+      { market: "Germany G-BA", clinical: 40, economic: 30, access: 20, political: 10, notes: "STIKO recommendation = mandatory sickness fund coverage; efficacy data quality" },
+      { market: "Japan MHLW", clinical: 35, economic: 25, access: 25, political: 15, notes: "NIP vaccines; catch-up programs; pandemic preparedness priority" },
+      { market: "China NHSA", clinical: 30, economic: 35, access: 25, political: 10, notes: "NIP (free) vs. non-NIP (OOP); domestic manufacturing preferred; CDC distribution" },
+      { market: "India PM-JAY", clinical: 25, economic: 40, access: 25, political: 10, notes: "UIP (Universal Immunization); price-sensitive; domestic production" },
+      { market: "Brazil CONITEC", clinical: 30, economic: 35, access: 25, political: 10, notes: "PNI (National Immunization Program); Fiocruz/Butantan local production" },
+    ],
+    adjustments: {
+      add: [
+        { item: "ACIP/STIKO/JCVI universal recommendation", points: "+15 (guaranteed coverage in respective markets)" },
+        { item: "Pandemic preparedness (influenza, coronavirus)", points: "+12 (government stockpile, emergency use)" },
+        { item: "mRNA platform (rapid variant adaptation)", points: "+10 (COVID precedent, platform flexibility)" },
+        { item: "Combination vaccine (fewer injections)", points: "+8 (adherence, schedule simplification)" },
+        { item: "Room temperature stable", points: "+6 (cold chain advantage, global access)" },
+        { item: "Single-dose regimen", points: "+8 (vs. multi-dose schedule)" },
+      ],
+      subtract: [
+        { item: "Ultra-cold chain requirement (-70°C)", points: "-12 (distribution/storage barrier)" },
+        { item: "Waning immunity requiring frequent boosters", points: "-10 (annual/semi-annual dosing)" },
+        { item: "Safety signal (myocarditis, GBS, anaphylaxis)", points: "-15 (public trust, regulatory scrutiny)" },
+        { item: "No ACIP/STIKO recommendation", points: "-20 (coverage not guaranteed)" },
+        { item: "Narrow serotype coverage vs. existing", points: "-8 (inferior to current vaccines)" },
+        { item: "No pediatric indication data", points: "-10 (key population excluded)" },
+      ],
+    },
+  },
+  {
+    name: "20. Women's Health",
+    markets: [
+      { market: "US Commercial", clinical: 30, economic: 25, access: 25, political: 20, notes: "ACA mandates contraception; reproductive rights politics; menopause growing" },
+      { market: "US Medicare", clinical: 25, economic: 30, access: 25, political: 20, notes: "Elderly women osteoporosis/menopause; fertility/obesity excluded" },
+      { market: "UK NICE", clinical: 35, economic: 40, access: 15, political: 10, notes: "Women's health priority; HRT safety data important; cost-effectiveness strict" },
+      { market: "Germany G-BA", clinical: 35, economic: 30, access: 25, political: 10, notes: "Patient-relevant QoL; endometriosis unmet need recognized" },
+      { market: "Japan MHLW", clinical: 25, economic: 30, access: 30, political: 15, notes: "Menopause, endometriosis priority; fertility treatments growing" },
+      { market: "China NHSA", clinical: 25, economic: 35, access: 30, political: 10, notes: "Reproductive health coverage limited; fertility OOP" },
+      { market: "India PM-JAY", clinical: 20, economic: 45, access: 25, political: 10, notes: "Maternal health priority; chronic gynecological conditions limited" },
+      { market: "Brazil CONITEC", clinical: 25, economic: 40, access: 25, political: 10, notes: "Contraception covered; endometriosis/menopause budget constrained" },
+    ],
+    adjustments: {
+      add: [
+        { item: "ACA-mandated contraception coverage (US)", points: "+12 (no cost-sharing required)" },
+        { item: "Non-hormonal mechanism (menopause, endometriosis)", points: "+15 (NK3 antagonist, GnRH antagonist; safety advantage vs. HRT)" },
+        { item: "Oral vs. injectable/implant", points: "+8 (patient preference, reversibility)" },
+        { item: "Rapid onset PPD (<1 week)", points: "+10 (zuranolone precedent, critical unmet need)" },
+        { item: "Dual indication (endometriosis + uterine fibroids)", points: "+8 (broader market)" },
+        { item: "Fertility preservation indication", points: "+10 (growing market, high willingness to pay)" },
+      ],
+      subtract: [
+        { item: "Medicare exclusion (obesity drugs, fertility)", points: "-20 (major coverage gap)" },
+        { item: "Political/religious coverage exemptions", points: "-15 (employer religious objections, Hobby Lobby precedent)" },
+        { item: "Cosmetic/elective perception", points: "-12 (payer classification risk)" },
+        { item: "Hormonal side effects (thrombosis, cancer risk)", points: "-10 (black box concerns)" },
+        { item: "Requires fertility specialist (IVF adjunct)", points: "-8 (limited access, high cost)" },
+        { item: "No male comparator/traditional endpoint", points: "-6 (regulatory endpoint challenges)" },
+      ],
+    },
+  },
 ];
 
 // ============ HELPER COMPONENTS ============
@@ -887,8 +1017,8 @@ export const PAModel1Dashboard = ({ molecules }: PAModel1DashboardProps) => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full justify-start flex-wrap h-auto gap-1 bg-sky-100 dark:bg-sky-950/30 p-1">
-         <TabsTrigger value="core" className="gap-1.5"><Globe className="h-3.5 w-3.5" /> Core Framework (7 Markets)</TabsTrigger>
-          <TabsTrigger value="ta" className="gap-1.5"><Stethoscope className="h-3.5 w-3.5" /> <TabsTrigger value="ta" className="gap-1.5"><Stethoscope className="h-3.5 w-3.5" /> TA-Specific Models (20 TAs)</TabsTrigger></TabsTrigger>
+          <TabsTrigger value="core" className="gap-1.5"><Globe className="h-3.5 w-3.5" /> Core Framework (7 Markets)</TabsTrigger>
+          <TabsTrigger value="ta" className="gap-1.5"><Stethoscope className="h-3.5 w-3.5" /> TA-Specific Models (20 TAs)</TabsTrigger>
           <TabsTrigger value="calculator" className="gap-1.5"><Calculator className="h-3.5 w-3.5" /> Interactive Calculator</TabsTrigger>
         </TabsList>
 
