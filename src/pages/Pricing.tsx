@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent, Mail, Send, Calculator, DollarSign, PieChart, Clock, Database, RefreshCw, CheckCircle } from "lucide-react";
+import { Check, ArrowLeft, Zap, Building2, Crown, FileText, TrendingUp, Package, Eye, X, BarChart3, Target, Shield, AlertTriangle, Percent, Mail, Send, Calculator, DollarSign, PieChart, Clock, Database, RefreshCw, CheckCircle, Pill, Layers, Globe, ShoppingCart, Plus, Minus, FlaskConical, Activity } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 
 // ROI Calculator Component
@@ -18,21 +19,18 @@ const ROICalculator = () => {
   const [failedDealRate, setFailedDealRate] = useState([25]);
   const [improvementRate, setImprovementRate] = useState([30]);
 
-  // Calculate ROI metrics (values in $K)
   const annualDeals = portfolioSize[0];
-  const avgDealValueK = avgDealValue[0]; // in thousands
+  const avgDealValueK = avgDealValue[0];
   const currentFailRate = failedDealRate[0] / 100;
   const improvementPct = improvementRate[0] / 100;
 
   const currentFailedDeals = Math.round(annualDeals * currentFailRate);
   const currentLossesK = currentFailedDeals * avgDealValueK;
-  
   const improvedFailRate = currentFailRate * (1 - improvementPct);
   const improvedFailedDeals = Math.round(annualDeals * improvedFailRate);
   const improvedLossesK = improvedFailedDeals * avgDealValueK;
-  
   const annualSavingsK = currentLossesK - improvedLossesK;
-  const bioquillCostK = 200; // $200K enterprise cost
+  const bioquillCostK = 200;
   const netROIK = annualSavingsK - bioquillCostK;
   const formatK = (v: number) => v >= 1000 ? `$${(v / 1000).toFixed(1)}M` : `$${v}K`;
   const roiMultiple = netROIK > 0 ? Math.round((netROIK / bioquillCostK) * 10) / 10 : 0;
@@ -50,101 +48,61 @@ const ROICalculator = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Input Controls */}
           <div className="space-y-5">
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <Label>Annual Deal Evaluations</Label>
                 <span className="font-bold text-primary">{portfolioSize[0]} deals</span>
               </div>
-              <Slider 
-                value={portfolioSize} 
-                onValueChange={setPortfolioSize} 
-                min={1} 
-                max={50} 
-                step={1}
-                className="w-full"
-              />
+              <Slider value={portfolioSize} onValueChange={setPortfolioSize} min={1} max={50} step={1} className="w-full" />
             </div>
-
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <Label>Average Deal Value</Label>
                 <span className="font-bold text-primary">{formatK(avgDealValue[0])}</span>
               </div>
-              <Slider 
-                value={avgDealValue} 
-                onValueChange={setAvgDealValue} 
-                min={2.5} 
-                max={500} 
-                step={2.5}
-                className="w-full"
-              />
-              <p className="text-xs text-muted-foreground">
-                Range: $2.5K – $500K (e.g., 10 deals at $2.5K + 10 deals at $200K)
-              </p>
+              <Slider value={avgDealValue} onValueChange={setAvgDealValue} min={2.5} max={500} step={2.5} className="w-full" />
+              <p className="text-xs text-muted-foreground">Range: $2.5K – $500K</p>
             </div>
-
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <Label>Current Failed Deal Rate</Label>
                 <span className="font-bold text-primary">{failedDealRate[0]}%</span>
               </div>
-              <Slider 
-                value={failedDealRate} 
-                onValueChange={setFailedDealRate} 
-                min={5} 
-                max={50} 
-                step={5}
-                className="w-full"
-              />
+              <Slider value={failedDealRate} onValueChange={setFailedDealRate} min={5} max={50} step={5} className="w-full" />
             </div>
-
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <Label>BioQuill Improvement Rate</Label>
                 <span className="font-bold text-primary">{improvementRate[0]}%</span>
               </div>
-              <Slider 
-                value={improvementRate} 
-                onValueChange={setImprovementRate} 
-                min={10} 
-                max={60} 
-                step={5}
-                className="w-full"
-              />
-              <p className="text-xs text-muted-foreground">
-                Based on historical LPI-3 model accuracy (82% AUC-ROC)
-              </p>
+              <Slider value={improvementRate} onValueChange={setImprovementRate} min={10} max={60} step={5} className="w-full" />
+              <p className="text-xs text-muted-foreground">Based on historical LPI-3 model accuracy (82% AUC-ROC)</p>
             </div>
           </div>
-
-          {/* Results */}
           <div className="space-y-4">
             <Card className="bg-red-50 dark:bg-red-950/30 border-red-200">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-red-600 font-medium">Current Annual Losses</p>
-                    <p className="text-xs text-muted-foreground">{currentFailedDeals} failed deals × {formatK(avgDealValueK)}</p>
+                    <p className="text-xs text-muted-foreground">{currentFailedDeals} failed × {formatK(avgDealValueK)}</p>
                   </div>
                   <div className="text-2xl font-bold text-red-600">{formatK(currentLossesK)}</div>
                 </div>
               </CardContent>
             </Card>
-
             <Card className="bg-green-50 dark:bg-green-950/30 border-green-200">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-[hsl(142,76%,36%)] font-medium">Improved Annual Losses</p>
-                    <p className="text-xs text-muted-foreground">{improvedFailedDeals} failed deals × {formatK(avgDealValueK)}</p>
+                    <p className="text-xs text-muted-foreground">{improvedFailedDeals} failed × {formatK(avgDealValueK)}</p>
                   </div>
                   <div className="text-2xl font-bold text-[hsl(142,76%,36%)]">{formatK(improvedLossesK)}</div>
                 </div>
               </CardContent>
             </Card>
-
             <Card className="bg-primary/10 border-primary/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -156,7 +114,6 @@ const ROICalculator = () => {
                 </div>
               </CardContent>
             </Card>
-
             <Card className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
@@ -178,8 +135,382 @@ const ROICalculator = () => {
   );
 };
 
+// Sample Compounded Report Preview for Orforglipron
+const SampleCompoundedReport = () => {
+  return (
+    <div className="max-h-[75vh] overflow-y-auto">
+      <div className="space-y-5 p-2">
+        {/* Report Header */}
+        <div className="bg-[#F5D547] rounded-lg p-4 flex items-center gap-4">
+          <img src={bioquillLogo} alt="BiOQUILL" className="h-10 w-auto" />
+          <div>
+            <h3 className="font-bold text-gray-800">Full Due Diligence Report</h3>
+            <p className="text-sm text-gray-700">Orforglipron — Eli Lilly</p>
+          </div>
+          <Badge className="ml-auto bg-gray-800 text-white">Sample</Badge>
+        </div>
+
+        {/* Section 1: Molecule Score Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Target className="h-4 w-4 text-primary" />
+              1. Molecule Score Card
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xs text-muted-foreground">Phase</p>
+                <p className="font-bold">Phase III</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xs text-muted-foreground">Indication</p>
+                <p className="font-bold text-sm">Obesity / T2D</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xs text-muted-foreground">Company</p>
+                <p className="font-bold text-sm text-[hsl(142,70%,30%)]">Eli Lilly</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-3 mt-3">
+              <div className="text-center p-3 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200">
+                <p className="text-xs text-muted-foreground">Composite Score</p>
+                <p className="text-2xl font-bold text-[hsl(142,76%,36%)]">74.2</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200">
+                <p className="text-xs text-muted-foreground">LPI-3 Score</p>
+                <p className="text-2xl font-bold text-blue-600">71.8%</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xs text-muted-foreground">TTM</p>
+                <p className="text-2xl font-bold">18 mo</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 2: LPI Analysis */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              2. LPI-3 Probability Analysis
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              {[
+                { label: "Meeting Endpoints", value: 78, color: "bg-green-500" },
+                { label: "Regulatory Pathway", value: 82, color: "bg-blue-500" },
+                { label: "Safety Profile", value: 72, color: "bg-yellow-500" },
+                { label: "Competitive Position", value: 68, color: "bg-orange-500" },
+                { label: "Manufacturing", value: 85, color: "bg-purple-500" },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-2">
+                  <span className="text-xs w-32 truncate">{item.label}</span>
+                  <div className="flex-1 bg-muted rounded-full h-2.5">
+                    <div className={`${item.color} h-2.5 rounded-full`} style={{ width: `${item.value}%` }} />
+                  </div>
+                  <span className="text-xs font-mono w-10 text-right">{item.value}%</span>
+                </div>
+              ))}
+            </div>
+            <div className="border-t pt-2 flex justify-between text-xs">
+              <span className="text-muted-foreground">Calibrated Probability</span>
+              <Badge className="bg-green-500 text-white">71.8% (High)</Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 3: LPI Extended - Category Weights */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-primary" />
+              3. LPI Extended — Category Weight vs Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {[
+                { cat: "Clinical Efficacy", weight: 30, perf: 78 },
+                { cat: "Safety & Tolerability", weight: 20, perf: 72 },
+                { cat: "Regulatory", weight: 15, perf: 82 },
+                { cat: "Market & Commercial", weight: 20, perf: 75 },
+                { cat: "Manufacturing", weight: 15, perf: 85 },
+              ].map((r) => (
+                <div key={r.cat} className="grid grid-cols-[120px_1fr_60px] items-center gap-2 text-xs">
+                  <span className="truncate">{r.cat}</span>
+                  <div className="relative h-4 bg-muted rounded">
+                    <div className="absolute inset-y-0 left-0 bg-primary/30 rounded" style={{ width: `${r.weight}%` }} />
+                    <div className="absolute inset-y-0 left-0 bg-primary rounded" style={{ width: `${r.perf}%`, maxWidth: `${r.weight}%` }} />
+                  </div>
+                  <span className="font-mono text-right">{r.perf}%</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 4: Investment Score */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-primary" />
+              4. Investment Score Assessment
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 rounded-lg border text-center">
+                <p className="text-xs text-muted-foreground">Risk-Adjusted Score</p>
+                <p className="text-xl font-bold text-primary">8.2 / 10</p>
+              </div>
+              <div className="p-3 rounded-lg border text-center">
+                <p className="text-xs text-muted-foreground">Decision Band</p>
+                <Badge className="bg-green-500 text-white mt-1">Accelerate</Badge>
+              </div>
+              <div className="p-3 rounded-lg border text-center">
+                <p className="text-xs text-muted-foreground">Peak Sales (Median)</p>
+                <p className="text-xl font-bold">$8.5B</p>
+              </div>
+              <div className="p-3 rounded-lg border text-center">
+                <p className="text-xs text-muted-foreground">Blockbuster Prob.</p>
+                <p className="text-xl font-bold text-[hsl(142,76%,36%)]">89%</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 5: Pricing & Access - Model 1 (MWPSPI) */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Globe className="h-4 w-4 text-primary" />
+              5. Pricing & Access — MWPSPI (Model 1)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="text-left p-2">Market</th>
+                    <th className="text-center p-2">Clinical</th>
+                    <th className="text-center p-2">Economic</th>
+                    <th className="text-center p-2">Access</th>
+                    <th className="text-center p-2">MWPSPI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { m: "US Commercial", c: 82, e: 78, a: 75, s: 78 },
+                    { m: "UK (NICE)", c: 72, e: 68, a: 82, s: 74 },
+                    { m: "Germany (G-BA)", c: 75, e: 72, a: 78, s: 75 },
+                    { m: "Japan (PMDA)", c: 78, e: 70, a: 72, s: 73 },
+                  ].map((r) => (
+                    <tr key={r.m} className="border-b">
+                      <td className="p-2 font-medium">{r.m}</td>
+                      <td className="text-center p-2">{r.c}</td>
+                      <td className="text-center p-2">{r.e}</td>
+                      <td className="text-center p-2">{r.a}</td>
+                      <td className="text-center p-2 font-bold">{r.s}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 6: Pricing & Access - Model 2 (Benchmarking) */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              6. Pricing & Access — Benchmarking (Model 2) & Triangulation
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 rounded-lg border">
+                <p className="text-xs text-muted-foreground">Model 1</p>
+                <p className="text-lg font-bold">75.5%</p>
+              </div>
+              <div className="text-center p-3 rounded-lg border">
+                <p className="text-xs text-muted-foreground">Model 2</p>
+                <p className="text-lg font-bold">72.1%</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-primary/10 border-primary/30">
+                <p className="text-xs text-muted-foreground">Triangulated</p>
+                <p className="text-lg font-bold text-primary">73.8%</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-muted-foreground">
+              Band: <Badge className="bg-green-500 text-white text-xs">Accelerate</Badge> — Strong payer support expected across major markets
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 7: Monte Carlo */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <PieChart className="h-4 w-4 text-primary" />
+              7. Monte Carlo Peak Sales Simulation
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xs text-muted-foreground">Median Peak Sales</p>
+                <p className="text-xl font-bold">$8.5B</p>
+              </div>
+              <div className="text-center p-3 rounded-lg bg-muted/50">
+                <p className="text-xs text-muted-foreground">Sharpe Ratio</p>
+                <p className="text-xl font-bold">1.92</p>
+              </div>
+            </div>
+            <div className="h-16 bg-gradient-to-r from-muted via-primary/30 to-muted rounded-lg flex items-end justify-center gap-0.5 p-2">
+              {[10, 18, 30, 48, 65, 82, 95, 100, 92, 78, 60, 42, 28, 15, 8].map((h, i) => (
+                <div key={i} className="bg-primary/70 rounded-t w-3" style={{ height: `${h}%` }} />
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>$2B</span>
+              <span>$8.5B (median)</span>
+              <span>$18B+</span>
+            </div>
+            <table className="w-full text-xs mt-3">
+              <tbody>
+                {[
+                  { p: "5th (Bear)", v: "$3.2B" },
+                  { p: "25th", v: "$5.8B" },
+                  { p: "50th (Median)", v: "$8.5B" },
+                  { p: "75th", v: "$11.2B" },
+                  { p: "95th (Bull)", v: "$16.8B" },
+                ].map((r, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-muted/30" : ""}>
+                    <td className="p-1.5">{r.p}</td>
+                    <td className="p-1.5 text-right font-bold">{r.v}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+
+        {/* Section 8: Market & Regulatory */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Globe className="h-4 w-4 text-primary" />
+              8. Market & Regulatory Analysis (10 Markets)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {[
+                { m: "United States", s: "Priority Review", t: "12 mo" },
+                { m: "EU / Germany", s: "Standard", t: "18 mo" },
+                { m: "Japan", s: "Standard", t: "20 mo" },
+                { m: "China", s: "Priority Import", t: "24 mo" },
+              ].map((r) => (
+                <div key={r.m} className="p-2 rounded border flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{r.m}</p>
+                    <p className="text-muted-foreground">{r.s}</p>
+                  </div>
+                  <Badge variant="outline" className="text-xs">{r.t}</Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 9: Patent & Competitive */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              9. Patent & Competitive Landscape
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="text-xs space-y-1">
+              <div className="flex justify-between"><span>Key Patent Expiry</span><span className="font-bold">2041</span></div>
+              <div className="flex justify-between"><span>Exclusivity Type</span><span className="font-bold">Composition + NCE</span></div>
+              <div className="flex justify-between"><span>Key Differentiator</span><span className="font-bold text-[hsl(142,76%,36%)]">First oral non-peptide GLP-1</span></div>
+            </div>
+            <div className="border-t pt-2">
+              <p className="text-xs font-medium mb-1">Top Competitors</p>
+              <div className="space-y-1 text-xs">
+                {[
+                  { name: "Rybelsus (Novo)", threat: "Medium" },
+                  { name: "Amycretin (Novo)", threat: "High" },
+                  { name: "Danuglipron (Pfizer)", threat: "Low — Discontinued" },
+                ].map((c) => (
+                  <div key={c.name} className="flex justify-between">
+                    <span>{c.name}</span>
+                    <span className="text-muted-foreground">{c.threat}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section 10: Clinical Studies */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <FlaskConical className="h-4 w-4 text-primary" />
+              10. Clinical Studies Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2 text-xs">
+              {[
+                { trial: "ACHIEVE-1 (T2D)", nct: "NCT05869903", status: "Active", phase: "Phase III" },
+                { trial: "ACHIEVE-4 (T2D)", nct: "NCT06272890", status: "Enrolling", phase: "Phase III" },
+                { trial: "ATTAIN-1 (Obesity)", nct: "NCT05869916", status: "Active", phase: "Phase III" },
+              ].map((t) => (
+                <div key={t.nct} className="flex items-center justify-between p-2 rounded border">
+                  <div>
+                    <p className="font-medium">{t.trial}</p>
+                    <p className="text-muted-foreground">{t.nct}</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge variant="outline" className="text-xs">{t.phase}</Badge>
+                    <p className="text-muted-foreground mt-0.5">{t.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2">
+            This is a sample preview of the compounded Full Due Diligence Report.
+            Actual reports include deeper methodology, interactive charts, and actionable insights.
+          </p>
+          <Badge variant="outline" className="text-xs">
+            <Percent className="h-3 w-3 mr-1" />
+            10 Sections · 10,000+ Monte Carlo Simulations
+          </Badge>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Pricing Tier Definitions - New structure
 interface PricingTier {
   name: string;
+  subtitle: string;
   description: string;
   price: string;
   originalPrice?: string;
@@ -187,130 +518,152 @@ interface PricingTier {
   icon: React.ReactNode;
   features: string[];
   highlighted?: boolean;
-  isBundle?: boolean;
+  saveBadge?: string;
   isContactSales?: boolean;
   buttonText: string;
   buttonVariant: "default" | "outline" | "secondary";
-  previewButton?: boolean;
+  showSampleReport?: boolean;
+  moleculeCount?: string;
 }
 
 const pricingTiers: PricingTier[] = [
   {
-    name: "Monte Carlo Analysis",
-    description: "Peak sales simulation with probabilistic risk analysis",
-    price: "$2,500",
-    priceSubtext: "per molecule",
-    icon: <TrendingUp className="h-6 w-6" />,
+    name: "1 Molecule",
+    subtitle: "Report & Monitoring",
+    description: "Full due diligence for a single molecule with 1-year monitoring access",
+    price: "$5,000",
+    priceSubtext: "per molecule / year",
+    icon: <Pill className="h-6 w-6" />,
+    moleculeCount: "1",
     features: [
-      "10,000+ Monte Carlo simulations",
-      "Peak sales probability distribution",
-      "Blockbuster probability assessment",
-      "Risk-adjusted metrics (VaR, CVaR)",
-      "Sensitivity analysis by component",
-      "Scenario comparisons (Bull/Bear)",
-      "Downloadable PDF report",
-      "14-day data access",
-    ],
-    buttonText: "Purchase Analysis",
-    buttonVariant: "outline",
-    previewButton: true,
-  },
-  {
-    name: "Single Report",
-    description: "One-time due diligence report for a specific molecule",
-    price: "$3,500",
-    priceSubtext: "per molecule",
-    icon: <FileText className="h-6 w-6" />,
-    features: [
-      "Full LPI-3 analysis with confidence intervals",
-      "TTM projections across 10 markets",
-      "Patent & exclusivity timeline",
-      "Competitive landscape analysis",
-      "Regulatory pathway comparison",
-      "Downloadable PDF report",
-      "30-day data access",
+      "Full compounded due diligence report (PDF)",
+      "Molecule Score Card & Composite Score",
+      "LPI-3 probability analysis + extended",
+      "Investment Score Assessment",
+      "Pricing & Access (Model 1 + Model 2 + Triangulation)",
+      "Monte Carlo peak sales simulation",
+      "Market & Regulatory analysis (10 markets)",
+      "Patent & competitive landscape",
+      "Clinical studies summary with links",
+      "1-year live dashboard monitoring",
+      "Real-time trial & regulatory alerts",
     ],
     buttonText: "Purchase Report",
     buttonVariant: "outline",
+    showSampleReport: true,
   },
   {
-    name: "Complete Bundle",
-    description: "Monte Carlo + Single Report combined at 17% discount",
-    price: "$5,000",
-    originalPrice: "$6,000",
-    priceSubtext: "per molecule",
-    icon: <Package className="h-6 w-6" />,
+    name: "5 Molecules",
+    subtitle: "Custom Basket",
+    description: "Choose up to 5 molecules from any therapeutic areas — build your own portfolio basket",
+    price: "$18,000",
+    originalPrice: "$25,000",
+    priceSubtext: "per year",
+    icon: <ShoppingCart className="h-6 w-6" />,
+    moleculeCount: "Up to 5",
+    saveBadge: "Save 28%",
     features: [
-      "Full Monte Carlo simulation suite",
-      "Complete LPI-3 due diligence report",
-      "Risk-adjusted peak sales projections",
-      "TTM projections across 10 markets",
-      "Patent & competitive analysis",
-      "Sensitivity & scenario analysis",
-      "Combined PDF report package",
-      "45-day data access",
-    ],
-    isBundle: true,
-    buttonText: "Get Bundle",
-    buttonVariant: "default",
-    previewButton: true,
-  },
-  {
-    name: "Annual Molecule",
-    description: "Continuous monitoring and updates for one molecule",
-    price: "$12,000",
-    priceSubtext: "per molecule / year",
-    icon: <Zap className="h-6 w-6" />,
-    features: [
-      "Everything in Complete Bundle",
-      "Live dashboard access",
-      "Real-time trial updates",
-      "Regulatory milestone alerts",
-      "Competitive intelligence updates",
-      "Manufacturing risk monitoring",
-      "Quarterly analyst briefings",
-      "Priority support",
+      "Everything in 1 Molecule × 5",
+      "Mix molecules from any TAs",
+      "Side-by-side molecule comparison",
+      "Portfolio-level analytics",
+      "Cross-molecule risk correlation",
+      "1-year monitoring for all 5",
+      "Quarterly portfolio briefings",
+      "Priority email support",
     ],
     highlighted: true,
-    buttonText: "Start Monitoring",
+    buttonText: "Build Your Basket",
     buttonVariant: "default",
   },
   {
-    name: "TA Package",
-    description: "Full therapeutic area coverage with all molecules",
-    price: "$75,000",
+    name: "1 TA",
+    subtitle: "Report & Monitoring",
+    description: "Full therapeutic area coverage: all molecules, comparisons, and monitoring for 1 year",
+    price: "$45,000",
     priceSubtext: "per TA / year",
-    icon: <Building2 className="h-6 w-6" />,
+    icon: <Layers className="h-6 w-6" />,
+    moleculeCount: "All molecules in TA (~20-60)",
     features: [
-      "All molecules in therapeutic area (~20-40)",
+      "Full reports for every molecule in the TA",
       "TA Composite Index analytics",
-      "Cross-molecule comparison tools",
-      "Pipeline trend analysis",
+      "Molecule comparison tools (head-to-head)",
+      "Pipeline trend & gap analysis",
       "M&A target identification",
-      "Custom report generation",
+      "Competitive intelligence across TA",
+      "1-year live monitoring & alerts",
       "Dedicated account manager",
+    ],
+    buttonText: "Select TA",
+    buttonVariant: "outline",
+  },
+  {
+    name: "3 TAs",
+    subtitle: "Multi-Area Coverage",
+    description: "Cover 3 therapeutic areas with full analysis, comparison, and monitoring",
+    price: "$110,000",
+    originalPrice: "$135,000",
+    priceSubtext: "per year",
+    icon: <Layers className="h-6 w-6" />,
+    moleculeCount: "All molecules across 3 TAs",
+    saveBadge: "Save 19%",
+    features: [
+      "Everything in 1 TA × 3",
+      "Cross-TA portfolio analytics",
+      "Cross-TA molecule comparison",
+      "TA vs TA benchmarking",
+      "Strategic portfolio optimization",
+      "Quarterly strategy sessions",
       "API access (limited)",
+      "Dedicated account manager",
     ],
     buttonText: "Contact Sales",
     buttonVariant: "secondary",
     isContactSales: true,
   },
   {
-    name: "Enterprise",
-    description: "Unlimited platform access for your organization",
-    price: "$200,000",
+    name: "5 TAs",
+    subtitle: "Extended Coverage",
+    description: "Cover 5 therapeutic areas with comprehensive analytics and strategic support",
+    price: "$160,000",
+    originalPrice: "$225,000",
+    priceSubtext: "per year",
+    icon: <Building2 className="h-6 w-6" />,
+    moleculeCount: "All molecules across 5 TAs",
+    saveBadge: "Save 29%",
+    features: [
+      "Everything in 3 TAs + 2 more",
+      "Advanced portfolio optimization",
+      "Full cross-TA comparison suite",
+      "Custom scoring configurations",
+      "White-label reporting option",
+      "Monthly strategy sessions",
+      "Full API access",
+      "Priority 24/7 support",
+    ],
+    buttonText: "Contact Sales",
+    buttonVariant: "secondary",
+    isContactSales: true,
+  },
+  {
+    name: "FULL",
+    subtitle: "All 20 TAs — Enterprise",
+    description: "Unlimited platform access across all 20 therapeutic areas for your organization",
+    price: "$300,000",
     priceSubtext: "starting / year",
     icon: <Crown className="h-6 w-6" />,
+    moleculeCount: "All 1,247+ molecules",
     features: [
-      "Unlimited molecule access",
       "All 20 therapeutic areas",
-      "Full API integration",
-      "Custom scoring configurations",
+      "Unlimited molecule access & reports",
+      "Full molecule comparison across all TAs",
+      "Enterprise portfolio dashboard",
+      "Custom scoring & model configurations",
       "White-label reporting",
       "SSO & team management",
       "On-premise deployment option",
-      "24/7 priority support",
-      "Quarterly strategy sessions",
+      "Quarterly executive strategy sessions",
+      "24/7 priority support + SLA",
     ],
     buttonText: "Contact Sales",
     buttonVariant: "secondary",
@@ -319,318 +672,26 @@ const pricingTiers: PricingTier[] = [
 ];
 
 const comparisonFeatures = [
-  { feature: "Molecules included", monteCarlo: "1", single: "1", bundle: "1", annual: "1", ta: "20-40", enterprise: "Unlimited" },
-  { feature: "Monte Carlo simulation", monteCarlo: "✓", single: "—", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "LPI-3 ML analysis", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "TTM projections", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Risk-adjusted metrics", monteCarlo: "✓", single: "—", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Sensitivity analysis", monteCarlo: "✓", single: "—", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Patent timeline", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Competitive analysis", monteCarlo: "—", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "PDF export", monteCarlo: "✓", single: "✓", bundle: "✓", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Live dashboard", monteCarlo: "14 days", single: "30 days", bundle: "45 days", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "Real-time alerts", monteCarlo: "—", single: "—", bundle: "—", annual: "✓", ta: "✓", enterprise: "✓" },
-  { feature: "API access", monteCarlo: "—", single: "—", bundle: "—", annual: "—", ta: "Limited", enterprise: "Full" },
-  { feature: "Dedicated support", monteCarlo: "Email", single: "Email", bundle: "Email", annual: "Priority", ta: "Account Mgr", enterprise: "24/7" },
+  { feature: "Molecules included", t1: "1", t5: "Up to 5", ta1: "All in TA", ta3: "All in 3 TAs", ta5: "All in 5 TAs", full: "1,247+" },
+  { feature: "Full DD report (PDF)", t1: "✓", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "LPI-3 + Extended analysis", t1: "✓", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "Monte Carlo simulation", t1: "✓", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "Pricing & Access (both models)", t1: "✓", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "Molecule comparison", t1: "—", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "Cross-TA analytics", t1: "—", t5: "—", ta1: "—", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "1-year monitoring", t1: "✓", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "Real-time alerts", t1: "✓", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "Portfolio analytics", t1: "—", t5: "✓", ta1: "✓", ta3: "✓", ta5: "✓", full: "✓" },
+  { feature: "API access", t1: "—", t5: "—", ta1: "—", ta3: "Limited", ta5: "Full", full: "Full" },
+  { feature: "Strategy sessions", t1: "—", t5: "Quarterly", ta1: "Quarterly", ta3: "Quarterly", ta5: "Monthly", full: "Quarterly Exec" },
+  { feature: "Support", t1: "Email", t5: "Priority", ta1: "Account Mgr", ta3: "Account Mgr", ta5: "24/7", full: "24/7 + SLA" },
 ];
-
-// Sample data for different therapeutic areas
-const sampleMoleculeData: Record<string, {
-  molecule: string;
-  indication: string;
-  peakSales: string;
-  blockbusterProb: string;
-  sharpeRatio: string;
-  var95: string;
-  percentiles: { p: string; v: string }[];
-  sensitivity: { name: string; impact: number }[];
-}> = {
-  neurology: {
-    molecule: "Lecanemab",
-    indication: "Alzheimer's Disease",
-    peakSales: "$4.2B",
-    blockbusterProb: "68%",
-    sharpeRatio: "1.42",
-    var95: "$1.8B",
-    percentiles: [
-      { p: "5th (Bear)", v: "$1.2B" },
-      { p: "25th", v: "$2.8B" },
-      { p: "50th (Median)", v: "$4.2B" },
-      { p: "75th", v: "$5.8B" },
-      { p: "95th (Bull)", v: "$8.5B" },
-    ],
-    sensitivity: [
-      { name: "Market Size", impact: 85 },
-      { name: "Clinical Efficacy", impact: 72 },
-      { name: "Competition", impact: 58 },
-      { name: "Regulatory", impact: 45 },
-    ],
-  },
-  oncology: {
-    molecule: "Dato-DXd",
-    indication: "NSCLC / Breast Cancer",
-    peakSales: "$6.8B",
-    blockbusterProb: "82%",
-    sharpeRatio: "1.68",
-    var95: "$2.4B",
-    percentiles: [
-      { p: "5th (Bear)", v: "$2.1B" },
-      { p: "25th", v: "$4.5B" },
-      { p: "50th (Median)", v: "$6.8B" },
-      { p: "75th", v: "$9.2B" },
-      { p: "95th (Bull)", v: "$14.5B" },
-    ],
-    sensitivity: [
-      { name: "Clinical Efficacy", impact: 92 },
-      { name: "Competition", impact: 78 },
-      { name: "Market Size", impact: 65 },
-      { name: "Pricing", impact: 52 },
-    ],
-  },
-  immunology: {
-    molecule: "Dupixent",
-    indication: "Atopic Dermatitis",
-    peakSales: "$12.5B",
-    blockbusterProb: "95%",
-    sharpeRatio: "2.15",
-    var95: "$4.2B",
-    percentiles: [
-      { p: "5th (Bear)", v: "$5.8B" },
-      { p: "25th", v: "$9.2B" },
-      { p: "50th (Median)", v: "$12.5B" },
-      { p: "75th", v: "$15.8B" },
-      { p: "95th (Bull)", v: "$22.0B" },
-    ],
-    sensitivity: [
-      { name: "Label Expansion", impact: 88 },
-      { name: "Competition", impact: 72 },
-      { name: "Pricing", impact: 58 },
-      { name: "Market Access", impact: 48 },
-    ],
-  },
-  cardiovascular: {
-    molecule: "Inclisiran",
-    indication: "Hypercholesterolemia",
-    peakSales: "$3.5B",
-    blockbusterProb: "58%",
-    sharpeRatio: "1.18",
-    var95: "$1.2B",
-    percentiles: [
-      { p: "5th (Bear)", v: "$0.8B" },
-      { p: "25th", v: "$2.2B" },
-      { p: "50th (Median)", v: "$3.5B" },
-      { p: "75th", v: "$4.8B" },
-      { p: "95th (Bull)", v: "$7.2B" },
-    ],
-    sensitivity: [
-      { name: "Market Access", impact: 82 },
-      { name: "Competition", impact: 68 },
-      { name: "Clinical Efficacy", impact: 55 },
-      { name: "Pricing", impact: 42 },
-    ],
-  },
-};
-
-// Sample Monte Carlo Report Preview Component
-const MonteCarloReportPreview = () => {
-  const [selectedTA, setSelectedTA] = useState("neurology");
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const data = sampleMoleculeData[selectedTA];
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubmitted(true);
-    }
-  };
-
-  return (
-    <div className="max-h-[70vh] overflow-y-auto">
-      <div className="space-y-6 p-4">
-        {/* TA Selector */}
-        <div className="flex items-center gap-4 border-b pb-4">
-          <Select value={selectedTA} onValueChange={setSelectedTA}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select Therapeutic Area" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="neurology">Neurology</SelectItem>
-              <SelectItem value="oncology">Oncology</SelectItem>
-              <SelectItem value="immunology">Immunology</SelectItem>
-              <SelectItem value="cardiovascular">Cardiovascular</SelectItem>
-            </SelectContent>
-          </Select>
-          <Badge>Sample Report</Badge>
-        </div>
-
-        {/* Header */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-bold text-primary">Monte Carlo Peak Sales Analysis</h3>
-          <p className="text-sm text-muted-foreground">Molecule: {data.molecule} ({data.indication})</p>
-          <p className="text-xs text-muted-foreground">Generated: January 11, 2026</p>
-        </div>
-
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="bg-muted/30">
-            <CardContent className="p-4 text-center">
-              <BarChart3 className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <p className="text-2xl font-bold">{data.peakSales}</p>
-              <p className="text-xs text-muted-foreground">Expected Peak Sales</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-muted/30">
-            <CardContent className="p-4 text-center">
-              <Target className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <p className="text-2xl font-bold">{data.blockbusterProb}</p>
-              <p className="text-xs text-muted-foreground">Blockbuster Probability</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-muted/30">
-            <CardContent className="p-4 text-center">
-              <Shield className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <p className="text-2xl font-bold">{data.sharpeRatio}</p>
-              <p className="text-xs text-muted-foreground">Sharpe Ratio</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-muted/30">
-            <CardContent className="p-4 text-center">
-              <AlertTriangle className="h-6 w-6 mx-auto mb-2 text-primary" />
-              <p className="text-2xl font-bold">{data.var95}</p>
-              <p className="text-xs text-muted-foreground">Value at Risk (95%)</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Distribution Preview */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Peak Sales Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-24 bg-gradient-to-r from-muted via-primary/30 to-muted rounded-lg flex items-end justify-center gap-1 p-2">
-              {[15, 25, 40, 60, 80, 95, 100, 90, 75, 55, 35, 20, 10].map((h, i) => (
-                <div 
-                  key={i} 
-                  className="bg-primary/70 rounded-t w-4"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground mt-2">
-              <span>$0B</span>
-              <span>{data.peakSales} (median)</span>
-              <span>$10B+</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Percentile Table Preview */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Percentile Analysis</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="p-2 text-left">Percentile</th>
-                  <th className="p-2 text-right">Peak Sales</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.percentiles.map((row, i) => (
-                  <tr key={i} className={i % 2 === 0 ? "bg-background" : "bg-muted/30"}>
-                    <td className="p-2">{row.p}</td>
-                    <td className="p-2 text-right font-medium">{row.v}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
-
-        {/* Sensitivity Preview */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Top Sensitivity Factors</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {data.sensitivity.map((factor, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-xs w-24 truncate">{factor.name}</span>
-                  <div className="flex-1 bg-muted rounded-full h-2">
-                    <div 
-                      className="bg-primary h-2 rounded-full"
-                      style={{ width: `${factor.impact}%` }}
-                    />
-                  </div>
-                  <span className="text-xs font-medium w-8">{factor.impact}%</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Email Capture Form */}
-        <Card className="border-primary/30 bg-primary/5">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Mail className="h-4 w-4 text-primary" />
-              Request Custom Demo
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!submitted ? (
-              <form onSubmit={handleSubmit} className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1"
-                  required
-                />
-                <Button type="submit" size="sm" className="gap-1">
-                  <Send className="h-3 w-3" />
-                  Request
-                </Button>
-              </form>
-            ) : (
-              <div className="text-center py-2">
-                <Check className="h-6 w-6 text-[hsl(142,76%,36%)] mx-auto mb-1" />
-                <p className="text-sm font-medium">Thank you!</p>
-                <p className="text-xs text-muted-foreground">Our team will contact you within 24 hours.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Footer */}
-        <div className="text-center pt-4 border-t">
-          <p className="text-xs text-muted-foreground mb-2">
-            This is a sample preview. Full reports include detailed methodology, 
-            scenario analysis, and actionable investment insights.
-          </p>
-          <Badge variant="outline" className="text-xs">
-            <Percent className="h-3 w-3 mr-1" />
-            10,000+ Simulations per Analysis
-          </Badge>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Yellow Bar + Orange Navigation Bar */}
+      {/* Header */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar */}
         <div className="bg-[#F5D547] w-full">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
@@ -643,8 +704,6 @@ export default function Pricing() {
             </div>
           </div>
         </div>
-        
-        {/* Orange Navigation Bar */}
         <div className="bg-[hsl(25,95%,55%)] w-full">
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-0">
@@ -674,20 +733,21 @@ export default function Pricing() {
             Pharmaceutical Intelligence for{" "}
             <span className="text-primary">Smarter Investments</span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            From single molecule reports to enterprise-wide access. Choose the plan that fits your due diligence needs.
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            From single molecule reports to full enterprise access across all 20 therapeutic areas.
+            Every plan includes 1-year monitoring and compounded due diligence reports.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
           {pricingTiers.map((tier) => (
             <Card
               key={tier.name}
               className={`relative flex flex-col ${
                 tier.highlighted
                   ? "border-2 border-primary shadow-lg shadow-primary/10"
-                  : tier.isBundle
+                  : tier.saveBadge && !tier.highlighted
                   ? "border-2 border-[hsl(142,76%,36%)] shadow-lg shadow-[hsl(142,76%,36%)]/10"
                   : "border"
               }`}
@@ -697,43 +757,54 @@ export default function Pricing() {
                   <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
                 </div>
               )}
-              {tier.isBundle && (
+              {tier.saveBadge && !tier.highlighted && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <Badge className="bg-[hsl(142,76%,36%)] text-white">Save 17%</Badge>
+                  <Badge className="bg-[hsl(142,76%,36%)] text-white">{tier.saveBadge}</Badge>
                 </div>
               )}
               <CardHeader className="pb-2">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-1">
                   <div className={`p-2 rounded-lg ${
                     tier.highlighted 
                       ? "bg-primary text-primary-foreground" 
-                      : tier.isBundle 
+                      : tier.saveBadge
                       ? "bg-[hsl(142,76%,36%)] text-white"
                       : "bg-muted"
                   }`}>
                     {tier.icon}
                   </div>
-                  <CardTitle className="text-base">{tier.name}</CardTitle>
+                  <div>
+                    <CardTitle className="text-base">{tier.name}</CardTitle>
+                    <p className="text-xs font-medium text-muted-foreground">{tier.subtitle}</p>
+                  </div>
                 </div>
                 <CardDescription className="text-xs">{tier.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 pb-2">
-                <div className="mb-4">
+                <div className="mb-3">
                   {tier.originalPrice && (
                     <span className="text-sm text-muted-foreground line-through mr-2">{tier.originalPrice}</span>
                   )}
                   <span className="text-2xl font-bold">{tier.price}</span>
                   <span className="text-muted-foreground text-xs ml-1">{tier.priceSubtext}</span>
                 </div>
-                <ul className="space-y-2">
-                  {tier.features.slice(0, 6).map((feature, idx) => (
+                {tier.moleculeCount && (
+                  <div className="mb-3">
+                    <Badge variant="outline" className="text-xs">
+                      <Pill className="h-3 w-3 mr-1" />
+                      {tier.moleculeCount}
+                    </Badge>
+                  </div>
+                )}
+                <ul className="space-y-1.5">
+                  {tier.features.slice(0, 7).map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-1.5 text-xs">
                       <Check className="h-3 w-3 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
-                  {tier.features.length > 6 && (
-                    <li className="text-xs text-muted-foreground">+{tier.features.length - 6} more</li>
+                  {tier.features.length > 7 && (
+                    <li className="text-xs text-muted-foreground pl-4">+{tier.features.length - 7} more</li>
                   )}
                 </ul>
               </CardContent>
@@ -745,22 +816,22 @@ export default function Pricing() {
                 >
                   {tier.buttonText}
                 </Button>
-                {tier.previewButton && (
+                {tier.showSampleReport && (
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="ghost" size="sm" className="w-full text-xs">
                         <Eye className="h-3 w-3 mr-1" />
-                        Preview Sample Report
+                        Preview Sample Report (Orforglipron)
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl">
                       <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
-                          <TrendingUp className="h-5 w-5 text-primary" />
-                          Monte Carlo Report Preview
+                          <FileText className="h-5 w-5 text-primary" />
+                          Sample Compounded Report — Orforglipron (Eli Lilly)
                         </DialogTitle>
                       </DialogHeader>
-                      <MonteCarloReportPreview />
+                      <SampleCompoundedReport />
                     </DialogContent>
                   </Dialog>
                 )}
@@ -768,6 +839,58 @@ export default function Pricing() {
             </Card>
           ))}
         </div>
+
+        {/* What's in the Report Section */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-center mb-2">What's in Every Molecule Report?</h2>
+          <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Every tier includes a compounded Full Due Diligence Report combining all analytical modules into one deliverable.
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-3">
+            {[
+              { icon: <Target className="h-5 w-5" />, title: "Score Card", desc: "Composite score, LPI-3, TTM" },
+              { icon: <TrendingUp className="h-5 w-5" />, title: "LPI Analysis", desc: "Probability with confidence intervals" },
+              { icon: <DollarSign className="h-5 w-5" />, title: "Pricing & Access", desc: "Model 1 + Model 2 + Triangulation" },
+              { icon: <PieChart className="h-5 w-5" />, title: "Monte Carlo", desc: "10,000+ peak sales simulations" },
+              { icon: <Shield className="h-5 w-5" />, title: "Patent & Competitive", desc: "Landscape + regulatory across 10 markets" },
+            ].map((item) => (
+              <Card key={item.title} className="text-center">
+                <CardContent className="pt-6 pb-4">
+                  <div className="mx-auto w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-3">
+                    {item.icon}
+                  </div>
+                  <h3 className="font-semibold text-sm mb-1">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* TA Access Note */}
+        <Card className="mb-16 border-primary/20 bg-primary/5">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-full bg-primary/10 text-primary flex-shrink-0">
+                <Layers className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-bold mb-2">TA-Level Access: Molecule Comparison Included</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  All TA packages (1 TA, 3 TAs, 5 TAs, and FULL) include <strong>molecule comparison tools</strong> — 
+                  visible and accessible to compare molecules head-to-head within and across therapeutic areas. 
+                  The 5-Molecule basket also enables side-by-side comparisons across your selected molecules.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="outline">Head-to-Head Comparison</Badge>
+                  <Badge variant="outline">Cross-TA Benchmarking</Badge>
+                  <Badge variant="outline">Pipeline Gap Analysis</Badge>
+                  <Badge variant="outline">M&A Target Ranking</Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Feature Comparison Table */}
         <div className="mb-16">
@@ -778,24 +901,24 @@ export default function Pricing() {
                 <thead>
                   <tr className="border-b bg-muted/50">
                     <th className="text-left p-3 font-medium">Feature</th>
-                    <th className="text-center p-3 font-medium">Monte Carlo</th>
-                    <th className="text-center p-3 font-medium">Single Report</th>
-                    <th className="text-center p-3 font-medium bg-[hsl(142,76%,36%)]/10">Bundle</th>
-                    <th className="text-center p-3 font-medium bg-primary/5">Annual</th>
-                    <th className="text-center p-3 font-medium">TA Package</th>
-                    <th className="text-center p-3 font-medium">Enterprise</th>
+                    <th className="text-center p-3 font-medium">1 Molecule</th>
+                    <th className="text-center p-3 font-medium bg-primary/5">5 Molecules</th>
+                    <th className="text-center p-3 font-medium">1 TA</th>
+                    <th className="text-center p-3 font-medium bg-[hsl(142,76%,36%)]/10">3 TAs</th>
+                    <th className="text-center p-3 font-medium bg-[hsl(142,76%,36%)]/10">5 TAs</th>
+                    <th className="text-center p-3 font-medium">FULL</th>
                   </tr>
                 </thead>
                 <tbody>
                   {comparisonFeatures.map((row, idx) => (
                     <tr key={idx} className={idx % 2 === 0 ? "bg-background" : "bg-muted/30"}>
                       <td className="p-3 text-sm font-medium">{row.feature}</td>
-                      <td className="p-3 text-sm text-center">{row.monteCarlo}</td>
-                      <td className="p-3 text-sm text-center">{row.single}</td>
-                      <td className="p-3 text-sm text-center bg-[hsl(142,76%,36%)]/5 font-medium">{row.bundle}</td>
-                      <td className="p-3 text-sm text-center bg-primary/5 font-medium">{row.annual}</td>
-                      <td className="p-3 text-sm text-center">{row.ta}</td>
-                      <td className="p-3 text-sm text-center">{row.enterprise}</td>
+                      <td className="p-3 text-sm text-center">{row.t1}</td>
+                      <td className="p-3 text-sm text-center bg-primary/5 font-medium">{row.t5}</td>
+                      <td className="p-3 text-sm text-center">{row.ta1}</td>
+                      <td className="p-3 text-sm text-center bg-[hsl(142,76%,36%)]/5">{row.ta3}</td>
+                      <td className="p-3 text-sm text-center bg-[hsl(142,76%,36%)]/5">{row.ta5}</td>
+                      <td className="p-3 text-sm text-center">{row.full}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -820,8 +943,8 @@ export default function Pricing() {
                 <p className="text-muted-foreground">LPI-3 model prediction accuracy (AUC-ROC)</p>
               </div>
               <div>
-                <div className="text-4xl font-bold text-primary mb-2">10</div>
-                <p className="text-muted-foreground">Global markets analyzed per molecule</p>
+                <div className="text-4xl font-bold text-primary mb-2">1,247+</div>
+                <p className="text-muted-foreground">Molecules across 20 therapeutic areas</p>
               </div>
             </div>
           </CardContent>
@@ -833,12 +956,11 @@ export default function Pricing() {
           <ROICalculator />
         </div>
 
-        {/* BioQuill vs Traditional Due Diligence Comparison */}
+        {/* BioQuill vs Traditional */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-center mb-8">BioQuill vs Traditional Due Diligence</h2>
           <Card className="border-primary/20">
             <CardContent className="p-8">
-              {/* Summary Cards */}
               <div className="grid gap-4 md:grid-cols-3 mb-8">
                 <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 rounded-lg p-6 text-center">
                   <Clock className="h-8 w-8 text-[hsl(142,76%,36%)] mx-auto mb-3" />
@@ -859,8 +981,6 @@ export default function Pricing() {
                   <p className="text-xs text-muted-foreground mt-1">500 vs 15 molecules</p>
                 </div>
               </div>
-
-              {/* Detailed Comparison Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -877,72 +997,26 @@ export default function Pricing() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b hover:bg-muted/30">
-                      <td className="p-4 flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        Time to Complete Analysis
-                      </td>
-                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">2 days</td>
-                      <td className="text-center p-4 text-muted-foreground">45 days</td>
-                      <td className="text-center p-4">
-                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">96% faster</Badge>
-                      </td>
-                    </tr>
-                    <tr className="border-b hover:bg-muted/30">
-                      <td className="p-4 flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                        Cost per Molecule Report
-                      </td>
-                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">$500</td>
-                      <td className="text-center p-4 text-muted-foreground">$15,000</td>
-                      <td className="text-center p-4">
-                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">97% savings</Badge>
-                      </td>
-                    </tr>
-                    <tr className="border-b hover:bg-muted/30">
-                      <td className="p-4 flex items-center gap-2">
-                        <Database className="h-4 w-4 text-muted-foreground" />
-                        Data Sources Analyzed
-                      </td>
-                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">85 sources</td>
-                      <td className="text-center p-4 text-muted-foreground">12 sources</td>
-                      <td className="text-center p-4">
-                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">7x more</Badge>
-                      </td>
-                    </tr>
-                    <tr className="border-b hover:bg-muted/30">
-                      <td className="p-4 flex items-center gap-2">
-                        <Target className="h-4 w-4 text-muted-foreground" />
-                        Portfolio Coverage
-                      </td>
-                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">500+ molecules</td>
-                      <td className="text-center p-4 text-muted-foreground">15 molecules</td>
-                      <td className="text-center p-4">
-                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">33x coverage</Badge>
-                      </td>
-                    </tr>
-                    <tr className="border-b hover:bg-muted/30">
-                      <td className="p-4 flex items-center gap-2">
-                        <RefreshCw className="h-4 w-4 text-muted-foreground" />
-                        Update Frequency
-                      </td>
-                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">Daily</td>
-                      <td className="text-center p-4 text-muted-foreground">Quarterly</td>
-                      <td className="text-center p-4">
-                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">90x faster</Badge>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-muted/30">
-                      <td className="p-4 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                        Accuracy Rate
-                      </td>
-                      <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">94%</td>
-                      <td className="text-center p-4 text-muted-foreground">78%</td>
-                      <td className="text-center p-4">
-                        <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">+16%</Badge>
-                      </td>
-                    </tr>
+                    {[
+                      { icon: <Clock className="h-4 w-4" />, metric: "Time to Complete Analysis", bq: "2 days", trad: "45 days", adv: "96% faster" },
+                      { icon: <DollarSign className="h-4 w-4" />, metric: "Cost per Molecule Report", bq: "$500", trad: "$15,000", adv: "97% savings" },
+                      { icon: <Database className="h-4 w-4" />, metric: "Data Sources Analyzed", bq: "85 sources", trad: "12 sources", adv: "7x more" },
+                      { icon: <Target className="h-4 w-4" />, metric: "Portfolio Coverage", bq: "1,247+ molecules", trad: "15 molecules", adv: "83x coverage" },
+                      { icon: <RefreshCw className="h-4 w-4" />, metric: "Update Frequency", bq: "Daily", trad: "Quarterly", adv: "90x faster" },
+                      { icon: <CheckCircle className="h-4 w-4" />, metric: "Accuracy Rate", bq: "94%", trad: "78%", adv: "+16%" },
+                    ].map((row, idx) => (
+                      <tr key={idx} className="border-b hover:bg-muted/30">
+                        <td className="p-4 flex items-center gap-2">
+                          <span className="text-muted-foreground">{row.icon}</span>
+                          {row.metric}
+                        </td>
+                        <td className="text-center p-4 font-bold text-[hsl(142,76%,36%)]">{row.bq}</td>
+                        <td className="text-center p-4 text-muted-foreground">{row.trad}</td>
+                        <td className="text-center p-4">
+                          <Badge variant="outline" className="bg-green-50 text-[hsl(142,76%,36%)] border-green-200">{row.adv}</Badge>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -956,13 +1030,51 @@ export default function Pricing() {
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">What data sources does BioQuill use?</CardTitle>
+                <CardTitle className="text-lg">What's included in a molecule report?</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  BioQuill integrates data from ClinicalTrials.gov, WHO ICTRP, FDA, EMA, PMDA, NMPA, 
-                  Health Canada, MHRA, ANVISA, and TGA regulatory databases. Our ML models are trained 
-                  on historical approval data from 2000-2024.
+                  Every molecule report is a compounded Full Due Diligence Report that includes: Molecule Score Card, 
+                  LPI-3 analysis with confidence intervals, LPI Extended breakdown, Investment Score Assessment, 
+                  Pricing & Access models (Model 1 MWPSPI + Model 2 Benchmarking + Triangulation), Monte Carlo 
+                  peak sales simulation, Market & Regulatory analysis across 10 markets, Patent & Competitive 
+                  landscape, and Clinical Studies summary — all in a single downloadable PDF.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Can I pick molecules from different TAs in the 5-Molecule plan?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Yes! The 5-Molecule Custom Basket lets you choose any combination of molecules from any 
+                  therapeutic areas. You can mix Oncology, Neurology, Cardiology, or any other TA — it's your 
+                  portfolio, your choice. All 5 molecules include side-by-side comparison tools.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">What molecule comparison features are available?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  TA packages and the 5-Molecule basket include molecule comparison tools: head-to-head score 
+                  comparison, LPI-3 side-by-side, competitive positioning analysis, TTM benchmarking, and 
+                  risk-adjusted metrics comparison. These tools are visible and accessible directly in the 
+                  platform dashboard.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Can I upgrade my plan later?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Yes! You can upgrade from 1 Molecule to 5 Molecules, or from any TA plan to a higher tier 
+                  at any time. Credit from previous purchases will be applied to your upgrade.
                 </p>
               </CardContent>
             </Card>
@@ -973,32 +1085,7 @@ export default function Pricing() {
               <CardContent>
                 <p className="text-muted-foreground">
                   Our XGBoost-based LPI-3 model achieves an AUC-ROC of 0.82 on held-out validation data. 
-                  All predictions include 95% confidence intervals and SHAP-based feature importance 
-                  for full transparency.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Can I upgrade my plan later?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Yes! You can upgrade from Single Report to Annual Molecule, or from Annual to TA Package 
-                  at any time. Credit from previous purchases will be applied to your upgrade.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Do you offer custom enterprise solutions?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Absolutely. Enterprise clients can access custom scoring configurations, 
-                  white-label reporting, and on-premise deployment options. Contact our sales team to discuss 
-                  your specific requirements. Note: proprietary model formulas, index architectures, and scoring 
-                  methodologies remain confidential and are not included in any tier.
+                  All predictions include 95% confidence intervals and SHAP-based feature importance.
                 </p>
               </CardContent>
             </Card>
@@ -1009,13 +1096,11 @@ export default function Pricing() {
         <div className="text-center mt-16">
           <h2 className="text-2xl font-bold mb-4">Ready to make smarter investment decisions?</h2>
           <p className="text-muted-foreground mb-6">
-            Start with a single molecule report or contact us for enterprise pricing.
+            Start with a single molecule report or contact us for multi-TA enterprise pricing.
           </p>
           <div className="flex justify-center gap-4">
             <Link to="/">
-              <Button size="lg">
-                Explore Platform
-              </Button>
+              <Button size="lg">Explore Platform</Button>
             </Link>
             <Button size="lg" className="bg-[hsl(142,70%,45%)] hover:bg-[hsl(142,70%,40%)] text-white">
               Contact Sales
@@ -1024,7 +1109,6 @@ export default function Pricing() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t mt-16 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>© 2025 BioQuill. Pharmaceutical Intelligence Platform.</p>
