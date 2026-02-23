@@ -287,10 +287,10 @@ export const PABatchComparison = () => {
               </div>
               {selectedIds.size >= 2 && (
                 <div className="flex gap-2 pt-2 border-t">
-                  <Button size="sm" variant="outline" className="gap-1.5" onClick={exportPDF}>
+                  <Button size="sm" variant="export" className="gap-1.5" onClick={exportPDF}>
                     <Download className="h-3.5 w-3.5" /> Export PDF
                   </Button>
-                  <Button size="sm" variant="outline" className="gap-1.5" onClick={exportExcel}>
+                  <Button size="sm" variant="export" className="gap-1.5" onClick={exportExcel}>
                     <FileSpreadsheet className="h-3.5 w-3.5" /> Export Excel
                   </Button>
                 </div>

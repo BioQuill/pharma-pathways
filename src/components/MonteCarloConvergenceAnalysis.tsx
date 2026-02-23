@@ -194,7 +194,7 @@ const MonteCarloConvergenceAnalysis: React.FC<MonteCarloConvergenceAnalysisProps
             <CardTitle>Monte Carlo Convergence Analysis</CardTitle>
           </div>
           {result && (
-            <Button variant="outline" size="sm" onClick={exportToPDF}>
+            <Button variant="export" size="sm" onClick={exportToPDF}>
               <Download className="h-4 w-4 mr-2" />
               Export PDF
             </Button>

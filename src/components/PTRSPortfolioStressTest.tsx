@@ -168,7 +168,7 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
             <CardTitle>Portfolio Stress Test</CardTitle>
           </div>
           {results.length > 0 && (
-            <Button variant="outline" size="sm" onClick={exportToPDF}>
+            <Button variant="export" size="sm" onClick={exportToPDF}>
               <Download className="h-4 w-4 mr-2" />
               Export PDF
             </Button>

@@ -471,7 +471,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
             </div>
             <Button
               size="sm"
-              variant="outline"
+              variant="export"
               className="gap-1.5"
               onClick={async () => {
                 const molName = selectedMolecule !== "manual"
@@ -562,7 +562,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
             </Button>
             <Button
               size="sm"
-              variant="outline"
+              variant="export"
               className="gap-1.5"
               onClick={() => {
                 const molName = selectedMolecule !== "manual"

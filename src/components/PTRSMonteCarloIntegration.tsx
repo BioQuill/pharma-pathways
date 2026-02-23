@@ -290,7 +290,7 @@ export const PTRSMonteCarloIntegration: React.FC<PTRSMonteCarloIntegrationProps>
             Probability distributions for success outcomes with {iterations.toLocaleString()} simulations
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleExportPDF}>
+        <Button variant="export" size="sm" onClick={handleExportPDF}>
           <Download className="h-4 w-4 mr-2" />
           Export PDF
         </Button>

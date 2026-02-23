@@ -862,11 +862,11 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
             {/* Export Buttons */}
             {hasResults && (
               <div className="flex gap-2 mt-4 pt-4 border-t">
-                <Button variant="outline" onClick={exportToCSV} className="gap-2">
+                <Button variant="export" onClick={exportToCSV} className="gap-2">
                   <Download className="h-4 w-4" />
                   Export CSV
                 </Button>
-                <Button variant="outline" onClick={exportToExcel} className="gap-2">
+                <Button variant="export" onClick={exportToExcel} className="gap-2">
                   <FileSpreadsheet className="h-4 w-4" />
                   Export Excel
                 </Button>

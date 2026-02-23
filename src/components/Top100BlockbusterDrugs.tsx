@@ -460,7 +460,7 @@ export function Top100BlockbusterDrugs({ molecules = [], onViewMolecule }: Top10
               {sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
             </Button>
           </div>
-          <Button variant="outline" size="sm" onClick={handleExportToExcel}>
+          <Button variant="export" size="sm" onClick={handleExportToExcel}>
             <Download className="h-4 w-4 mr-1" />
             Export Excel
           </Button>
