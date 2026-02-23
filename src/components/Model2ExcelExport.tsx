@@ -134,7 +134,7 @@ export const Model2ExcelExport = ({ calculatorResults }: Model2ExcelExportProps)
   };
 
   return (
-    <Button onClick={handleExport} variant="outline" size="sm" className="gap-1.5">
+    <Button onClick={handleExport} variant="export" size="sm" className="gap-1.5">
       <Download className="h-3.5 w-3.5" />
       Export Excel
     </Button>

@@ -226,7 +226,7 @@ export const PTRSMonteCarloComparison: React.FC<PTRSMonteCarloComparisonProps> =
           </p>
         </div>
         {simulations.length > 0 && (
-          <Button variant="outline" size="sm" onClick={handleExportPDF}>
+          <Button variant="export" size="sm" onClick={handleExportPDF}>
             <Download className="h-4 w-4 mr-2" />
             Export PDF
           </Button>

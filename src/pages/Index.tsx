@@ -447,7 +447,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
           </div>
         </div>
         <Button 
-          variant="outline" 
+          variant="export" 
           size="sm" 
           onClick={handleDownloadPTRSPDF}
           className="ptrs-pdf-hide gap-2"

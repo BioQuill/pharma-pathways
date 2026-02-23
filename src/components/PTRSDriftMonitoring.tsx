@@ -240,7 +240,7 @@ const PTRSDriftMonitoring: React.FC<PTRSDriftMonitoringProps> = ({ molecules }) 
               <RefreshCw className="h-4 w-4 mr-1" />
               Refresh
             </Button>
-            <Button variant="outline" size="sm" onClick={exportToPDF}>
+            <Button variant="export" size="sm" onClick={exportToPDF}>
               <FileDown className="h-4 w-4 mr-1" />
               Export
             </Button>

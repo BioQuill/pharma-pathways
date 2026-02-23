@@ -860,7 +860,7 @@ export const Top50SmallCapFirms = () => {
                 </CardDescription>
               </div>
             </div>
-            <Button variant="outline" onClick={handleExportPDF} className="gap-2">
+            <Button variant="export" onClick={handleExportPDF} className="gap-2">
               <Download className="h-4 w-4" />
               Export PDF
             </Button>
@@ -1592,7 +1592,7 @@ export const Top50SmallCapFirms = () => {
                   </CardTitle>
                   <CardDescription className="mt-1">Critical warning signs that could derail an acquisition or lead to failed integration</CardDescription>
                 </div>
-                <Button variant="outline" size="sm" className="gap-2" onClick={() => exportRedFlagsToExcel(dueDiligenceRedFlags)}>
+                <Button variant="export" size="sm" className="gap-2" onClick={() => exportRedFlagsToExcel(dueDiligenceRedFlags)}>
                   <FileSpreadsheet className="h-4 w-4" />
                   Export Excel
                 </Button>
@@ -1817,11 +1817,11 @@ export const Top50SmallCapFirms = () => {
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="gap-2" onClick={() => exportMARankingsToExcel(maProbabilityScores)}>
+                  <Button variant="export" size="sm" className="gap-2" onClick={() => exportMARankingsToExcel(maProbabilityScores)}>
                     <FileSpreadsheet className="h-4 w-4" />
                     Rankings Excel
                   </Button>
-                  <Button variant="outline" size="sm" className="gap-2" onClick={() => exportCombinedMAReport(maProbabilityScores, dueDiligenceRedFlags)}>
+                  <Button variant="export" size="sm" className="gap-2" onClick={() => exportCombinedMAReport(maProbabilityScores, dueDiligenceRedFlags)}>
                     <Download className="h-4 w-4" />
                     Full Report
                   </Button>

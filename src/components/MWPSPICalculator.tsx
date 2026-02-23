@@ -316,7 +316,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
             </Badge>
             <Button
               size="sm"
-              variant="outline"
+              variant="export"
               className="gap-1.5"
               onClick={async () => {
                 const molName = selectedMolecule !== "manual"
@@ -406,7 +406,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
             </Button>
             <Button
               size="sm"
-              variant="outline"
+              variant="export"
               className="gap-1.5"
               onClick={() => {
                 const molName = selectedMolecule !== "manual"

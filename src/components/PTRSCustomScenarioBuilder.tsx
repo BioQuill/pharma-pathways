@@ -569,7 +569,7 @@ export const PTRSCustomScenarioBuilder = ({ molecules }: PTRSCustomScenarioBuild
           ) : (
             <>
               <div className="flex justify-end">
-                <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
+                <Button variant="export" size="sm" onClick={handleDownloadPDF}>
                   <Download className="h-4 w-4 mr-2" />
                   Export PDF
                 </Button>

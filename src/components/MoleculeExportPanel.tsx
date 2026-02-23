@@ -120,7 +120,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="export" size="sm" className="gap-2">
           <Download className="h-4 w-4" />
           Export & Compare
         </Button>
@@ -244,7 +244,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
                 </Button>
                 <Button 
                   size="sm" 
-                  variant="outline"
+                  variant="export"
                   onClick={() => exportLPIDetailedToExcel(filteredMolecules, 'filtered-lpi')}
                   disabled={filteredMolecules.length === 0}
                 >
@@ -252,7 +252,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
                 </Button>
                 <Button 
                   size="sm" 
-                  variant="outline"
+                  variant="export"
                   onClick={() => exportTherapeuticAreaSummary(filteredMolecules, 'filtered-ta-summary')}
                   disabled={filteredMolecules.length === 0}
                 >

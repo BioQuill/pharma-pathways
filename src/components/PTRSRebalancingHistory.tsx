@@ -253,7 +253,7 @@ const PTRSRebalancingHistory: React.FC<PTRSRebalancingHistoryProps> = ({ molecul
                 <SelectItem value="all">All Time</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
+            <Button variant="export" size="sm" onClick={handleDownloadPDF}>
               <Download className="h-4 w-4 mr-2" />
               Export PDF
             </Button>

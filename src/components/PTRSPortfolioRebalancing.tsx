@@ -438,7 +438,7 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
             </CardDescription>
           </div>
           {analysisResults && (
-            <Button variant="outline" size="sm" onClick={exportToPDF}>
+            <Button variant="export" size="sm" onClick={exportToPDF}>
               <FileText className="h-4 w-4 mr-2" />
               Export PDF
             </Button>

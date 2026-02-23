@@ -357,7 +357,7 @@ export const PTRSStressTesting: React.FC<PTRSStressTestingProps> = ({ molecules 
           </p>
         </div>
         {stressTestResults.length > 0 && (
-          <Button variant="outline" size="sm" onClick={handleExportPDF}>
+          <Button variant="export" size="sm" onClick={handleExportPDF}>
             <Download className="h-4 w-4 mr-2" />
             Export Report
           </Button>

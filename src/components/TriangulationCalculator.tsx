@@ -223,7 +223,7 @@ export const TriangulationCalculator = () => {
           <p className="text-xs font-semibold">Weight Distribution</p>
           <Button
             size="sm"
-            variant="outline"
+            variant="export"
             className="gap-1.5"
             onClick={async () => {
               const molName = selectedMolecule !== "manual"
@@ -318,7 +318,7 @@ export const TriangulationCalculator = () => {
           </Button>
           <Button
             size="sm"
-            variant="outline"
+            variant="export"
             className="gap-1.5"
             onClick={() => {
               const molName = selectedMolecule !== "manual"
