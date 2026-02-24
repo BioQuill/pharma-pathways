@@ -866,10 +866,6 @@ const MonteCarloComparison = ({ molecules }: MonteCarloComparisonProps) => {
                   <Download className="h-4 w-4" />
                   Export CSV
                 </Button>
-                <Button variant="export" onClick={exportToExcel} className="gap-2">
-                  <FileSpreadsheet className="h-4 w-4" />
-                  Export Excel
-                </Button>
               </div>
             )}
           </CardContent>
