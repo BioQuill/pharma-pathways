@@ -234,31 +234,6 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
               <Badge variant="secondary" className="text-sm">
                 {filteredMolecules.length} of {molecules.length} molecules match filters
               </Badge>
-              <div className="flex gap-2">
-                <Button 
-                  size="sm" 
-                  onClick={() => exportMoleculesToExcel(filteredMolecules, 'filtered-molecules')}
-                  disabled={filteredMolecules.length === 0}
-                >
-                  Export All Data
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="export"
-                  onClick={() => exportLPIDetailedToExcel(filteredMolecules, 'filtered-lpi')}
-                  disabled={filteredMolecules.length === 0}
-                >
-                  Export LPI Details
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="export"
-                  onClick={() => exportTherapeuticAreaSummary(filteredMolecules, 'filtered-ta-summary')}
-                  disabled={filteredMolecules.length === 0}
-                >
-                  Export TA Summary
-                </Button>
-              </div>
             </div>
 
             {/* Preview list */}
@@ -386,14 +361,6 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
                         onClick={() => setSelectedForComparison(new Set())}
                       >
                         Clear Selection
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => exportComparisonToExcel(comparisonMolecules)}
-                        disabled={comparisonMolecules.length < 2}
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Export Comparison Report
                       </Button>
                     </div>
                   </div>

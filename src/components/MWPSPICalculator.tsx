@@ -404,45 +404,6 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
               <Download className="h-3.5 w-3.5" />
               Export PDF
             </Button>
-            <Button
-              size="sm"
-              variant="export"
-              className="gap-1.5"
-              onClick={() => {
-                const molName = selectedMolecule !== "manual"
-                  ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
-                  : "Manual Input";
-                const marketObj = markets.find(m => m.id === selectedMarket)!;
-                const taLabels2 = selectedTAs.map(id => therapeuticAreas.find(t => t.id === id)?.label).filter(Boolean).join(', ');
-                const data = [{
-                  'Molecule': molName,
-                  'Market': marketObj.label,
-                  'Therapeutic Area(s)': taLabels2,
-                  'Clinical Score': clinicalScore[0],
-                  'Clinical Weight': marketObj.clinical,
-                  'Clinical Contribution': parseFloat(clinicalContribution),
-                  'Economic Score': economicScore[0],
-                  'Economic Weight': marketObj.economic,
-                  'Economic Contribution': parseFloat(economicContribution),
-                  'Access Score': accessScore[0],
-                  'Access Weight': marketObj.access,
-                  'Access Contribution': parseFloat(accessContribution),
-                  'Political Score': politicalScore[0],
-                  'Political Weight': marketObj.political,
-                  'Political Contribution': parseFloat(politicalContribution),
-                  'Adjustment Points': adjustmentPoints[0],
-                  'MWPSPI Score': mwpspi,
-                  'Probability Band': band.label,
-                }];
-                const ws = XLSX.utils.json_to_sheet(data);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'MWPSPI');
-                XLSX.writeFile(wb, `MWPSPI-${molName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.xlsx`);
-              }}
-            >
-              <FileSpreadsheet className="h-3.5 w-3.5" />
-              Export Excel
-            </Button>
           </div>
 
           <div className="font-mono text-xs text-muted-foreground border-t pt-2">

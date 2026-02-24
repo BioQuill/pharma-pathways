@@ -6,7 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { BarChart3, Calculator, Globe, TrendingUp, Target, Lightbulb, FileText, FlaskConical, Info, Sliders } from "lucide-react";
 import { Model2Calculator } from "@/components/Model2Calculator";
 import { Model2PDFExport } from "@/components/Model2PDFExport";
-import { Model2ExcelExport } from "@/components/Model2ExcelExport";
+
 
 // ============ STEP 1: HISTORICAL BASE RATES (20 TAs) ============
 const historicalBaseRates = [
@@ -532,7 +532,7 @@ export const PAModel2Dashboard = () => {
               </CardDescription>
             </div>
             <div className="flex gap-2">
-              <Model2ExcelExport calculatorResults={calculatorResults} />
+              
               <Model2PDFExport />
             </div>
           </div>

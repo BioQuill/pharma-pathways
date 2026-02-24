@@ -703,6 +703,56 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
+
+  // 4-Area navigation configuration
+  const areaConfig = {
+    pipeline: {
+      label: 'PIPELINE INTELLIGENCE',
+      tabs: [
+        { value: 'overview', label: 'Molecules Overview', icon: BarChart3 },
+        { value: 'molecules', label: 'Molecules', icon: Pill },
+        { value: 'lpi-3', label: 'LPI', icon: TrendingUp },
+        { value: 'ptrs', label: 'PTRS', icon: TrendingUp },
+        { value: 'ttm', label: 'TTM', icon: Calendar },
+        { value: 'regulatory', label: 'TA Risk Index', icon: Globe },
+        { value: 'watchlist', label: 'Watchlist', icon: Star },
+      ]
+    },
+    market: {
+      label: 'MARKET ACCESS',
+      tabs: [
+        { value: 'pricing-access', label: 'Pricing & Access', icon: DollarSign },
+        { value: 'payers', label: 'Payers', icon: Landmark },
+      ]
+    },
+    investor: {
+      label: 'INVESTOR SIGNALS',
+      tabs: [
+        { value: 'lpi-2', label: 'Investment Score', icon: TrendingUp },
+        { value: 'peak-sales', label: 'Peak Sales Index', icon: TrendingUp },
+        { value: 'top-100', label: 'Top 100', icon: Target },
+        { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
+        { value: 'portfolio', label: 'Portfolio', icon: LayoutDashboard },
+      ]
+    },
+    intelligence: {
+      label: 'INTELLIGENCE HUB',
+      tabs: [
+        { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
+      ]
+    },
+  } as const;
+
+  type AreaKey = keyof typeof areaConfig;
+
+  const getAreaForTab = (tab: string): AreaKey => {
+    for (const [key, area] of Object.entries(areaConfig)) {
+      if (area.tabs.some((t: any) => t.value === tab)) return key as AreaKey;
+    }
+    return 'pipeline';
+  };
+
+  const currentArea = getAreaForTab(activeTab);
   
   // Watchlist hook for persistent molecule tracking
   const { 
@@ -771,27 +821,30 @@ const Index = () => {
       {/* Header with Yellow Bar + Orange Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
         {/* Yellow Brand Bar */}
-        <div className="bg-[#F5D547] w-full">
+        <div className="bg-[#FFC512] w-full">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <img src={bioquillLogo} alt="BiOQUILL" className="h-14 w-auto object-contain" />
                 <span className="text-lg font-semibold text-gray-800 hidden md:block">
-                  Pharmaceutical Intelligence for Smart Investors
+                  Precision intelligence. From pipeline to patient.
                 </span>
               </div>
+              <Badge variant="outline" className="bg-white/80 text-xs font-medium text-gray-600 border-gray-300 hidden sm:flex">
+                Data refreshed: Monday 24 Feb 2026
+              </Badge>
             </div>
           </div>
         </div>
         
         {/* Orange Navigation Bar */}
-        <div className="bg-[hsl(25,95%,55%)] w-full">
+        <div className="bg-[#0E1D35] w-full">
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-0">
               {/* Compare Molecules */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                  <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
                     Compare Molecules
                   </button>
                 </PopoverTrigger>
@@ -802,14 +855,14 @@ const Index = () => {
               
               {/* Pricing */}
               <Link to="/pricing" className="flex-1 max-w-[200px]">
-                <button className="w-full py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
                   Pricing
                 </button>
               </Link>
               
               {/* Methodology */}
               <Link to="/methodology" className="flex-1 max-w-[200px]">
-                <button className="w-full py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
                   Methodology
                 </button>
               </Link>
@@ -817,11 +870,11 @@ const Index = () => {
               {/* Search */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors flex items-center justify-center gap-2">
+                  <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
                     <Search className="h-4 w-4" />
                     Search
                     {(searchQuery || phaseFilter !== 'all') && (
-                      <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-black/20 text-black">
+                      <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
                         {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
                       </Badge>
                     )}
@@ -929,72 +982,35 @@ const Index = () => {
         {/* Main Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="-mx-4 px-0">
-            {/* Primary Navigation Bar - Blue */}
-            <TabsList className="w-full justify-start bg-[#000080] border-0 rounded-none h-12 px-4">
-              <TabsTrigger value="overview" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <BarChart3 className="h-4 w-4" />
-                Molecules Overview
-              </TabsTrigger>
-              <TabsTrigger value="ta-market" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Globe className="h-4 w-4" />
-                TA Market Overview
-              </TabsTrigger>
-              <TabsTrigger value="molecules" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Pill className="h-4 w-4" />
-                Molecules
-              </TabsTrigger>
-              <TabsTrigger value="top-100" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Target className="h-4 w-4" />
-                Top 100
-              </TabsTrigger>
-              <TabsTrigger value="top-50-smallcap" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Building2 className="h-4 w-4" />
-                Top 100 Small Cap Firms
-              </TabsTrigger>
-              <TabsTrigger value="watchlist" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Star className="h-4 w-4" />
-                Watchlist ({watchlist.length})
-              </TabsTrigger>
-              <TabsTrigger value="portfolio" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <LayoutDashboard className="h-4 w-4" />
-                Portfolio
-              </TabsTrigger>
-            </TabsList>
+            {/* 4-Area Navigation Bar */}
+            <div className="w-full bg-[#0E1D35] flex justify-center">
+              {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).map(([key, area]) => (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(area.tabs[0].value)}
+                  className={`flex-1 max-w-[280px] py-3 text-center font-bold text-sm tracking-wider uppercase transition-colors ${
+                    currentArea === key 
+                      ? 'border-b-2 border-[#FFC512] text-white bg-[#2B3D5B]' 
+                      : 'border-b-2 border-transparent text-white/60 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {area.label}
+                </button>
+              ))}
+            </div>
             
-            {/* Secondary Navigation Bar - Dark Purple */}
-            <TabsList className="w-full justify-start bg-[#4B0082] border-0 rounded-none h-12 px-4">
-              <TabsTrigger value="ttm" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Calendar className="h-4 w-4" />
-                TTM
-              </TabsTrigger>
-              <TabsTrigger value="regulatory" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Globe className="h-4 w-4" />
-                TA Risk Index
-              </TabsTrigger>
-              <TabsTrigger value="ptrs" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <TrendingUp className="h-4 w-4" />
-                PTRS
-              </TabsTrigger>
-              <TabsTrigger value="lpi-2" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <TrendingUp className="h-4 w-4" />
-                Investment Score
-              </TabsTrigger>
-              <TabsTrigger value="lpi-3" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <TrendingUp className="h-4 w-4" />
-                LPI
-              </TabsTrigger>
-              <TabsTrigger value="peak-sales" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <TrendingUp className="h-4 w-4" />
-                Peak Sales Index
-              </TabsTrigger>
-              <TabsTrigger value="pricing-access" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <DollarSign className="h-4 w-4" />
-                Pricing & Access
-              </TabsTrigger>
-              <TabsTrigger value="payers" className="gap-2 text-white font-bold data-[state=active]:bg-white/20 data-[state=active]:text-white">
-                <Landmark className="h-4 w-4" />
-                Payers
-              </TabsTrigger>
+            {/* Sub-tabs Bar */}
+            <TabsList className="w-full justify-start bg-[#2B3D5B] border-0 rounded-none h-11 px-4">
+              {areaConfig[currentArea].tabs.map(tab => {
+                const Icon = tab.icon;
+                return (
+                  <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
+                    <Icon className="h-4 w-4" />
+                    {tab.label}
+                    {tab.value === 'watchlist' && <span className="text-xs">({watchlist.length})</span>}
+                  </TabsTrigger>
+                );
+              })}
             </TabsList>
           </div>
 
@@ -2197,9 +2213,16 @@ const Index = () => {
                   <Badge variant="outline" className="text-xs">Registry</Badge>
                 </a>
               </div>
-              <div className="text-xs text-muted-foreground mt-3 text-right">Last sync: Dec 7, 2025</div>
+              <div className="text-xs text-muted-foreground mt-3 text-right">Last sync: Feb 24, 2026</div>
             </TabsContent>
           </Tabs>
+        </div>
+
+        {/* Data Freshness Statement */}
+        <div className="mt-4 py-3 px-4 bg-[#FFC512]/10 border border-[#FFC512]/30 rounded-lg text-center">
+          <p className="text-sm text-muted-foreground italic">
+            "BioQuill intelligence refreshes every Monday — reflecting the latest trial registrations, regulatory decisions, and market access updates from the prior week."
+          </p>
         </div>
       </main>
     </div>

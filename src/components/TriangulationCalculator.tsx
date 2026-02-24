@@ -316,37 +316,6 @@ export const TriangulationCalculator = () => {
             <Download className="h-3.5 w-3.5" />
             Export PDF
           </Button>
-          <Button
-            size="sm"
-            variant="export"
-            className="gap-1.5"
-            onClick={() => {
-              const molName = selectedMolecule !== "manual"
-                ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
-                : "Manual Input";
-              const data = [{
-                'Molecule': molName,
-                'Model 1 (MWPSPI) Probability (%)': model1Prob,
-                'Model 2 (Benchmark) Probability (%)': model2Prob,
-                'First-in-Class': isFirstInClass ? 'Yes' : 'No',
-                'W1 (Model 1 Weight)': results.w1,
-                'W2 (Model 2 Weight)': results.w2,
-                'Weighted Probability (%)': parseFloat(results.weighted.toFixed(1)),
-                'Divergence (pp)': results.divergence,
-                'Confidence Level': results.confidence,
-                'Decision Band': band.label,
-                'Interpretation': results.interpretation,
-                'Recommended Action': results.action,
-              }];
-              const ws = XLSX.utils.json_to_sheet(data);
-              const wb = XLSX.utils.book_new();
-              XLSX.utils.book_append_sheet(wb, ws, 'Triangulation');
-              XLSX.writeFile(wb, `Triangulation-${molName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.xlsx`);
-            }}
-          >
-            <FileSpreadsheet className="h-3.5 w-3.5" />
-            Export Excel
-          </Button>
         </div>
         <div className="p-3 bg-muted/20 rounded-lg">
           <div className="flex items-center gap-2">

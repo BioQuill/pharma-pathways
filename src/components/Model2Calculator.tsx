@@ -560,48 +560,6 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
               <Download className="h-3.5 w-3.5" />
               Export PDF
             </Button>
-            <Button
-              size="sm"
-              variant="export"
-              className="gap-1.5"
-              onClick={() => {
-                const molName = selectedMolecule !== "manual"
-                  ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
-                  : "Manual Input";
-                const data = marketResults.map(r => ({
-                  'Molecule': molName,
-                  'Therapeutic Area': ta.label,
-                  'Pediatric': isPediatric ? 'Yes' : 'No',
-                  'Market': r.market,
-                  'Base Rate (%)': r.baseRate,
-                  'Pediatric Bonus (%)': r.pedBonus,
-                  'Adjusted Base (%)': r.adjustedBase,
-                  'Composite Score': compositeScore.toFixed(2),
-                  '× Composite (%)': r.compositeResult,
-                  'Total Adjustment (%)': totalAdjustment,
-                  'Final Probability (%)': r.final,
-                }));
-                // Add ratios sheet
-                const ratioData = [{
-                  'Clinical Benefit': ratios.clinicalBenefit.toFixed(2),
-                  'Safety Profile': ratios.safetyProfile.toFixed(2),
-                  'ICER': ratios.icer.toFixed(2),
-                  'Target Population': ratios.targetPopulation.toFixed(2),
-                  'Price vs SOC': ratios.priceVsSoc.toFixed(2),
-                  'Evidence Quality': ratios.evidenceQuality.toFixed(2),
-                  'Composite': compositeScore.toFixed(2),
-                }];
-                const ws = XLSX.utils.json_to_sheet(data);
-                const ws2 = XLSX.utils.json_to_sheet(ratioData);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Market Results');
-                XLSX.utils.book_append_sheet(wb, ws2, 'Comparator Ratios');
-                XLSX.writeFile(wb, `Model2-${molName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.xlsx`);
-              }}
-            >
-              <FileSpreadsheet className="h-3.5 w-3.5" />
-              Export Excel
-            </Button>
           </div>
         </CardContent>
       </Card>
