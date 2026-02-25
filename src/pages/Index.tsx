@@ -704,40 +704,45 @@ const Index = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // 4-Area navigation configuration
+   // 5-Area navigation configuration
   const areaConfig = {
     pipeline: {
-      label: 'PIPELINE INTELLIGENCE',
+      label: 'PIPELINE',
       tabs: [
         { value: 'overview', label: 'Molecules Overview', icon: BarChart3 },
-        { value: 'molecules', label: 'Molecules', icon: Pill },
+        { value: 'molecules', label: 'Database', icon: Pill },
         { value: 'lpi-3', label: 'LPI', icon: TrendingUp },
+      ]
+    },
+    approval: {
+      label: 'APPROVAL',
+      tabs: [
         { value: 'ptrs', label: 'PTRS', icon: TrendingUp },
         { value: 'ttm', label: 'TTM', icon: Calendar },
         { value: 'regulatory', label: 'TA Risk Index', icon: Globe },
-        { value: 'watchlist', label: 'Watchlist', icon: Star },
       ]
     },
-    market: {
-      label: 'MARKET ACCESS',
+    pricingAccess: {
+      label: 'PRICING & ACCESS',
       tabs: [
         { value: 'pricing-access', label: 'Pricing & Access', icon: DollarSign },
         { value: 'payers', label: 'Payers', icon: Landmark },
+        { value: 'watchlist', label: 'Watchlist', icon: Star },
       ]
     },
-    investor: {
-      label: 'INVESTOR SIGNALS',
+    launchCommercial: {
+      label: 'LAUNCH & COMMERCIAL',
       tabs: [
         { value: 'lpi-2', label: 'Investment Score', icon: TrendingUp },
         { value: 'peak-sales', label: 'Peak Sales Index', icon: TrendingUp },
-        { value: 'top-100', label: 'Top 100', icon: Target },
-        { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
         { value: 'portfolio', label: 'Portfolio', icon: LayoutDashboard },
       ]
     },
-    intelligence: {
-      label: 'INTELLIGENCE HUB',
+    lcmNews: {
+      label: 'LCM & NEWS',
       tabs: [
+        { value: 'top-100', label: 'Top 100', icon: Target },
+        { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
         { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
       ]
     },
@@ -837,21 +842,21 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Orange Navigation Bar */}
+        {/* Top Navy Navigation Bar */}
         <div className="bg-[#0E1D35] w-full">
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-0">
-              {/* Compare Molecules */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
-                    Compare Molecules
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[800px] p-0" align="center">
-                  <MoleculeComparison molecules={allMolecules} />
-                </PopoverContent>
-              </Popover>
+              {/* Methodology */}
+              <Link to="/methodology" className="flex-1 max-w-[200px]">
+                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
+                  Methodology
+                </button>
+              </Link>
+              
+              {/* Strategy Hub (active) */}
+              <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white bg-white/15 border-r border-white/20">
+                Strategy Hub
+              </button>
               
               {/* Pricing */}
               <Link to="/pricing" className="flex-1 max-w-[200px]">
@@ -860,19 +865,11 @@ const Index = () => {
                 </button>
               </Link>
               
-              {/* Methodology */}
-              <Link to="/methodology" className="flex-1 max-w-[200px]">
-                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
-                  Methodology
-                </button>
-              </Link>
-              
               {/* Search */}
               <Popover>
                 <PopoverTrigger asChild>
                   <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
-                    <Search className="h-4 w-4" />
-                    Search
+                    🔍 Search
                     {(searchQuery || phaseFilter !== 'all') && (
                       <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
                         {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}

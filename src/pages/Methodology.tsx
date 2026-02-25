@@ -168,39 +168,47 @@ const uniqueStrengths = [
 export default function Methodology() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Yellow Bar + Orange Navigation Bar */}
+      {/* Header with Yellow Bar + Navy Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
         {/* Yellow Brand Bar */}
-        <div className="bg-[#F5D547] w-full">
+        <div className="bg-[#FFC512] w-full">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-4">
                 <img src={bioquillLogo} alt="BiOQUILL" className="h-14 w-auto object-contain" />
                 <span className="text-lg font-semibold text-gray-800 hidden md:block">
-                  Pharmaceutical Intelligence for Smart Investors
+                  Precision intelligence. From pipeline to patient.
                 </span>
               </Link>
+              <Badge variant="outline" className="bg-white/80 text-xs font-medium text-gray-600 border-gray-300 hidden sm:flex">
+                Data refreshed: Monday 24 Feb 2026
+              </Badge>
             </div>
           </div>
         </div>
         
-        {/* Orange Navigation Bar */}
-        <div className="bg-[hsl(25,95%,55%)] w-full">
+        {/* Navy Navigation Bar */}
+        <div className="bg-[#0E1D35] w-full">
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-0">
+              <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white bg-white/15 border-r border-white/20">
+                Methodology
+              </button>
               <Link to="/" className="flex-1 max-w-[200px]">
-                <button className="w-full py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
-                  Platform
+                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
+                  Strategy Hub
                 </button>
               </Link>
               <Link to="/pricing" className="flex-1 max-w-[200px]">
-                <button className="w-full py-2 text-center font-bold text-black hover:bg-orange-400/50 transition-colors border-r border-orange-400/30">
+                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
                   Pricing
                 </button>
               </Link>
-              <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-black bg-orange-400/30 border-r border-orange-400/30">
-                Methodology
-              </button>
+              <Link to="/" className="flex-1 max-w-[200px]">
+                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
+                  🔍 Search
+                </button>
+              </Link>
             </nav>
           </div>
         </div>
@@ -574,7 +582,8 @@ export default function Methodology() {
       {/* Footer */}
       <footer className="border-t mt-16 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2025 BioQuill. Pharmaceutical Intelligence Platform.</p>
+          <p>© 2026 BioQuill. Pharmaceutical Intelligence Platform.</p>
+          <p className="text-xs mt-1 italic">Precision intelligence. From pipeline to patient.</p>
         </div>
       </footer>
     </div>
