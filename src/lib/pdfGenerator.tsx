@@ -78,6 +78,16 @@ const styles = StyleSheet.create({
     borderTop: '1 solid #e5e7eb',
     paddingTop: 8,
   },
+  watermark: {
+    position: 'absolute',
+    bottom: 8,
+    left: 30,
+    right: 30,
+    fontSize: 7,
+    color: '#c0c0c0',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
   methodologyNote: {
     padding: 12,
     backgroundColor: '#eff6ff',
@@ -131,6 +141,24 @@ export const formatReportDate = (): string => {
     month: 'long',
     day: 'numeric'
   });
+};
+
+// Format date for watermark (mm/dd/yyyy hh:mm)
+export const formatWatermarkDate = (): string => {
+  const now = new Date();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const yyyy = now.getFullYear();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  return `${mm}/${dd}/${yyyy} ${hh}:${min}`;
+};
+
+// Get watermark text for PDF reports
+export const getReportWatermark = (username?: string): string => {
+  const date = formatWatermarkDate();
+  const user = username || 'Platform User';
+  return `BioQuill | ${user} | Downloaded: ${date}`;
 };
 
 // Generate PDF from React-PDF document and trigger download
@@ -248,6 +276,16 @@ export const exportDomToPDF = async (
         srcY += sliceHeight;
         page++;
       }
+    }
+    
+    // Add watermark to every page
+    const watermarkText = getReportWatermark();
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(7);
+      doc.setTextColor(180, 180, 180);
+      doc.text(watermarkText, pageWidth / 2, pageHeight - 5, { align: 'center' });
     }
     
     doc.save(filename);
