@@ -6,6 +6,8 @@ import { getClinicalTrialsUrl } from "@/lib/clinicalTrialsIntegration";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
 import { calculatePeakSalesIndex, getPeakSalesScoreColor, getPeakSalesScoreBgColor, type PeakSalesResult } from "@/lib/peakSalesIndex";
 import { type MoleculeProfile } from "@/lib/moleculesData";
+import { getTherapeuticIndexForMolecule } from "@/lib/therapeuticIndex";
+import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
 
 interface MoleculeScoreCardProps {
   moleculeName: string;
@@ -27,6 +29,26 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   
   // Calculate Peak Sales Index if molecule is provided
   const peakSalesIndex = molecule ? calculatePeakSalesIndex(molecule) : null;
+
+  // Signal dots calculation
+  const lpi3Result = molecule ? calculateLPI3ForMolecule(molecule) : null;
+  const lpi3Score = lpi3Result ? Math.round(lpi3Result.calibratedProbability * 100) : overallScore;
+  const ti = molecule ? getTherapeuticIndexForMolecule(molecule) : null;
+  const ttmMonthsVal = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
+  const ttmEff = ttmMonthsVal !== null ? Math.max(0, Math.min(100, 100 - ((ttmMonthsVal - 1) * (100 / 99)))) : 50;
+  const compScoreVal = Math.round(overallScore * 0.6 + ttmEff * 0.4);
+
+  const getDotColor = (value: number, thresholds: [number, number]) => {
+    if (value >= thresholds[1]) return 'bg-[hsl(142,76%,36%)]';
+    if (value >= thresholds[0]) return 'bg-[hsl(45,93%,47%)]';
+    return 'bg-[hsl(0,72%,51%)]';
+  };
+
+  const lpiDot = getDotColor(lpi3Score, [34, 67]);
+  const ttmDot = ttmMonthsVal !== null ? getDotColor(ttmEff, [34, 67]) : 'bg-muted-foreground';
+  const scoreDot = getDotColor(compScoreVal, [34, 67]);
+  const tiDot = ti ? (ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]') : 'bg-muted-foreground';
+  const dropoutDot = scores.dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : scores.dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
   
   const getDropoutColor = (ranking: number) => {
     if (ranking <= 2) return "text-success";
@@ -101,6 +123,24 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
                 ClinicalTrials.gov: {nctId} →
               </a>
             )}
+            {/* Signal Dots Row */}
+            <div className="flex items-center gap-4 text-xs font-mono mt-2">
+              <span className="flex items-center gap-1.5" title={`LPI: ${lpi3Score}% — ≥67 green, 34-66 yellow, <34 red`}>
+                LPI: <span className={`w-3 h-3 rounded-full inline-block ${lpiDot}`}></span>
+              </span>
+              <span className="flex items-center gap-1.5" title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'm' : 'N/A'}`}>
+                TTM: <span className={`w-3 h-3 rounded-full inline-block ${ttmDot}`}></span>
+              </span>
+              <span className="flex items-center gap-1.5" title={`Score: ${compScoreVal}`}>
+                Score: <span className={`w-3 h-3 rounded-full inline-block ${scoreDot}`}></span>
+              </span>
+              <span className="flex items-center gap-1.5" title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
+                TI: <span className={`w-3 h-3 rounded-full inline-block ${tiDot}`}></span>
+              </span>
+              <span className="flex items-center gap-1.5" title={`Dropout: ${scores.dropoutRanking}/5`}>
+                Dropout: <span className={`w-3 h-3 rounded-full inline-block ${dropoutDot}`}></span>
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex flex-col gap-2">
