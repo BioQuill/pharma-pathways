@@ -709,8 +709,7 @@ const Index = () => {
     pipeline: {
       label: 'PIPELINE',
       tabs: [
-        { value: 'overview', label: 'Molecules Overview', icon: BarChart3 },
-        { value: 'molecules', label: 'Database', icon: Pill },
+        { value: 'overview', label: 'Molecules Database', icon: BarChart3 },
         { value: 'lpi-3', label: 'LPI', icon: TrendingUp },
       ]
     },
@@ -1015,10 +1014,33 @@ const Index = () => {
           <TabsContent value="overview" className="space-y-6">
             {!selectedMolecule ? (
               <div className="space-y-4">
+                {/* Signal Indicators Legend */}
+                <div className="mb-4 p-3 rounded-lg bg-muted/50 border">
+                  <div className="flex items-center flex-wrap gap-x-6 gap-y-1 text-xs">
+                    <span className="font-semibold text-sm">Signal indicators:</span>
+                    <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Above benchmark</span>
+                    <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> At benchmark</span>
+                    <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Below benchmark</span>
+                    <span className="text-muted-foreground">Thresholds are TA-specific — hover any metric for details</span>
+                  </div>
+                </div>
+
+                {/* Molecule Distribution Chart + Export */}
+                <div className="mb-6 p-4 border rounded-lg bg-muted/30">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-semibold">Molecules by Therapeutic Area</h3>
+                    <div className="flex items-center gap-2">
+                      <MoleculeExportPanel molecules={allMolecules} />
+                      <Badge variant="secondary" className="text-lg px-3 py-1">{allMolecules.length.toLocaleString()} Molecules</Badge>
+                    </div>
+                  </div>
+                  <MoleculeDistributionChart molecules={allMolecules} />
+                </div>
+
                 {/* Header with Sort Icons */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-2xl font-semibold">High Priority Molecules</h2>
+                    <h2 className="text-2xl font-semibold">Molecules Database</h2>
                     <p className="text-sm text-muted-foreground">Comprehensive due diligence profiles for PE/M&A analysis</p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1105,163 +1127,103 @@ const Index = () => {
                     }
                     return sortOrder === 'asc' ? -comparison : comparison;
                   })
-                  .map((molecule) => (
+                  .map((molecule) => {
+                    const lpi3 = calculateLPI3ForMolecule(molecule);
+                    const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
+                    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
+                    const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
+                    const compositeScore = Math.round(molecule.overallScore * 0.6 + ttmEfficiency * 0.4);
+                    const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
+                    const dropoutRanking = molecule.scores.dropoutRanking;
+
+                    const getDotColor = (value: number, thresholds: [number, number]) => {
+                      if (value >= thresholds[1]) return 'bg-[hsl(142,76%,36%)]';
+                      if (value >= thresholds[0]) return 'bg-[hsl(45,93%,47%)]';
+                      return 'bg-[hsl(0,72%,51%)]';
+                    };
+
+                    const lpiDot = getDotColor(lpi3Score, [34, 67]);
+                    const ttmDot = ttm !== null ? getDotColor(ttmEfficiency, [34, 67]) : 'bg-muted-foreground';
+                    const scoreDot = getDotColor(compositeScore, [34, 67]);
+                    const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+                    const dropoutDot = dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+
+                    const lpiText = lpi3Score >= 67 ? 'Strong probability' : lpi3Score >= 34 ? 'Moderate probability' : 'Low probability';
+                    const ttmText = ttmEfficiency >= 67 ? 'fast timeline' : ttmEfficiency >= 34 ? 'average timeline' : 'slow timeline';
+                    const scoreText = compositeScore >= 67 ? 'good score' : compositeScore >= 34 ? 'moderate score' : 'weak score';
+                    const tiText = ti.classification === 'wide' ? 'wide safety margin' : ti.classification === 'moderate' ? 'moderate safety margin' : 'narrow safety margin';
+                    const dropoutText = dropoutRanking <= 2 ? 'low dropout risk' : dropoutRanking === 3 ? 'moderate dropout risk' : 'high dropout risk';
+                    const verdict = compositeScore >= 67 ? '→ INTERESTING — worth full analysis' : compositeScore >= 34 ? '→ MONITOR — review at next data update' : '→ CAUTION — high-risk profile';
+
+                    return (
                     <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedMolecule(molecule.id)}>
-                      <CardContent className="p-6">
+                      <CardContent className="p-5">
                         <div className="flex items-start justify-between">
-                        <div className="space-y-1 flex-1">
-                          <div className="flex items-center gap-3">
-                            <h3 className="text-xl font-semibold">{molecule.name}</h3>
-                            <Badge variant="outline">{molecule.id}</Badge>
-                            <Badge variant="secondary" className="flex items-center gap-1.5">
-                              <span>{molecule.company}</span>
-                              {(() => {
-                                const mfg = getManufacturingCapability(molecule.company);
-                                return mfg?.ticker ? (
-                                  <a
-                                    href={`https://finance.yahoo.com/quote/${mfg.ticker}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
-                                    onClick={(e) => e.stopPropagation()}
-                                    title="View on Yahoo Finance"
-                                  >
-                                    {mfg.ticker}
-                                  </a>
-                                ) : null;
-                              })()}
-                            </Badge>
-                          </div>
-                          {/* Trial Name with Clinical Trials Link */}
-                          {molecule.trialName && (
-                            <div className="flex items-center gap-2">
-                              <a
-                                href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(molecule.clinicalTrialsSearchTerm || molecule.name.split(' ')[0])}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {molecule.trialName} {molecule.phase}
-                                <ExternalLink className="h-3 w-3" />
-                              </a>
-                            </div>
-                          )}
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span>{molecule.phase}</span>
-                            <span>•</span>
-                            <span>{molecule.indication}</span>
-                            <span>•</span>
-                            <span>{molecule.therapeuticArea}</span>
-                          </div>
-                            <div className="flex items-center gap-6 mt-3">
-                              <div className="text-xs">
-                                <span className="text-muted-foreground">Approval: </span>
-                                <span className="font-semibold">{(molecule.scores.approval * 100).toFixed(0)}%</span>
-                              </div>
-                              <div className="text-xs">
-                                <span className="text-muted-foreground">Next Phase: </span>
-                                <span className="font-semibold">{(molecule.scores.nextPhase * 100).toFixed(0)}%</span>
-                              </div>
-                              <div className="text-xs">
-                                <span className="text-muted-foreground">Dropout: </span>
-                                <span className="font-semibold">{molecule.scores.dropoutRanking}/5</span>
-                              </div>
-                              {/* Therapeutic Index */}
-                              {(() => {
-                                const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
-                                const tiColor = ti.classification === 'wide' 
-                                  ? 'text-[hsl(142,76%,36%)]' 
-                                  : ti.classification === 'moderate' 
-                                    ? 'text-[hsl(45,93%,47%)]' 
-                                    : 'text-[hsl(0,72%,51%)]';
-                                return (
-                                  <div className="text-xs" title={`Therapeutic Index: ${ti.notes || 'Safety margin between efficacy and toxicity'}`}>
-                                    <span className="text-muted-foreground">TI: </span>
-                                    <span className={`font-semibold ${tiColor}`}>
-                                      {ti.value.toFixed(1)} ({ti.classification})
-                                    </span>
-                                    {ti.monitoringRequired && (
-                                      <span className="ml-1 text-[hsl(0,72%,51%)]" title="Monitoring required">⚠</span>
-                                    )}
-                                  </div>
-                                );
-                              })()}
-                              <div className="text-xs">
-                                <span className="text-muted-foreground">Revenue (2Y): </span>
-                                <span className="font-semibold">${molecule.marketData.reduce((sum, m) => sum + m.revenueProjection.year1 + m.revenueProjection.year2, 0).toFixed(0)}M</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end gap-3">
-                            <div className="flex items-center gap-4">
-                              {/* LPI-3 Score */}
-                              {(() => {
-                                const lpi3 = calculateLPI3ForMolecule(molecule);
-                                const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
-                                const ciLower = Math.round(lpi3.confidenceInterval.lower * 100);
-                                const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
-                                return (
-                                  <div className="text-right">
-                                    <div className="text-xs text-muted-foreground">LPI</div>
-                                    <div className={`text-2xl font-bold ${
-                                      lpi3Score >= 67 
-                                        ? 'text-[hsl(142,76%,36%)]' 
-                                        : lpi3Score >= 34 
-                                          ? 'text-[hsl(45,93%,47%)]' 
-                                          : 'text-[hsl(0,72%,51%)]'
-                                    }`}>{lpi3Score}%</div>
-                                    <div className="text-[10px] text-muted-foreground cursor-help" title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data.">CI: {ciLower}–{ciUpper}%</div>
-                                  </div>
-                                );
-                              })()}
-                              <div className="text-right">
-                                <div className="text-xs text-muted-foreground">TTM</div>
+                          <div className="space-y-2 flex-1">
+                            <div className="flex items-center gap-3 flex-wrap">
+                              <h3 className="text-lg font-bold">{molecule.name}</h3>
+                              <Badge variant="secondary" className="flex items-center gap-1.5 text-xs">
+                                <span>{molecule.company}</span>
                                 {(() => {
-                                  const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
-                                  const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : null;
-                                  const ttmColor = ttmEfficiency !== null 
-                                    ? ttmEfficiency >= 67 
-                                      ? 'text-[hsl(142,76%,36%)]' 
-                                      : ttmEfficiency >= 34 
-                                        ? 'text-[hsl(45,93%,47%)]' 
-                                        : 'text-[hsl(0,72%,51%)]'
-                                    : 'text-primary';
-                                  return (
-                                    <div className={`text-2xl font-bold ${ttmColor}`}>
-                                      {ttm !== null ? `${ttm}m` : 'N/A'}
-                                    </div>
-                                  );
+                                  const mfg = getManufacturingCapability(molecule.company);
+                                  return mfg?.ticker ? (
+                                    <a href={`https://finance.yahoo.com/quote/${mfg.ticker}`} target="_blank" rel="noopener noreferrer"
+                                      className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                                      onClick={(e) => e.stopPropagation()} title="View on Yahoo Finance">
+                                      {mfg.ticker}
+                                    </a>
+                                  ) : null;
                                 })()}
-                              </div>
-                              {/* Composite Score Badge */}
-                              {(() => {
-                                const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
-                                const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
-                                const compositeScore = Math.round(molecule.overallScore * 0.6 + ttmEfficiency * 0.4);
-                                const bgColor = compositeScore >= 67 
-                                  ? 'bg-[hsl(142,76%,36%)]' 
-                                  : compositeScore >= 34 
-                                    ? 'bg-[hsl(45,93%,47%)]' 
-                                    : 'bg-[hsl(0,72%,51%)]';
-                                return (
-                                  <div 
-                                    className={`flex items-center justify-center w-12 h-12 rounded-full ${bgColor} text-white`}
-                                    title="Composite Score: 60% LPI + 40% TTM efficiency"
-                                  >
-                                    <span className="text-sm font-bold">{compositeScore}</span>
-                                  </div>
-                                );
-                              })()}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">{molecule.phase} • {molecule.indication} • {molecule.therapeuticArea}</span>
                             </div>
-                            <Button size="sm" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
-                              Full Analysis
+                            {/* Signal Dots Row */}
+                            <div className="flex items-center gap-4 text-xs font-mono">
+                              <span className="flex items-center gap-1.5" title={`LPI: ${lpi3Score}% — ≥67 green, 34-66 yellow, <34 red`}>
+                                LPI: <span className={`w-3 h-3 rounded-full inline-block ${lpiDot}`}></span>
+                              </span>
+                              <span className="flex items-center gap-1.5" title={`TTM: ${ttm !== null ? ttm + 'm' : 'N/A'} — efficiency ≥67 green, 34-66 yellow, <34 red`}>
+                                TTM: <span className={`w-3 h-3 rounded-full inline-block ${ttmDot}`}></span>
+                              </span>
+                              <span className="flex items-center gap-1.5" title={`Composite Score: ${compositeScore} — ≥67 green, 34-66 yellow, <34 red`}>
+                                Score: <span className={`w-3 h-3 rounded-full inline-block ${scoreDot}`}></span>
+                              </span>
+                              <span className="flex items-center gap-1.5" title={`TI: ${ti.value.toFixed(1)} (${ti.classification}) — Wide=green, Moderate=yellow, Narrow=red`}>
+                                TI: <span className={`w-3 h-3 rounded-full inline-block ${tiDot}`}></span>
+                              </span>
+                              <span className="flex items-center gap-1.5" title={`Dropout: ${dropoutRanking}/5 — ≤2 green, 3 yellow, ≥4 red`}>
+                                Dropout: <span className={`w-3 h-3 rounded-full inline-block ${dropoutDot}`}></span>
+                              </span>
+                            </div>
+                            {/* Interpretation */}
+                            <div className="text-xs text-muted-foreground pl-1 space-y-0.5">
+                              <p>= {lpiText}, {ttmText}, {scoreText}, {tiText}, {dropoutText}</p>
+                              <p className="font-semibold text-foreground">{verdict}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-2 ml-4">
+                            <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                <div className="text-[10px] text-muted-foreground">LPI</div>
+                                <div className={`text-xl font-bold ${lpi3Score >= 67 ? 'text-[hsl(142,76%,36%)]' : lpi3Score >= 34 ? 'text-[hsl(45,93%,47%)]' : 'text-[hsl(0,72%,51%)]'}`}>{lpi3Score}%</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-[10px] text-muted-foreground">TTM</div>
+                                <div className={`text-xl font-bold ${ttm !== null && ttmEfficiency >= 67 ? 'text-[hsl(142,76%,36%)]' : ttm !== null && ttmEfficiency >= 34 ? 'text-[hsl(45,93%,47%)]' : 'text-[hsl(0,72%,51%)]'}`}>{ttm !== null ? `${ttm}m` : 'N/A'}</div>
+                              </div>
+                              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${scoreDot} text-white`} title={`Composite: ${compositeScore}`}>
+                                <span className="text-xs font-bold">{compositeScore}</span>
+                              </div>
+                            </div>
+                            <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
+                              Full Analysis →
                             </Button>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
+                    );
+                  })}
               </div>
             ) : activeMolecule ? (
               <div className="space-y-6" ref={reportRef}>
@@ -1584,62 +1546,7 @@ const Index = () => {
             ) : null}
           </TabsContent>
 
-          {/* Molecules Tab */}
-          <TabsContent value="molecules" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Molecule Database</span>
-                  <div className="flex items-center gap-2">
-                    <MoleculeExportPanel molecules={allMolecules} />
-                    <Badge variant="secondary" className="text-lg px-3 py-1">{allMolecules.length.toLocaleString()} Molecules</Badge>
-                  </div>
-                </CardTitle>
-                <CardDescription>Browse and analyze clinical trial molecules</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Molecule Distribution Pie Chart */}
-                <div className="mb-6 p-4 border rounded-lg bg-muted/30">
-                  <h3 className="text-sm font-semibold mb-3">Molecules by Therapeutic Area</h3>
-                  <MoleculeDistributionChart molecules={allMolecules} />
-                </div>
-                <div className="grid gap-4">
-                  {allMolecules.map((mol) => (
-                    <div 
-                      key={mol.id} 
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-                      onClick={() => {
-                        setSelectedMolecule(mol.id);
-                        setActiveTab("overview");
-                      }}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div>
-                          <div className="font-semibold">{mol.name}</div>
-                          <div className="text-sm text-muted-foreground">{mol.company} • {mol.therapeuticArea}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline">{mol.phase}</Badge>
-                        {(() => {
-                          const lpi3 = calculateLPI3ForMolecule(mol);
-                          const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
-                          const ciLower = Math.round(lpi3.confidenceInterval.lower * 100);
-                          const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
-                          return (
-                            <div className="flex items-center gap-2">
-                              <Badge className="bg-blue-500 text-white">LPI {lpi3Score}%</Badge>
-                              <span className="text-[10px] text-muted-foreground">CI: {ciLower}–{ciUpper}%</span>
-                            </div>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          {/* Molecules Tab - merged into overview */}
 
           {/* TA Market Overview Tab */}
           <TabsContent value="ta-market" className="space-y-6">
