@@ -123,23 +123,28 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
                 ClinicalTrials.gov: {nctId} →
               </a>
             )}
-            {/* Signal Dots Row */}
-            <div className="flex items-center gap-4 text-xs font-mono mt-2">
-              <span className="flex items-center gap-1.5" title={`LPI: ${lpi3Score}% — ≥67 green, 34-66 yellow, <34 red`}>
-                LPI: <span className={`w-3 h-3 rounded-full inline-block ${lpiDot}`}></span>
-              </span>
-              <span className="flex items-center gap-1.5" title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'm' : 'N/A'}`}>
-                TTM: <span className={`w-3 h-3 rounded-full inline-block ${ttmDot}`}></span>
-              </span>
-              <span className="flex items-center gap-1.5" title={`Score: ${compScoreVal}`}>
-                Score: <span className={`w-3 h-3 rounded-full inline-block ${scoreDot}`}></span>
-              </span>
-              <span className="flex items-center gap-1.5" title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
-                TI: <span className={`w-3 h-3 rounded-full inline-block ${tiDot}`}></span>
-              </span>
-              <span className="flex items-center gap-1.5" title={`Dropout: ${scores.dropoutRanking}/5`}>
-                Dropout: <span className={`w-3 h-3 rounded-full inline-block ${dropoutDot}`}></span>
-              </span>
+            {/* Signal Dots Row - Large circles with values */}
+            <div className="flex items-center gap-3 mt-2">
+              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
+                <span className="text-[9px] font-medium leading-none">LPI</span>
+                <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
+                <span className="text-[9px] font-medium leading-none">TTM</span>
+                <span className="text-sm font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
+                <span className="text-[9px] font-medium leading-none">Score</span>
+                <span className="text-sm font-bold leading-none">{compScoreVal}</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${tiDot} text-white`} title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
+                <span className="text-[9px] font-medium leading-none">TI</span>
+                <span className="text-sm font-bold leading-none">{ti ? ti.value.toFixed(1) : 'N/A'}</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${scores.dropoutRanking}/5`}>
+                <span className="text-[9px] font-medium leading-none">Drop</span>
+                <span className="text-sm font-bold leading-none">{scores.dropoutRanking}/5</span>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-4">
