@@ -704,7 +704,10 @@ const Index = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
 
-   // 5-Area navigation configuration
+   // Top nav mode: 'platform' or 'strategy-hub'
+  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub'>('platform');
+
+  // 7-Area navigation configuration for Platform
   const areaConfig = {
     pipeline: {
       label: 'PIPELINE',
@@ -732,20 +735,45 @@ const Index = () => {
     launchCommercial: {
       label: 'LAUNCH & COMMERCIAL',
       tabs: [
-        { value: 'lpi-2', label: 'Investment Score', icon: TrendingUp },
         { value: 'peak-sales', label: 'Peak Sales Index', icon: TrendingUp },
         { value: 'portfolio', label: 'Portfolio', icon: LayoutDashboard },
       ]
     },
-    lcmNews: {
-      label: 'LCM & NEWS',
+    lcm: {
+      label: 'LCM',
       tabs: [
-        { value: 'top-100', label: 'Top 100', icon: Target },
-        { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
-        { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
+        { value: 'lcm-patent-cliff', label: 'Patent Cliff', icon: AlertTriangle },
+        { value: 'lcm-exclusivity', label: 'Exclusivity', icon: ShieldCheck },
+        { value: 'lcm-generic', label: 'Generic/Biosimilar', icon: Pill },
+        { value: 'lcm-label-expansion', label: 'Label Expansion', icon: Target },
+        { value: 'lcm-formulations', label: 'Formulations', icon: Pill },
+        { value: 'lcm-indication', label: 'Indication Expansions', icon: TrendingUp },
+        { value: 'lcm-rwe', label: 'RWE', icon: BarChart3 },
+        { value: 'lcm-safety', label: 'Post-market Safety', icon: AlertTriangle },
+        { value: 'lcm-phase4', label: 'Phase 4', icon: Activity },
+      ]
+    },
+    news: {
+      label: 'NEWS',
+      tabs: [
+        { value: 'news-regulatory', label: 'Regulatory', icon: Globe },
+        { value: 'news-trials', label: 'Trials', icon: Activity },
+        { value: 'news-bdl', label: 'BD&L', icon: Building2 },
+        { value: 'news-press', label: 'Press Release', icon: ExternalLink },
+        { value: 'news-sec', label: 'SEC 8-K Alerts', icon: AlertTriangle },
+        { value: 'news-pipeline', label: 'Pipeline Updates', icon: TrendingUp },
+        { value: 'news-kol', label: 'KOL Publications', icon: Brain },
       ]
     },
   } as const;
+
+  // Strategy Hub tabs
+  const strategyHubTabs = [
+    { value: 'lpi-2', label: 'Investment Score', icon: TrendingUp },
+    { value: 'top-100', label: 'Top 100', icon: Target },
+    { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
+    { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
+  ] as const;
 
   type AreaKey = keyof typeof areaConfig;
 
@@ -755,6 +783,8 @@ const Index = () => {
     }
     return 'pipeline';
   };
+
+  const isStrategyHubTab = (tab: string) => strategyHubTabs.some(t => t.value === tab);
 
   const currentArea = getAreaForTab(activeTab);
   
@@ -845,6 +875,14 @@ const Index = () => {
         <div className="bg-[#0E1D35] w-full">
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-0">
+              {/* Platform */}
+              <button 
+                onClick={() => { setTopNavMode('platform'); if (isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
+                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'platform' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
+              >
+                Platform
+              </button>
+              
               {/* Methodology */}
               <Link to="/methodology" className="flex-1 max-w-[200px]">
                 <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
@@ -852,8 +890,11 @@ const Index = () => {
                 </button>
               </Link>
               
-              {/* Strategy Hub (active) */}
-              <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white bg-white/15 border-r border-white/20">
+              {/* Strategy Hub */}
+              <button 
+                onClick={() => { setTopNavMode('strategy-hub'); setActiveTab('lpi-2'); }}
+                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'strategy-hub' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
+              >
                 Strategy Hub
               </button>
               
@@ -976,38 +1017,62 @@ const Index = () => {
         </div>
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
           <div className="-mx-4 px-0">
-            {/* 4-Area Navigation Bar */}
-            <div className="w-full bg-[#0E1D35] flex justify-center">
-              {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).map(([key, area]) => (
-                <button
-                  key={key}
-                  onClick={() => setActiveTab(area.tabs[0].value)}
-                  className={`flex-1 max-w-[280px] py-3 text-center font-bold text-sm tracking-wider uppercase transition-colors ${
-                    currentArea === key 
-                      ? 'border-b-2 border-[#FFC512] text-white bg-[#2B3D5B]' 
-                      : 'border-b-2 border-transparent text-white/60 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  {area.label}
-                </button>
-              ))}
-            </div>
-            
-            {/* Sub-tabs Bar */}
-            <TabsList className="w-full justify-start bg-[#2B3D5B] border-0 rounded-none h-11 px-4">
-              {areaConfig[currentArea].tabs.map(tab => {
-                const Icon = tab.icon;
-                return (
-                  <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
-                    <Icon className="h-4 w-4" />
-                    {tab.label}
-                    {tab.value === 'watchlist' && <span className="text-xs">({watchlist.length})</span>}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
+            {topNavMode === 'platform' ? (
+              <>
+                {/* Area Navigation Bar */}
+                <div className="w-full bg-[#0E1D35] flex justify-center">
+                  {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).map(([key, area]) => (
+                    <button
+                      key={key}
+                      onClick={() => setActiveTab(area.tabs[0].value)}
+                      className={`flex-1 max-w-[220px] py-3 text-center font-bold text-xs tracking-wider uppercase transition-colors ${
+                        currentArea === key 
+                          ? 'border-b-2 border-[#FFC512] text-white bg-[#2B3D5B]' 
+                          : 'border-b-2 border-transparent text-white/60 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      {area.label}
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Sub-tabs Bar */}
+                <TabsList className="w-full justify-start bg-[#2B3D5B] border-0 rounded-none h-11 px-4 flex-wrap">
+                  {areaConfig[currentArea].tabs.map(tab => {
+                    const Icon = tab.icon;
+                    return (
+                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90 text-xs">
+                        <Icon className="h-3 w-3" />
+                        {tab.label}
+                        {tab.value === 'watchlist' && <span className="text-xs">({watchlist.length})</span>}
+                      </TabsTrigger>
+                    );
+                  })}
+                </TabsList>
+              </>
+            ) : (
+              <>
+                {/* Strategy Hub Sub-tabs */}
+                <div className="w-full bg-[#0E1D35] py-2">
+                  <div className="container mx-auto px-4 text-center">
+                    <span className="text-white/60 text-xs tracking-wider uppercase font-bold">Strategy Hub</span>
+                  </div>
+                </div>
+                <TabsList className="w-full justify-center bg-[#2B3D5B] border-0 rounded-none h-11 px-4">
+                  {strategyHubTabs.map(tab => {
+                    const Icon = tab.icon;
+                    return (
+                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
+                        <Icon className="h-4 w-4" />
+                        {tab.label}
+                      </TabsTrigger>
+                    );
+                  })}
+                </TabsList>
+              </>
+            )}
           </div>
 
           {/* Overview Tab */}
@@ -1177,44 +1242,33 @@ const Index = () => {
                               </Badge>
                               <span className="text-xs text-muted-foreground">{molecule.phase} • {molecule.indication} • {molecule.therapeuticArea}</span>
                             </div>
-                            {/* Signal Dots Row */}
-                            <div className="flex items-center gap-4 text-xs font-mono">
-                              <span className="flex items-center gap-1.5" title={`LPI: ${lpi3Score}% — ≥67 green, 34-66 yellow, <34 red`}>
-                                LPI: <span className={`w-3 h-3 rounded-full inline-block ${lpiDot}`}></span>
-                              </span>
-                              <span className="flex items-center gap-1.5" title={`TTM: ${ttm !== null ? ttm + 'm' : 'N/A'} — efficiency ≥67 green, 34-66 yellow, <34 red`}>
-                                TTM: <span className={`w-3 h-3 rounded-full inline-block ${ttmDot}`}></span>
-                              </span>
-                              <span className="flex items-center gap-1.5" title={`Composite Score: ${compositeScore} — ≥67 green, 34-66 yellow, <34 red`}>
-                                Score: <span className={`w-3 h-3 rounded-full inline-block ${scoreDot}`}></span>
-                              </span>
-                              <span className="flex items-center gap-1.5" title={`TI: ${ti.value.toFixed(1)} (${ti.classification}) — Wide=green, Moderate=yellow, Narrow=red`}>
-                                TI: <span className={`w-3 h-3 rounded-full inline-block ${tiDot}`}></span>
-                              </span>
-                              <span className="flex items-center gap-1.5" title={`Dropout: ${dropoutRanking}/5 — ≤2 green, 3 yellow, ≥4 red`}>
-                                Dropout: <span className={`w-3 h-3 rounded-full inline-block ${dropoutDot}`}></span>
-                              </span>
+                            {/* Signal Dots Row - Large circles with values */}
+                            <div className="flex items-center gap-3 mt-1">
+                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
+                                <span className="text-[9px] font-medium leading-none">LPI</span>
+                                <span className="text-xs font-bold leading-none">{lpi3Score}%</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
+                                <span className="text-[9px] font-medium leading-none">TTM</span>
+                                <span className="text-xs font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${scoreDot} text-white`} title={`Score: ${compositeScore}`}>
+                                <span className="text-[9px] font-medium leading-none">Score</span>
+                                <span className="text-xs font-bold leading-none">{compositeScore}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${tiDot} text-white`} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
+                                <span className="text-[9px] font-medium leading-none">TI</span>
+                                <span className="text-xs font-bold leading-none">{ti.value.toFixed(1)}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${dropoutRanking}/5`}>
+                                <span className="text-[9px] font-medium leading-none">Drop</span>
+                                <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
+                              </div>
                             </div>
-                            {/* Interpretation */}
-                            <div className="text-xs text-muted-foreground pl-1 space-y-0.5">
-                              <p>= {lpiText}, {ttmText}, {scoreText}, {tiText}, {dropoutText}</p>
-                              <p className="font-semibold text-foreground">{verdict}</p>
-                            </div>
+                            {/* Verdict line */}
+                            <p className="text-xs font-semibold text-foreground mt-1">{verdict}</p>
                           </div>
                           <div className="flex flex-col items-end gap-2 ml-4">
-                            <div className="flex items-center gap-3">
-                              <div className="text-right">
-                                <div className="text-[10px] text-muted-foreground">LPI</div>
-                                <div className={`text-xl font-bold ${lpi3Score >= 67 ? 'text-[hsl(142,76%,36%)]' : lpi3Score >= 34 ? 'text-[hsl(45,93%,47%)]' : 'text-[hsl(0,72%,51%)]'}`}>{lpi3Score}%</div>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-[10px] text-muted-foreground">TTM</div>
-                                <div className={`text-xl font-bold ${ttm !== null && ttmEfficiency >= 67 ? 'text-[hsl(142,76%,36%)]' : ttm !== null && ttmEfficiency >= 34 ? 'text-[hsl(45,93%,47%)]' : 'text-[hsl(0,72%,51%)]'}`}>{ttm !== null ? `${ttm}m` : 'N/A'}</div>
-                              </div>
-                              <div className={`flex items-center justify-center w-10 h-10 rounded-full ${scoreDot} text-white`} title={`Composite: ${compositeScore}`}>
-                                <span className="text-xs font-bold">{compositeScore}</span>
-                              </div>
-                            </div>
                             <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
                               Full Analysis →
                             </Button>
@@ -1987,6 +2041,48 @@ const Index = () => {
           <TabsContent value="payers" className="space-y-6">
             <PayersLandscape />
           </TabsContent>
+
+          {/* LCM Placeholder Tabs */}
+          {['lcm-patent-cliff', 'lcm-exclusivity', 'lcm-generic', 'lcm-label-expansion', 'lcm-formulations', 'lcm-indication', 'lcm-rwe', 'lcm-safety', 'lcm-phase4'].map(tabVal => (
+            <TabsContent key={tabVal} value={tabVal} className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-primary" />
+                    {tabVal.replace('lcm-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </CardTitle>
+                  <CardDescription>Life Cycle Management module — coming soon</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Module under development</p>
+                    <p className="text-sm mt-2">This LCM intelligence module will be available in a future update.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          ))}
+
+          {/* NEWS Placeholder Tabs */}
+          {['news-regulatory', 'news-trials', 'news-bdl', 'news-press', 'news-sec', 'news-pipeline', 'news-kol'].map(tabVal => (
+            <TabsContent key={tabVal} value={tabVal} className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5 text-primary" />
+                    {tabVal.replace('news-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </CardTitle>
+                  <CardDescription>News & intelligence feed — coming soon</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Module under development</p>
+                    <p className="text-sm mt-2">This news intelligence feed will be available in a future update.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          ))}
         </Tabs>
 
         {/* Data Sources - Bottom of page */}
