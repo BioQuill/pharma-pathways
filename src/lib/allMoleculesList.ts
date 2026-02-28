@@ -1,85 +1,44 @@
 // Shared utility to provide the complete molecule list for calculator components
-import { additionalMolecules, type MoleculeProfile } from './moleculesData';
-import { endocrinologyMolecules } from './endocrinologyMolecules';
-import { obesityMolecules } from './obesityMolecules';
-import { diabetesMolecules } from './diabetesMolecules';
-import { dermatologyMolecules } from './dermatologyMolecules';
-import { oncologyMolecules } from './oncologyMolecules';
-import { cardiovascularMolecules } from './cardiovascularMolecules';
-import { neurologyMolecules } from './neurologyMolecules';
-import { immunologyMolecules } from './immunologyMolecules';
-import { infectiousMolecules } from './infectiousMolecules';
-import { rareDiseaseMolecules } from './rareDiseaseMolecules';
-import { rheumatologyMolecules } from './rheumatologyMolecules';
-import { psychiatryMolecules } from './psychiatryMolecules';
-import { hematologyMolecules } from './hematologyMolecules';
-import { gastroenterologyMolecules } from './gastroenterologyMolecules';
-import { nephrologyMolecules } from './nephologyMolecules';
-import { painMolecules } from './painMolecules';
-import { womensHealthMolecules } from './womensHealthMolecules';
-import { extendedOncologyMolecules } from './extendedOncologyMolecules';
-import { extendedNeurologyMolecules } from './extendedNeurologyMolecules';
-import { extendedCardiometabolicMolecules } from './extendedCardiometabolicMolecules';
-import { extendedImmunologyMolecules } from './extendedImmunologyMolecules';
-import { extendedInfectiousMolecules } from './extendedInfectiousMolecules';
-import { extendedPsychiatryMolecules } from './extendedPsychiatryMolecules';
-import { extendedRheumatologyMolecules } from './extendedRheumatologyMolecules';
-import { coreMolecules } from './coreMolecules';
+// Now backed by real data from useMolecules hook
+import { type MoleculeProfile } from './moleculesData';
+import { getCachedMolecules } from '@/hooks/useMolecules';
 
 export const getAllMolecules = (): MoleculeProfile[] => {
-  return [
-    ...coreMolecules,
-    ...additionalMolecules,
-    ...endocrinologyMolecules,
-    ...obesityMolecules,
-    ...diabetesMolecules,
-    ...dermatologyMolecules,
-    ...oncologyMolecules,
-    ...cardiovascularMolecules,
-    ...neurologyMolecules,
-    ...immunologyMolecules,
-    ...infectiousMolecules,
-    ...rareDiseaseMolecules,
-    ...rheumatologyMolecules,
-    ...psychiatryMolecules,
-    ...hematologyMolecules,
-    ...gastroenterologyMolecules,
-    ...nephrologyMolecules,
-    ...painMolecules,
-    ...womensHealthMolecules,
-    ...extendedOncologyMolecules,
-    ...extendedNeurologyMolecules,
-    ...extendedCardiometabolicMolecules,
-    ...extendedImmunologyMolecules,
-    ...extendedInfectiousMolecules,
-    ...extendedPsychiatryMolecules,
-    ...extendedRheumatologyMolecules,
-  ];
+  return getCachedMolecules();
 };
 
 // Map therapeutic area names from molecule data to calculator TA IDs
 export const mapTAToModel1Id = (ta: string): string | null => {
   const mapping: Record<string, string> = {
     "Oncology/Hematology": "oncology",
+    "Oncology & Hematology": "oncology",
     "Cardiovascular/Cardiology": "cardiology",
+    "Cardiovascular": "cardiology",
     "Neurology/Neuroscience": "neurology",
+    "Neurology": "neurology",
     "Dermatology": "dermatology",
     "Endocrinology & Metabolism": "endocrinology",
     "Immunology & Inflammation": "immunology",
     "Infectious Diseases": "infectious",
+    "Infectious Disease": "infectious",
     "Respiratory/Pulmonology": "respiratory",
+    "Respiratory & Pulmonary": "respiratory",
     "Gastroenterology & Hepatology": "gastro",
     "Hematology": "hematology",
     "Rheumatology": "rheumatology",
     "Ophthalmology": "ophthalmology",
     "Nephrology/Renal": "uro_nephro",
+    "Nephrology & Renal": "uro_nephro",
     "Psychiatry/Mental Health": "psychiatry",
+    "Psychiatry & Mental Health": "psychiatry",
     "Transplant & Cell/Gene Therapy": "transplant",
     "Rare Diseases/Orphan": "rareDisease",
+    "Rare Disease & Orphan": "rareDisease",
     "Women's Health": "womensHealth",
     "Pain Management/Anesthesia": "pain",
     "Obesity": "endocrinology",
     "Type 2 Diabetes": "endocrinology",
+    "Other": "oncology",
   };
   return mapping[ta] || null;
 };
@@ -87,25 +46,34 @@ export const mapTAToModel1Id = (ta: string): string | null => {
 export const mapTAToModel2Id = (ta: string): string | null => {
   const mapping: Record<string, string> = {
     "Oncology/Hematology": "oncology",
+    "Oncology & Hematology": "oncology",
     "Cardiovascular/Cardiology": "cardiovascular",
+    "Cardiovascular": "cardiovascular",
     "Neurology/Neuroscience": "neurology",
+    "Neurology": "neurology",
     "Psychiatry/Mental Health": "psychiatry",
+    "Psychiatry & Mental Health": "psychiatry",
     "Endocrinology & Metabolism": "endocrinology",
     "Immunology & Inflammation": "immunology",
     "Rheumatology": "rheumatology",
     "Infectious Diseases": "infectious",
+    "Infectious Disease": "infectious",
     "Respiratory/Pulmonology": "respiratory",
+    "Respiratory & Pulmonary": "respiratory",
     "Gastroenterology & Hepatology": "gastro",
     "Nephrology/Renal": "nephrology",
+    "Nephrology & Renal": "nephrology",
     "Dermatology": "dermatology",
     "Ophthalmology": "ophthalmology",
     "Rare Diseases/Orphan": "rareDisease",
+    "Rare Disease & Orphan": "rareDisease",
     "Women's Health": "womensHealth",
     "Pain Management/Anesthesia": "pain",
     "Transplant & Cell/Gene Therapy": "transplant",
     "Hematology": "oncology",
     "Obesity": "endocrinology",
     "Type 2 Diabetes": "endocrinology",
+    "Other": "oncology",
   };
   return mapping[ta] || null;
 };
@@ -113,15 +81,11 @@ export const mapTAToModel2Id = (ta: string): string | null => {
 // Derive Model 1 scores from molecule probability data
 export const deriveModel1Scores = (mol: MoleculeProfile) => {
   const s = mol.scores;
-  // Clinical: based on meeting endpoints + approval probability
   const clinical = Math.round(((s.meetingEndpoints + s.approval) / 2) * 100);
-  // Economic: based on revenue potential (normalize year1 revenue)
-  const avgRevenue = mol.marketData.reduce((sum, m) => sum + m.revenueProjection.year1, 0) / mol.marketData.length;
+  const avgRevenue = mol.marketData.reduce((sum, m) => sum + m.revenueProjection.year1, 0) / Math.max(1, mol.marketData.length);
   const economic = Math.round(Math.min(100, (avgRevenue / 500) * 100));
-  // Access: based on HTA strategy strength
-  const avgHTA = mol.marketData.reduce((sum, m) => sum + m.marketAccessStrategy.hta, 0) / mol.marketData.length;
+  const avgHTA = mol.marketData.reduce((sum, m) => sum + m.marketAccessStrategy.hta, 0) / Math.max(1, mol.marketData.length);
   const access = Math.round(avgHTA * 100);
-  // Political: based on regulatory pathway (breakthrough/orphan boost)
   const political = Math.round(((s.regulatoryPathway.breakthrough + s.regulatoryPathway.orphan) / 2) * 100);
   return { clinical, economic, access, political };
 };
