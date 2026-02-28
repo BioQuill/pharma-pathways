@@ -87,32 +87,8 @@ import {
 } from "@/lib/scoring";
 import { generateLaunchFactors, type LaunchFactors } from "@/lib/launchFactors";
 import { getManufacturingCapability } from "@/lib/manufacturingCapability";
-import { additionalMolecules, type MoleculeProfile, type TherapeuticIndex } from "@/lib/moleculesData";
-import { coreMolecules } from "@/lib/coreMolecules";
-import { endocrinologyMolecules } from "@/lib/endocrinologyMolecules";
-import { obesityMolecules } from "@/lib/obesityMolecules";
-import { diabetesMolecules } from "@/lib/diabetesMolecules";
-import { dermatologyMolecules } from "@/lib/dermatologyMolecules";
-import { oncologyMolecules } from "@/lib/oncologyMolecules";
-import { cardiovascularMolecules } from "@/lib/cardiovascularMolecules";
-import { neurologyMolecules } from "@/lib/neurologyMolecules";
-import { immunologyMolecules } from "@/lib/immunologyMolecules";
-import { infectiousMolecules } from "@/lib/infectiousMolecules";
-import { rareDiseaseMolecules } from "@/lib/rareDiseaseMolecules";
-import { rheumatologyMolecules } from "@/lib/rheumatologyMolecules";
-import { psychiatryMolecules } from "@/lib/psychiatryMolecules";
-import { hematologyMolecules } from "@/lib/hematologyMolecules";
-import { gastroenterologyMolecules } from "@/lib/gastroenterologyMolecules";
-import { nephrologyMolecules } from "@/lib/nephologyMolecules";
-import { painMolecules } from "@/lib/painMolecules";
-import { womensHealthMolecules } from "@/lib/womensHealthMolecules";
-import { extendedOncologyMolecules } from "@/lib/extendedOncologyMolecules";
-import { extendedNeurologyMolecules } from "@/lib/extendedNeurologyMolecules";
-import { extendedCardiometabolicMolecules } from "@/lib/extendedCardiometabolicMolecules";
-import { extendedImmunologyMolecules } from "@/lib/extendedImmunologyMolecules";
-import { extendedInfectiousMolecules } from "@/lib/extendedInfectiousMolecules";
-import { extendedPsychiatryMolecules } from "@/lib/extendedPsychiatryMolecules";
-import { extendedRheumatologyMolecules } from "@/lib/extendedRheumatologyMolecules";
+import { type MoleculeProfile, type TherapeuticIndex } from "@/lib/moleculesData";
+import { useMolecules } from "@/hooks/useMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 
 // TimelinePhase interface imported from moleculesData
@@ -696,6 +672,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
   );
 };
 const Index = () => {
+  const { molecules: allMolecules, loading: moleculesLoading, error: moleculesError } = useMolecules();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta' | 'ti'>('lpi');
@@ -829,26 +806,35 @@ const Index = () => {
     }
   };
 
-  // Core molecules imported from shared module
-  const mockMolecules = coreMolecules;
-
-  // Merge all molecules from all therapeutic areas
-  const allMolecules = [...mockMolecules, ...additionalMolecules, ...endocrinologyMolecules, ...obesityMolecules, ...diabetesMolecules, ...dermatologyMolecules, ...oncologyMolecules, ...cardiovascularMolecules, ...neurologyMolecules, ...immunologyMolecules, ...infectiousMolecules, ...rareDiseaseMolecules, ...rheumatologyMolecules, ...psychiatryMolecules, ...hematologyMolecules, ...gastroenterologyMolecules, ...nephrologyMolecules, ...painMolecules, ...womensHealthMolecules, ...extendedOncologyMolecules, ...extendedNeurologyMolecules, ...extendedCardiometabolicMolecules, ...extendedImmunologyMolecules, ...extendedInfectiousMolecules, ...extendedPsychiatryMolecules, ...extendedRheumatologyMolecules];
-
-  // Calculate overall scores and generate launch factors based on probabilities and market projections
-  allMolecules.forEach(mol => {
-    mol.launchFactors = generateLaunchFactors(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
-    const manufacturingCapability = getManufacturingCapability(mol.company);
-    mol.overallScore = calculateOverallScore(
-      mol.scores, 
-      mol.marketData, 
-      mol.phase, 
-      mol.therapeuticArea, 
-      manufacturingCapability.scaleUpIndex
-    );
-  });
-
   const activeMolecule = allMolecules.find(m => m.id === selectedMolecule);
+
+  if (moleculesLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-lg font-semibold text-foreground">Loading molecules from ClinicalTrials.gov...</p>
+          <p className="text-sm text-muted-foreground">Parsing ~12,635 real clinical trial records</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (moleculesError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4 max-w-md">
+          <div className="text-4xl">⚠️</div>
+          <p className="text-lg font-semibold text-foreground">Unable to load molecule database.</p>
+          <p className="text-sm text-muted-foreground">Please refresh or check your connection.</p>
+          <p className="text-xs text-destructive">{moleculesError}</p>
+          <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90">
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -983,8 +969,8 @@ const Index = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Molecules</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-primary">1,247</div>
-              <p className="text-xs text-muted-foreground mt-1">From trial databases</p>
+              <div className="text-3xl font-bold text-primary">{allMolecules.length.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground mt-1">From ClinicalTrials.gov</p>
             </CardContent>
           </Card>
           <Card>
@@ -992,8 +978,8 @@ const Index = () => {
               <CardTitle className="text-sm font-medium text-muted-foreground">Active Trials</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-secondary">892</div>
-              <p className="text-xs text-muted-foreground mt-1">Across 45 countries</p>
+              <div className="text-3xl font-bold text-secondary">{allMolecules.filter(m => !m.isFailed).length.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground mt-1">Active pipeline molecules</p>
             </CardContent>
           </Card>
           <Card>
@@ -1151,7 +1137,9 @@ const Index = () => {
                       mol.name.toLowerCase().includes(query) ||
                       mol.company.toLowerCase().includes(query) ||
                       mol.therapeuticArea.toLowerCase().includes(query) ||
-                      mol.indication.toLowerCase().includes(query);
+                      mol.indication.toLowerCase().includes(query) ||
+                      (mol.nctId && mol.nctId.toLowerCase().includes(query)) ||
+                      (mol.trialName && mol.trialName.toLowerCase().includes(query));
                     
                     // Phase filter
                     const matchesPhase = phaseFilter === 'all' || mol.phase.includes(phaseFilter);
