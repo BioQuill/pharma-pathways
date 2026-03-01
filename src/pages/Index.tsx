@@ -77,6 +77,11 @@ import { Top100BlockbusterDrugs } from "@/components/Top100BlockbusterDrugs";
 import { Top50SmallCapFirms } from "@/components/Top50SmallCapFirms";
 import { PricingAccessDashboard } from "@/components/PricingAccessDashboard";
 import { PayersLandscape } from "@/components/PayersLandscape";
+import { PAModel1Dashboard } from "@/components/PAModel1Dashboard";
+import { PAModel2Dashboard } from "@/components/PAModel2Dashboard";
+import { ModelsDecisionFramework } from "@/components/ModelsDecisionFramework";
+import { PAModelComparisonMode } from "@/components/PAModelComparisonMode";
+import { PABatchComparison } from "@/components/PABatchComparison";
 import { 
   calculateProbabilityScores,
   generateMarketProjections, 
@@ -704,7 +709,12 @@ const Index = () => {
     pricingAccess: {
       label: 'PRICING & ACCESS',
       tabs: [
-        { value: 'pricing-access', label: 'Pricing & Access', icon: DollarSign },
+        { value: 'pricing-access', label: 'Markets Overview', icon: DollarSign },
+        { value: 'pa-model1', label: 'PA Index-1 & Model 1', icon: DollarSign },
+        { value: 'pa-model2', label: 'PA Index-2 & Model 2', icon: BarChart3 },
+        { value: 'pa-framework', label: 'Models Decision Framework', icon: Target },
+        { value: 'pa-comparison', label: 'Combined Comparison', icon: Activity },
+        { value: 'pa-batch', label: 'Batch Comparison', icon: Building2 },
         { value: 'payers', label: 'Payers', icon: Landmark },
         { value: 'watchlist', label: 'Watchlist', icon: Star },
       ]
@@ -2020,9 +2030,34 @@ const Index = () => {
             <Top50SmallCapFirms />
           </TabsContent>
 
-          {/* Pricing & Access Tab */}
+          {/* Pricing & Access Markets Overview Tab */}
           <TabsContent value="pricing-access" className="space-y-6">
             <PricingAccessDashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* PA Model 1 Tab */}
+          <TabsContent value="pa-model1" className="space-y-6">
+            <PAModel1Dashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* PA Model 2 Tab */}
+          <TabsContent value="pa-model2" className="space-y-6">
+            <PAModel2Dashboard />
+          </TabsContent>
+
+          {/* PA Decision Framework Tab */}
+          <TabsContent value="pa-framework" className="space-y-6">
+            <ModelsDecisionFramework />
+          </TabsContent>
+
+          {/* PA Combined Comparison Tab */}
+          <TabsContent value="pa-comparison" className="space-y-6">
+            <PAModelComparisonMode />
+          </TabsContent>
+
+          {/* PA Batch Comparison Tab */}
+          <TabsContent value="pa-batch" className="space-y-6">
+            <PABatchComparison />
           </TabsContent>
 
           {/* Payers Tab */}
