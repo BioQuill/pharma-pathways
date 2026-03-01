@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -95,6 +95,8 @@ import { getManufacturingCapability } from "@/lib/manufacturingCapability";
 import { type MoleculeProfile, type TherapeuticIndex } from "@/lib/moleculesData";
 import { useMolecules } from "@/hooks/useMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
+import { MethodologyContent } from "@/components/MethodologyContent";
+import { PricingContent } from "@/components/PricingContent";
 
 // TimelinePhase interface imported from moleculesData
 
@@ -686,8 +688,8 @@ const Index = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
 
-   // Top nav mode: 'platform' or 'strategy-hub'
-  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub'>('platform');
+   // Top nav mode: 'platform', 'strategy-hub', 'methodology', or 'pricing'
+  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'methodology' | 'pricing'>('platform');
 
   // 7-Area navigation configuration for Platform
   const areaConfig = {
@@ -880,11 +882,12 @@ const Index = () => {
               </button>
               
               {/* Methodology */}
-              <Link to="/methodology" className="flex-1 max-w-[200px]">
-                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
-                  Methodology
-                </button>
-              </Link>
+              <button 
+                onClick={() => setTopNavMode('methodology')}
+                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'methodology' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
+              >
+                Methodology
+              </button>
               
               {/* Strategy Hub */}
               <button 
@@ -895,11 +898,12 @@ const Index = () => {
               </button>
               
               {/* Pricing */}
-              <Link to="/pricing" className="flex-1 max-w-[200px]">
-                <button className="w-full py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors border-r border-white/20">
-                  Pricing
-                </button>
-              </Link>
+              <button 
+                onClick={() => setTopNavMode('pricing')}
+                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'pricing' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
+              >
+                Pricing
+              </button>
               
               {/* Search */}
               <Popover>
@@ -972,8 +976,14 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        {/* Hero Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        {/* Methodology Content */}
+        {topNavMode === 'methodology' && <MethodologyContent />}
+        
+        {/* Pricing Content */}
+        {topNavMode === 'pricing' && <PricingContent />}
+
+        {/* Hero Stats - only show for platform/strategy-hub */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Molecules</CardTitle>
@@ -1010,10 +1020,10 @@ const Index = () => {
               <p className="text-xs text-muted-foreground mt-1">Phase I to approval</p>
             </CardContent>
           </Card>
-        </div>
+        </div>}
 
-        {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
+        {/* Main Tabs - only show for platform/strategy-hub */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
           <div className="-mx-4 px-0">
             {topNavMode === 'platform' ? (
               <>
@@ -1048,7 +1058,7 @@ const Index = () => {
                   })}
                 </TabsList>
               </>
-            ) : (
+            ) : topNavMode === 'strategy-hub' ? (
               <>
                 {/* Strategy Hub Sub-tabs */}
                 <div className="w-full bg-[#0E1D35] py-2">
@@ -1068,7 +1078,7 @@ const Index = () => {
                   })}
                 </TabsList>
               </>
-            )}
+            ) : null}
           </div>
 
           {/* Overview Tab */}
@@ -2106,10 +2116,10 @@ const Index = () => {
               </Card>
             </TabsContent>
           ))}
-        </Tabs>
+        </Tabs>}
 
         {/* Data Sources - Bottom of page */}
-        <div className="mt-8">
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <div className="mt-8">
           <Tabs defaultValue="trial-databases" className="w-full">
             <TabsList className="w-full justify-start h-10 bg-[#E8C84A] rounded-none p-0">
               <TabsTrigger 
@@ -2239,7 +2249,7 @@ const Index = () => {
               <div className="text-xs text-muted-foreground mt-3 text-right">Last sync: Feb 24, 2026</div>
             </TabsContent>
           </Tabs>
-        </div>
+        </div>}
 
         {/* Data Freshness Statement */}
         <div className="mt-4 py-3 px-4 bg-[#FFC512]/10 border border-[#FFC512]/30 rounded-lg text-center">
