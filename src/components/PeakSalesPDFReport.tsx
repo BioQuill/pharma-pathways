@@ -22,6 +22,7 @@ import {
   getScoreColor,
   getScoreBg,
   formatReportDate,
+  PDFWatermark,
 } from "@/lib/pdfGenerator";
 
 interface PeakSalesPDFReportProps {
@@ -365,9 +366,9 @@ const PeakSalesPDFDocument = ({ result, moleculeName, therapeuticArea, phase, co
       {/* Footer */}
       <View style={styles.footer}>
         <Text>Peak Sales Composite Index Model v1.0</Text>
-        <Text>Confidential - For Internal Use Only</Text>
         <Text>Page 1 of 1</Text>
       </View>
+      <PDFWatermark />
     </Page>
   </Document>
 );

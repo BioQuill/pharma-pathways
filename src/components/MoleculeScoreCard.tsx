@@ -123,56 +123,31 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
                 ClinicalTrials.gov: {nctId} →
               </a>
             )}
-            {/* Signal Dots Row - Large circles with values */}
-            <div className="flex items-center gap-3 mt-2">
-              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
-                <span className="text-[9px] font-medium leading-none">LPI</span>
-                <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+            {/* Signal Dots Row - Doubled size circles with values */}
+            <div className="flex items-center gap-4 mt-2">
+              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
+                <span className="text-sm font-medium leading-none">LPI</span>
+                <span className="text-xl font-bold leading-none">{lpi3Score}%</span>
               </div>
-              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
-                <span className="text-[9px] font-medium leading-none">TTM</span>
-                <span className="text-sm font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
+              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
+                <span className="text-sm font-medium leading-none">TTM</span>
+                <span className="text-xl font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
               </div>
-              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
-                <span className="text-[9px] font-medium leading-none">Score</span>
-                <span className="text-sm font-bold leading-none">{compScoreVal}</span>
+              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
+                <span className="text-sm font-medium leading-none">Score</span>
+                <span className="text-xl font-bold leading-none">{compScoreVal}</span>
               </div>
-              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${tiDot} text-white`} title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
-                <span className="text-[9px] font-medium leading-none">TI</span>
-                <span className="text-sm font-bold leading-none">{ti ? ti.value.toFixed(1) : 'N/A'}</span>
+              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${tiDot} text-white`} title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
+                <span className="text-sm font-medium leading-none">TI</span>
+                <span className="text-xl font-bold leading-none">{ti ? ti.value.toFixed(1) : 'N/A'}</span>
               </div>
-              <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${scores.dropoutRanking}/5`}>
-                <span className="text-[9px] font-medium leading-none">Drop</span>
-                <span className="text-sm font-bold leading-none">{scores.dropoutRanking}/5</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col gap-2">
-              <Badge variant="default" className="text-lg font-bold px-4 py-2 flex items-center justify-center" style={{ lineHeight: '1.2', display: 'flex', alignItems: 'center' }}>
-                LPI (Launch Probability Index): {overallScore}%
-              </Badge>
-              <Badge variant="default" className="text-lg font-bold px-4 py-2 flex items-center justify-center" style={{ lineHeight: '1.2', display: 'flex', alignItems: 'center' }}>
-                TTM: {ttmMonths !== null ? `${ttmMonths} months` : 'N/A'}
-              </Badge>
-            </div>
-            <div 
-              className={`w-20 h-20 rounded-full text-white ${
-                compositeScore >= 67 
-                  ? 'bg-[hsl(142,76%,36%)]' // Green - top 33%
-                  : compositeScore >= 34 
-                    ? 'bg-[hsl(45,93%,47%)]' // Yellow - middle 33%
-                    : 'bg-[hsl(0,72%,51%)]' // Red - bottom 33%
-              }`}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              title="Composite Score: Weighted average of LPI (60%) and TTM efficiency (40%)"
-            >
-              <div className="text-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <div className="text-2xl font-bold" style={{ lineHeight: '1.2' }}>{compositeScore}</div>
-                <div className="text-xs opacity-90" style={{ lineHeight: '1.2' }}>Score</div>
+              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${scores.dropoutRanking}/5`}>
+                <span className="text-sm font-medium leading-none">Drop</span>
+                <span className="text-xl font-bold leading-none">{scores.dropoutRanking}/5</span>
               </div>
             </div>
           </div>
+          {/* Signal dots only - LPI/TTM badges and Score circle removed */}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Users, Download, FileSpreadsheet, TrendingUp, ArrowUpDown, X, Search } from "lucide-react";
 import { getAllMolecules, deriveModel1Scores, mapTAToModel2Id, deriveModel2Ratios } from "@/lib/allMoleculesList";
-import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
+import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 import * as XLSX from 'xlsx';
 
 const model1USWeights = { clinical: 25, economic: 35, access: 25, political: 15 };
@@ -185,8 +185,8 @@ export const PABatchComparison = () => {
           </View>
           <View style={pdfStyles.footer}>
             <Text>BiOQUILL Analytics • Batch Model Comparison</Text>
-            <Text>Confidential — For Internal Use Only</Text>
           </View>
+          <PDFWatermark />
         </Page>
       </Document>
     );

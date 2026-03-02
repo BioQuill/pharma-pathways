@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Calculator, ArrowRight, AlertTriangle, CheckCircle, TrendingUp, Pill, Download, FileSpreadsheet } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { getAllMolecules } from "@/lib/allMoleculesList";
-import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
+import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 
 export const TriangulationCalculator = () => {
   const allMolecules = useMemo(() => getAllMolecules(), []);
@@ -305,8 +305,8 @@ export const TriangulationCalculator = () => {
                     </View>
                     <View style={pdfStyles.footer}>
                       <Text>BiOQUILL Analytics • Triangulation Calculator</Text>
-                      <Text>Confidential — For Internal Use Only</Text>
                     </View>
+                    <PDFWatermark />
                   </Page>
                 </Document>
               );

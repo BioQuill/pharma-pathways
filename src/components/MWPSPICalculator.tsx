@@ -7,7 +7,7 @@ import { Calculator, TrendingUp, Target, Pill, Download, FileSpreadsheet, Chevro
 import * as XLSX from 'xlsx';
 import { Button } from "@/components/ui/button";
 import { getAllMolecules, mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
-import { Document, Page, Text, View, StyleSheet, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
+import { Document, Page, Text, View, StyleSheet, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -393,8 +393,8 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
                       </View>
                       <View style={pdfStyles.footer}>
                         <Text>BiOQUILL Analytics • MWPSPI Calculator</Text>
-                        <Text>Confidential — For Internal Use Only</Text>
                       </View>
+                      <PDFWatermark />
                     </Page>
                   </Document>
                 );

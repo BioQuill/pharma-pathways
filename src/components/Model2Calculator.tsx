@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Calculator, TrendingUp, AlertTriangle, CheckCircle, Pill, Download, FileSpreadsheet, ChevronDown, X } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { getAllMolecules, mapTAToModel2Id, deriveModel2Ratios } from "@/lib/allMoleculesList";
-import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
+import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -549,8 +549,8 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
                       )}
                       <View style={pdfStyles.footer}>
                         <Text>BiOQUILL Analytics • Model 2 Calculator</Text>
-                        <Text>Confidential — For Internal Use Only</Text>
                       </View>
+                      <PDFWatermark />
                     </Page>
                   </Document>
                 );
