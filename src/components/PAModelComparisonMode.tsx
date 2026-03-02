@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Layers, Download, FileSpreadsheet, Pill, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react";
 import { getAllMolecules, mapTAToModel1Id, mapTAToModel2Id, deriveModel1Scores, deriveModel2Ratios } from "@/lib/allMoleculesList";
-import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles } from "@/lib/pdfGenerator";
+import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 import * as XLSX from 'xlsx';
 
 const model1Markets = [
@@ -215,8 +215,8 @@ export const PAModelComparisonMode = () => {
           </View>
           <View style={pdfStyles.footer}>
             <Text>BiOQUILL Analytics • Combined Model Comparison</Text>
-            <Text>Confidential — For Internal Use Only</Text>
           </View>
+          <PDFWatermark />
         </Page>
       </Document>
     );

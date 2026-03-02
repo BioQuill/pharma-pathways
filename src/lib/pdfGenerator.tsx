@@ -79,14 +79,14 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   watermark: {
-    position: 'absolute',
+    position: 'absolute' as const,
     bottom: 8,
     left: 30,
     right: 30,
-    fontSize: 7,
+    fontSize: 6,
     color: '#c0c0c0',
-    textAlign: 'center',
-    fontStyle: 'italic',
+    textAlign: 'center' as const,
+    fontStyle: 'italic' as const,
   },
   methodologyNote: {
     padding: 12,
@@ -155,10 +155,11 @@ export const formatWatermarkDate = (): string => {
 };
 
 // Get watermark text for PDF reports
-export const getReportWatermark = (username?: string): string => {
+export const getReportWatermark = (companyName?: string, userEmail?: string): string => {
   const date = formatWatermarkDate();
-  const user = username || 'Platform User';
-  return `BioQuill | ${user} | Downloaded: ${date}`;
+  const company = companyName || 'Client Company';
+  const email = userEmail || 'user@company.com';
+  return `BioQuill | ${company} | ${email} | Downloaded: ${date} | Licensed for internal use only — redistribution prohibited`;
 };
 
 // Generate PDF from React-PDF document and trigger download
@@ -283,7 +284,7 @@ export const exportDomToPDF = async (
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
-      doc.setFontSize(7);
+      doc.setFontSize(6);
       doc.setTextColor(180, 180, 180);
       doc.text(watermarkText, pageWidth / 2, pageHeight - 5, { align: 'center' });
     }
@@ -294,6 +295,13 @@ export const exportDomToPDF = async (
     throw error;
   }
 };
+
+// Reusable PDF watermark component for @react-pdf/renderer documents
+export const PDFWatermark = ({ companyName, userEmail }: { companyName?: string; userEmail?: string }) => (
+  <Text style={styles.watermark}>
+    {getReportWatermark(companyName, userEmail)}
+  </Text>
+);
 
 // Re-export styles and components for custom documents
 export { styles as pdfStyles, Document, Page, Text, View, StyleSheet, pdf };
