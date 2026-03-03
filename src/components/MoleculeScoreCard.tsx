@@ -83,36 +83,46 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
     return "text-destructive";
   };
 
+  // Verdict
+  const verdict = compScoreVal >= 67 ? '→ INTERESTING — worth full analysis' : compScoreVal >= 34 ? '→ MONITOR — review at next data update' : '→ CAUTION — high-risk profile';
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-xl">{moleculeName}</CardTitle>
-            </div>
-            {trialName && (
-              <p className="text-sm font-medium text-primary mt-0.5">{trialName}</p>
-            )}
+          <div className="space-y-1.5 flex-1">
+            {/* Row 1: Drug name bold uppercase */}
+            <CardTitle className="text-xl uppercase tracking-wide">{moleculeName}</CardTitle>
+            
+            {/* Row 2: Sponsor & Ticker */}
             {company && (
-              <div className="flex items-center gap-2 mt-1">
-                <span className="inline-flex items-center gap-1.5 text-sm">
-                  <span className="font-bold text-[hsl(142,60%,25%)]">{company}</span>
-                  {mfgCapability?.ticker && (
-                    <a
-                      href={`https://finance.yahoo.com/quote/${mfgCapability.ticker}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-foreground transition-colors"
-                      title="View on Yahoo Finance"
-                    >
-                      ({mfgCapability.ticker})
-                    </a>
-                  )}
-                </span>
+              <div className="flex items-center gap-2 text-sm">
+                <span className="font-bold text-[hsl(142,60%,25%)]">{company}</span>
+                {mfgCapability?.ticker && (
+                  <a
+                    href={`https://finance.yahoo.com/quote/${mfgCapability.ticker}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                    title="View on Yahoo Finance"
+                  >
+                    ({mfgCapability.ticker})
+                  </a>
+                )}
               </div>
             )}
-            <CardDescription>{indication} • {therapeuticArea} • {phase}</CardDescription>
+            
+            {/* Row 3: Acronym | NCT ID | Phase */}
+            <p className="text-sm text-muted-foreground">
+              {trialName && <span className="font-medium">{trialName} | </span>}
+              {nctId && <span>{nctId} | </span>}
+              <span className="font-medium">{phase}</span>
+            </p>
+            
+            {/* Row 4: Condition | TA */}
+            <CardDescription>{indication} | {therapeuticArea}</CardDescription>
+            
+            {/* Row 5: Study URL */}
             {nctId && (
               <a 
                 href={getClinicalTrialsUrl(nctId)}
@@ -123,8 +133,9 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
                 ClinicalTrials.gov: {nctId} →
               </a>
             )}
+
             {/* Signal Dots Row - Doubled size circles with values */}
-            <div className="flex items-center gap-4 mt-2">
+            <div className="flex items-center gap-4 mt-3">
               <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
                 <span className="text-sm font-medium leading-none">LPI</span>
                 <span className="text-xl font-bold leading-none">{lpi3Score}%</span>
@@ -146,8 +157,10 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
                 <span className="text-xl font-bold leading-none">{scores.dropoutRanking}/5</span>
               </div>
             </div>
+            
+            {/* Verdict */}
+            <p className="text-sm font-semibold text-foreground mt-2">{verdict}</p>
           </div>
-          {/* Signal dots only - LPI/TTM badges and Score circle removed */}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

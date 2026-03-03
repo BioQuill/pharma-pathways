@@ -171,7 +171,7 @@ export default function Methodology() {
       {/* Header with Yellow Bar + Navy Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
         {/* Yellow Brand Bar */}
-        <div className="bg-[#FFC512] w-full">
+        <div className="bg-[#FFD700] w-full">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-4">

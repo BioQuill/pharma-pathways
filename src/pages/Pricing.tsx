@@ -141,7 +141,7 @@ const SampleCompoundedReport = () => {
     <div className="max-h-[75vh] overflow-y-auto">
       <div className="space-y-5 p-2">
         {/* Report Header */}
-        <div className="bg-[#F5D547] rounded-lg p-4 flex items-center gap-4">
+        <div className="bg-[#FFD700] rounded-lg p-4 flex items-center gap-4">
           <img src={bioquillLogo} alt="BiOQUILL" className="h-10 w-auto" />
           <div>
             <h3 className="font-bold text-gray-800">Full Due Diligence Report</h3>
@@ -692,7 +692,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 w-full">
-        <div className="bg-[#FFC512] w-full">
+        <div className="bg-[#FFD700] w-full">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-4">
