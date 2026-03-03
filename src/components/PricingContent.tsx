@@ -136,7 +136,7 @@ const SampleCompoundedReport = () => {
   return (
     <div className="max-h-[75vh] overflow-y-auto">
       <div className="space-y-5 p-2">
-        <div className="bg-[#F5D547] rounded-lg p-4 flex items-center gap-4">
+        <div className="bg-[#FFD700] rounded-lg p-4 flex items-center gap-4">
           <img src={bioquillLogo} alt="BiOQUILL" className="h-10 w-auto" />
           <div>
             <h3 className="font-bold text-gray-800">Full Due Diligence Report</h3>

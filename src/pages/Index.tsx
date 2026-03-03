@@ -853,7 +853,7 @@ const Index = () => {
       {/* Header with Yellow Bar + Orange Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
         {/* Yellow Brand Bar */}
-        <div className="bg-[#FFC512] w-full">
+        <div className="bg-[#FFD700] w-full">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -1035,7 +1035,7 @@ const Index = () => {
                       onClick={() => setActiveTab(area.tabs[0].value)}
                       className={`flex-1 max-w-[220px] py-3 text-center font-bold text-xs tracking-wider uppercase transition-colors ${
                         currentArea === key 
-                          ? 'border-b-2 border-[#FFC512] text-white bg-[#2B3D5B]' 
+                          ? 'border-b-2 border-[#FFD700] text-white bg-[#2B3D5B]' 
                           : 'border-b-2 border-transparent text-white/60 hover:text-white hover:bg-white/5'
                       }`}
                     >
@@ -1221,37 +1221,57 @@ const Index = () => {
                     const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
                     const dropoutDot = dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
 
-                    const lpiText = lpi3Score >= 67 ? 'Strong probability' : lpi3Score >= 34 ? 'Moderate probability' : 'Low probability';
-                    const ttmText = ttmEfficiency >= 67 ? 'fast timeline' : ttmEfficiency >= 34 ? 'average timeline' : 'slow timeline';
-                    const scoreText = compositeScore >= 67 ? 'good score' : compositeScore >= 34 ? 'moderate score' : 'weak score';
-                    const tiText = ti.classification === 'wide' ? 'wide safety margin' : ti.classification === 'moderate' ? 'moderate safety margin' : 'narrow safety margin';
-                    const dropoutText = dropoutRanking <= 2 ? 'low dropout risk' : dropoutRanking === 3 ? 'moderate dropout risk' : 'high dropout risk';
                     const verdict = compositeScore >= 67 ? '→ INTERESTING — worth full analysis' : compositeScore >= 34 ? '→ MONITOR — review at next data update' : '→ CAUTION — high-risk profile';
+
+                    // Generate enriched trial info from molecule data
+                    const mfg = getManufacturingCapability(molecule.company);
+                    const studyUrl = molecule.nctId ? `https://clinicaltrials.gov/study/${molecule.nctId}` : null;
 
                     return (
                     <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedMolecule(molecule.id)}>
                       <CardContent className="p-5">
                         <div className="flex items-start justify-between">
-                          <div className="space-y-2 flex-1">
-                            <div className="flex items-center gap-3 flex-wrap">
-                              <h3 className="text-lg font-bold">{molecule.name}</h3>
-                              <Badge variant="secondary" className="flex items-center gap-1.5 text-xs">
-                                <span>{molecule.company}</span>
-                                {(() => {
-                                  const mfg = getManufacturingCapability(molecule.company);
-                                  return mfg?.ticker ? (
-                                    <a href={`https://finance.yahoo.com/quote/${mfg.ticker}`} target="_blank" rel="noopener noreferrer"
-                                      className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
-                                      onClick={(e) => e.stopPropagation()} title="View on Yahoo Finance">
-                                      {mfg.ticker}
-                                    </a>
-                                  ) : null;
-                                })()}
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">{molecule.phase} • {molecule.indication} • {molecule.therapeuticArea}</span>
+                          <div className="space-y-1.5 flex-1 min-w-0">
+                            {/* Row 1: Drug name in bold uppercase */}
+                            <h3 className="text-lg font-bold uppercase tracking-wide">{molecule.name}</h3>
+                            
+                            {/* Row 2: Sponsor & Ticker */}
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
+                              {mfg?.ticker && (
+                                <a href={`https://finance.yahoo.com/quote/${mfg.ticker}`} target="_blank" rel="noopener noreferrer"
+                                  className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                                  onClick={(e) => e.stopPropagation()} title="View on Yahoo Finance">
+                                  ({mfg.ticker})
+                                </a>
+                              )}
                             </div>
-                            {/* Signal Dots Row - Large circles with values */}
-                            <div className="flex items-center gap-3 mt-1">
+                            
+                            {/* Row 3: Acronym | NCT ID | Phase */}
+                            <p className="text-xs text-muted-foreground">
+                              {molecule.trialName && <span className="font-medium">{molecule.trialName} | </span>}
+                              {molecule.nctId && <span>{molecule.nctId} | </span>}
+                              <span className="font-medium">{molecule.phase}</span>
+                            </p>
+                            
+                            {/* Row 4: Condition | TA */}
+                            <p className="text-xs text-muted-foreground">
+                              {molecule.indication} | {molecule.therapeuticArea}
+                            </p>
+                            
+                            {/* Row 5: Study URL */}
+                            {studyUrl && (
+                              <a href={studyUrl} target="_blank" rel="noopener noreferrer"
+                                className="text-xs text-primary hover:underline inline-block"
+                                onClick={(e) => e.stopPropagation()}>
+                                ClinicalTrials.gov: {molecule.nctId} →
+                              </a>
+                            )}
+                          </div>
+
+                          {/* Right side: Signal Dots + Verdict */}
+                          <div className="flex flex-col items-end gap-2 ml-4 shrink-0">
+                            <div className="flex items-center gap-2">
                               <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
                                 <span className="text-[9px] font-medium leading-none">LPI</span>
                                 <span className="text-xs font-bold leading-none">{lpi3Score}%</span>
@@ -1273,10 +1293,7 @@ const Index = () => {
                                 <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
                               </div>
                             </div>
-                            {/* Verdict line */}
-                            <p className="text-xs font-semibold text-foreground mt-1">{verdict}</p>
-                          </div>
-                          <div className="flex flex-col items-end gap-2 ml-4">
+                            <p className="text-xs font-semibold text-foreground text-right">{verdict}</p>
                             <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
                               Full Analysis →
                             </Button>
@@ -1290,7 +1307,7 @@ const Index = () => {
             ) : activeMolecule ? (
               <div className="space-y-6" ref={reportRef}>
                 {/* PDF-only header - hidden on screen, shown in PDF */}
-                <div className="hidden print:block pdf-header bg-[#F5D547] py-2 px-4 -mx-4 mb-4">
+                <div className="hidden print:block pdf-header bg-[#FFD700] py-2 px-4 -mx-4 mb-4">
                   <div className="flex items-center">
                     <img src={bioquillLogo} alt="BiOQUILL" className="h-8 w-auto object-contain" />
                   </div>
@@ -2252,7 +2269,7 @@ const Index = () => {
         </div>}
 
         {/* Data Freshness Statement */}
-        <div className="mt-4 py-3 px-4 bg-[#FFC512]/10 border border-[#FFC512]/30 rounded-lg text-center">
+        <div className="mt-4 py-3 px-4 bg-[#FFD700]/10 border border-[#FFD700]/30 rounded-lg text-center">
           <p className="text-sm text-muted-foreground italic">
             "BioQuill intelligence refreshes every Monday — reflecting the latest trial registrations, regulatory decisions, and market access updates from the prior week."
           </p>
