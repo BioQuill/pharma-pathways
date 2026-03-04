@@ -853,21 +853,9 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar + Orange Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar */}
-        <div className="bg-[#FFD700] w-full">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <img src={bioquillLogo} alt="BiOQUILL" className="h-14 w-auto object-contain mix-blend-multiply" />
-                <span className="text-lg font-semibold text-gray-800 hidden md:block">
-                  Precision intelligence. From pipeline to patient.
-                </span>
-              </div>
-              <Badge variant="outline" className="bg-white/80 text-xs font-medium text-gray-600 border-gray-300 hidden sm:flex">
-                Data refreshed: Monday 24 Feb 2026
-              </Badge>
-            </div>
-          </div>
+        {/* Yellow Brand Bar - Full-width logo banner */}
+        <div className="w-full">
+          <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full h-auto object-cover" />
         </div>
         
         {/* Top Navy Navigation Bar */}
