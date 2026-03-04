@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
+import topBarLogo from "@/assets/top-bar-logo.png";
 
 // ROI Calculator Component
 const ROICalculator = () => {
