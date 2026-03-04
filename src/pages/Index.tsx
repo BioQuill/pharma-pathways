@@ -1219,103 +1219,69 @@ const Index = () => {
                     return (
                     <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedMolecule(molecule.id)}>
                       <CardContent className="p-5">
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-1.5 flex-1 min-w-0">
-                            {/* Row 1: Drug name in bold uppercase */}
-                            <h3 className="text-lg font-bold uppercase tracking-wide">{molecule.name}</h3>
-                            
-                            {/* Row 2: Sponsor & Ticker */}
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
-                              {mfg?.ticker && (
-                                <a href={`https://finance.yahoo.com/quote/${mfg.ticker}`} target="_blank" rel="noopener noreferrer"
-                                  className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
-                                  onClick={(e) => e.stopPropagation()} title="View on Yahoo Finance">
-                                  ({mfg.ticker})
-                                </a>
-                              )}
-                            </div>
-                            
-                            {/* Row 3: NCT ID | Phase */}
-                            <p className="text-xs text-muted-foreground">
-                              {molecule.nctId && <span>{molecule.nctId} | </span>}
-                              <span className="font-medium">{molecule.phase}</span>
-                            </p>
-                            
-                            {/* Row 4: Condition | TA */}
-                            <p className="text-xs text-muted-foreground">
-                              {molecule.indication} | {molecule.therapeuticArea}
-                            </p>
-                            
-                            {/* Row 5: Study Title */}
-                            {molecule.trialName && (
-                              <p className="text-xs text-muted-foreground italic line-clamp-1" title={molecule.trialName}>
-                                {molecule.trialName}
-                              </p>
-                            )}
-                            
-                            {/* Row 6: Brief Summary */}
-                            {(molecule as any)._raw?.brief_summary && (
-                              <p className="text-xs text-muted-foreground line-clamp-2" title={(molecule as any)._raw.brief_summary}>
-                                {(molecule as any)._raw.brief_summary}
-                              </p>
-                            )}
-                            
-                            {/* Row 7: Start Date | Completion Date | Status */}
-                            {((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
-                              <p className="text-xs text-muted-foreground">
-                                {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
-                                {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
-                                {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
-                              </p>
-                            )}
-                            
-                            {/* Row 8: Study URL */}
-                            {studyUrl && (
-                              <a href={studyUrl} target="_blank" rel="noopener noreferrer"
-                                className="text-xs text-primary hover:underline inline-block"
-                                onClick={(e) => e.stopPropagation()}>
-                                ClinicalTrials.gov: {molecule.nctId} →
+                        {/* Top-right Full Analysis button */}
+                        <div className="flex items-start justify-between mb-2">
+                          <h3 className="text-lg font-bold uppercase tracking-wide">{molecule.name}</h3>
+                          <Button size="sm" variant="outline" className="text-xs shrink-0 ml-4" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
+                            Full Analysis →
+                          </Button>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          {/* Row 2: Sponsor & Ticker */}
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
+                            {mfg?.ticker && (
+                              <a href={`https://finance.yahoo.com/quote/${mfg.ticker}`} target="_blank" rel="noopener noreferrer"
+                                className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                                onClick={(e) => e.stopPropagation()} title="View on Yahoo Finance">
+                                ({mfg.ticker})
                               </a>
                             )}
-                            
-                            {/* Row 9: Primary Outcome */}
-                            {molecule.drugInfo?.keyAdvantage && (
-                              <p className="text-xs text-muted-foreground line-clamp-1">
-                                <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
-                              </p>
-                            )}
                           </div>
+                          
+                          {/* Row 3: NCT ID | Phase */}
+                          <p className="text-xs text-muted-foreground">
+                            {molecule.nctId && <span>{molecule.nctId} | </span>}
+                            <span className="font-medium">{molecule.phase}</span>
+                          </p>
+                          
+                          {/* Row 4: Condition | TA */}
+                          <p className="text-xs text-muted-foreground">
+                            {molecule.indication} | {molecule.therapeuticArea}
+                          </p>
+                          
+                          {/* Row 5: Study Title */}
+                          {molecule.trialName && (
+                            <p className="text-xs text-muted-foreground italic line-clamp-1" title={molecule.trialName}>
+                              {molecule.trialName}
+                            </p>
+                          )}
 
-                          {/* Right side: Signal Dots + Verdict */}
-                          <div className="flex flex-col items-end gap-2 ml-4 shrink-0">
-                            <div className="flex items-center gap-2">
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
-                                <span className="text-[9px] font-medium leading-none">LPI</span>
-                                <span className="text-xs font-bold leading-none">{lpi3Score}%</span>
-                              </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
-                                <span className="text-[9px] font-medium leading-none">TTM</span>
-                                <span className="text-xs font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
-                              </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${scoreDot} text-white`} title={`Score: ${compositeScore}`}>
-                                <span className="text-[9px] font-medium leading-none">Score</span>
-                                <span className="text-xs font-bold leading-none">{compositeScore}</span>
-                              </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${tiDot} text-white`} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
-                                <span className="text-[9px] font-medium leading-none">TI</span>
-                                <span className="text-xs font-bold leading-none">{ti.value.toFixed(1)}</span>
-                              </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${dropoutRanking}/5`}>
-                                <span className="text-[9px] font-medium leading-none">Drop</span>
-                                <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
-                              </div>
+                          {/* Signal Dots + Verdict - on the left */}
+                          <div className="flex items-center gap-2 mt-3">
+                            <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
+                              <span className="text-[9px] font-medium leading-none">LPI</span>
+                              <span className="text-xs font-bold leading-none">{lpi3Score}%</span>
                             </div>
-                            <p className="text-xs font-semibold text-foreground text-right">{verdict}</p>
-                            <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
-                              Full Analysis →
-                            </Button>
+                            <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
+                              <span className="text-[9px] font-medium leading-none">TTM</span>
+                              <span className="text-xs font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${scoreDot} text-white`} title={`Score: ${compositeScore}`}>
+                              <span className="text-[9px] font-medium leading-none">Score</span>
+                              <span className="text-xs font-bold leading-none">{compositeScore}</span>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${tiDot} text-white`} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
+                              <span className="text-[9px] font-medium leading-none">TI</span>
+                              <span className="text-xs font-bold leading-none">{ti.value.toFixed(1)}</span>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${dropoutRanking}/5`}>
+                              <span className="text-[9px] font-medium leading-none">Drop</span>
+                              <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
+                            </div>
                           </div>
+                          <p className="text-xs font-semibold text-foreground">{verdict}</p>
                         </div>
                       </CardContent>
                     </Card>
