@@ -1236,9 +1236,8 @@ const Index = () => {
                               )}
                             </div>
                             
-                            {/* Row 3: Acronym | NCT ID | Phase */}
+                            {/* Row 3: NCT ID | Phase */}
                             <p className="text-xs text-muted-foreground">
-                              {molecule.trialName && <span className="font-medium">{molecule.trialName} | </span>}
                               {molecule.nctId && <span>{molecule.nctId} | </span>}
                               <span className="font-medium">{molecule.phase}</span>
                             </p>
