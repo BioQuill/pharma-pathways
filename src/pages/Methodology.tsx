@@ -21,6 +21,7 @@ import {
   LineChart
 } from "lucide-react";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
+import topBarLogo from "@/assets/top-bar-logo.png";
 
 const featureCategories = [
   {
