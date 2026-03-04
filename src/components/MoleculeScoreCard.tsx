@@ -89,8 +89,9 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="space-y-1.5 flex-1">
+        <div className="flex items-start gap-6">
+          {/* Left: First 3 rows of text */}
+          <div className="space-y-1.5 flex-1 min-w-0">
             {/* Row 1: Drug name bold uppercase */}
             <CardTitle className="text-xl uppercase tracking-wide">{moleculeName}</CardTitle>
             
@@ -117,77 +118,80 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               {nctId && <span>{nctId} | </span>}
               <span className="font-medium">{phase}</span>
             </p>
-            
-            {/* Row 4: Condition | TA */}
-            <CardDescription>{indication} | {therapeuticArea}</CardDescription>
-            
-            {/* Row 5: Study Title */}
-            {trialName && (
-              <p className="text-sm text-muted-foreground italic">{trialName}</p>
-            )}
-            
-            {/* Row 6: Brief Summary */}
-            {molecule && (molecule as any)._raw?.brief_summary && (
-              <p className="text-sm text-muted-foreground line-clamp-3">
-                {(molecule as any)._raw.brief_summary}
-              </p>
-            )}
-            
-            {/* Row 7: Start Date | Completion Date | Status */}
-            {molecule && ((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
-              <p className="text-sm text-muted-foreground">
-                {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
-                {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
-                {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
-              </p>
-            )}
-            
-            {/* Row 8: Study URL */}
-            {nctId && (
-              <a 
-                href={getClinicalTrialsUrl(nctId)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-primary hover:underline mt-1 inline-block"
-              >
-                ClinicalTrials.gov: {nctId} →
-              </a>
-            )}
-            
-            {/* Row 9: Primary Outcome */}
-            {molecule?.drugInfo?.keyAdvantage && (
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
-              </p>
-            )}
-
-            {/* Signal Dots Row - Doubled size circles with values */}
-            <div className="flex items-center gap-4 mt-3">
-              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
-                <span className="text-sm font-medium leading-none">LPI</span>
-                <span className="text-xl font-bold leading-none">{lpi3Score}%</span>
-              </div>
-              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
-                <span className="text-sm font-medium leading-none">TTM</span>
-                <span className="text-xl font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
-              </div>
-              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
-                <span className="text-sm font-medium leading-none">Score</span>
-                <span className="text-xl font-bold leading-none">{compScoreVal}</span>
-              </div>
-              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${tiDot} text-white`} title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
-                <span className="text-sm font-medium leading-none">TI</span>
-                <span className="text-xl font-bold leading-none">{ti ? ti.value.toFixed(1) : 'N/A'}</span>
-              </div>
-              <div className={`flex flex-col items-center justify-center w-28 h-28 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${scores.dropoutRanking}/5`}>
-                <span className="text-sm font-medium leading-none">Drop</span>
-                <span className="text-xl font-bold leading-none">{scores.dropoutRanking}/5</span>
-              </div>
-            </div>
-            
-            {/* Verdict */}
-            <p className="text-sm font-semibold text-foreground mt-2">{verdict}</p>
           </div>
+
+          {/* Right: 5 Signal Dots inline with top rows */}
+          <div className="flex items-center gap-3 shrink-0">
+            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
+              <span className="text-[10px] font-medium leading-none">LPI</span>
+              <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+            </div>
+            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
+              <span className="text-[10px] font-medium leading-none">TTM</span>
+              <span className="text-sm font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
+            </div>
+            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
+              <span className="text-[10px] font-medium leading-none">Score</span>
+              <span className="text-sm font-bold leading-none">{compScoreVal}</span>
+            </div>
+            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${tiDot} text-white`} title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
+              <span className="text-[10px] font-medium leading-none">TI</span>
+              <span className="text-sm font-bold leading-none">{ti ? ti.value.toFixed(1) : 'N/A'}</span>
+            </div>
+            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${scores.dropoutRanking}/5`}>
+              <span className="text-[10px] font-medium leading-none">Drop</span>
+              <span className="text-sm font-bold leading-none">{scores.dropoutRanking}/5</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Remaining rows below */}
+        <div className="space-y-1.5 mt-3">
+          {/* Row 4: Condition | TA */}
+          <CardDescription>{indication} | {therapeuticArea}</CardDescription>
+          
+          {/* Row 5: Study Title */}
+          {trialName && (
+            <p className="text-sm text-muted-foreground italic">{trialName}</p>
+          )}
+          
+          {/* Row 6: Brief Summary */}
+          {molecule && (molecule as any)._raw?.brief_summary && (
+            <p className="text-sm text-muted-foreground line-clamp-3">
+              {(molecule as any)._raw.brief_summary}
+            </p>
+          )}
+          
+          {/* Row 7: Start Date | Completion Date | Status */}
+          {molecule && ((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
+            <p className="text-sm text-muted-foreground">
+              {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
+              {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
+              {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+            </p>
+          )}
+          
+          {/* Row 8: Study URL */}
+          {nctId && (
+            <a 
+              href={getClinicalTrialsUrl(nctId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline mt-1 inline-block"
+            >
+              ClinicalTrials.gov: {nctId} →
+            </a>
+          )}
+          
+          {/* Row 9: Primary Outcome */}
+          {molecule?.drugInfo?.keyAdvantage && (
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
+            </p>
+          )}
+          
+          {/* Verdict */}
+          <p className="text-sm font-semibold text-foreground mt-2">{verdict}</p>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
