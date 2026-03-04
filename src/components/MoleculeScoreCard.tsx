@@ -112,9 +112,8 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               </div>
             )}
             
-            {/* Row 3: Acronym | NCT ID | Phase */}
+            {/* Row 3: NCT ID | Phase */}
             <p className="text-sm text-muted-foreground">
-              {trialName && <span className="font-medium">{trialName} | </span>}
               {nctId && <span>{nctId} | </span>}
               <span className="font-medium">{phase}</span>
             </p>
