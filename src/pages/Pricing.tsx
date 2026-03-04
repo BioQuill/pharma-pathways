@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
+import topBarLogo from "@/assets/top-bar-logo.png";
 
 // ROI Calculator Component
 const ROICalculator = () => {
@@ -692,20 +693,10 @@ export default function Pricing() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 w-full">
-        <div className="bg-[#FFD700] w-full">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-              <Link to="/" className="flex items-center gap-4">
-                <img src={bioquillLogo} alt="BiOQUILL" className="h-14 w-auto object-contain" />
-                <span className="text-lg font-semibold text-gray-800 hidden md:block">
-                  Precision intelligence. From pipeline to patient.
-                </span>
-              </Link>
-              <Badge variant="outline" className="bg-white/80 text-xs font-medium text-gray-600 border-gray-300 hidden sm:flex">
-                Data refreshed: Monday 24 Feb 2026
-              </Badge>
-            </div>
-          </div>
+        <div className="w-full">
+          <Link to="/">
+            <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full h-auto object-cover" />
+          </Link>
         </div>
         <div className="bg-[#0E1D35] w-full">
           <div className="container mx-auto px-4">

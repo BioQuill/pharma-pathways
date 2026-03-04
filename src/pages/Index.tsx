@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
+import topBarLogo from "@/assets/top-bar-logo.png";
 import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
@@ -852,21 +853,9 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar + Orange Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar */}
-        <div className="bg-[#FFD700] w-full">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <img src={bioquillLogo} alt="BiOQUILL" className="h-14 w-auto object-contain mix-blend-multiply" />
-                <span className="text-lg font-semibold text-gray-800 hidden md:block">
-                  Precision intelligence. From pipeline to patient.
-                </span>
-              </div>
-              <Badge variant="outline" className="bg-white/80 text-xs font-medium text-gray-600 border-gray-300 hidden sm:flex">
-                Data refreshed: Monday 24 Feb 2026
-              </Badge>
-            </div>
-          </div>
+        {/* Yellow Brand Bar - Full-width logo banner */}
+        <div className="w-full">
+          <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full h-auto object-cover" />
         </div>
         
         {/* Top Navy Navigation Bar */}
@@ -1247,9 +1236,8 @@ const Index = () => {
                               )}
                             </div>
                             
-                            {/* Row 3: Acronym | NCT ID | Phase */}
+                            {/* Row 3: NCT ID | Phase */}
                             <p className="text-xs text-muted-foreground">
-                              {molecule.trialName && <span className="font-medium">{molecule.trialName} | </span>}
                               {molecule.nctId && <span>{molecule.nctId} | </span>}
                               <span className="font-medium">{molecule.phase}</span>
                             </p>
@@ -1259,13 +1247,43 @@ const Index = () => {
                               {molecule.indication} | {molecule.therapeuticArea}
                             </p>
                             
-                            {/* Row 5: Study URL */}
+                            {/* Row 5: Study Title */}
+                            {molecule.trialName && (
+                              <p className="text-xs text-muted-foreground italic line-clamp-1" title={molecule.trialName}>
+                                {molecule.trialName}
+                              </p>
+                            )}
+                            
+                            {/* Row 6: Brief Summary */}
+                            {(molecule as any)._raw?.brief_summary && (
+                              <p className="text-xs text-muted-foreground line-clamp-2" title={(molecule as any)._raw.brief_summary}>
+                                {(molecule as any)._raw.brief_summary}
+                              </p>
+                            )}
+                            
+                            {/* Row 7: Start Date | Completion Date | Status */}
+                            {((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
+                              <p className="text-xs text-muted-foreground">
+                                {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
+                                {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
+                                {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+                              </p>
+                            )}
+                            
+                            {/* Row 8: Study URL */}
                             {studyUrl && (
                               <a href={studyUrl} target="_blank" rel="noopener noreferrer"
                                 className="text-xs text-primary hover:underline inline-block"
                                 onClick={(e) => e.stopPropagation()}>
                                 ClinicalTrials.gov: {molecule.nctId} →
                               </a>
+                            )}
+                            
+                            {/* Row 9: Primary Outcome */}
+                            {molecule.drugInfo?.keyAdvantage && (
+                              <p className="text-xs text-muted-foreground line-clamp-1">
+                                <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
+                              </p>
                             )}
                           </div>
 
