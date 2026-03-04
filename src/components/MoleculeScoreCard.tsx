@@ -122,7 +122,28 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             {/* Row 4: Condition | TA */}
             <CardDescription>{indication} | {therapeuticArea}</CardDescription>
             
-            {/* Row 5: Study URL */}
+            {/* Row 5: Study Title */}
+            {trialName && (
+              <p className="text-sm text-muted-foreground italic">{trialName}</p>
+            )}
+            
+            {/* Row 6: Brief Summary */}
+            {molecule && (molecule as any)._raw?.brief_summary && (
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {(molecule as any)._raw.brief_summary}
+              </p>
+            )}
+            
+            {/* Row 7: Start Date | Completion Date | Status */}
+            {molecule && ((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
+              <p className="text-sm text-muted-foreground">
+                {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
+                {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
+                {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+              </p>
+            )}
+            
+            {/* Row 8: Study URL */}
             {nctId && (
               <a 
                 href={getClinicalTrialsUrl(nctId)}
@@ -132,6 +153,13 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               >
                 ClinicalTrials.gov: {nctId} →
               </a>
+            )}
+            
+            {/* Row 9: Primary Outcome */}
+            {molecule?.drugInfo?.keyAdvantage && (
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
+              </p>
             )}
 
             {/* Signal Dots Row - Doubled size circles with values */}
