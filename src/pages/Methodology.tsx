@@ -172,11 +172,14 @@ export default function Methodology() {
       {/* Header with Yellow Bar + Navy Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
         {/* Yellow Brand Bar */}
-        <div className="w-full">
-          <Link to="/">
-            <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full object-cover" style={{ maxHeight: '32px', objectFit: 'cover' }} />
-          </Link>
-        </div>
+        <Link to="/" className="block w-full">
+          <div className="w-full bg-[#FFD700] flex items-center justify-center" style={{ height: '28px' }}>
+            <div className="flex items-center gap-3">
+              <span className="text-[#0E1D35] font-bold text-sm tracking-wide">BiOQUILL</span>
+              <span className="text-[#0E1D35] text-[10px] opacity-80">Precision intelligence. From pipeline to patient.</span>
+            </div>
+          </div>
+        </Link>
         
         {/* Navy Navigation Bar */}
         <div className="bg-[#0E1D35] w-full">
