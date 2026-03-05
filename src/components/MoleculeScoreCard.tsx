@@ -193,8 +193,6 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             </p>
           )}
           
-          {/* Verdict */}
-          <p className="text-sm font-semibold text-foreground mt-2">{verdict}</p>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
