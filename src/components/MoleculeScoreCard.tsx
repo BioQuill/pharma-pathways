@@ -120,28 +120,31 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             </p>
           </div>
 
-          {/* Right: 5 Signal Dots inline with top rows */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
-              <span className="text-[10px] font-medium leading-none">LPI</span>
-              <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+          {/* Right: 5 Signal Dots + Verdict inline with top rows */}
+          <div className="flex flex-col items-start shrink-0">
+            <div className="flex items-center gap-3">
+              <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${lpiDot} text-white`} title={`LPI: ${lpi3Score}%`}>
+                <span className="text-[10px] font-medium leading-none">LPI</span>
+                <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
+                <span className="text-[10px] font-medium leading-none">TTM</span>
+                <span className="text-sm font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
+                <span className="text-[10px] font-medium leading-none">Score</span>
+                <span className="text-sm font-bold leading-none">{compScoreVal}</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${tiDot} text-white`} title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
+                <span className="text-[10px] font-medium leading-none">TI</span>
+                <span className="text-sm font-bold leading-none">{ti ? ti.value.toFixed(1) : 'N/A'}</span>
+              </div>
+              <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${scores.dropoutRanking}/5`}>
+                <span className="text-[10px] font-medium leading-none">Drop</span>
+                <span className="text-sm font-bold leading-none">{scores.dropoutRanking}/5</span>
+              </div>
             </div>
-            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
-              <span className="text-[10px] font-medium leading-none">TTM</span>
-              <span className="text-sm font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
-            </div>
-            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
-              <span className="text-[10px] font-medium leading-none">Score</span>
-              <span className="text-sm font-bold leading-none">{compScoreVal}</span>
-            </div>
-            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${tiDot} text-white`} title={`TI: ${ti ? ti.value.toFixed(1) + ' (' + ti.classification + ')' : 'N/A'}`}>
-              <span className="text-[10px] font-medium leading-none">TI</span>
-              <span className="text-sm font-bold leading-none">{ti ? ti.value.toFixed(1) : 'N/A'}</span>
-            </div>
-            <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${dropoutDot} text-white`} title={`Dropout: ${scores.dropoutRanking}/5`}>
-              <span className="text-[10px] font-medium leading-none">Drop</span>
-              <span className="text-sm font-bold leading-none">{scores.dropoutRanking}/5</span>
-            </div>
+            <p className="text-sm font-semibold text-foreground mt-1">{verdict}</p>
           </div>
         </div>
 
