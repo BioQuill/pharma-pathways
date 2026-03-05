@@ -853,9 +853,9 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar + Orange Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar - Full-width logo banner */}
+        {/* Yellow Brand Bar - Full-width logo banner (50% thinner) */}
         <div className="w-full">
-          <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full h-auto object-cover" />
+          <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full object-cover" style={{ maxHeight: '32px', objectFit: 'cover' }} />
         </div>
         
         {/* Top Navy Navigation Bar */}
