@@ -1018,7 +1018,7 @@ const Index = () => {
               <>
                 {/* Area Navigation Bar */}
                 <div className="w-full bg-[#0E1D35] flex justify-center">
-                  {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).map(([key, area]) => (
+                {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).filter(([key]) => key !== 'lcm' && key !== 'news').map(([key, area]) => (
                     <button
                       key={key}
                       onClick={() => setActiveTab(area.tabs[0].value)}
