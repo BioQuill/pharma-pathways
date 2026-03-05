@@ -853,9 +853,15 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar + Orange Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar - Full-width logo banner (50% thinner) */}
-        <div className="w-full">
-          <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full object-cover" style={{ maxHeight: '32px', objectFit: 'cover' }} />
+        {/* Yellow Brand Bar */}
+        <div className="w-full bg-[#FFD700] flex items-center justify-center" style={{ height: '28px' }}>
+          <div className="flex items-center gap-3">
+            <span className="text-[#0E1D35] font-bold text-sm tracking-wide">BiOQUILL</span>
+            <span className="text-[#0E1D35] text-[10px] opacity-80">Precision intelligence. From pipeline to patient.</span>
+            <Badge variant="outline" className="text-[8px] px-1.5 py-0 h-4 border-[#0E1D35]/30 text-[#0E1D35]/70 bg-white/40">
+              Data refreshed: {new Date().toLocaleDateString()}
+            </Badge>
+          </div>
         </div>
         
         {/* Top Navy Navigation Bar */}
