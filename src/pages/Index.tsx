@@ -853,9 +853,9 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header with Yellow Bar + Orange Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar - Full-width logo banner */}
+        {/* Yellow Brand Bar - Full-width logo banner (50% thinner) */}
         <div className="w-full">
-          <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full h-auto object-cover" />
+          <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full object-cover" style={{ maxHeight: '32px', objectFit: 'cover' }} />
         </div>
         
         {/* Top Navy Navigation Bar */}
@@ -1018,7 +1018,7 @@ const Index = () => {
               <>
                 {/* Area Navigation Bar */}
                 <div className="w-full bg-[#0E1D35] flex justify-center">
-                  {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).map(([key, area]) => (
+                {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).filter(([key]) => key !== 'lcm' && key !== 'news').map(([key, area]) => (
                     <button
                       key={key}
                       onClick={() => setActiveTab(area.tabs[0].value)}
@@ -1255,6 +1255,22 @@ const Index = () => {
                           {molecule.trialName && (
                             <p className="text-xs text-muted-foreground italic line-clamp-1" title={molecule.trialName}>
                               {molecule.trialName}
+                            </p>
+                          )}
+                          
+                          {/* Row 6: Primary Outcome */}
+                          {molecule.drugInfo?.keyAdvantage && (
+                            <p className="text-xs text-muted-foreground">
+                              <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
+                            </p>
+                          )}
+
+                          {/* Row 7: Start Date | Completion Date | Status */}
+                          {((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
+                            <p className="text-xs text-muted-foreground">
+                              {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
+                              {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
+                              {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
                             </p>
                           )}
 

@@ -155,10 +155,10 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             <p className="text-sm text-muted-foreground italic">{trialName}</p>
           )}
           
-          {/* Row 6: Brief Summary */}
-          {molecule && (molecule as any)._raw?.brief_summary && (
-            <p className="text-sm text-muted-foreground line-clamp-3">
-              {(molecule as any)._raw.brief_summary}
+          {/* Row 6: Primary Outcome */}
+          {molecule?.drugInfo?.keyAdvantage && (
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
             </p>
           )}
           
@@ -183,10 +183,10 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             </a>
           )}
           
-          {/* Row 9: Primary Outcome */}
-          {molecule?.drugInfo?.keyAdvantage && (
-            <p className="text-sm text-muted-foreground">
-              <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
+          {/* Row 9: Brief Summary */}
+          {molecule && (molecule as any)._raw?.brief_summary && (
+            <p className="text-sm text-muted-foreground line-clamp-3">
+              {(molecule as any)._raw.brief_summary}
             </p>
           )}
           

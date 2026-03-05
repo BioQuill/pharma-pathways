@@ -279,34 +279,28 @@ export const exportDomToPDF = async (
       }
     }
     
-    // Add watermark + emblem to every page
+    // Add yellow bar header + watermark to every page
     const watermarkText = getReportWatermark();
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
+      
+      // Yellow brand bar at top of each page
+      doc.setFillColor(255, 215, 0); // #FFD700
+      doc.rect(0, 0, pageWidth, 10, 'F');
+      // Logo text on yellow bar
+      doc.setFontSize(7);
+      doc.setTextColor(14, 29, 53); // #0E1D35 navy
+      doc.setFont('Helvetica', 'bold');
+      doc.text('BiOQUILL', pageWidth / 2, 6.5, { align: 'center' });
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(4.5);
+      doc.text('Precision intelligence. From pipeline to patient.', pageWidth / 2, 9, { align: 'center' });
+      
+      // Watermark at bottom
       doc.setFontSize(6);
       doc.setTextColor(180, 180, 180);
       doc.text(watermarkText, pageWidth / 2, pageHeight - 5, { align: 'center' });
-      
-      // Emblem: black circle with quill symbol (bottom-right corner)
-      const emblemX = pageWidth - margin - 8;
-      const emblemY = pageHeight - 16;
-      const emblemR = 6;
-      doc.setFillColor(0, 0, 0);
-      doc.circle(emblemX, emblemY, emblemR, 'F');
-      // Draw a stylized quill/feather inside the circle
-      doc.setDrawColor(255, 215, 0); // Gold quill
-      doc.setLineWidth(0.4);
-      // Quill shaft (diagonal line)
-      doc.line(emblemX - 2.5, emblemY + 3, emblemX + 2.5, emblemY - 3);
-      // Feather barbs
-      doc.line(emblemX - 1.5, emblemY + 1.5, emblemX - 3, emblemY);
-      doc.line(emblemX - 0.5, emblemY + 0.5, emblemX - 2, emblemY - 1);
-      doc.line(emblemX + 0.5, emblemY - 0.5, emblemX - 1, emblemY - 2);
-      doc.line(emblemX + 1.5, emblemY - 1.5, emblemX, emblemY - 3);
-      // Nib at bottom
-      doc.line(emblemX - 2.5, emblemY + 3, emblemX - 3, emblemY + 4);
-      doc.line(emblemX - 2.5, emblemY + 3, emblemX - 2, emblemY + 4);
     }
     
     doc.save(filename);

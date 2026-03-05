@@ -695,7 +695,7 @@ export default function Pricing() {
       <header className="sticky top-0 z-10 w-full">
         <div className="w-full">
           <Link to="/">
-            <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full h-auto object-cover" />
+            <img src={topBarLogo} alt="BiOQUILL — Precision intelligence. From pipeline to patient." className="w-full object-cover" style={{ maxHeight: '32px', objectFit: 'cover' }} />
           </Link>
         </div>
         <div className="bg-[#0E1D35] w-full">
