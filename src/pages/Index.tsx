@@ -1257,6 +1257,22 @@ const Index = () => {
                               {molecule.trialName}
                             </p>
                           )}
+                          
+                          {/* Row 6: Primary Outcome */}
+                          {molecule.drugInfo?.keyAdvantage && (
+                            <p className="text-xs text-muted-foreground">
+                              <span className="font-medium">Primary outcome:</span> {molecule.drugInfo.keyAdvantage}
+                            </p>
+                          )}
+
+                          {/* Row 7: Start Date | Completion Date | Status */}
+                          {((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
+                            <p className="text-xs text-muted-foreground">
+                              {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
+                              {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
+                              {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+                            </p>
+                          )}
 
                           {/* Signal Dots + Verdict - on the left */}
                           <div className="flex items-center gap-2 mt-3">
