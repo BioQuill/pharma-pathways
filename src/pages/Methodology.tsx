@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 import topBarLogo from "@/assets/top-bar-logo.png";
+import topBarImage from "@/assets/bioquill-top-bar.png";
 
 const featureCategories = [
   {
