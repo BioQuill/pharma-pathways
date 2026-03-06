@@ -1244,6 +1244,20 @@ const Index = () => {
                           <div className="flex-1 min-w-0 space-y-1">
                             {/* Row 1: Drug Name */}
                             <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(var(--foreground))]">{molecule.name}</h3>
+                            {/* Approval Status Badge */}
+                            {(() => {
+                              const status = (molecule as any)._raw?.approval_status;
+                              if (!status || status === 'ACTIVE_PIPELINE') return null;
+                              const badgeConfig: Record<string, { color: string; text: string }> = {
+                                'APPROVED_2024': { color: 'bg-[hsl(142,76%,36%)] text-white', text: '✓ Approved' },
+                                'LIKELY_IN_REVIEW': { color: 'bg-blue-500 text-white', text: '⏳ In Review' },
+                                'RECENTLY_COMPLETED_PH3': { color: 'bg-amber-500 text-white', text: 'Completed Ph3' },
+                                'COMPLETED_PH3': { color: 'bg-slate-400 text-white', text: 'Completed Ph3' },
+                                'COMPLETED_PH2': { color: 'bg-gray-300 text-gray-700', text: 'Completed Ph2' },
+                              };
+                              const cfg = badgeConfig[status] || badgeConfig['COMPLETED_PH3'];
+                              return <Badge className={`text-[10px] px-1.5 py-0 ${cfg.color}`}>{cfg.text}</Badge>;
+                            })()}
                             {/* Row 2: Sponsor & Ticker */}
                             <div className="flex items-center gap-2 text-sm">
                               <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
@@ -1255,7 +1269,7 @@ const Index = () => {
                                 </a>
                               )}
                             </div>
-                            {/* Row 3: acronym | NCT ID | Phase */}
+                            {/* Row 3: NCT ID | Phase */}
                             <p className="text-xs text-muted-foreground">
                               {molecule.nctId && <span>{molecule.nctId} | </span>}
                               <span className="font-medium">{molecule.phase}</span>
