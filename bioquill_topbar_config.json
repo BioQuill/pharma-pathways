@@ -1,0 +1,161 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "BioQuill top bar configuration \u2014 platform header and PDF report header",
+    "last_updated": "2026-03-06"
+  },
+  "brand": {
+    "name": "BiOQUILL",
+    "trademark": "\u2122",
+    "tagline_line1": "Precision intelligence.",
+    "tagline_line2": "From pipeline to patients.",
+    "yellow": "#F5C518",
+    "yellow_dark": "#E8B800",
+    "text_dark": "#1A1A1A",
+    "text_on_yellow": "#1A1A1A"
+  },
+  "platform_topbar": {
+    "description": "Sticky top bar shown on all platform pages. Replaces current navigation header.",
+    "position": "fixed top-0 left-0 right-0 z-50",
+    "height_px": 48,
+    "height_rem": 3,
+    "background": "#F5C518",
+    "border_bottom": "none",
+    "shadow": "0 2px 8px rgba(0,0,0,0.12)",
+    "logo_section": {
+      "position": "absolute left-0 top-50%",
+      "description": "Logo circle overflows bar top and bottom \u2014 vertically centered on bar midpoint",
+      "circle_diameter_px": 56,
+      "circle_overflow_px": 8,
+      "circle_background": "#1A1A1A",
+      "circle_margin_left_px": 16,
+      "emblem_size_px": 36,
+      "wordmark": {
+        "text": "BiOQUILL\u2122",
+        "font_family": "Inter, sans-serif",
+        "font_weight": 700,
+        "font_size_px": 20,
+        "letter_spacing": "-0.02em",
+        "color": "#1A1A1A",
+        "margin_left_px": 12
+      }
+    },
+    "tagline_section": {
+      "description": "Two-line tagline immediately right of wordmark, vertically centered",
+      "display": "none",
+      "note": "Hide tagline in platform topbar \u2014 space constrained. Show only in PDF header.",
+      "show_in_platform": false,
+      "show_in_pdf": true
+    },
+    "right_section": {
+      "description": "Data refresh date pushed to far right",
+      "position": "absolute right-0",
+      "margin_right_px": 24,
+      "data_refreshed_label": "Data refreshed:",
+      "font_size_px": 12,
+      "font_weight": 400,
+      "color": "#1A1A1A",
+      "opacity": 0.75,
+      "pill_background": "rgba(255,255,255,0.35)",
+      "pill_border_radius_px": 20,
+      "pill_padding": "4px 12px"
+    },
+    "nav_links": {
+      "description": "Navigation links centered in the bar",
+      "position": "center",
+      "items": [
+        "Platform",
+        "Methodology",
+        "Strategy Hub",
+        "Pricing",
+        "Search"
+      ],
+      "font_size_px": 14,
+      "font_weight": 500,
+      "color": "#1A1A1A",
+      "active_color": "#1A1A1A",
+      "active_underline": "2px solid #1A1A1A",
+      "gap_px": 32
+    },
+    "css": "/* BioQuill Platform Top Bar */\n.bq-topbar {\n  position: fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 50;\n  height: 48px;\n  background-color: #F5C518;\n  box-shadow: 0 2px 8px rgba(0,0,0,0.12);\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 0;\n}\n\n.bq-topbar__logo-wrap {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding-left: 16px;\n  flex-shrink: 0;\n}\n\n.bq-topbar__circle {\n  width: 56px;\n  height: 56px;\n  background: #1A1A1A;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  /* Overflow: circle is 56px in 48px bar = 8px overflow, split 4px top/bottom */\n  margin-top: -4px;\n  margin-bottom: -4px;\n  overflow: visible;\n}\n\n.bq-topbar__wordmark {\n  font-family: 'Inter', sans-serif;\n  font-weight: 700;\n  font-size: 20px;\n  letter-spacing: -0.02em;\n  color: #1A1A1A;\n  white-space: nowrap;\n}\n\n.bq-topbar__nav {\n  display: flex;\n  align-items: center;\n  gap: 32px;\n  position: absolute;\n  left: 50%;\n  transform: translateX(-50%);\n}\n\n.bq-topbar__nav-link {\n  font-size: 14px;\n  font-weight: 500;\n  color: #1A1A1A;\n  text-decoration: none;\n  white-space: nowrap;\n  opacity: 0.85;\n}\n\n.bq-topbar__nav-link--active {\n  opacity: 1;\n  border-bottom: 2px solid #1A1A1A;\n  padding-bottom: 2px;\n}\n\n.bq-topbar__right {\n  display: flex;\n  align-items: center;\n  padding-right: 24px;\n  flex-shrink: 0;\n}\n\n.bq-topbar__refresh-pill {\n  font-size: 12px;\n  color: #1A1A1A;\n  background: rgba(255,255,255,0.35);\n  border-radius: 20px;\n  padding: 4px 12px;\n  white-space: nowrap;\n}\n\n/* Push page content below fixed bar */\n.bq-page-content {\n  margin-top: 48px;\n}"
+  },
+  "pdf_header": {
+    "description": "Header bar for all generated PDF due diligence reports. Full width of page.",
+    "page_width_mm": 210,
+    "bar_height_mm": 11,
+    "bar_height_px_at_96dpi": 42,
+    "background": "#F5C518",
+    "margin_top_mm": 0,
+    "margin_left_mm": 0,
+    "margin_right_mm": 0,
+    "logo_section": {
+      "position": "left",
+      "circle_diameter_mm": 14,
+      "circle_overflow_mm": 1.5,
+      "circle_background": "#1A1A1A",
+      "circle_left_mm": 6,
+      "circle_vertical_center": "bar center",
+      "emblem_fills_circle": true,
+      "wordmark": {
+        "text": "BiOQUILL\u2122",
+        "font": "Inter Bold",
+        "font_size_pt": 13,
+        "color": "#1A1A1A",
+        "margin_left_from_circle_mm": 3,
+        "vertical_align": "center"
+      }
+    },
+    "tagline_section": {
+      "description": "Two-line tagline shown in PDF header, immediately right of wordmark",
+      "show": true,
+      "separator": "|",
+      "separator_color": "rgba(26,26,26,0.3)",
+      "separator_margin_mm": 4,
+      "line1": "Precision intelligence.",
+      "line2": "From pipeline to patients.",
+      "font": "Inter Regular",
+      "font_size_pt": 7.5,
+      "line_height": 1.3,
+      "color": "#1A1A1A",
+      "vertical_align": "center"
+    },
+    "right_section": {
+      "description": "Data refresh date at far right \u2014 maximally spaced from tagline",
+      "position": "right",
+      "margin_right_mm": 8,
+      "label": "Data refreshed:",
+      "value_format": "DD/MM/YYYY",
+      "font": "Inter Regular",
+      "font_size_pt": 7.5,
+      "color": "#1A1A1A",
+      "opacity": 0.8,
+      "pill_background": "rgba(255,255,255,0.30)",
+      "pill_border_radius_pt": 8,
+      "pill_padding_horizontal_mm": 3,
+      "pill_padding_vertical_mm": 1
+    },
+    "css_for_pdf_generator": "/* BioQuill PDF Header \u2014 inject at top of every generated PDF */\n.bq-pdf-header {\n  width: 100%;\n  height: 42px;\n  background-color: #F5C518;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  position: relative;\n  overflow: visible;\n  page-break-inside: avoid;\n}\n\n.bq-pdf-header__left {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding-left: 20px;\n  overflow: visible;\n}\n\n.bq-pdf-header__circle {\n  width: 52px;\n  height: 52px;\n  background: #1A1A1A;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n  margin-top: -5px;\n  margin-bottom: -5px;\n}\n\n.bq-pdf-header__wordmark {\n  font-family: 'Inter', sans-serif;\n  font-weight: 700;\n  font-size: 13pt;\n  color: #1A1A1A;\n  letter-spacing: -0.02em;\n  white-space: nowrap;\n}\n\n.bq-pdf-header__separator {\n  width: 1px;\n  height: 22px;\n  background: rgba(26,26,26,0.25);\n  margin: 0 12px;\n}\n\n.bq-pdf-header__tagline {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n\n.bq-pdf-header__tagline span {\n  font-family: 'Inter', sans-serif;\n  font-size: 7.5pt;\n  color: #1A1A1A;\n  line-height: 1.3;\n}\n\n.bq-pdf-header__right {\n  margin-left: auto;\n  padding-right: 24px;\n  display: flex;\n  align-items: center;\n}\n\n.bq-pdf-header__refresh-pill {\n  font-family: 'Inter', sans-serif;\n  font-size: 7.5pt;\n  color: #1A1A1A;\n  background: rgba(255,255,255,0.30);\n  border-radius: 8px;\n  padding: 3px 10px;\n  white-space: nowrap;\n}"
+  },
+  "implementation_notes": {
+    "platform": [
+      "Add margin-top: 48px to all page content wrappers so content isn't hidden behind fixed bar",
+      "The current dark navy nav bar should be REPLACED by this yellow bar \u2014 do not stack them",
+      "Nav links (Platform, Methodology, Strategy Hub, Pricing, Search) move into this bar, centered",
+      "Logo circle uses overflow: visible so it bleeds 4px above and below the 48px bar",
+      "The emblem PNG/SVG should be the flame-feather icon only (no background) placed inside the black circle"
+    ],
+    "pdf": [
+      "Replace the current yellow bar in PDFs \u2014 current version has wrong proportions and missing tagline",
+      "Bar must span full page width with no left/right margin",
+      "Logo circle overflows bar by ~1.5mm top and bottom",
+      "Tagline and data-refreshed date must be on the same horizontal line as the wordmark",
+      "Data-refreshed date should be pushed to the absolute right edge (margin-left: auto)",
+      "This header should appear on EVERY page of the PDF, not just page 1",
+      "Use @page or repeating header technique in PDF generator"
+    ],
+    "colors": {
+      "primary_yellow": "#F5C518",
+      "note": "Use #F5C518 consistently \u2014 do not use the slightly different yellow currently in some PDF headers"
+    }
+  }
+}
