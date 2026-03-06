@@ -35,6 +35,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 import topBarLogo from "@/assets/top-bar-logo.png";
+import topBarImage from "@/assets/bioquill-top-bar.png";
 import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
@@ -851,17 +852,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Yellow Bar + Orange Navigation Bar */}
+      {/* Header with Top Bar Image + Navy Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar */}
-        <div className="w-full bg-[#FFD700] flex items-center justify-center" style={{ height: '28px' }}>
-          <div className="flex items-center gap-3">
-            <span className="text-[#0E1D35] font-bold text-sm tracking-wide">BiOQUILL</span>
-            <span className="text-[#0E1D35] text-[10px] opacity-80">Precision intelligence. From pipeline to patient.</span>
-            <Badge variant="outline" className="text-[8px] px-1.5 py-0 h-4 border-[#0E1D35]/30 text-[#0E1D35]/70 bg-white/40">
-              Data refreshed: {new Date().toLocaleDateString()}
-            </Badge>
-          </div>
+        {/* Top Bar - using uploaded brand image, 1-1.2cm height */}
+        <div className="w-full" style={{ height: '38px' }}>
+          <img src={topBarImage} alt="BiOQUILL - Precision intelligence. From pipeline to patients." className="w-full h-full object-cover object-bottom" />
         </div>
         
         {/* Top Navy Navigation Bar */}
@@ -977,45 +972,62 @@ const Index = () => {
         {/* Pricing Content */}
         {topNavMode === 'pricing' && <PricingContent />}
 
-        {/* Hero Stats - only show for platform/strategy-hub */}
-        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Molecules</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary">{allMolecules.length.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">From ClinicalTrials.gov</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Active Trials</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-secondary">{allMolecules.filter(m => !m.isFailed).length.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">Active pipeline molecules</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Approval Time</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-accent">8.3y</div>
-              <p className="text-xs text-muted-foreground mt-1">FDA average timeline</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Success Rate</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-chart-4">12.4%</div>
-              <p className="text-xs text-muted-foreground mt-1">Phase I to approval</p>
-            </CardContent>
-          </Card>
-        </div>}
+        {/* 6 Dashboard Tiles - calculated from real data */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && (() => {
+          const activeTrials = allMolecules.filter(m => (m as any)._raw?.status === 'RECRUITING' || (m as any)._raw?.status === 'ACTIVE_NOT_RECRUITING').length;
+          const uniqueMolecules = new Set(allMolecules.map(m => m.name?.toLowerCase().trim()).filter(Boolean)).size;
+          const recruiting = allMolecules.filter(m => (m as any)._raw?.status === 'RECRUITING').length;
+          const notRecruiting = allMolecules.filter(m => (m as any)._raw?.status === 'ACTIVE_NOT_RECRUITING').length;
+          
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Active Trials</p>
+                  <p className="text-2xl font-bold text-[#0E1D35] mt-1">{activeTrials.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Across all phases</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Molecules</p>
+                  <p className="text-2xl font-bold text-[#0E1D35] mt-1">{uniqueMolecules.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Unique drug entities</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Recruiting</p>
+                  <p className="text-2xl font-bold text-[hsl(142,76%,36%)] mt-1">{recruiting.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Actively enrolling</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Not Recruiting</p>
+                  <p className="text-2xl font-bold text-[hsl(45,93%,47%)] mt-1">{notRecruiting.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Active, not enrolling</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Avg Approval Time</p>
+                  <p className="text-2xl font-bold text-[hsl(142,76%,36%)] mt-1">8.3y</p>
+                  <p className="text-xs text-muted-foreground">FDA historical average (Phase I → approval)</p>
+                  <p className="text-[9px] text-muted-foreground italic">Source: Tufts CSDD / FDA review timelines</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Success Rate</p>
+                  <p className="text-2xl font-bold text-[hsl(45,93%,47%)] mt-1">12.4%</p>
+                  <p className="text-xs text-muted-foreground">Industry Phase I → approval rate</p>
+                  <p className="text-[9px] text-muted-foreground italic">Source: BIO / Norstella</p>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })()}
 
         {/* Main Tabs - only show for platform/strategy-hub */}
         {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
@@ -1107,7 +1119,9 @@ const Index = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h2 className="text-2xl font-semibold">Molecules Database</h2>
-                    <p className="text-sm text-muted-foreground">Comprehensive due diligence profiles for PE/M&A analysis</p>
+                    <p className="text-sm text-muted-foreground">
+                      Showing {allMolecules.length.toLocaleString()} unique molecules · Deduplicated by drug + sponsor, showing most advanced phase
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
@@ -1230,6 +1244,20 @@ const Index = () => {
                           <div className="flex-1 min-w-0 space-y-1">
                             {/* Row 1: Drug Name */}
                             <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(var(--foreground))]">{molecule.name}</h3>
+                            {/* Approval Status Badge */}
+                            {(() => {
+                              const status = (molecule as any)._raw?.approval_status;
+                              if (!status || status === 'ACTIVE_PIPELINE') return null;
+                              const badgeConfig: Record<string, { color: string; text: string }> = {
+                                'APPROVED_2024': { color: 'bg-[hsl(142,76%,36%)] text-white', text: '✓ Approved' },
+                                'LIKELY_IN_REVIEW': { color: 'bg-blue-500 text-white', text: '⏳ In Review' },
+                                'RECENTLY_COMPLETED_PH3': { color: 'bg-amber-500 text-white', text: 'Completed Ph3' },
+                                'COMPLETED_PH3': { color: 'bg-slate-400 text-white', text: 'Completed Ph3' },
+                                'COMPLETED_PH2': { color: 'bg-gray-300 text-gray-700', text: 'Completed Ph2' },
+                              };
+                              const cfg = badgeConfig[status] || badgeConfig['COMPLETED_PH3'];
+                              return <Badge className={`text-[10px] px-1.5 py-0 ${cfg.color}`}>{cfg.text}</Badge>;
+                            })()}
                             {/* Row 2: Sponsor & Ticker */}
                             <div className="flex items-center gap-2 text-sm">
                               <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
@@ -1241,7 +1269,7 @@ const Index = () => {
                                 </a>
                               )}
                             </div>
-                            {/* Row 3: acronym | NCT ID | Phase */}
+                            {/* Row 3: NCT ID | Phase */}
                             <p className="text-xs text-muted-foreground">
                               {molecule.nctId && <span>{molecule.nctId} | </span>}
                               <span className="font-medium">{molecule.phase}</span>
@@ -1308,11 +1336,42 @@ const Index = () => {
             ) : activeMolecule ? (
               <div className="space-y-6" ref={reportRef}>
                 {/* PDF-only header - hidden on screen, shown in PDF */}
-                <div className="hidden print:block pdf-header bg-[#FFD700] py-2 px-4 -mx-4 mb-4">
-                  <div className="flex items-center">
-                    <img src={bioquillLogo} alt="BiOQUILL" className="h-8 w-auto object-contain" />
-                  </div>
+                <div className="hidden print:block pdf-header -mx-4 mb-4" style={{ height: '38px' }}>
+                  <img src={topBarImage} alt="BiOQUILL" className="w-full h-full object-cover object-bottom" />
                 </div>
+                
+                {/* Approval Status Banner */}
+                {(() => {
+                  const status = (activeMolecule as any)._raw?.approval_status;
+                  if (status?.startsWith('APPROVED_')) {
+                    return (
+                      <div className="p-4 rounded-lg bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30">
+                        <p className="font-semibold text-[hsl(142,76%,36%)]">✓ APPROVED MOLECULE — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Scores shown below reflect retrospective performance and serve as benchmark comparators for active pipeline molecules in this therapeutic area and mechanism class.</p>
+                        <p className="text-xs text-muted-foreground mt-1">TTM = Actual time from Phase I to approval · PTRS = Historical · LPI = 100% · BQ Score = Benchmark reference</p>
+                      </div>
+                    );
+                  }
+                  if (status === 'LIKELY_IN_REVIEW') {
+                    return (
+                      <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                        <p className="font-semibold text-blue-600">⏳ LIKELY IN REGULATORY REVIEW — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Phase III completed within the past 12 months. Based on typical submission timelines, NDA/MAA filing is probable.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Regulatory TTM remaining: Estimated 0–6 months · PTRS regulatory component: 82–90%</p>
+                      </div>
+                    );
+                  }
+                  if (status === 'RECENTLY_COMPLETED_PH3' || status === 'COMPLETED_PH3') {
+                    return (
+                      <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                        <p className="font-semibold text-amber-600">ℹ PHASE 3 COMPLETED — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">This molecule has completed Phase III trials. Regulatory submission status is uncertain based on publicly available data.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Data source: ClinicalTrials.gov · Last refreshed: 05/03/2026</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
                 
                 {/* Action buttons - visible on screen, hidden in PDF */}
                 <div className="flex items-center justify-between pdf-hide-buttons">
@@ -1589,23 +1648,21 @@ const Index = () => {
                       <div className="space-y-2">
                         <h4 className="font-semibold text-primary">LPI% (Launch Probability Index)</h4>
                         <p className="text-sm text-muted-foreground">
-                          The probability (0-100%) of a molecule successfully reaching market launch. Calculated using weighted factors: 
-                          TA Composite Score (20%), Phase-specific success rates (25%), Approval probability (15%), Meeting endpoints (10%), 
-                          Revenue potential (10%), Manufacturing/Scale-Up Capability (15%), and Dropout/Execution risk (5%).
+                          LPI (Launch Probability Index) estimates the probability this molecule will reach commercial launch, given its current phase, therapeutic area maturity, regulatory pathway designation, and access profile. LPI is NOT purely phase-dependent. A Phase I orphan drug in a consecrated therapeutic area may score higher than a Phase III drug in a novel indication with HTA uncertainty.
                         </p>
+                        <p className="text-xs text-muted-foreground mt-1 italic">Source: BioQuill scoring model v1.0 | Benchmarked against GLP-1 class retrospective validation</p>
                         <div className="flex items-center gap-4 text-xs mt-2">
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> 67-100: Strong</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 34-66: Moderate</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> 0-33: High Risk</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> &gt;75%: High launch probability</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 50-75%: Moderate</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> &lt;30%: Very low</span>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-primary">TTM (Time To Market)</h4>
+                        <h4 className="font-semibold text-primary">Est. TTM (Time To Market)</h4>
                         <p className="text-sm text-muted-foreground">
-                          The expected number of months from the current development stage to first regulatory approval. 
-                          Calculated using therapeutic area-specific factors and company track record data. Lower TTM values indicate 
-                          faster commercialization timelines and are considered more favorable for investment decisions.
+                          Modelled estimate of months from current development stage to first regulatory approval. TTM = Clinical TTM + Regulatory TTM + Access TTM. Based on TA-median benchmarks from 319 approved drugs (FDA + EMA, 2000–2025). All values are estimates with ±6–18 months uncertainty range.
                         </p>
+                        <p className="text-xs text-muted-foreground mt-1 italic">Source: BioQuill benchmark dataset · "With Results" CTG subset</p>
                         <div className="flex items-center gap-4 text-xs mt-2">
                           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Fast (low months)</span>
                           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> Average</span>
@@ -1614,11 +1671,17 @@ const Index = () => {
                       </div>
                     </div>
                     <div className="pt-4 border-t">
-                      <h4 className="font-semibold text-primary mb-2">Composite Score</h4>
+                      <h4 className="font-semibold text-primary mb-2">BQ Pipeline Score (Composite)</h4>
                       <p className="text-sm text-muted-foreground">
-                        A weighted aggregate of LPI% (60%) and TTM efficiency (40%), where TTM efficiency normalizes 1 month as 100 (best) and 100 months as 0 (worst). 
-                        This metric provides a single holistic assessment balancing probability of success and timeline efficiency for PE/M&A decision-making.
+                        The BQ Pipeline Score (0–100) is a composite signal reflecting the estimated strategic attractiveness of a molecule from a development and market access perspective. It is NOT a financial return model, clinical efficacy prediction, or regulatory guarantee. It IS a relative signal for pipeline prioritisation and screening.
                       </p>
+                      <div className="mt-3 p-3 bg-muted/30 rounded-lg text-xs space-y-1">
+                        <p className="font-semibold">BQ Score Legend:</p>
+                        <p><span className="text-[hsl(142,76%,36%)] font-bold">75–100 STRONG BUY</span> — Phase III+ with favourable regulatory pathway and access profile</p>
+                        <p><span className="text-[hsl(45,93%,47%)] font-bold">55–74 INTERESTING</span> — Meaningful pipeline signal; warrants full due diligence</p>
+                        <p><span className="text-amber-600 font-bold">35–54 MONITOR</span> — Early stage or headwinds identified; revisit at next data cycle</p>
+                        <p><span className="text-[hsl(0,72%,51%)] font-bold">0–34 PASS</span> — Insufficient data or signal to recommend tracking at this time</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

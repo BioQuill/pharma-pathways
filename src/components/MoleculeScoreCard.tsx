@@ -84,7 +84,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   };
 
   // Verdict
-  const verdict = compScoreVal >= 67 ? '→ INTERESTING — worth full analysis' : compScoreVal >= 34 ? '→ MONITOR — review at next data update' : '→ CAUTION — high-risk profile';
+  const verdict = compScoreVal >= 75 ? '→ STRONG BUY — high conviction' : compScoreVal >= 55 ? '→ INTERESTING — worth full analysis' : compScoreVal >= 35 ? '→ MONITOR — review at next data update' : '→ PASS — insufficient signal';
 
   return (
     <Card>
@@ -127,9 +127,9 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
                 <span className="text-[10px] font-medium leading-none">LPI</span>
                 <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
               </div>
-              <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${ttmDot} text-white`} title={`TTM: ${ttmMonthsVal !== null ? ttmMonthsVal + 'mo' : 'N/A'}`}>
+              <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${ttmDot} text-white`} title={`Est. TTM: ${ttmMonthsVal !== null ? '~' + ttmMonthsVal + 'mo' : 'N/A'}`}>
                 <span className="text-[10px] font-medium leading-none">TTM</span>
-                <span className="text-sm font-bold leading-none">{ttmMonthsVal !== null ? `${ttmMonthsVal}mo` : 'N/A'}</span>
+                <span className="text-sm font-bold leading-none">{ttmMonthsVal !== null ? `~${ttmMonthsVal}mo` : 'N/A'}</span>
               </div>
               <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-full ${scoreDot} text-white`} title={`Score: ${compScoreVal}`}>
                 <span className="text-[10px] font-medium leading-none">Score</span>
