@@ -1658,12 +1658,11 @@ const Index = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <h4 className="font-semibold text-primary">TTM (Time To Market)</h4>
+                        <h4 className="font-semibold text-primary">Est. TTM (Time To Market)</h4>
                         <p className="text-sm text-muted-foreground">
-                          The expected number of months from the current development stage to first regulatory approval. 
-                          Calculated using therapeutic area-specific factors and company track record data. Lower TTM values indicate 
-                          faster commercialization timelines and are considered more favorable for investment decisions.
+                          Modelled estimate of months from current development stage to first regulatory approval. TTM = Clinical TTM + Regulatory TTM + Access TTM. Based on TA-median benchmarks from 319 approved drugs (FDA + EMA, 2000–2025). All values are estimates with ±6–18 months uncertainty range.
                         </p>
+                        <p className="text-xs text-muted-foreground mt-1 italic">Source: BioQuill benchmark dataset · "With Results" CTG subset</p>
                         <div className="flex items-center gap-4 text-xs mt-2">
                           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Fast (low months)</span>
                           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> Average</span>
