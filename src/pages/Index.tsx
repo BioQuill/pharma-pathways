@@ -1119,7 +1119,9 @@ const Index = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h2 className="text-2xl font-semibold">Molecules Database</h2>
-                    <p className="text-sm text-muted-foreground">Comprehensive due diligence profiles for PE/M&A analysis</p>
+                    <p className="text-sm text-muted-foreground">
+                      Showing {allMolecules.length.toLocaleString()} unique molecules · Deduplicated by drug + sponsor, showing most advanced phase
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
