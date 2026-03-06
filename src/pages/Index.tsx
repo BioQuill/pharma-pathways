@@ -972,45 +972,62 @@ const Index = () => {
         {/* Pricing Content */}
         {topNavMode === 'pricing' && <PricingContent />}
 
-        {/* Hero Stats - only show for platform/strategy-hub */}
-        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Molecules</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary">{allMolecules.length.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">From ClinicalTrials.gov</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Active Trials</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-secondary">{allMolecules.filter(m => !m.isFailed).length.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground mt-1">Active pipeline molecules</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Avg. Approval Time</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-accent">8.3y</div>
-              <p className="text-xs text-muted-foreground mt-1">FDA average timeline</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Success Rate</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-chart-4">12.4%</div>
-              <p className="text-xs text-muted-foreground mt-1">Phase I to approval</p>
-            </CardContent>
-          </Card>
-        </div>}
+        {/* 6 Dashboard Tiles - calculated from real data */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && (() => {
+          const activeTrials = allMolecules.filter(m => (m as any)._raw?.status === 'RECRUITING' || (m as any)._raw?.status === 'ACTIVE_NOT_RECRUITING').length;
+          const uniqueMolecules = new Set(allMolecules.map(m => m.name?.toLowerCase().trim()).filter(Boolean)).size;
+          const recruiting = allMolecules.filter(m => (m as any)._raw?.status === 'RECRUITING').length;
+          const notRecruiting = allMolecules.filter(m => (m as any)._raw?.status === 'ACTIVE_NOT_RECRUITING').length;
+          
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Active Trials</p>
+                  <p className="text-2xl font-bold text-[#0E1D35] mt-1">{activeTrials.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Across all phases</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Molecules</p>
+                  <p className="text-2xl font-bold text-[#0E1D35] mt-1">{uniqueMolecules.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Unique drug entities</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Recruiting</p>
+                  <p className="text-2xl font-bold text-[hsl(142,76%,36%)] mt-1">{recruiting.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Actively enrolling</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Not Recruiting</p>
+                  <p className="text-2xl font-bold text-[hsl(45,93%,47%)] mt-1">{notRecruiting.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Active, not enrolling</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Avg Approval Time</p>
+                  <p className="text-2xl font-bold text-[hsl(142,76%,36%)] mt-1">8.3y</p>
+                  <p className="text-xs text-muted-foreground">FDA historical average (Phase I → approval)</p>
+                  <p className="text-[9px] text-muted-foreground italic">Source: Tufts CSDD / FDA review timelines</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="p-4 text-center">
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Success Rate</p>
+                  <p className="text-2xl font-bold text-[hsl(45,93%,47%)] mt-1">12.4%</p>
+                  <p className="text-xs text-muted-foreground">Industry Phase I → approval rate</p>
+                  <p className="text-[9px] text-muted-foreground italic">Source: BIO / Norstella</p>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })()}
 
         {/* Main Tabs - only show for platform/strategy-hub */}
         {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
