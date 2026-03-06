@@ -851,17 +851,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Yellow Bar + Orange Navigation Bar */}
+      {/* Header with Top Bar Image + Navy Navigation Bar */}
       <header className="sticky top-0 z-10 w-full">
-        {/* Yellow Brand Bar */}
-        <div className="w-full bg-[#FFD700] flex items-center justify-center" style={{ height: '28px' }}>
-          <div className="flex items-center gap-3">
-            <span className="text-[#0E1D35] font-bold text-sm tracking-wide">BiOQUILL</span>
-            <span className="text-[#0E1D35] text-[10px] opacity-80">Precision intelligence. From pipeline to patient.</span>
-            <Badge variant="outline" className="text-[8px] px-1.5 py-0 h-4 border-[#0E1D35]/30 text-[#0E1D35]/70 bg-white/40">
-              Data refreshed: {new Date().toLocaleDateString()}
-            </Badge>
-          </div>
+        {/* Top Bar - using uploaded brand image, 1-1.2cm height */}
+        <div className="w-full" style={{ height: '38px' }}>
+          <img src={topBarImage} alt="BiOQUILL - Precision intelligence. From pipeline to patients." className="w-full h-full object-cover object-bottom" />
         </div>
         
         {/* Top Navy Navigation Bar */}
