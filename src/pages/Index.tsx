@@ -1648,14 +1648,13 @@ const Index = () => {
                       <div className="space-y-2">
                         <h4 className="font-semibold text-primary">LPI% (Launch Probability Index)</h4>
                         <p className="text-sm text-muted-foreground">
-                          The probability (0-100%) of a molecule successfully reaching market launch. Calculated using weighted factors: 
-                          TA Composite Score (20%), Phase-specific success rates (25%), Approval probability (15%), Meeting endpoints (10%), 
-                          Revenue potential (10%), Manufacturing/Scale-Up Capability (15%), and Dropout/Execution risk (5%).
+                          LPI (Launch Probability Index) estimates the probability this molecule will reach commercial launch, given its current phase, therapeutic area maturity, regulatory pathway designation, and access profile. LPI is NOT purely phase-dependent. A Phase I orphan drug in a consecrated therapeutic area may score higher than a Phase III drug in a novel indication with HTA uncertainty.
                         </p>
+                        <p className="text-xs text-muted-foreground mt-1 italic">Source: BioQuill scoring model v1.0 | Benchmarked against GLP-1 class retrospective validation</p>
                         <div className="flex items-center gap-4 text-xs mt-2">
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> 67-100: Strong</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 34-66: Moderate</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> 0-33: High Risk</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> &gt;75%: High launch probability</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 50-75%: Moderate</span>
+                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> &lt;30%: Very low</span>
                         </div>
                       </div>
                       <div className="space-y-2">
