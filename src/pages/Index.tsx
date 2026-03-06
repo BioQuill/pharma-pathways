@@ -1671,11 +1671,17 @@ const Index = () => {
                       </div>
                     </div>
                     <div className="pt-4 border-t">
-                      <h4 className="font-semibold text-primary mb-2">Composite Score</h4>
+                      <h4 className="font-semibold text-primary mb-2">BQ Pipeline Score (Composite)</h4>
                       <p className="text-sm text-muted-foreground">
-                        A weighted aggregate of LPI% (60%) and TTM efficiency (40%), where TTM efficiency normalizes 1 month as 100 (best) and 100 months as 0 (worst). 
-                        This metric provides a single holistic assessment balancing probability of success and timeline efficiency for PE/M&A decision-making.
+                        The BQ Pipeline Score (0–100) is a composite signal reflecting the estimated strategic attractiveness of a molecule from a development and market access perspective. It is NOT a financial return model, clinical efficacy prediction, or regulatory guarantee. It IS a relative signal for pipeline prioritisation and screening.
                       </p>
+                      <div className="mt-3 p-3 bg-muted/30 rounded-lg text-xs space-y-1">
+                        <p className="font-semibold">BQ Score Legend:</p>
+                        <p><span className="text-[hsl(142,76%,36%)] font-bold">75–100 STRONG BUY</span> — Phase III+ with favourable regulatory pathway and access profile</p>
+                        <p><span className="text-[hsl(45,93%,47%)] font-bold">55–74 INTERESTING</span> — Meaningful pipeline signal; warrants full due diligence</p>
+                        <p><span className="text-amber-600 font-bold">35–54 MONITOR</span> — Early stage or headwinds identified; revisit at next data cycle</p>
+                        <p><span className="text-[hsl(0,72%,51%)] font-bold">0–34 PASS</span> — Insufficient data or signal to recommend tracking at this time</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
