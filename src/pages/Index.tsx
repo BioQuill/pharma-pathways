@@ -1336,11 +1336,42 @@ const Index = () => {
             ) : activeMolecule ? (
               <div className="space-y-6" ref={reportRef}>
                 {/* PDF-only header - hidden on screen, shown in PDF */}
-                <div className="hidden print:block pdf-header bg-[#FFD700] py-2 px-4 -mx-4 mb-4">
-                  <div className="flex items-center">
-                    <img src={bioquillLogo} alt="BiOQUILL" className="h-8 w-auto object-contain" />
-                  </div>
+                <div className="hidden print:block pdf-header -mx-4 mb-4" style={{ height: '38px' }}>
+                  <img src={topBarImage} alt="BiOQUILL" className="w-full h-full object-cover object-bottom" />
                 </div>
+                
+                {/* Approval Status Banner */}
+                {(() => {
+                  const status = (activeMolecule as any)._raw?.approval_status;
+                  if (status?.startsWith('APPROVED_')) {
+                    return (
+                      <div className="p-4 rounded-lg bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30">
+                        <p className="font-semibold text-[hsl(142,76%,36%)]">✓ APPROVED MOLECULE — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Scores shown below reflect retrospective performance and serve as benchmark comparators for active pipeline molecules in this therapeutic area and mechanism class.</p>
+                        <p className="text-xs text-muted-foreground mt-1">TTM = Actual time from Phase I to approval · PTRS = Historical · LPI = 100% · BQ Score = Benchmark reference</p>
+                      </div>
+                    );
+                  }
+                  if (status === 'LIKELY_IN_REVIEW') {
+                    return (
+                      <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                        <p className="font-semibold text-blue-600">⏳ LIKELY IN REGULATORY REVIEW — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Phase III completed within the past 12 months. Based on typical submission timelines, NDA/MAA filing is probable.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Regulatory TTM remaining: Estimated 0–6 months · PTRS regulatory component: 82–90%</p>
+                      </div>
+                    );
+                  }
+                  if (status === 'RECENTLY_COMPLETED_PH3' || status === 'COMPLETED_PH3') {
+                    return (
+                      <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                        <p className="font-semibold text-amber-600">ℹ PHASE 3 COMPLETED — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">This molecule has completed Phase III trials. Regulatory submission status is uncertain based on publicly available data.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Data source: ClinicalTrials.gov · Last refreshed: 05/03/2026</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
                 
                 {/* Action buttons - visible on screen, hidden in PDF */}
                 <div className="flex items-center justify-between pdf-hide-buttons">
