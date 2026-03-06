@@ -84,7 +84,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   };
 
   // Verdict
-  const verdict = compScoreVal >= 67 ? '→ INTERESTING — worth full analysis' : compScoreVal >= 34 ? '→ MONITOR — review at next data update' : '→ CAUTION — high-risk profile';
+  const verdict = compScoreVal >= 75 ? '→ STRONG BUY — high conviction' : compScoreVal >= 55 ? '→ INTERESTING — worth full analysis' : compScoreVal >= 35 ? '→ MONITOR — review at next data update' : '→ PASS — insufficient signal';
 
   return (
     <Card>
