@@ -279,23 +279,25 @@ export const exportDomToPDF = async (
       }
     }
     
-    // Add yellow bar header + watermark to every page
+    // Add top bar + watermark to every page
     const watermarkText = getReportWatermark();
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
       
-      // Yellow brand bar at top of each page
+      // Top bar: thin yellow strip (1-1.2cm = ~4mm bar)
       doc.setFillColor(255, 215, 0); // #FFD700
-      doc.rect(0, 0, pageWidth, 10, 'F');
+      doc.rect(0, 0, pageWidth, 12, 'F');
       // Logo text on yellow bar
-      doc.setFontSize(7);
+      doc.setFontSize(6);
       doc.setTextColor(14, 29, 53); // #0E1D35 navy
       doc.setFont('Helvetica', 'bold');
-      doc.text('BiOQUILL', pageWidth / 2, 6.5, { align: 'center' });
+      doc.text('BiOQUILL\u2122', 15, 6);
       doc.setFont('Helvetica', 'normal');
-      doc.setFontSize(4.5);
-      doc.text('Precision intelligence. From pipeline to patient.', pageWidth / 2, 9, { align: 'center' });
+      doc.setFontSize(4);
+      doc.text('Precision intelligence. From pipeline to patients.', 40, 6);
+      doc.setFontSize(3.5);
+      doc.text('Data refreshed: 05/03/2026', pageWidth - 15, 6, { align: 'right' });
       
       // Watermark at bottom
       doc.setFontSize(6);
