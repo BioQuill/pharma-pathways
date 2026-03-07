@@ -700,6 +700,7 @@ const Index = () => {
       tabs: [
         { value: 'overview', label: 'Molecules Database', icon: BarChart3 },
         { value: 'lpi-3', label: 'LPI', icon: TrendingUp },
+        { value: 'ti-analysis', label: 'TI', icon: ShieldCheck },
       ]
     },
     approval: {
