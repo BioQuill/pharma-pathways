@@ -2078,6 +2078,79 @@ const Index = () => {
             <LPI3Dashboard molecules={allMolecules} />
           </TabsContent>
 
+          {/* TI Analysis Tab */}
+          <TabsContent value="ti-analysis" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5" />
+                  Therapeutic Index (TI) — Pipeline Overview
+                </CardTitle>
+                <CardDescription>
+                  Safety margin assessment (TD50/ED50) across all pipeline molecules. Higher TI = wider safety margin.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Classification legend */}
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]" /><span>Narrow (&lt;2)</span></div>
+                    <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]" /><span>Moderate (2–10)</span></div>
+                    <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]" /><span>Wide (&gt;10)</span></div>
+                  </div>
+                  {/* TI table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left py-2 px-3 font-semibold">Drug</th>
+                          <th className="text-left py-2 px-3 font-semibold">Sponsor</th>
+                          <th className="text-left py-2 px-3 font-semibold">TA</th>
+                          <th className="text-left py-2 px-3 font-semibold">Phase</th>
+                          <th className="text-center py-2 px-3 font-semibold">TI Value</th>
+                          <th className="text-center py-2 px-3 font-semibold">Classification</th>
+                          <th className="text-center py-2 px-3 font-semibold">Monitoring</th>
+                          <th className="text-left py-2 px-3 font-semibold">Notes</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allMolecules.slice(0, 100).map((mol, idx) => {
+                          const ti = getTherapeuticIndexForMolecule(mol);
+                          const tiColor = getTherapeuticIndexColor(ti.classification);
+                          const tiBgColor = getTherapeuticIndexBgColor(ti.classification);
+                          return (
+                            <tr key={idx} className="border-b border-border/50 hover:bg-muted/30">
+                              <td className="py-2 px-3 font-medium uppercase">{mol.name}</td>
+                              <td className="py-2 px-3">{mol.company || '—'}</td>
+                              <td className="py-2 px-3 text-xs">{mol.therapeuticArea}</td>
+                              <td className="py-2 px-3">{mol.phase}</td>
+                              <td className="py-2 px-3 text-center">
+                                <span className={`font-bold ${tiColor}`}>{ti.value.toFixed(1)}</span>
+                              </td>
+                              <td className="py-2 px-3 text-center">
+                                <Badge className={`${tiBgColor} text-white text-xs`}>
+                                  {ti.classification === 'narrow' ? 'Narrow' : ti.classification === 'moderate' ? 'Moderate' : 'Wide'}
+                                </Badge>
+                              </td>
+                              <td className="py-2 px-3 text-center">
+                                {ti.monitoringRequired ? (
+                                  <AlertTriangle className="h-4 w-4 text-[hsl(45,93%,47%)] inline" />
+                                ) : (
+                                  <ShieldCheck className="h-4 w-4 text-[hsl(142,76%,36%)] inline" />
+                                )}
+                              </td>
+                              <td className="py-2 px-3 text-xs text-muted-foreground">{ti.notes}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Peak Sales Index Tab */}
           <TabsContent value="peak-sales" className="space-y-6">
             <PeakSalesIndexDashboard molecules={allMolecules} />
