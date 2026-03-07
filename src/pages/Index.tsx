@@ -99,6 +99,7 @@ import { useMolecules } from "@/hooks/useMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 import { MethodologyContent } from "@/components/MethodologyContent";
 import { PricingContent } from "@/components/PricingContent";
+import { ModelsContent } from "@/components/ModelsContent";
 
 // TimelinePhase interface imported from moleculesData
 
