@@ -873,6 +873,14 @@ const Index = () => {
                 Platform
               </button>
               
+              {/* Models */}
+              <button 
+                onClick={() => setTopNavMode('models')}
+                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'models' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
+              >
+                Models
+              </button>
+              
               {/* Methodology */}
               <button 
                 onClick={() => setTopNavMode('methodology')}
