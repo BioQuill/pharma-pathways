@@ -99,6 +99,7 @@ import { useMolecules } from "@/hooks/useMolecules";
 import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
 import { MethodologyContent } from "@/components/MethodologyContent";
 import { PricingContent } from "@/components/PricingContent";
+import { ModelsContent } from "@/components/ModelsContent";
 
 // TimelinePhase interface imported from moleculesData
 
@@ -690,8 +691,8 @@ const Index = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
 
-   // Top nav mode: 'platform', 'strategy-hub', 'methodology', or 'pricing'
-  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'methodology' | 'pricing'>('platform');
+   // Top nav mode: 'platform', 'strategy-hub', 'models', 'methodology', or 'pricing'
+  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'models' | 'methodology' | 'pricing'>('platform');
 
   // 7-Area navigation configuration for Platform
   const areaConfig = {
@@ -872,6 +873,14 @@ const Index = () => {
                 Platform
               </button>
               
+              {/* Models */}
+              <button 
+                onClick={() => setTopNavMode('models')}
+                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'models' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
+              >
+                Models
+              </button>
+              
               {/* Methodology */}
               <button 
                 onClick={() => setTopNavMode('methodology')}
@@ -967,6 +976,9 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
+        {/* Models Content */}
+        {topNavMode === 'models' && <ModelsContent />}
+
         {/* Methodology Content */}
         {topNavMode === 'methodology' && <MethodologyContent />}
         
