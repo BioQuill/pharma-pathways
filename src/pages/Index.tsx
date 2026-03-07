@@ -690,8 +690,8 @@ const Index = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
 
-   // Top nav mode: 'platform', 'strategy-hub', 'methodology', or 'pricing'
-  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'methodology' | 'pricing'>('platform');
+   // Top nav mode: 'platform', 'strategy-hub', 'models', 'methodology', or 'pricing'
+  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'models' | 'methodology' | 'pricing'>('platform');
 
   // 7-Area navigation configuration for Platform
   const areaConfig = {
