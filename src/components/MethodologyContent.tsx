@@ -1,172 +1,84 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Brain, 
   Database, 
   Shield, 
-  Target, 
   TrendingUp, 
-  FileCheck, 
-  Building2,
-  Zap,
+  CheckCircle2,
   Globe,
   Clock,
   BarChart3,
-  CheckCircle2,
-  Layers,
-  LineChart
+  Zap,
+  ArrowRight,
+  ShieldCheck,
+  Target,
+  Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const featureCategories = [
+const modelSuite = [
   {
-    name: "Scientific / Preclinical",
-    weight: "20%",
-    icon: <Database className="h-5 w-5" />,
-    features: [
-      "Target validation strength",
-      "Modality risk profile (small molecule, biologic, cell/gene)",
-      "Biomarker availability for patient selection",
-      "Mechanism of action novelty vs. validation"
-    ]
-  },
-  {
-    name: "Clinical Signals",
-    weight: "30%",
-    icon: <Target className="h-5 w-5" />,
-    features: [
-      "Phase-specific historical success rates",
-      "Phase II effect size (if available)",
-      "Trial size and operational complexity",
-      "Enrollment feasibility and recruitment speed"
-    ]
-  },
-  {
-    name: "Regulatory & Program",
-    weight: "18%",
-    icon: <FileCheck className="h-5 w-5" />,
-    features: [
-      "Expedited pathway status (Breakthrough, Fast Track, Priority)",
-      "Orphan drug designation",
-      "CMC complexity score (1-5 scale)",
-      "First-in-class regulatory pathway clarity"
-    ]
-  },
-  {
-    name: "Sponsor / Organization",
-    weight: "15%",
-    icon: <Building2 className="h-5 w-5" />,
-    features: [
-      "Sponsor type and size classification",
-      "Historical track record in therapeutic area",
-      "Partnership and licensing status",
-      "Funding runway and resource availability"
-    ]
-  },
-  {
-    name: "Market & Commercial",
-    weight: "10%",
+    name: "PTRS",
     icon: <TrendingUp className="h-5 w-5" />,
-    features: [
-      "Total addressable market size",
-      "Competitive density in indication",
-      "Reimbursement complexity by geography"
-    ]
+    description: "Probability of Technical and Regulatory Success — grounded in BIO/Norstella published phase transition rates across 20 therapeutic areas.",
+    tab: "ptrs"
   },
   {
-    name: "Safety & History",
-    weight: "7%",
-    icon: <Shield className="h-5 w-5" />,
-    features: [
-      "Early safety signals from clinical data",
-      "Drug class safety history",
-      "DILI/QT prolongation risk profile"
-    ]
-  }
+    name: "Monte Carlo",
+    icon: <Activity className="h-5 w-5" />,
+    description: "10,000-iteration uncertainty propagation through each PTRS input independently, producing P5–P95 confidence ranges.",
+    tab: "monte-carlo"
+  },
+  {
+    name: "TI (Therapeutic Index)",
+    icon: <ShieldCheck className="h-5 w-5" />,
+    description: "TD50/ED50 safety margin from pharmacology literature. Classifies drugs as narrow, moderate, or wide therapeutic index.",
+    tab: "ti"
+  },
+  {
+    name: "LPI (Launch Potential Index)",
+    icon: <BarChart3 className="h-5 w-5" />,
+    description: "Composite launch probability score combining scientific, clinical, regulatory, sponsor, market, and safety factors.",
+    tab: "lpi"
+  },
+  {
+    name: "Composite Score",
+    icon: <Target className="h-5 w-5" />,
+    description: "Overall molecule attractiveness index combining LPI and TTM efficiency into a single 0–100 score.",
+    tab: "composite"
+  },
+  {
+    name: "CAPM Alpha Signals",
+    icon: <Zap className="h-5 w-5" />,
+    description: "Risk-adjusted performance vs historical benchmarks (α₁) and current pipeline competition (α₂), with divergence tracking (Δα).",
+    tab: "capm"
+  },
+  {
+    name: "TTM (Time to Market)",
+    icon: <Clock className="h-5 w-5" />,
+    description: "Empirical time from first patient in to commercial launch, with 5-phase lifecycle decomposition by therapeutic area.",
+    tab: "ttm"
+  },
 ];
 
 const dataSources = [
-  {
-    category: "Clinical Trial Registries",
-    sources: [
-      { name: "ClinicalTrials.gov", region: "US", type: "Primary", url: "https://clinicaltrials.gov" },
-      { name: "WHO ICTRP", region: "Global", type: "12 Registries", url: "https://trialsearch.who.int" }
-    ]
-  },
-  {
-    category: "Regulatory Approval Databases",
-    sources: [
-      { name: "FDA NDA/BLA Approvals", region: "US", type: "Official", url: "https://www.fda.gov/drugs/nda-and-bla-approvals" },
-      { name: "EMA National Registers", region: "EU", type: "Official", url: "https://www.ema.europa.eu" },
-      { name: "EU Community Register", region: "EU", type: "Official", url: "https://ec.europa.eu/health/documents/community-register" },
-      { name: "NMPA Drug Registry", region: "China", type: "Official", url: "https://www.nmpa.gov.cn" },
-      { name: "PMDA Approvals", region: "Japan", type: "Official", url: "https://www.pmda.go.jp" },
-      { name: "MHRA Products", region: "UK", type: "Official", url: "https://products.mhra.gov.uk" },
-      { name: "Health Canada DPD", region: "Canada", type: "Official", url: "https://health-products.canada.ca/dpd-bdpp" },
-      { name: "ANVISA Registry", region: "Brazil", type: "Official", url: "https://consultas.anvisa.gov.br" }
-    ]
-  },
-  {
-    category: "Financial & Company Data",
-    sources: [
-      { name: "Yahoo Finance", region: "Global", type: "CAPEX/Financials", url: "https://finance.yahoo.com" },
-      { name: "SEC EDGAR", region: "US", type: "Filings", url: "https://www.sec.gov/edgar" }
-    ]
-  }
+  { name: "ClinicalTrials.gov", region: "US", type: "Primary", url: "https://clinicaltrials.gov" },
+  { name: "WHO ICTRP", region: "Global", type: "12 Registries", url: "https://trialsearch.who.int" },
+  { name: "FDA NDA/BLA Approvals", region: "US", type: "Official", url: "https://www.fda.gov/drugs/nda-and-bla-approvals" },
+  { name: "EMA National Registers", region: "EU", type: "Official", url: "https://www.ema.europa.eu" },
+  { name: "Yahoo Finance", region: "Global", type: "Financials", url: "https://finance.yahoo.com" },
+  { name: "SEC EDGAR", region: "US", type: "Filings", url: "https://www.sec.gov/edgar" },
 ];
 
-const validationMetrics = [
-  { metric: "AUC-ROC", value: "0.82", description: "Area under ROC curve measuring discrimination ability" },
-  { metric: "Brier Score", value: "0.15", description: "Probabilistic accuracy (lower is better)" },
-  { metric: "Calibration Slope", value: "0.98", description: "How well predicted probabilities match observed outcomes" },
-  { metric: "Calibration Intercept", value: "0.02", description: "Systematic over/under-estimation bias" }
-];
+interface MethodologyContentProps {
+  onNavigateToModels?: (tab: string) => void;
+}
 
-const uniqueStrengths = [
-  {
-    icon: <Brain className="h-8 w-8" />,
-    title: "ML-Powered Probability Scoring",
-    description: "XGBoost gradient boosting with isotonic calibration delivers quantified launch probabilities, not qualitative ratings. Every prediction includes 95% confidence intervals.",
-    highlight: "Calibrated probabilities, not opinions"
-  },
-  {
-    icon: <Layers className="h-8 w-8" />,
-    title: "SHAP-Based Transparency",
-    description: "Full feature attribution via SHAP values shows exactly which factors drive each prediction. No black boxes—every score is explainable to investment committees.",
-    highlight: "Complete model interpretability"
-  },
-  {
-    icon: <Clock className="h-8 w-8" />,
-    title: "TA-Specific TTM Decomposition",
-    description: "Time-to-market projections broken down by 5 lifecycle phases with therapeutic area-specific benchmarks. Understand where delays occur, not just when.",
-    highlight: "Phase-level timeline visibility"
-  },
-  {
-    icon: <Globe className="h-8 w-8" />,
-    title: "10-Market Global Coverage",
-    description: "Simultaneous analysis across US, EU, China, Japan, UK, Canada, Brazil, and more. Country-specific regulatory pathways and market access projections.",
-    highlight: "True global commercial lens"
-  },
-  {
-    icon: <BarChart3 className="h-8 w-8" />,
-    title: "20 TA Composite Indexes",
-    description: "Each therapeutic area has its own risk-weighted composite index. Compare molecules across TAs using consistent, benchmarked metrics.",
-    highlight: "Apples-to-apples TA comparison"
-  },
-  {
-    icon: <LineChart className="h-8 w-8" />,
-    title: "Retrospective Time-Travel Scoring",
-    description: "Evaluate molecules at any historical phase milestone to simulate real-time investment decision-making. Backtest your thesis with data available at the time.",
-    highlight: "Historical decision simulation"
-  }
-];
-
-export const MethodologyContent = () => {
+export const MethodologyContent = ({ onNavigateToModels }: MethodologyContentProps = {}) => {
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Hero - Why BioQuill */}
-      <div className="text-center mb-16">
+    <div className="container mx-auto px-4 py-12 space-y-16">
+      {/* Hero */}
+      <div className="text-center">
         <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">The Quant Approach to Pharma DD</Badge>
         <h1 className="text-4xl font-bold mb-4">
           Why <span className="text-primary">BioQuill</span>
@@ -177,331 +89,162 @@ export const MethodologyContent = () => {
         </p>
       </div>
 
-      {/* Unique Strengths Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-        {uniqueStrengths.map((strength, idx) => (
-          <Card key={idx} className="relative overflow-hidden group hover:shadow-lg transition-shadow">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
-            <CardHeader>
-              <div className="p-3 rounded-xl bg-primary/10 text-primary w-fit mb-3">
-                {strength.icon}
-              </div>
-              <CardTitle className="text-lg">{strength.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-sm mb-4">{strength.description}</p>
-              <Badge variant="secondary" className="text-xs">
-                <CheckCircle2 className="h-3 w-3 mr-1" />
-                {strength.highlight}
-              </Badge>
+      {/* Section 1: Data Foundation */}
+      <div>
+        <div className="text-center mb-8">
+          <Badge className="mb-3"><Database className="h-3 w-3 mr-1 inline" /> Data Foundation</Badge>
+          <h2 className="text-3xl font-bold">Comprehensive Data Coverage</h2>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <Card className="text-center">
+            <CardContent className="p-5">
+              <p className="text-3xl font-bold text-primary">14,000+</p>
+              <p className="text-sm text-muted-foreground mt-1">Clinical Trials</p>
+              <p className="text-xs text-muted-foreground">ClinicalTrials.gov</p>
             </CardContent>
           </Card>
-        ))}
-      </div>
-
-      {/* Methodology Section */}
-      <div className="mb-16">
-        <div className="text-center mb-10">
-          <Badge className="mb-4">Methodology</Badge>
-          <h2 className="text-3xl font-bold mb-4">LPI Model Architecture</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Our Launch Probability Index uses gradient boosting machine learning with rigorous 
-            calibration and validation to deliver trustworthy probability estimates.
-          </p>
+          <Card className="text-center">
+            <CardContent className="p-5">
+              <p className="text-3xl font-bold text-primary">9,754</p>
+              <p className="text-sm text-muted-foreground mt-1">Unique Molecules</p>
+              <p className="text-xs text-muted-foreground">Deduplicated, most advanced phase</p>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="p-5">
+              <p className="text-3xl font-bold text-primary">209</p>
+              <p className="text-sm text-muted-foreground mt-1">FDA-Approved NMEs</p>
+              <p className="text-xs text-muted-foreground">2000–2025</p>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="p-5">
+              <p className="text-3xl font-bold text-primary">145</p>
+              <p className="text-sm text-muted-foreground mt-1">EMA-Approved NMEs</p>
+              <p className="text-xs text-muted-foreground">2000–2025</p>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="p-5">
+              <p className="text-3xl font-bold text-primary">396</p>
+              <p className="text-sm text-muted-foreground mt-1">Matched Drugs</p>
+              <p className="text-xs text-muted-foreground">EMA EPAR × CT.gov (TTM)</p>
+            </CardContent>
+          </Card>
         </div>
 
-        <Tabs defaultValue="algorithm" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8 bg-sky-100 dark:bg-sky-950/30">
-            <TabsTrigger value="algorithm">Algorithm</TabsTrigger>
-            <TabsTrigger value="features">Feature Engineering</TabsTrigger>
-            <TabsTrigger value="calibration">Calibration</TabsTrigger>
-            <TabsTrigger value="validation">Validation</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="algorithm">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Brain className="h-5 w-5 text-primary" />
-                    Primary Model: XGBoost Classifier
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Gradient boosted decision trees for probability estimation
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Binary classification: launch within 8-10 year horizon
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Handles missing data and non-linear feature interactions
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Feature importance via SHAP TreeExplainer
-                    </li>
-                  </ul>
-                  <div className="p-4 bg-muted/50 rounded-lg font-mono text-xs">
-                    <pre className="whitespace-pre-wrap text-muted-foreground">
-{`# Model Pipeline
-1. Feature Engineering → Canonicalize + Encode
-2. XGBoost Training → binary:logistic, AUC opt
-3. Calibration → Isotonic regression
-4. SHAP → Feature contributions
-5. Output → P(launch | features), CI`}
-                    </pre>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-primary" />
-                    Survival Analysis Extension
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Cox proportional hazards for time-to-launch estimation
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Random Survival Forests for non-parametric estimation
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Right-censoring handled for ongoing programs
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                      Hazard ratios for phase transition timing
-                    </li>
-                  </ul>
-                  <p className="text-sm text-muted-foreground">
-                    The survival component provides time-to-event predictions, complementing 
-                    the binary classification with when a molecule is likely to launch, not just if.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="features">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {featureCategories.map((category, idx) => (
-                <Card key={idx}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                          {category.icon}
-                        </div>
-                        <CardTitle className="text-base">{category.name}</CardTitle>
-                      </div>
-                      <Badge variant="outline">{category.weight}</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-1.5 text-xs text-muted-foreground">
-                      {category.features.map((feature, fidx) => (
-                        <li key={fidx} className="flex items-start gap-1.5">
-                          <span className="text-primary mt-0.5">•</span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="calibration">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Isotonic Calibration</CardTitle>
-                  <CardDescription>
-                    Raw model probabilities are calibrated to match observed frequencies
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    XGBoost raw outputs are transformed using isotonic regression fitted on a 
-                    held-out validation set. This ensures that when the model predicts 60% probability, 
-                    approximately 60% of such molecules historically reached launch.
-                  </p>
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <h4 className="font-medium text-sm mb-2">Why Calibration Matters</h4>
-                    <ul className="space-y-1 text-xs text-muted-foreground">
-                      <li>• Enables meaningful probability comparisons across molecules</li>
-                      <li>• Supports rational portfolio allocation decisions</li>
-                      <li>• Provides honest uncertainty quantification</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Confidence Intervals</CardTitle>
-                  <CardDescription>
-                    95% Wilson score intervals for every prediction
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    Every LPI score includes a confidence interval reflecting uncertainty from 
-                    limited training data and model variance. Narrower intervals indicate higher 
-                    prediction confidence.
-                  </p>
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <h4 className="font-medium text-sm mb-2">Interpreting CI Width</h4>
-                    <div className="space-y-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]" />
-                        <span>Narrow (±5-8%): High confidence, well-characterized profile</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]" />
-                        <span>Medium (±8-12%): Moderate uncertainty, some data gaps</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]" />
-                        <span>Wide (±12%+): High uncertainty, novel profile or limited data</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="validation">
-            <div className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Model Performance Metrics</CardTitle>
-                  <CardDescription>
-                    Validated on held-out temporal test set (train on older cohorts, test on recent)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {validationMetrics.map((metric, idx) => (
-                      <div key={idx} className="text-center p-4 bg-muted/50 rounded-lg">
-                        <div className="text-2xl font-bold text-primary">{metric.value}</div>
-                        <div className="font-medium text-sm">{metric.metric}</div>
-                        <div className="text-xs text-muted-foreground mt-1">{metric.description}</div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Training Methodology</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>Temporal split:</strong> Train on 2000-2020, validate on 2021-2024</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>No information leakage:</strong> Future data never used in training</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>Stratified by TA:</strong> Ensures representation across therapeutic areas</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-[hsl(142,76%,36%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>Annual recalibration:</strong> Model updated with latest outcomes</span>
-                      </li>
-                    </ul>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Limitations & Caveats</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <Zap className="h-4 w-4 text-[hsl(45,93%,47%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>Data quality:</strong> Accuracy depends on input completeness</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <Zap className="h-4 w-4 text-[hsl(45,93%,47%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>Temporal drift:</strong> Historical patterns may not predict novel modalities</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <Zap className="h-4 w-4 text-[hsl(45,93%,47%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>Censoring:</strong> Ongoing programs have incomplete outcome data</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <Zap className="h-4 w-4 text-[hsl(45,93%,47%)] mt-0.5 flex-shrink-0" />
-                        <span><strong>Decision aid:</strong> Supplements, does not replace, expert judgment</span>
-                      </li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+        <p className="text-center text-sm text-muted-foreground mt-4 italic">
+          Data refreshed weekly — reflecting the latest trial registrations, regulatory decisions, and market access updates.
+        </p>
       </div>
 
-      {/* Data Sources */}
-      <div className="mb-16">
-        <div className="text-center mb-10">
-          <Badge className="mb-4">Data Sources</Badge>
-          <h2 className="text-3xl font-bold mb-4">Comprehensive Data Foundation</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            BioQuill integrates authoritative regulatory and clinical trial databases 
-            across all major pharmaceutical markets.
-          </p>
+      {/* Section 2: Model Suite */}
+      <div>
+        <div className="text-center mb-8">
+          <Badge className="mb-3"><BarChart3 className="h-3 w-3 mr-1 inline" /> Model Suite</Badge>
+          <h2 className="text-3xl font-bold">7 Proprietary Models</h2>
+          <p className="text-muted-foreground mt-2">Each model is fully documented with formulas, inputs, outputs, and worked examples in the <strong>Models</strong> tab.</p>
         </div>
 
-        <div className="space-y-6">
-          {dataSources.map((category, idx) => (
-            <Card key={idx}>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{category.category}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {category.sources.map((source, sidx) => (
-                    <a
-                      key={sidx}
-                      href={source.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {modelSuite.map((model) => (
+            <Card key={model.name} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                    {model.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm">{model.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-1">{model.description}</p>
+                    <button 
+                      onClick={() => onNavigateToModels?.(model.tab)}
+                      className="text-xs text-primary font-medium mt-2 flex items-center gap-1 hover:underline"
                     >
-                      <div className="font-medium text-sm">{source.name}</div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-xs">{source.region}</Badge>
-                        <span className="text-xs text-muted-foreground">{source.type}</span>
-                      </div>
-                    </a>
-                  ))}
+                      → See full model details <ArrowRight className="h-3 w-3" />
+                    </button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Section 3: Data Quality & Limitations */}
+      <div>
+        <div className="text-center mb-8">
+          <Badge className="mb-3"><Shield className="h-3 w-3 mr-1 inline" /> Data Quality & Limitations</Badge>
+          <h2 className="text-3xl font-bold">Transparency & Caveats</h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-[hsl(142,76%,36%)]" />
+                Validation & Calibration
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <p>• AUC-ROC: 0.82 — strong discrimination ability</p>
+              <p>• Brier Score: 0.15 — well-calibrated probabilities</p>
+              <p>• Temporal split validation: train on 2000–2020, test on 2021–2024</p>
+              <p>• Annual recalibration with latest outcomes</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Zap className="h-5 w-5 text-[hsl(45,93%,47%)]" />
+                Known Limitations
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-muted-foreground">
+              <p>• <strong>Data quality:</strong> Accuracy depends on input completeness from public registries</p>
+              <p>• <strong>Temporal drift:</strong> Historical patterns may not predict novel modalities</p>
+              <p>• <strong>Censoring:</strong> Ongoing programs have incomplete outcome data</p>
+              <p>• <strong>Decision aid:</strong> Supplements, does not replace, expert judgment</p>
+            </CardContent>
+          </Card>
+
+          <Card className="md:col-span-2">
+            <CardContent className="p-5 space-y-3 text-sm text-muted-foreground">
+              <p className="font-semibold text-foreground">Important Calibration Notes:</p>
+              <p>
+                PTRS and approval rate calibration is based on <strong>historical closed-cohort data</strong>. Current pipeline molecules 
+                are unresolved — their outcomes are unknown and should not be used as calibration benchmarks.
+              </p>
+              <p>
+                Alpha signals (α₁, α₂, Δα) distinguish between historical realised performance and current pipeline positioning. 
+                <strong> α₂ updates dynamically</strong> with each platform refresh; <strong>α₁ is anchored to published cohort studies</strong> 
+                (BIO/Norstella) and updates only when new cohort data is published (~every 3–5 years).
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Data Sources */}
+      <div>
+        <div className="text-center mb-8">
+          <Badge className="mb-3"><Globe className="h-3 w-3 mr-1 inline" /> Data Sources</Badge>
+          <h2 className="text-3xl font-bold">Authoritative Sources</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {dataSources.map((source) => (
+            <a
+              key={source.name}
+              href={source.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors text-center"
+            >
+              <div className="font-medium text-xs">{source.name}</div>
+              <Badge variant="outline" className="text-[10px] mt-1">{source.region}</Badge>
+            </a>
           ))}
         </div>
       </div>
@@ -514,12 +257,8 @@ export const MethodologyContent = () => {
             Explore our platform with live molecule data or contact us for a personalized demo.
           </p>
           <div className="flex justify-center gap-4">
-            <Button size="lg">
-              Explore Platform
-            </Button>
-            <Button variant="outline" size="lg">
-              View Pricing
-            </Button>
+            <Button size="lg">Explore Platform</Button>
+            <Button variant="outline" size="lg">View Pricing</Button>
           </div>
         </CardContent>
       </Card>
