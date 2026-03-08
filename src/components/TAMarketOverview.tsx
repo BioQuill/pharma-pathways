@@ -980,7 +980,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Padcev earlier-line bladder data and next-gen PSMA radioligands (2026)',
   },
-  'PAIN MANAGEMENT/ANESTHESIA': {
+  'PAIN & ANAESTHESIA': {
     approvedDrugsTitle: 'Key Approved Pain/Anesthesia Therapies:',
     approvedDrugs: [
       { name: 'Nucynta (tapentadol)', details: 'Dual MOR/NRI mechanism, moderate abuse deterrent' },
