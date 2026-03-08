@@ -138,7 +138,7 @@ function scoreTranslationalEvidence(
   phase: string,
   companyTrackRecord: string
 ): LPI2Factor {
-  const ta = normalizeTA(therapeuticArea);
+  const ta = canonicalizeTA(therapeuticArea);
   
   const preclinicalReproducibility = getPreclinicalReproducibilityScore(ta, phase);
   const biomarkerAvailability = getBiomarkerAvailabilityScore(ta);
