@@ -444,29 +444,12 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
       {/* Molecule Selector (when in molecule mode) */}
       {calculationMode === "molecule" && (
         <div className="space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/20">
-          <Label className="font-medium">Select a Molecule</Label>
-          <Select value={selectedMoleculeId} onValueChange={handleMoleculeSelect}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Choose a molecule to analyze..." />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {molecules.slice(0, 50).map((mol) => (
-                <SelectItem key={mol.id} value={mol.id}>
-                  <span className="flex items-center gap-2">
-                    <span className="font-medium">{mol.name}</span>
-                    <span className="text-muted-foreground text-xs">({mol.company} - {mol.phase})</span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {selectedMolecule && (
-            <div className="mt-3 p-3 bg-background rounded border">
-              <p className="text-sm"><strong>Molecule:</strong> {selectedMolecule.name}</p>
-              <p className="text-sm text-muted-foreground"><strong>Indication:</strong> {selectedMolecule.indication}</p>
-              <p className="text-sm text-muted-foreground"><strong>TA:</strong> {selectedMolecule.therapeuticArea} | <strong>Phase:</strong> {selectedMolecule.phase}</p>
-            </div>
-          )}
+          <MoleculePicker
+            molecules={molecules}
+            value={selectedMolecule || null}
+            onChange={(mol) => { if (mol) handleMoleculeSelect(mol.id); else { setSelectedMoleculeId(''); } }}
+            label="Select a Molecule"
+          />
         </div>
       )}
 
@@ -1727,6 +1710,7 @@ const IndexInner = () => {
 
           {/* TA Market Overview Tab */}
           <TabsContent value="ta-market" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <TAMarketOverview molecules={allMolecules} />
           </TabsContent>
 
@@ -2122,6 +2106,7 @@ const IndexInner = () => {
 
           {/* Monte Carlo Simulation Hub Tab */}
           <TabsContent value="monte-carlo-hub" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
               <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Activity className="h-5 w-5 text-primary" /> Monte Carlo Simulation Engine</h2>
               <p className="text-sm text-muted-foreground">Cross-model uncertainty analysis: PTRS → LPI → PA Index → Peak Sales → BB Prob. Outputs P5 / P50 / P95 on each model + final composite.</p>
