@@ -1034,7 +1034,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'VX-548 chronic pain Phase 3 data and suzetrigine label expansion (2026)',
   },
-  'TRANSPLANT/CELL-GENE': {
+  'HEMATOLOGY (NON-ONCOLOGY)': {
     approvedDrugsTitle: 'Key Approved Transplant/CGT Therapies:',
     approvedDrugs: [
       { name: 'Yescarta (axicabtagene ciloleucel)', details: 'CAR-T for large B-cell lymphoma, $1B+' },
