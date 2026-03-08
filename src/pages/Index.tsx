@@ -243,27 +243,74 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     }
   }, [simulatorMolecule]);
 
-  // Base rates by therapeutic area
-  const taBaseRates: Record<string, { pts: number; prs: number }> = {
-    oncology: { pts: 12, prs: 82 },
-    cns: { pts: 8, prs: 78 },
-    cardiovascular: { pts: 15, prs: 85 },
-    infectious: { pts: 22, prs: 88 },
-    immunology: { pts: 18, prs: 84 },
-    metabolic: { pts: 16, prs: 86 },
-    rareDisease: { pts: 25, prs: 90 },
-    dermatology: { pts: 20, prs: 87 },
+  // === PTRS Calibration Data (from ptrs_calibration.json) ===
+  // PTS base rates by TA and phase (BIO/Norstella 2011-2023)
+  const ptsBaseRates: Record<string, Record<string, number>> = {
+    oncology: { phase1: 0.63, phase2: 0.32, phase3: 0.51 },
+    cns: { phase1: 0.59, phase2: 0.28, phase3: 0.48 },
+    cardiovascular: { phase1: 0.65, phase2: 0.35, phase3: 0.58 },
+    infectious: { phase1: 0.72, phase2: 0.42, phase3: 0.64 },
+    immunology: { phase1: 0.66, phase2: 0.36, phase3: 0.56 },
+    metabolic: { phase1: 0.64, phase2: 0.34, phase3: 0.54 },
+    rareDisease: { phase1: 0.74, phase2: 0.45, phase3: 0.68 },
+    dermatology: { phase1: 0.68, phase2: 0.40, phase3: 0.60 },
+    respiratory: { phase1: 0.62, phase2: 0.33, phase3: 0.52 },
+    psychiatry: { phase1: 0.55, phase2: 0.25, phase3: 0.44 },
+    ophthalmology: { phase1: 0.60, phase2: 0.33, phase3: 0.52 },
+    gastroenterology: { phase1: 0.61, phase2: 0.31, phase3: 0.50 },
+    nephrology: { phase1: 0.60, phase2: 0.30, phase3: 0.50 },
+    musculoskeletal: { phase1: 0.60, phase2: 0.32, phase3: 0.50 },
+    vaccines: { phase1: 0.70, phase2: 0.45, phase3: 0.65 },
+    womensHealth: { phase1: 0.62, phase2: 0.33, phase3: 0.52 },
+    pain: { phase1: 0.58, phase2: 0.28, phase3: 0.46 },
+    pediatrics: { phase1: 0.65, phase2: 0.38, phase3: 0.58 },
+    urology: { phase1: 0.60, phase2: 0.30, phase3: 0.48 },
+    other: { phase1: 0.60, phase2: 0.30, phase3: 0.50 },
   };
 
-  // Phase multipliers
-  const phaseMultipliers: Record<string, number> = {
-    preclinical: 0.3,
-    phase1: 0.5,
-    phase2: 0.75,
-    phase3: 1.2,
-    nda: 1.5,
-    approved: 2.0,
+  // PRS base rates by TA (BioQuill empirical from 14,000-trial dataset)
+  const prsBaseRates: Record<string, { rate: number; asymmetric: boolean }> = {
+    oncology: { rate: 0.89, asymmetric: true },
+    dermatology: { rate: 0.79, asymmetric: false },
+    metabolic: { rate: 0.78, asymmetric: false },
+    immunology: { rate: 0.75, asymmetric: false },
+    vaccines: { rate: 0.75, asymmetric: false },
+    respiratory: { rate: 0.65, asymmetric: false },
+    cns: { rate: 0.63, asymmetric: false },
+    cardiovascular: { rate: 0.58, asymmetric: false },
+    womensHealth: { rate: 0.50, asymmetric: false },
+    pain: { rate: 0.50, asymmetric: false },
+    psychiatry: { rate: 0.47, asymmetric: false },
+    nephrology: { rate: 0.44, asymmetric: false },
+    rareDisease: { rate: 0.44, asymmetric: false },
+    gastroenterology: { rate: 0.40, asymmetric: false },
+    pediatrics: { rate: 0.50, asymmetric: false },
+    infectious: { rate: 0.35, asymmetric: false },
+    ophthalmology: { rate: 0.16, asymmetric: false },
+    musculoskeletal: { rate: 0.10, asymmetric: false },
+    urology: { rate: 0.50, asymmetric: false },
+    other: { rate: 0.38, asymmetric: false },
   };
+
+  // Slider multiplier: converts 0-100 slider to multiplier on base rate
+  const getSliderMultiplier = (value: number): number => {
+    if (value <= 20) return 0.50;
+    if (value <= 40) return 0.75;
+    if (value <= 60) return 1.00;
+    if (value <= 80) return 1.20;
+    return 1.40;
+  };
+
+  // Asymmetric multiplier for PRS when base rate >= 0.80
+  const getAsymmetricMultiplier = (value: number): number => {
+    if (value <= 20) return 0.60;
+    if (value <= 40) return 0.80;
+    if (value <= 60) return 1.00;
+    if (value <= 80) return 1.05;
+    return 1.08;
+  };
+
+  // Phase multipliers no longer used — base rates are per-phase
 
   // Get TA key from molecule's therapeutic area
   const getTAKey = (ta: string): string => {
@@ -274,20 +321,31 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     if (taLower.includes("infectious")) return "infectious";
     if (taLower.includes("immun")) return "immunology";
     if (taLower.includes("metabol") || taLower.includes("endocr") || taLower.includes("diabetes") || taLower.includes("obesity")) return "metabolic";
-    if (taLower.includes("rare")) return "rareDisease";
+    if (taLower.includes("rare") || taLower.includes("orphan")) return "rareDisease";
     if (taLower.includes("derma")) return "dermatology";
-    return "oncology";
+    if (taLower.includes("respir") || taLower.includes("pulmon")) return "respiratory";
+    if (taLower.includes("psych") || taLower.includes("mental")) return "psychiatry";
+    if (taLower.includes("ophthalm")) return "ophthalmology";
+    if (taLower.includes("gastro") || taLower.includes("hepato")) return "gastroenterology";
+    if (taLower.includes("nephro") || taLower.includes("renal")) return "nephrology";
+    if (taLower.includes("musculo") || taLower.includes("orthop")) return "musculoskeletal";
+    if (taLower.includes("vaccin")) return "vaccines";
+    if (taLower.includes("women") || taLower.includes("reprod")) return "womensHealth";
+    if (taLower.includes("pain") || taLower.includes("anesth")) return "pain";
+    if (taLower.includes("pediatr")) return "pediatrics";
+    if (taLower.includes("urolog")) return "urology";
+    return "other";
   };
 
   // Get phase key from molecule's phase
   const getPhaseKey = (phase: string): string => {
     const phaseLower = phase.toLowerCase();
-    if (phaseLower.includes("preclinical")) return "preclinical";
+    if (phaseLower.includes("preclinical")) return "phase1";
     if (phaseLower.includes("phase i") && !phaseLower.includes("ii") && !phaseLower.includes("iii")) return "phase1";
     if (phaseLower.includes("phase ii") && !phaseLower.includes("iii")) return "phase2";
     if (phaseLower.includes("phase iii") || phaseLower.includes("phase 3")) return "phase3";
-    if (phaseLower.includes("nda") || phaseLower.includes("bla") || phaseLower.includes("filed")) return "nda";
-    if (phaseLower.includes("approved")) return "approved";
+    if (phaseLower.includes("nda") || phaseLower.includes("bla") || phaseLower.includes("filed")) return "phase3";
+    if (phaseLower.includes("approved")) return "phase3";
     return "phase2";
   };
 
@@ -313,32 +371,38 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     }
   };
 
-  // Calculate PTS based on inputs
+  // Calculate PTS: basePTS(TA, phase) * avg(slider multipliers for 3 PTS factors)
   const calculatePTS = () => {
-    const baseRate = taBaseRates[therapeuticArea]?.pts || 15;
-    const phaseMultiplier = phaseMultipliers[currentPhase] || 1;
+    const taRates = ptsBaseRates[therapeuticArea] || ptsBaseRates.other;
+    const baseRate = taRates[currentPhase] || taRates.phase2 || 0.30;
     
-    const adjustmentFactor = 
-      (mechanismNovelty[0] * 0.15 + 
-       endpointClarity[0] * 0.25 + 
-       priorTrialData[0] * 0.35 + 
-       sponsorExperience[0] * 0.25) / 100;
+    const modAvg = (
+      getSliderMultiplier(mechanismNovelty[0]) +
+      getSliderMultiplier(endpointClarity[0]) +
+      getSliderMultiplier(priorTrialData[0])
+    ) / 3;
     
-    const pts = Math.min(95, Math.max(5, baseRate * phaseMultiplier * (0.5 + adjustmentFactor)));
-    return Math.round(pts * 10) / 10;
+    const pts = Math.min(0.95, Math.max(0.03, baseRate * modAvg));
+    return Math.round(pts * 1000) / 10; // return as percentage
   };
 
-  // Calculate PRS based on inputs
+  // Calculate PRS: basePRS(TA) * avg(slider multipliers for 3 PRS factors)
+  // Uses asymmetric multiplier when base rate >= 0.80
   const calculatePRS = () => {
-    const baseRate = taBaseRates[therapeuticArea]?.prs || 85;
+    const prsData = prsBaseRates[therapeuticArea] || prsBaseRates.other;
+    const baseRate = prsData.rate;
+    const useAsymmetric = prsData.asymmetric;
     
-    const adjustmentFactor = 
-      (regulatoryPrecedent[0] * 0.4 + 
-       safetyProfile[0] * 0.4 + 
-       sponsorExperience[0] * 0.2) / 100;
+    const getMult = useAsymmetric ? getAsymmetricMultiplier : getSliderMultiplier;
     
-    const prs = Math.min(98, Math.max(50, baseRate * (0.7 + adjustmentFactor * 0.6)));
-    return Math.round(prs * 10) / 10;
+    const modAvg = (
+      getMult(sponsorExperience[0]) +
+      getMult(regulatoryPrecedent[0]) +
+      getMult(safetyProfile[0])
+    ) / 3;
+    
+    const prs = Math.min(0.98, Math.max(0.10, baseRate * modAvg));
+    return Math.round(prs * 1000) / 10; // return as percentage
   };
 
   const pts = calculatePTS();
@@ -347,26 +411,35 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
 
   const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
 
-  // TA display names
+  // TA display names (expanded to match calibration data)
   const taDisplayNames: Record<string, string> = {
-    oncology: "Oncology",
-    cns: "CNS/Neurology",
+    oncology: "Oncology & Hematology",
+    cns: "Neurology",
     cardiovascular: "Cardiovascular",
     infectious: "Infectious Disease",
-    immunology: "Immunology",
-    metabolic: "Metabolic/Endocrine",
-    rareDisease: "Rare Disease",
+    immunology: "Immunology & Inflammation",
+    metabolic: "Endocrinology & Metabolism",
+    rareDisease: "Rare Disease & Orphan",
     dermatology: "Dermatology",
+    respiratory: "Respiratory & Pulmonary",
+    psychiatry: "Psychiatry & Mental Health",
+    ophthalmology: "Ophthalmology",
+    gastroenterology: "Gastroenterology & Hepatology",
+    nephrology: "Nephrology & Renal",
+    musculoskeletal: "Musculoskeletal",
+    vaccines: "Vaccines & Preventive",
+    womensHealth: "Women's Health & Reproductive",
+    pain: "Pain & Anesthesia",
+    pediatrics: "Pediatrics",
+    urology: "Urology",
+    other: "Other",
   };
 
   // Phase display names
   const phaseDisplayNames: Record<string, string> = {
-    preclinical: "Preclinical",
     phase1: "Phase I",
     phase2: "Phase II",
     phase3: "Phase III",
-    nda: "NDA/BLA Filed",
-    approved: "Approved",
   };
 
   // Handle PDF download
@@ -876,125 +949,109 @@ const IndexInner = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Top Bar Image + Navy Navigation Bar */}
-      <header className="sticky top-0 z-10 w-full">
-        {/* Top Bar - using uploaded brand image, 1-1.2cm height */}
-        <div className="w-full" style={{ height: '38px' }}>
-          <img src={topBarImage} alt="BiOQUILL - Precision intelligence. From pipeline to patients." className="w-full h-full object-cover object-bottom" />
-        </div>
-        
-        {/* Top Navy Navigation Bar */}
-        <div className="bg-[#0E1D35] w-full">
-          <div className="container mx-auto px-4">
-            <nav className="flex items-center justify-center gap-0">
-              {/* Platform */}
-              <button 
-                onClick={() => { setTopNavMode('platform'); if (isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
-                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'platform' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
+      {/* BioQuill Yellow Top Bar per bioquill_topbar_config.json */}
+      <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 48, backgroundColor: '#F5C518', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
+        <div className="flex items-center justify-between h-full px-0">
+          {/* Left: Logo circle + wordmark */}
+          <div className="flex items-center gap-2.5 pl-4 shrink-0">
+            <div className="flex items-center justify-center rounded-full bg-[#1A1A1A] overflow-visible shrink-0" style={{ width: 56, height: 56, marginTop: -4, marginBottom: -4 }}>
+              <img src={topBarLogo} alt="BiOQUILL emblem" className="w-9 h-9 object-contain" />
+            </div>
+            <span className="font-bold text-xl tracking-tight text-[#1A1A1A]" style={{ letterSpacing: '-0.02em' }}>BiOQUILL™</span>
+          </div>
+
+          {/* Center: Nav links */}
+          <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-8">
+            {[
+              { label: 'Platform', mode: 'platform' as const },
+              { label: 'Methodology', mode: 'methodology' as const },
+              { label: 'Strategy Hub', mode: 'strategy-hub' as const },
+              { label: 'Pricing', mode: 'pricing' as const },
+            ].map(item => (
+              <button
+                key={item.mode}
+                onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('lpi-2'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
+                className={`text-sm font-medium whitespace-nowrap transition-colors ${topNavMode === item.mode ? 'text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-0.5' : 'text-[#1A1A1A]/80 hover:text-[#1A1A1A]'}`}
               >
-                Platform
+                {item.label}
               </button>
-              
-              {/* Models */}
-              <button 
-                onClick={() => setTopNavMode('models')}
-                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'models' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
-              >
-                Models
-              </button>
-              
-              {/* Methodology */}
-              <button 
-                onClick={() => setTopNavMode('methodology')}
-                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'methodology' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
-              >
-                Methodology
-              </button>
-              
-              {/* Strategy Hub */}
-              <button 
-                onClick={() => { setTopNavMode('strategy-hub'); setActiveTab('lpi-2'); }}
-                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'strategy-hub' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
-              >
-                Strategy Hub
-              </button>
-              
-              {/* Pricing */}
-              <button 
-                onClick={() => setTopNavMode('pricing')}
-                className={`flex-1 max-w-[200px] py-2 text-center font-bold transition-colors border-r border-white/20 ${topNavMode === 'pricing' ? 'text-white bg-white/15' : 'text-white/90 hover:bg-white/10'}`}
-              >
-                Pricing
-              </button>
-              
-              {/* Search */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button className="flex-1 max-w-[200px] py-2 text-center font-bold text-white/90 hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
-                    🔍 Search
-                    {(searchQuery || phaseFilter !== 'all') && (
-                      <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
-                        {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
-                      </Badge>
-                    )}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-4" align="end">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Search molecules</label>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <input
-                          type="text"
-                          placeholder="Name, company, or therapeutic area..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        />
-                        {searchQuery && (
-                          <button 
-                            onClick={() => setSearchQuery('')}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
+            ))}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-sm font-medium text-[#1A1A1A]/80 hover:text-[#1A1A1A] transition-colors flex items-center gap-1.5">
+                  <Search className="h-3.5 w-3.5" /> Search
+                  {(searchQuery || phaseFilter !== 'all') && (
+                    <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-[#1A1A1A]/15 text-[#1A1A1A]">
+                      {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
+                    </Badge>
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-4" align="end">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Search molecules</label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <input
+                        type="text"
+                        placeholder="Name, company, or therapeutic area..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      />
+                      {searchQuery && (
+                        <button 
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Phase filter</label>
-                      <div className="flex flex-wrap gap-1">
-                        {['all', 'Phase I', 'Phase II', 'Phase III', 'Approved'].map((phase) => (
-                          <Button
-                            key={phase}
-                            variant={phaseFilter === phase ? 'default' : 'outline'}
-                            size="sm"
-                            className="h-7 px-2 text-xs"
-                            onClick={() => setPhaseFilter(phase)}
-                          >
-                            {phase === 'all' ? 'All' : phase.replace('Phase ', 'P')}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                    {(searchQuery || phaseFilter !== 'all') && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="w-full text-muted-foreground"
-                        onClick={() => { setSearchQuery(''); setPhaseFilter('all'); }}
-                      >
-                        Clear filters
-                      </Button>
-                    )}
                   </div>
-                </PopoverContent>
-              </Popover>
-            </nav>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Phase filter</label>
+                    <div className="flex flex-wrap gap-1">
+                      {['all', 'Phase I', 'Phase II', 'Phase III', 'Approved'].map((phase) => (
+                        <Button
+                          key={phase}
+                          variant={phaseFilter === phase ? 'default' : 'outline'}
+                          size="sm"
+                          className="h-7 px-2 text-xs"
+                          onClick={() => setPhaseFilter(phase)}
+                        >
+                          {phase === 'all' ? 'All' : phase.replace('Phase ', 'P')}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  {(searchQuery || phaseFilter !== 'all') && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="w-full text-muted-foreground"
+                      onClick={() => { setSearchQuery(''); setPhaseFilter('all'); }}
+                    >
+                      Clear filters
+                    </Button>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </nav>
+
+          {/* Right: Data refreshed pill */}
+          <div className="flex items-center pr-6 shrink-0">
+            <span className="text-xs text-[#1A1A1A]/75 whitespace-nowrap" style={{ background: 'rgba(255,255,255,0.35)', borderRadius: 20, padding: '4px 12px' }}>
+              Data refreshed: 06/03/2026
+            </span>
           </div>
         </div>
       </header>
+
+      {/* Spacer for fixed header */}
+      <div style={{ height: 48 }} />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
@@ -1329,26 +1386,26 @@ const IndexInner = () => {
 
                           {/* Middle: Signal Dots + Verdict */}
                           <div className="flex flex-col items-start shrink-0">
-                            <div className="flex items-center gap-2">
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${lpiDot} text-black`} title={`LPI: ${lpi3Score}%`}>
-                                <span className="text-[9px] font-bold leading-none">LPI</span>
-                                <span className="text-xs font-bold leading-none">{lpi3Score}%</span>
+                            <div className="flex items-center gap-1.5 -ml-2">
+                              <div className={`flex flex-col items-center justify-center rounded-full ${lpiDot} text-black`} style={{ width: 62, height: 62 }} title={`LPI: ${lpi3Score}%`}>
+                                <span className="text-[11px] font-bold leading-none">LPI</span>
+                                <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${ttmDot} text-black`} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
-                                <span className="text-[9px] font-bold leading-none">TTM</span>
-                                <span className="text-xs font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${ttmDot} text-black`} style={{ width: 62, height: 62 }} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
+                                <span className="text-[11px] font-bold leading-none">TTM</span>
+                                <span className="text-sm font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${scoreDot} text-black`} title={`Score: ${compositeScore}`}>
-                                <span className="text-[9px] font-bold leading-none">Score</span>
-                                <span className="text-xs font-bold leading-none">{compositeScore}</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${scoreDot} text-black`} style={{ width: 62, height: 62 }} title={`Score: ${compositeScore}`}>
+                                <span className="text-[11px] font-bold leading-none">Score</span>
+                                <span className="text-sm font-bold leading-none">{compositeScore}</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${tiDot} text-black`} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
-                                <span className="text-[9px] font-bold leading-none">TI</span>
-                                <span className="text-xs font-bold leading-none">{ti.value.toFixed(1)}</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${tiDot} text-black`} style={{ width: 62, height: 62 }} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
+                                <span className="text-[11px] font-bold leading-none">TI</span>
+                                <span className="text-sm font-bold leading-none">{ti.value.toFixed(1)}</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${dropoutDot} text-black`} title={`Dropout: ${dropoutRanking}/5`}>
-                                <span className="text-[9px] font-bold leading-none">Drop</span>
-                                <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${dropoutDot} text-black`} style={{ width: 62, height: 62 }} title={`Dropout: ${dropoutRanking}/5`}>
+                                <span className="text-[11px] font-bold leading-none">Drop</span>
+                                <span className="text-sm font-bold leading-none">{dropoutRanking}/5</span>
                               </div>
                             </div>
                             <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
