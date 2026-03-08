@@ -405,7 +405,7 @@ const taBenchmarkingData = [
     ],
     pediatricExamples: [
       { name: "Pediatric Oncology (ALL)", baseTA: "Oncology", baseRate: "75%", bonus: "+10%", adjusted: "85%" },
-      { name: "Pediatric Rare Disease (DMD)", baseTA: "Rare Diseases", baseRate: "85%", bonus: "+10%", adjusted: "95%" },
+      { name: "Pediatric Rare Disease (DMD)", baseTA: "Rare Disease & Orphan", baseRate: "85%", bonus: "+10%", adjusted: "95%" },
       { name: "Pediatric Asthma (6-11 years)", baseTA: "Respiratory", baseRate: "62%", bonus: "+10%", adjusted: "72%" },
     ],
   },

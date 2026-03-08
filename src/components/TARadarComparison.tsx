@@ -19,7 +19,7 @@ const COLORS = [
 
 const TARadarComparison: React.FC = () => {
   const allIndexes = getAllTACompositeIndexes();
-  const [selectedTAs, setSelectedTAs] = useState<string[]>(['Oncology/Hematology', 'Cardiovascular', 'Neurology/CNS']);
+  const [selectedTAs, setSelectedTAs] = useState<string[]>(['Oncology & Hematology', 'Cardiovascular', 'Neurology']);
 
   const toggleTA = (ta: string) => {
     setSelectedTAs(prev => 

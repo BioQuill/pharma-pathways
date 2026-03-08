@@ -1045,7 +1045,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "GENEr8-1",
     phase: "Approved (EU) / Withdrawn (US Process)",
     indication: "Severe Hemophilia A",
-    therapeuticArea: "Transplantation & Cell/Gene Therapy",
+    therapeuticArea: "Hematology (non-oncology)",
     company: "BioMarin",
     companyTrackRecord: 'average',
     nctId: "NCT03370913",
