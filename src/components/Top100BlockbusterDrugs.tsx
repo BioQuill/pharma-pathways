@@ -111,7 +111,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Infectious Diseases",
+    name: "Infectious Disease",
     drugs: [
       { name: "Zoliflodacin", company: "Innoviva", mechanism: "Topoisomerase II inhibitor", indication: "Gonorrhea", peakSales: "$500M-1B", status: "Phase 3, Filing Q1 2025", nct: "TBD" },
       { name: "Clesrovimab (MK-1654)", company: "Merck", mechanism: "mAb", indication: "RSV prevention (infants)", peakSales: "$2B+", status: "Under FDA review", nct: "TBD" },
