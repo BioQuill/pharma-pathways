@@ -278,7 +278,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Olpasiran Phase 3 CV outcomes trial results (OCEAN(a)-Outcomes, 2026)',
   },
-  'NEUROLOGY/CNS': {
+  'NEUROLOGY': {
     approvedDrugsTitle: 'Key Approved Neurology Therapies:',
     approvedDrugs: [
       { name: 'Leqembi (lecanemab)', details: 'Anti-amyloid for Alzheimer\'s, 27% slowing of decline, IV infusion' },
