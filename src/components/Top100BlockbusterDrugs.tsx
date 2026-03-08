@@ -181,7 +181,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Vaccines & Virology",
+    name: "Vaccines & Preventive",
     drugs: [
       { name: "mRES (mRNA-1345)", company: "Moderna", mechanism: "mRNA RSV vaccine", indication: "RSV prevention (adults 60+)", peakSales: "$2-3B", status: "Approved 2024", nct: "NCT05127434" },
       { name: "mRNA-1010", company: "Moderna", mechanism: "mRNA influenza vaccine", indication: "Seasonal influenza", peakSales: "$3-5B", status: "Phase 3", nct: "TBD" },
