@@ -297,7 +297,7 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "Endpoint: 32%, GL-3 reduction: 68%", safety: "Infusion reactions 22%, anaphylaxis rare", icer: "$480K/QALY", population: "~500-1000 patients", price: "IV q2w" },
       ratios: ["Clinical endpoint: 38%/32% = 1.19", "Biomarker: 75%/68% = 1.10", "QoL: 12/9 = 1.33", "Safety: 22%/18% = 1.22 (better)", "ICER: $480K/$425K = 1.13", "Dosing: Same = 1.0"],
       compositeScore: "1.16",
-      probability: { baseRate: "US Commercial Rare Diseases: 85%", composite: "85% × 1.16 = 98.6%", adjustments: ["Orphan Drug Act 7-year exclusivity: +0% (in base)", "Pediatric Rare Disease PRV: +5%", "Patient advocacy (strong): +3%"], final: "99% + 5% + 3% = 107% → cap at 95%" },
+      probability: { baseRate: "US Commercial Rare Disease & Orphan: 85%", composite: "85% × 1.16 = 98.6%", adjustments: ["Orphan Drug Act 7-year exclusivity: +0% (in base)", "Pediatric Rare Disease PRV: +5%", "Patient advocacy (strong): +3%"], final: "99% + 5% + 3% = 107% → cap at 95%" },
     },
   },
   {
