@@ -512,7 +512,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "NAVIGATOR",
     phase: "Approved",
     indication: "Severe Uncontrolled Asthma",
-    therapeuticArea: "Respiratory/Pulmonology",
+    therapeuticArea: "Respiratory & Pulmonary",
     company: "AstraZeneca/Amgen",
     companyTrackRecord: 'fast',
     nctId: "NCT03347279",
