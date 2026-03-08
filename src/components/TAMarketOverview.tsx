@@ -170,7 +170,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Nemolizumab Phase 3 atopic dermatitis results and regulatory submissions (2025-26)',
   },
-  'ONCOLOGY/HEMATOLOGY': {
+  'ONCOLOGY & HEMATOLOGY': {
     approvedDrugsTitle: 'Key Approved Oncology Therapies:',
     approvedDrugs: [
       { name: 'Keytruda (pembrolizumab)', details: 'PD-1 inhibitor, $25B+ sales, 30+ indications across solid tumors' },
