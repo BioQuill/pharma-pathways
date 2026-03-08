@@ -1231,14 +1231,15 @@ const IndexInner = () => {
                       { key: 'ttm', label: 'TTM' },
                       { key: 'composite', label: 'Score' },
                       { key: 'ti', label: 'TI' },
-                      { key: 'company', label: 'Company' },
+                      { key: 'ptrs', label: 'PTRS' },
+                      { key: 'company', label: 'Sponsor' },
                       { key: 'ta', label: 'TA' },
                     ].map(({ key, label }) => (
                       <Button
                         key={key}
                         variant={sortBy === key ? 'default' : 'outline'}
                         size="sm"
-                        className="h-7 px-2 text-xs"
+                        className="h-9 px-3 text-base font-bold text-black"
                         onClick={() => {
                           if (sortBy === key) {
                             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
