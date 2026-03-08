@@ -98,29 +98,10 @@ export function estimateBeta(inputs: BetaInputs): number {
   return Math.max(0.2, Math.min(2.5, Math.round(raw * 100) / 100));
 }
 
+import { canonicalizeTA } from './taCanonical';
+
 export function mapTAToRmKey(ta: string): string {
-  const taLower = ta.toLowerCase();
-  if (taLower.includes("oncology") || (taLower.includes("hematology") && taLower.includes("oncology"))) return "Oncology & Hematology";
-  if (taLower.includes("hematology")) return "Hematology (non-oncology)";
-  if (taLower.includes("rare") || taLower.includes("orphan")) return "Rare Disease & Orphan";
-  if (taLower.includes("vaccin")) return "Vaccines & Preventive";
-  if (taLower.includes("infectious")) return "Infectious Disease";
-  if (taLower.includes("derma")) return "Dermatology";
-  if (taLower.includes("pediatr")) return "Pediatrics";
-  if (taLower.includes("cardio")) return "Cardiovascular";
-  if (taLower.includes("immun")) return "Immunology & Inflammation";
-  if (taLower.includes("endocr") || taLower.includes("metabol") || taLower.includes("diabet") || taLower.includes("obes")) return "Endocrinology & Metabolism";
-  if (taLower.includes("respir") || taLower.includes("pulmon")) return "Respiratory & Pulmonary";
-  if (taLower.includes("women") || taLower.includes("reprod")) return "Womens Health & Reproductive";
-  if (taLower.includes("ophthalm")) return "Ophthalmology";
-  if (taLower.includes("musculo") || taLower.includes("orthop")) return "Musculoskeletal";
-  if (taLower.includes("gastro") || taLower.includes("hepat")) return "Gastroenterology & Hepatology";
-  if (taLower.includes("nephro") || taLower.includes("renal")) return "Nephrology & Renal";
-  if (taLower.includes("urolog")) return "Urology";
-  if (taLower.includes("neuro") || taLower.includes("cns")) return "Neurology";
-  if (taLower.includes("pain") || taLower.includes("anesth")) return "Pain & Anesthesia";
-  if (taLower.includes("psych") || taLower.includes("mental")) return "Psychiatry & Mental Health";
-  return "Oncology & Hematology"; // default
+  return canonicalizeTA(ta);
 }
 
 export function calculateCAPM(ta: string, actualPTRS: number, betaInputs: BetaInputs): CAPMResult {

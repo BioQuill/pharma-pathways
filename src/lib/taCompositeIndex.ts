@@ -221,72 +221,11 @@ export function getAllTACompositeIndexes(): TACompositeIndex[] {
   return tas.map(ta => generateTACompositeIndex(ta));
 }
 
-// Normalize TA string to match our keys
+// Normalize TA string to match our canonical UPPERCASE keys
+import { canonicalizeTAKey } from './taCanonical';
+
 function normalizeTA(ta: string): string {
-  const taLower = ta.toLowerCase();
-  
-  if (taLower.includes('oncology') || taLower.includes('hematology') || taLower.includes('cancer')) {
-    return 'ONCOLOGY/HEMATOLOGY';
-  }
-  if (taLower.includes('cardio') || taLower.includes('heart')) {
-    return 'CARDIOVASCULAR';
-  }
-  if (taLower.includes('neuro') || taLower.includes('cns') || taLower.includes('alzheimer')) {
-    return 'NEUROLOGY/CNS';
-  }
-  if (taLower.includes('psych') || taLower.includes('mental')) {
-    return 'PSYCHIATRY/MENTAL HEALTH';
-  }
-  if (taLower.includes('immun') || taLower.includes('inflam')) {
-    return 'IMMUNOLOGY & INFLAMMATION';
-  }
-  if (taLower.includes('rheum') || taLower.includes('arthritis')) {
-    return 'RHEUMATOLOGY';
-  }
-  if (taLower.includes('infect') || taLower.includes('virus') || taLower.includes('bacter')) {
-    return 'INFECTIOUS DISEASES';
-  }
-  if (taLower.includes('respir') || taLower.includes('pulmon') || taLower.includes('lung')) {
-    return 'RESPIRATORY/PULMONOLOGY';
-  }
-  if (taLower.includes('gastro') || taLower.includes('hepat') || taLower.includes('liver')) {
-    return 'GASTROENTEROLOGY & HEPATOLOGY';
-  }
-  if (taLower.includes('nephro') || taLower.includes('renal') || taLower.includes('kidney')) {
-    return 'NEPHROLOGY/RENAL';
-  }
-  if (taLower.includes('derma') || taLower.includes('skin')) {
-    return 'DERMATOLOGY';
-  }
-  if (taLower.includes('ophthal') || taLower.includes('eye')) {
-    return 'OPHTHALMOLOGY';
-  }
-  if (taLower.includes('rare') || taLower.includes('orphan')) {
-    return 'RARE DISEASES/ORPHAN';
-  }
-  if (taLower.includes('vaccin') || taLower.includes('virol')) {
-    return 'VACCINES & VIROLOGY';
-  }
-  if (taLower.includes('women') || taLower.includes('gynec') || taLower.includes('obstet')) {
-    return 'WOMEN\'S HEALTH';
-  }
-  if (taLower.includes('urol') || taLower.includes('prostat')) {
-    return 'UROLOGY';
-  }
-  if (taLower.includes('pain') || taLower.includes('anesth')) {
-    return 'PAIN MANAGEMENT/ANESTHESIA';
-  }
-  if (taLower.includes('transplant') || taLower.includes('cell') || taLower.includes('gene')) {
-    return 'TRANSPLANT/CELL-GENE';
-  }
-  if (taLower.includes('pediatr') || taLower.includes('child')) {
-    return 'PEDIATRICS';
-  }
-  if (taLower.includes('metabol') || taLower.includes('diabet') || taLower.includes('endocrin') || taLower.includes('obesity')) {
-    return 'ENDOCRINOLOGY & METABOLISM';
-  }
-  
-  return 'GENERAL';
+  return canonicalizeTAKey(ta);
 }
 
 export { normalizeTA };
