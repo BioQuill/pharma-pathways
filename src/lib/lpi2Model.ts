@@ -221,7 +221,7 @@ function scoreRegulatoryAttractiveness(
   indication: string,
   phase: string
 ): LPI2Factor {
-  const ta = normalizeTA(therapeuticArea);
+  const ta = canonicalizeTA(therapeuticArea);
   
   const orphanStatus = getOrphanStatusScore(ta, indication);
   const unmetNeed = getUnmetNeedScore(ta, indication);
