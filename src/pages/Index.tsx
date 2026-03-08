@@ -1265,7 +1265,10 @@ const IndexInner = () => {
                     const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
                     const dropoutDot = dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
 
-                    const verdict = compositeScore >= 67 ? '→ INTERESTING — worth full analysis' : compositeScore >= 34 ? '→ MONITOR — review at next data update' : '→ CAUTION — high-risk profile';
+                    const medalRank = compositeScore >= 67 ? 1 : compositeScore >= 34 ? 2 : 3;
+                    const medalEmoji = medalRank === 1 ? '🥇' : medalRank === 2 ? '🥈' : '🥉';
+                    const medalBg = medalRank === 1 ? 'bg-[hsl(45,90%,50%)]' : medalRank === 2 ? 'bg-[hsl(0,0%,75%)]' : 'bg-[hsl(30,60%,45%)]';
+                    const medalBorder = medalRank === 1 ? 'border-[hsl(45,90%,40%)]' : medalRank === 2 ? 'border-[hsl(0,0%,65%)]' : 'border-[hsl(30,60%,35%)]';
 
                     // Generate enriched trial info from molecule data
                     const mfg = getManufacturingCapability(molecule.company);
