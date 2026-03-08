@@ -675,7 +675,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "13. Nephrology & Renal",
+    name: "Nephrology & Renal",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "CKD progression, prostate cancer, BPH; dialysis cost-offset valued" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Elderly CKD/ESRD; Part D oral; Part B ESAs/dialysis drugs" },
