@@ -307,43 +307,19 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     }
   };
 
-  // Calculate PTS: basePTS(TA, phase) * avg(slider multipliers for 3 PTS factors)
-  const calculatePTS = () => {
-    const taRates = ptsBaseRates[therapeuticArea] || ptsBaseRates.other;
-    const baseRate = taRates[currentPhase] || taRates.phase2 || 0.30;
-    
-    const modAvg = (
-      getSliderMultiplier(mechanismNovelty[0]) +
-      getSliderMultiplier(endpointClarity[0]) +
-      getSliderMultiplier(priorTrialData[0])
-    ) / 3;
-    
-    const pts = Math.min(0.95, Math.max(0.03, baseRate * modAvg));
-    return Math.round(pts * 1000) / 10; // return as percentage
-  };
+  // Use centralized PTRS engine
+  const ptrsResult = calculatePTRS(therapeuticArea, currentPhase, {
+    mechanismNovelty: mechanismNovelty[0],
+    endpointClarity: endpointClarity[0],
+    priorTrialData: priorTrialData[0],
+    sponsorExperience: sponsorExperience[0],
+    regulatoryPrecedent: regulatoryPrecedent[0],
+    safetyProfile: safetyProfile[0],
+  });
 
-  // Calculate PRS: basePRS(TA) * avg(slider multipliers for 3 PRS factors)
-  // Uses asymmetric multiplier when base rate >= 0.80
-  const calculatePRS = () => {
-    const prsData = prsBaseRates[therapeuticArea] || prsBaseRates.other;
-    const baseRate = prsData.rate;
-    const useAsymmetric = prsData.asymmetric;
-    
-    const getMult = useAsymmetric ? getAsymmetricMultiplier : getSliderMultiplier;
-    
-    const modAvg = (
-      getMult(sponsorExperience[0]) +
-      getMult(regulatoryPrecedent[0]) +
-      getMult(safetyProfile[0])
-    ) / 3;
-    
-    const prs = Math.min(0.98, Math.max(0.10, baseRate * modAvg));
-    return Math.round(prs * 1000) / 10; // return as percentage
-  };
-
-  const pts = calculatePTS();
-  const prs = calculatePRS();
-  const ptrs = Math.round((pts / 100) * prs * 10) / 10;
+  const pts = ptrsResult.pts_pct;
+  const prs = ptrsResult.prs_pct;
+  const ptrs = ptrsResult.ptrs_pct;
 
   const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
 
