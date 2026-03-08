@@ -24,7 +24,7 @@ export interface TASpecificScoring {
 
 export const taSpecificScoringData: TASpecificScoring[] = [
   {
-    taName: "1. Oncology",
+    taName: "Oncology & Hematology",
     marketScorings: [
       {
         market: "US Markets",
