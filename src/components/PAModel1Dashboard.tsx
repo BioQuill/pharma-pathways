@@ -856,7 +856,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "18. Rare Disease & Orphan",
+    name: "Rare Disease & Orphan",
     markets: [
       { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Orphan Drug Act; 7-year exclusivity; high willingness to pay; ultra-rare pricing flexibility" },
       { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B/D coverage; CED pathway for gene therapy; PRV incentives" },
