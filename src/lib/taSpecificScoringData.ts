@@ -630,7 +630,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "7. Infectious Diseases",
+    taName: "Infectious Disease",
     marketScorings: [
       {
         market: "US Markets",
