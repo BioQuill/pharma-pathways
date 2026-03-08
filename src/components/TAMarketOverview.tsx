@@ -818,7 +818,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'DMD gene therapy regulatory decisions and CRISPR indication expansion (2026)',
   },
-  'VACCINES & VIROLOGY': {
+  'VACCINES & PREVENTIVE': {
     approvedDrugsTitle: 'Key Approved Vaccines:',
     approvedDrugs: [
       { name: 'Comirnaty (BNT162b2)', details: 'mRNA COVID-19 vaccine, first approved mRNA platform' },
