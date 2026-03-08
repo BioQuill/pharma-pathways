@@ -115,10 +115,7 @@ export const TA_MAX_TTM: Record<string, number> = {
 // Alias for backward compatibility
 export const TA_AVERAGE_TTM = TA_MAX_TTM;
 
-// Normalize therapeutic area string to canonical UPPERCASE key
-import { canonicalizeTAKey } from './taCanonical';
-
-function normalizeTherapeuticAreaInternal(ta: string): string {
+export function normalizeTherapeuticArea(ta: string): string {
   return canonicalizeTAKey(ta);
 }
 
