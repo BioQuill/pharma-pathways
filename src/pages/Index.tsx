@@ -444,29 +444,12 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
       {/* Molecule Selector (when in molecule mode) */}
       {calculationMode === "molecule" && (
         <div className="space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/20">
-          <Label className="font-medium">Select a Molecule</Label>
-          <Select value={selectedMoleculeId} onValueChange={handleMoleculeSelect}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Choose a molecule to analyze..." />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {molecules.slice(0, 50).map((mol) => (
-                <SelectItem key={mol.id} value={mol.id}>
-                  <span className="flex items-center gap-2">
-                    <span className="font-medium">{mol.name}</span>
-                    <span className="text-muted-foreground text-xs">({mol.company} - {mol.phase})</span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {selectedMolecule && (
-            <div className="mt-3 p-3 bg-background rounded border">
-              <p className="text-sm"><strong>Molecule:</strong> {selectedMolecule.name}</p>
-              <p className="text-sm text-muted-foreground"><strong>Indication:</strong> {selectedMolecule.indication}</p>
-              <p className="text-sm text-muted-foreground"><strong>TA:</strong> {selectedMolecule.therapeuticArea} | <strong>Phase:</strong> {selectedMolecule.phase}</p>
-            </div>
-          )}
+          <MoleculePicker
+            molecules={molecules}
+            value={selectedMolecule || null}
+            onChange={(mol) => { if (mol) handleMoleculeSelect(mol.id); else { setSelectedMoleculeId(''); } }}
+            label="Select a Molecule"
+          />
         </div>
       )}
 
