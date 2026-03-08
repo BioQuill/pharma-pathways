@@ -2316,6 +2316,7 @@ const IndexInner = () => {
                 <PTRSCustomScenarioBuilder molecules={allMolecules} />
               </CardContent>
             </Card>
+          </TabsContent>
 
           {/* Pricing & Access Markets Overview Tab */}
           <TabsContent value="pricing-access" className="space-y-6">
