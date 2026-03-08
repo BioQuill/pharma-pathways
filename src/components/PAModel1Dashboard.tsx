@@ -519,7 +519,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "8. Respiratory",
+    name: "Respiratory & Pulmonary",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Severe asthma biologics growing; COPD prevalent; inhaler competition" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "COPD elderly; Part D inhalers; Part B biologics" },
