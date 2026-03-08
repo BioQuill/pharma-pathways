@@ -94,7 +94,7 @@ function scoreBiologicalPlausibility(
   phase: string,
   indication: string
 ): LPI2Factor {
-  const ta = normalizeTA(therapeuticArea);
+  const ta = canonicalizeTA(therapeuticArea);
   
   // Sub-factors for biological plausibility
   const geneticEvidence = getGeneticEvidenceScore(ta, indication);
