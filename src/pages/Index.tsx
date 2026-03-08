@@ -1727,6 +1727,7 @@ const IndexInner = () => {
 
           {/* TTM Tab */}
           <TabsContent value="ttm" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <TTMBreakdownChart />
           </TabsContent>
 
