@@ -764,7 +764,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'OPT-302 combination Phase 3 and gene therapy AMD trials (2026)',
   },
-  'RARE DISEASES/ORPHAN': {
+  'RARE DISEASE & ORPHAN': {
     approvedDrugsTitle: 'Key Approved Rare Disease Therapies:',
     approvedDrugs: [
       { name: 'Spinraza (nusinersen)', details: 'ASO for SMA, first disease-modifying therapy' },
