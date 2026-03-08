@@ -301,7 +301,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "15. Vaccines & Virology",
+    ta: "15. Vaccines & Preventive",
     benchmarks: [
       { molecule: "Arexvy (RSV)", indication: "RSV prevention (elderly)", usApproval: "Yes", niceRec: "Yes", gba: "STIKO rec", icer: "~£8K/QALY", keyEndpoint: "VE 82%, severe 94%", successFactor: "First RSV vaccine (elderly)" },
       { molecule: "Abrysvo (RSV)", indication: "RSV (elderly + maternal)", usApproval: "Yes", niceRec: "Yes", gba: "STIKO rec", icer: "~£9K/QALY", keyEndpoint: "VE 67-86%", successFactor: "Dual indication" },
