@@ -100,6 +100,9 @@ import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChar
 import { MethodologyContent } from "@/components/MethodologyContent";
 import { PricingContent } from "@/components/PricingContent";
 import { ModelsContent } from "@/components/ModelsContent";
+import { SimulatorMoleculeProvider, useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
+import { MoleculePicker } from "@/components/MoleculePicker";
 
 // TimelinePhase interface imported from moleculesData
 
