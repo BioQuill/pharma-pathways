@@ -398,7 +398,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "4. Dermatology",
+    name: "Dermatology",
     markets: [
       { market: "US", clinical: 25, economic: 30, access: 30, political: 15, notes: "Medical vs. cosmetic distinction critical; prior auth common" },
       { market: "US Medicare", clinical: 25, economic: 30, access: 30, political: 15, notes: "Part D coverage; step therapy typical" },
