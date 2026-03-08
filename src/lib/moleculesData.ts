@@ -245,7 +245,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "GEMINI/EVOLVE",
     phase: "Phase III",
     indication: "Treatment-Resistant Depression",
-    therapeuticArea: "Psychiatry/Mental Health",
+    therapeuticArea: "Psychiatry & Mental Health",
     company: "Axsome Therapeutics",
     companyTrackRecord: 'average',
     nctId: "NCT04019704",
