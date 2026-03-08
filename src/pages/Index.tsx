@@ -1178,7 +1178,7 @@ const IndexInner = () => {
                   {strategyHubTabs.map(tab => {
                     const Icon = tab.icon;
                     return (
-                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
+                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/80 font-bold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
                         <Icon className="h-4 w-4" />
                         {tab.label}
                       </TabsTrigger>
