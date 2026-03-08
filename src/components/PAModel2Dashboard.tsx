@@ -177,7 +177,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "8. Infectious Diseases",
+    ta: "8. Infectious Disease",
     benchmarks: [
       { molecule: "Xacduro (zoliflodacin)", indication: "Gonorrhea", usApproval: "Yes", niceRec: "Not reviewed", gba: "Pending", icer: "N/A", keyEndpoint: "Cure rate", successFactor: "Novel mechanism, AMR priority" },
       { molecule: "Sunlenca (lenacapavir)", indication: "HIV (MDR)", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£42K", keyEndpoint: "Viral suppression", successFactor: "Twice-yearly dosing" },
