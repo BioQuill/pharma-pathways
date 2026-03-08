@@ -2231,6 +2231,7 @@ const IndexInner = () => {
 
           {/* Pricing & Access Markets Overview Tab */}
           <TabsContent value="pricing-access" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PricingAccessDashboard molecules={allMolecules} />
           </TabsContent>
 
