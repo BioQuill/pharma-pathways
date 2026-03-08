@@ -18,10 +18,9 @@ const DATA_URL =
 let cachedMolecules: MoleculeProfile[] | null = null;
 let fetchPromise: Promise<MoleculeProfile[]> | null = null;
 
-// TA normalisation map — keep JSON values as-is, only fix true duplicates
-const TA_CANONICAL: Record<string, string> = {
-  'Musculoskeletal & Rheumatology': 'Musculoskeletal',
-};
+// TA normalisation — delegate to central canonical mapper
+const TA_CANONICAL: Record<string, string> = {};
+// All mapping is handled by canonicalizeTA()
 
 // Phase normalisation map
 const PHASE_CANONICAL: Record<string, string> = {
