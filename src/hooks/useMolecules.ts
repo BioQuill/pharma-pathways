@@ -241,6 +241,11 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
       ta_benchmark: taBenchmark,
       approval_status: approvalStatus,
       model_applicability: modelApplicability,
+      lpi_ci: lpiResult.ci,
+      lpi_ci_low: lpiResult.ciLow,
+      lpi_ci_high: lpiResult.ciHigh,
+      lpi_label: lpiResult.label,
+      lpi_breakdown: lpiResult.breakdown,
     },
   } as MoleculeProfile & { _raw: any };
 }
