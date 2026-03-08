@@ -952,12 +952,28 @@ const IndexInner = () => {
                     ))}
                   </div>
                 </div>
-                {(searchQuery || phaseFilter !== 'all') && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Record type</label>
+                  <div className="flex flex-wrap gap-1">
+                    {(['drugs', 'devices', 'all'] as const).map((rt) => (
+                      <Button
+                        key={rt}
+                        variant={recordTypeFilter === rt ? 'default' : 'outline'}
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => setRecordTypeFilter(rt)}
+                      >
+                        {rt === 'drugs' ? 'Drugs only' : rt === 'devices' ? 'Devices only' : 'All'}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                {(searchQuery || phaseFilter !== 'all' || recordTypeFilter !== 'drugs') && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     className="w-full text-muted-foreground"
-                    onClick={() => { setSearchQuery(''); setPhaseFilter('all'); }}
+                    onClick={() => { setSearchQuery(''); setPhaseFilter('all'); setRecordTypeFilter('drugs'); }}
                   >
                     Clear filters
                   </Button>
