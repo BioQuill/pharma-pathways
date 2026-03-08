@@ -153,6 +153,7 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
   const trackRecord = guessTrackRecord(company);
   const indication = raw.conditions || raw.primary_drug || '';
   const isFailed = raw.status === 'TERMINATED' || raw.status === 'WITHDRAWN';
+  const approvalStatus = determineApprovalStatus(raw);
 
   const scores = calculateProbabilityScores(phase, indication, ta, isFailed);
   const marketData = generateMarketProjections(
