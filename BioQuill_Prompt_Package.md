@@ -520,10 +520,13 @@ Connect the Pricing tab to Stripe for live subscription checkout.
 2. For each paid plan button on the Pricing tab, replace with a Stripe Checkout 
    redirect button. On click: create a Stripe Checkout session and redirect.
 
-3. Price IDs from env variables:
-   VITE_STRIPE_PRICE_PRO=price_XXXX
-   VITE_STRIPE_PRICE_ENTERPRISE=price_XXXX
-   Add code comment: // TODO: replace test price IDs with live IDs before launch
+3. Price IDs from env variables — one per plan, mapped to each card button:
+   VITE_STRIPE_PRICE_1MOLECULE      → "1 Molecule" plan button
+   VITE_STRIPE_PRICE_5MOLECULES     → "5 Molecules" plan button
+   VITE_STRIPE_PRICE_1TA            → "1 TA" plan button
+   VITE_STRIPE_PRICE_2TAS           → "2 TAs" plan button
+   VITE_STRIPE_PRICE_3TAS           → "3 TAs" plan button
+   VITE_STRIPE_PRICE_FULL           → "Full" plan button
 
 4. Success redirect URL: /platform?subscribed=true
    Show success banner: "Subscription activated — welcome to BioQuill"
@@ -533,9 +536,13 @@ Connect the Pricing tab to Stripe for live subscription checkout.
 6. No authentication/login wall at this stage — Stripe checkout only.
 
 Environment variables to add in Lovable project settings before running this prompt:
-VITE_STRIPE_PUBLISHABLE_KEY = pk_test_[your key]
-VITE_STRIPE_PRICE_PRO = price_[your price ID]
-VITE_STRIPE_PRICE_ENTERPRISE = price_[your price ID]
+VITE_STRIPE_PUBLISHABLE_KEY      = pk_live_[your publishable key]
+VITE_STRIPE_PRICE_1MOLECULE      = price_[your price ID]
+VITE_STRIPE_PRICE_5MOLECULES     = price_[your price ID]
+VITE_STRIPE_PRICE_1TA            = price_[your price ID]
+VITE_STRIPE_PRICE_2TAS           = price_[your price ID]
+VITE_STRIPE_PRICE_3TAS           = price_[your price ID]
+VITE_STRIPE_PRICE_FULL           = price_[your price ID]
 ```
 
 ---
@@ -589,3 +596,298 @@ CHANGE 2 — Add hover effect:
 Do not change any pricing amounts, plan names, feature lists, or button text.
 Do not add Stripe integration in this prompt (handled separately).
 ```
+
+---
+
+## PROMPT H1 — Single Source of Truth Architecture Refactor
+*Estimated cost: 5-7 credits — send BEFORE Prompt H2*
+*Do not send until Prompts A-F are complete and verified*
+
+---
+
+```
+TASK: Architecture refactor only — no UI changes, no new features.
+Fix the dual molecule object problem so that the Full DD Report and all 
+simulator dashboards use one single source of truth.
+
+CURRENT PROBLEM (confirmed by audit):
+- Simulators use: SimulatorMoleculeContext (session state from MoleculePicker)
+- Full DD Report uses: activeMolecule from Overview cards (different object instance)
+- Both call the same pure functions BUT with potentially different field mappings
+  when molecules are loaded from the 14K master dataset
+- Result: numerical discrepancies are possible between simulator outputs 
+  and Full DD Report outputs for the same molecule
+
+REQUIRED CHANGES:
+
+1. CREATE a new unified context: src/context/ReportMoleculeContext.tsx
+   This is the single source of truth for the selected molecule across 
+   the entire platform.
+   
+   Interface:
+   {
+     molecule: MoleculeProfile | null,
+     rawRow: MoleculeRow | null,        // original row from molecules_master.min.json
+     nctId: string | null,
+     setMolecule: (molecule: MoleculeProfile, rawRow: MoleculeRow) => void,
+     clearMolecule: () => void
+   }
+
+2. TRIGGER: "Use in Simulator →" button on any Overview card calls 
+   ReportMoleculeContext.setMolecule() with BOTH the MoleculeProfile 
+   AND the original raw JSON row. This is the ONLY place molecule 
+   selection is set.
+
+3. WIRE all simulator dashboards to read from ReportMoleculeContext:
+   - src/components/LPI3Dashboard.tsx
+   - src/components/LPI2Dashboard.tsx
+   - src/components/PeakSalesIndexDashboard.tsx
+   - src/components/MonteCarloSimulation.tsx
+   - src/components/CAPMAlphaSignals.tsx
+   - src/components/PAModel1Dashboard.tsx
+   - src/components/PAModel2Dashboard.tsx
+   - src/components/PTRSMonteCarloIntegration.tsx
+   Replace any local molecule state or SimulatorMoleculeContext 
+   reads with ReportMoleculeContext reads.
+
+4. WIRE all report card components to read from ReportMoleculeContext:
+   - src/components/LPI3ReportCard.tsx
+   - src/components/InvestmentScoreReportCard.tsx
+   - src/components/MoleculeScoreCard.tsx
+   - src/components/LPIExtendedReportCard.tsx
+   Replace activeMolecule reads with ReportMoleculeContext reads.
+
+5. ENSURE the _raw → MoleculeProfile transformation is done ONCE 
+   at context set time (in the "Use in Simulator →" handler), 
+   not independently in each component. Both simulators and report 
+   components receive the SAME pre-transformed MoleculeProfile object.
+
+6. DEPRECATE SimulatorMoleculeContext — migrate all its consumers 
+   to ReportMoleculeContext, then remove it.
+
+7. DEPRECATE the activeMolecule pattern in Overview cards for report 
+   generation — the report must only render when ReportMoleculeContext 
+   has a molecule set.
+
+VERIFICATION after implementation:
+- Pick any molecule from the 14K dataset via "Use in Simulator →"
+- Check LPI% shown on the Overview card badge
+- Check LPI% shown in LPI3Dashboard simulator
+- Check LPI% shown in Full DD Report
+- All three must show identical numbers
+- Repeat for TI, Peak Sales Score, Investment Score, TTM
+- If any discrepancy exists, the refactor is incomplete
+
+Do NOT add any new UI elements, new models, or new features in this prompt.
+Architecture refactor only.
+```
+
+---
+
+## PROMPT H2 — Full DD Report: Add Missing Models + Interpretive Narrative
+*Estimated cost: 8-10 credits — send ONLY after H1 is verified complete*
+
+---
+
+```
+TASK: Two additions to the Full DD Report:
+(1) Add 4 missing model sections
+(2) Add interpretive narrative to every model output
+
+PREREQUISITE: Prompt H1 must be complete. All report sections must be 
+reading from ReportMoleculeContext before this prompt is sent.
+
+--- PART 1: ADD MISSING MODEL SECTIONS TO FULL DD REPORT ---
+
+Add these 4 sections to the Full DD Report, in this order after 
+the existing Investment Score section:
+
+SECTION 1 — PTRS Analysis
+Component: embed PTRSReportCard reading from ReportMoleculeContext
+Display:
+- PTS (Technical Success) % with progress bar
+- PRS (Regulatory Success) % with progress bar  
+- PTRS Combined % — large prominent number
+- Formula shown: PTRS = PTS × PRS
+- Input Parameters Summary table:
+  Therapeutic Area | Current Phase | Mechanism Novelty % | 
+  Endpoint Clarity % | Prior Trial Data % | 
+  Sponsor Experience % | Regulatory Precedent % | Safety Profile %
+- TA baseline comparison: this molecule's PTRS vs TA historical average
+
+SECTION 2 — CAPM Alpha Signals
+Component: embed CAPMReportCard reading from ReportMoleculeContext
+Display:
+- Estimated β with risk classification (Low/Medium/High)
+- α₁ Historical Alpha % with label (Strongly Positive/Positive/Negative)
+- α₂ Pipeline Alpha % with label
+- Δα Divergence % with label
+- CAPM Signal Summary table:
+  Rf | Rm | TA Premium | Estimated β | E(R) | Actual PTRS | 
+  α₁ | α₂ | Δα
+
+SECTION 3 — PA Index Summary
+Component: embed PAIndexReportCard reading from ReportMoleculeContext
+Display:
+- PA Model recommendation: Model 1 or Model 2 (with brief reason why)
+- PA Index-1 MWPSPI scores for all 8 markets in a compact table:
+  Market | Score | Band | Key implication (one line)
+- PA Index-2 Final Probability per market where comparators exist
+- Overall market access signal: Strong/Moderate/Weak
+
+SECTION 4 — Monte Carlo Stress Test
+Component: embed MonteCarloReportCard reading from ReportMoleculeContext
+Display:
+- P5/P50/P95 outputs for each model in the chain:
+  PTRS | LPI | Peak Sales ($M) | Blockbuster Probability
+- Presented as a clean table with three columns: Bear / Base / Bull
+- Composite uncertainty band: "Under stress conditions, 
+  peak sales range from $Xm (P5) to $Xb (P95)"
+
+--- PART 2: ADD INTERPRETIVE NARRATIVE TO ALL MODEL OUTPUTS ---
+
+For every model section in the Full DD Report AND in each standalone 
+simulator tab, add an interpretive narrative block immediately below 
+the model output numbers.
+
+The narrative block:
+- Grey bordered box, light background
+- Heading: "What this means"
+- 2-4 sentences generated dynamically based on the molecule's scores
+- Uses conditional logic to generate molecule-specific text
+
+Narrative logic per model (implement as template strings with 
+conditional branches):
+
+LPI Narrative:
+- If score ≥75: "This molecule shows high launch probability, 
+  placing it in the top [X]% of [TA] pipeline assets. 
+  The score is driven primarily by [highest scoring feature category]. 
+  [If Phase III]: Phase III status is the strongest positive signal. 
+  Primary risk: [lowest scoring feature category]."
+- If score 50-74: "This molecule shows moderate launch probability 
+  for a [Phase] asset in [TA]. 
+  Strengths: [top 2 feature categories]. 
+  Key uncertainty: [bottom feature category]."
+- If score <50: "This molecule faces significant launch headwinds. 
+  [Phase] assets in [TA] historically achieve [TA baseline LPI]% 
+  on average. Improvement drivers: [bottom 2 feature categories]."
+
+PTRS Narrative:
+- If PTRS ≥50: "Technical and regulatory success probability is 
+  above the [TA] Phase [X] historical average of [baseline]%. 
+  Regulatory confidence (PRS [X]%) is [stronger/weaker] than 
+  technical confidence (PTS [X]%), suggesting [regulatory pathway 
+  is well-established / clinical endpoints carry more risk]."
+- If PTRS <50: "At [X]%, combined success probability reflects 
+  [high technical uncertainty / regulatory complexity] for this 
+  indication. The [PTS/PRS] component at [X]% is the primary 
+  risk driver."
+
+TI Narrative:
+- If Wide (>10): "A wide therapeutic index indicates a substantial 
+  safety margin between effective and toxic doses. 
+  This profile supports flexible dosing and reduces 
+  discontinuation risk in trials."
+- If Moderate (2-10): "A moderate therapeutic index is typical 
+  for this drug class. Standard monitoring protocols apply. 
+  Dose titration will be important in Phase [X] design."
+- If Narrow (<2): "A narrow therapeutic index requires careful 
+  dose management and close patient monitoring. 
+  This increases trial complexity and may require REMS 
+  post-approval."
+
+Peak Sales Narrative:
+- If >$5B: "Blockbuster-scale peak sales potential. 
+  The [Base Market] and [Clinical] factors are the primary 
+  value drivers. Competitive factor of [X] reflects 
+  [crowded/moderate/clear] market dynamics."
+- If $1B-5B: "Significant commercial opportunity with 
+  peak sales in the $[X]B range. 
+  [Strongest factor] is the key value driver. 
+  [Weakest factor] represents the main commercial risk."
+- If <$1B: "Moderate commercial scale, potentially appropriate 
+  for [rare disease/niche indication/specific population]. 
+  Market access and pricing strategy will be critical 
+  to maximising revenue in this segment."
+
+Investment Score Narrative:
+- If ≥75: "Strong investment signal. This molecule scores above 
+  the platform threshold for VC/BD interest. 
+  [Top 2 components] are the primary value drivers. 
+  Recommended action: full due diligence warranted."
+- If 50-74: "Moderate investment signal. Selective interest 
+  is appropriate. [Strongest component] supports consideration 
+  but [weakest component] requires further validation before 
+  commitment."
+- If <50: "Weak investment signal at current development stage. 
+  Monitor for [phase advancement / data readout / 
+  partnership announcement] as potential re-rating catalysts."
+
+CAPM Alpha Narrative:
+- If α₁ positive AND α₂ positive: "Both historical and pipeline 
+  alpha are positive — this molecule outperforms expectations 
+  on both benchmarks. Δα of [X]% indicates the field has 
+  [advanced vs history / retreated], which is a 
+  [favourable/cautionary] signal for new entrants."
+- If α₁ positive AND α₂ negative: "Strong historical alpha 
+  but below current pipeline mean — the TA has become more 
+  competitive since historical benchmarks were set. 
+  Differentiation strategy is critical."
+- If both negative: "Below-benchmark performance on both 
+  measures. Review mechanism novelty and competitive positioning 
+  before investment decision."
+
+Monte Carlo Narrative:
+- Always show: "Under [N] simulated scenarios, peak sales 
+  range from $[P5] (bear case) to $[P95] (bull case) 
+  with a base case of $[P50]. 
+  The [widest/narrowest] uncertainty band is in [model name], 
+  driven by [PTRS/market/competitive] variability."
+
+PA Index Narrative:
+- Highest scoring market: "Strongest access signal in [market] 
+  ([score]/100 — [band]). [One sentence on why — 
+  e.g. established payer precedent / orphan designation / 
+  QALY profile]."
+- Lowest scoring market: "Most challenging access in [market] 
+  ([score]/100). Primary barrier: [price pressure / 
+  HTA evidence requirements / budget impact]."
+- Overall: "Global weighted access score suggests 
+  [strong/moderate/selective] market entry strategy. 
+  Priority markets: [top 3 by score]."
+
+IMPLEMENTATION NOTES:
+- Narratives are generated at render time using the same 
+  MoleculeProfile data from ReportMoleculeContext
+- All threshold values and TA baselines come from existing 
+  calibration files (ptrs_calibration.json, taBenchmarks_multiTA.ts)
+- Narratives appear in BOTH the Full DD Report AND the individual 
+  simulator tabs (each simulator tab gets its own model narrative)
+- Font: italic, slightly smaller than body text, grey text colour
+- The narrative box should not be printable as a separate element — 
+  it flows naturally within each model section
+
+ALSO: Add trial-specific disclaimer to the Full DD Report header:
+Grey italic text immediately below the molecule name/NCT badge row:
+"This report reflects [NCT ID] — [Phase] | [Conditions] | [Age group] | 
+[Sex]. All model outputs are specific to this trial design and 
+patient population."
+```
+
+---
+
+## UPDATED SEND ORDER (complete package)
+
+| Prompt | Description | Credits | Status |
+|--------|-------------|---------|--------|
+| A | TA canonical names sweep | 3-4 | Send now |
+| LPI | Scoring fix — src/lib/scoring.ts | — | Send now |
+| B | CAPM restructure + selector fix | 4-5 | Send now |
+| C | Device flagging | 2-3 | Send now |
+| D | Methodology tab 5 missing models | 3-4 | Send now |
+| E | ALPHA rename + Stripe | 4-6 | After Stripe keys added |
+| F | Pricing card hover fix | 1-2 | Send now |
+| G | Pricing page redesign | 4-5 | TBD — pricing structure being finalised |
+| H1 | Single source of truth refactor | 5-7 | After A-F verified |
+| H2 | Missing models + narrative layer | 8-10 | After H1 verified |
