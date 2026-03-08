@@ -184,7 +184,7 @@ export const MethodologyContent = ({ onNavigateToModels }: MethodologyContentPro
       <div>
         <div className="text-center mb-8">
           <Badge className="mb-3"><BarChart3 className="h-3 w-3 mr-1 inline" /> Model Suite</Badge>
-          <h2 className="text-3xl font-bold">12 Proprietary Models</h2>
+          <h2 className="text-3xl font-bold">13 Proprietary Models</h2>
           <p className="text-muted-foreground mt-2">Spanning every stage of the drug development lifecycle — from pipeline discovery to commercial launch.</p>
         </div>
 
