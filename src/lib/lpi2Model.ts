@@ -333,7 +333,7 @@ function getPreclinicalReproducibilityScore(ta: string, phase: string): number {
 }
 
 function getBiomarkerAvailabilityScore(ta: string): number {
-  const highBiomarkerTA = ['oncology/hematology', 'immunology & inflammation', 'cardiovascular'];
+  const highBiomarkerTA = ['Oncology & Hematology', 'Immunology & Inflammation', 'Cardiovascular'];
   if (highBiomarkerTA.includes(ta)) return 70 + Math.random() * 25;
   return 45 + Math.random() * 35;
 }
