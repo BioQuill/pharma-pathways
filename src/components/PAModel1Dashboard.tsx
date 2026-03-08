@@ -643,7 +643,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "12. Ophthalmology",
+    name: "Ophthalmology",
     markets: [
       { market: "US", clinical: 35, economic: 25, access: 25, political: 15, notes: "Retinal diseases (AMD, DME); Medicare Part B buy-and-bill critical" },
       { market: "US Medicare", clinical: 40, economic: 20, access: 25, political: 15, notes: "Elderly AMD prevalent; Part B medical benefit; ASP+6% reimbursement" },
