@@ -71,7 +71,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Psychiatry/Mental Health",
+    name: "Psychiatry & Mental Health",
     drugs: [
       { name: "Pimavanserin", company: "Acadia", mechanism: "5-HT2A inverse agonist", indication: "Major depressive disorder", peakSales: "$1B+", status: "Phase 3", nct: "TBD" },
       { name: "Zuranolone", company: "Biogen/Sage", mechanism: "GABA-A modulator", indication: "Postpartum depression", peakSales: "$1.5B+", status: "Approved 2023", nct: "NCT02978326" },
