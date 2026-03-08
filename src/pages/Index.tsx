@@ -1329,26 +1329,26 @@ const IndexInner = () => {
 
                           {/* Middle: Signal Dots + Verdict */}
                           <div className="flex flex-col items-start shrink-0">
-                            <div className="flex items-center gap-2">
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${lpiDot} text-black`} title={`LPI: ${lpi3Score}%`}>
-                                <span className="text-[9px] font-bold leading-none">LPI</span>
-                                <span className="text-xs font-bold leading-none">{lpi3Score}%</span>
+                            <div className="flex items-center gap-1.5 -ml-2">
+                              <div className={`flex flex-col items-center justify-center rounded-full ${lpiDot} text-black`} style={{ width: 62, height: 62 }} title={`LPI: ${lpi3Score}%`}>
+                                <span className="text-[11px] font-bold leading-none">LPI</span>
+                                <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${ttmDot} text-black`} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
-                                <span className="text-[9px] font-bold leading-none">TTM</span>
-                                <span className="text-xs font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${ttmDot} text-black`} style={{ width: 62, height: 62 }} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
+                                <span className="text-[11px] font-bold leading-none">TTM</span>
+                                <span className="text-sm font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${scoreDot} text-black`} title={`Score: ${compositeScore}`}>
-                                <span className="text-[9px] font-bold leading-none">Score</span>
-                                <span className="text-xs font-bold leading-none">{compositeScore}</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${scoreDot} text-black`} style={{ width: 62, height: 62 }} title={`Score: ${compositeScore}`}>
+                                <span className="text-[11px] font-bold leading-none">Score</span>
+                                <span className="text-sm font-bold leading-none">{compositeScore}</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${tiDot} text-black`} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
-                                <span className="text-[9px] font-bold leading-none">TI</span>
-                                <span className="text-xs font-bold leading-none">{ti.value.toFixed(1)}</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${tiDot} text-black`} style={{ width: 62, height: 62 }} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
+                                <span className="text-[11px] font-bold leading-none">TI</span>
+                                <span className="text-sm font-bold leading-none">{ti.value.toFixed(1)}</span>
                               </div>
-                              <div className={`flex flex-col items-center justify-center w-12 h-12 rounded-full ${dropoutDot} text-black`} title={`Dropout: ${dropoutRanking}/5`}>
-                                <span className="text-[9px] font-bold leading-none">Drop</span>
-                                <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${dropoutDot} text-black`} style={{ width: 62, height: 62 }} title={`Dropout: ${dropoutRanking}/5`}>
+                                <span className="text-[11px] font-bold leading-none">Drop</span>
+                                <span className="text-sm font-bold leading-none">{dropoutRanking}/5</span>
                               </div>
                             </div>
                             <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
