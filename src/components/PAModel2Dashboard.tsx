@@ -283,7 +283,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "14. Rare Diseases/Orphan Drugs",
+    ta: "14. Rare Disease & Orphan",
     benchmarks: [
       { molecule: "Zolgensma (onasemnogene)", indication: "SMA type 1", usApproval: "Yes", niceRec: "Yes (installments)", gba: "Orphan exempt", icer: "~£1.8M", keyEndpoint: "Survival, motor milestones", successFactor: "Gene therapy, curative" },
       { molecule: "Evrysdi (risdiplam)", indication: "SMA", usApproval: "Yes", niceRec: "Yes", gba: "Orphan exempt", icer: "~£85K/yr", keyEndpoint: "Motor milestone achievement", successFactor: "Oral SMN2 splicing modifier" },
