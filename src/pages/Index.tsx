@@ -37,6 +37,7 @@ import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 import topBarLogo from "@/assets/top-bar-logo.png";
 import topBarImage from "@/assets/bioquill-top-bar.png";
 import bioquillEmblem from "@/assets/bioquill-emblem.png";
+import bioquillFullLogo from "@/assets/bioquill-full-logo.png";
 import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
