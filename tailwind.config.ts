@@ -99,6 +99,10 @@ export default {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
+        "medal-spin": {
+          "0%": { transform: "rotateY(0deg)" },
+          "100%": { transform: "rotateY(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
