@@ -88,25 +88,25 @@ const TA_SUCCESS_MODIFIERS: Record<string, { endpoints: number; nextPhase: numbe
 // Maximum TTM (B_max) in MONTHS by therapeutic area for composite score calculation
 // These are the upper bounds used in the normalized composite score formula
 export const TA_MAX_TTM: Record<string, number> = {
-  'ONCOLOGY/HEMATOLOGY': 132,        // 11 years
+  'ONCOLOGY & HEMATOLOGY': 132,        // 11 years
   'CARDIOVASCULAR': 162,             // 13.5 years
-  'NEUROLOGY/CNS': 180,              // 15 years
-  'PSYCHIATRY/MENTAL HEALTH': 126,   // 10.5 years
+  'NEUROLOGY': 180,              // 15 years
+  'PSYCHIATRY & MENTAL HEALTH': 126,   // 10.5 years
   'ENDOCRINOLOGY & METABOLISM': 156, // 13 years
   'IMMUNOLOGY & INFLAMMATION': 138,  // 11.5 years
-  'RHEUMATOLOGY': 126,               // 10.5 years
-  'INFECTIOUS DISEASES': 108,        // 9 years
-  'RESPIRATORY/PULMONOLOGY': 132,    // 11 years
+  'MUSCULOSKELETAL & RHEUMATOLOGY': 126, // 10.5 years
+  'INFECTIOUS DISEASE': 108,        // 9 years
+  'RESPIRATORY & PULMONARY': 132,    // 11 years
   'GASTROENTEROLOGY & HEPATOLOGY': 150, // 12.5 years
-  'NEPHROLOGY/RENAL': 150,           // 12.5 years
+  'NEPHROLOGY & RENAL': 150,           // 12.5 years
   'DERMATOLOGY': 108,                // 9 years
   'OPHTHALMOLOGY': 138,              // 11.5 years
-  'RARE DISEASES/ORPHAN': 96,        // 8 years
-  'VACCINES & VIROLOGY': 90,         // 7.5 years
-  'WOMEN\'S HEALTH': 126,            // 10.5 years
+  'RARE DISEASE & ORPHAN': 96,        // 8 years
+  'VACCINES & PREVENTIVE': 90,         // 7.5 years
+  "WOMEN'S HEALTH": 126,            // 10.5 years
   'UROLOGY': 120,                    // 10 years
-  'PAIN MANAGEMENT/ANESTHESIA': 108, // 9 years
-  'TRANSPLANT/CELL-GENE': 120,       // 10 years
+  'PAIN & ANAESTHESIA': 108, // 9 years
+  'HEMATOLOGY (NON-ONCOLOGY)': 120,       // 10 years
   'PEDIATRICS': 156,                 // 13 years
   'GENERAL': 132,                    // 11 years (average)
 };
