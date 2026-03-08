@@ -1356,7 +1356,11 @@ const IndexInner = () => {
                                 <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
                               </div>
                             </div>
-                            <p className="text-xs font-semibold text-foreground mt-1">{verdict}</p>
+                            <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
+                              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} text-white font-bold text-lg shadow-md`}>
+                                {medalRank}
+                              </div>
+                            </div>
                           </div>
 
                           {/* Right: Action buttons */}
