@@ -949,109 +949,120 @@ const IndexInner = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* BioQuill Yellow Top Bar per bioquill_topbar_config.json */}
+      {/* BioQuill Yellow Branding Bar */}
       <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 48, backgroundColor: '#F5C518', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
         <div className="flex items-center justify-between h-full px-0">
-          {/* Left: Logo circle + wordmark */}
+          {/* Left: Logo circle + wordmark + tagline */}
           <div className="flex items-center gap-2.5 pl-4 shrink-0">
             <div className="flex items-center justify-center rounded-full bg-[#1A1A1A] overflow-visible shrink-0" style={{ width: 56, height: 56, marginTop: -4, marginBottom: -4 }}>
               <img src={topBarLogo} alt="BiOQUILL emblem" className="w-9 h-9 object-contain" />
             </div>
             <span className="font-bold text-xl tracking-tight text-[#1A1A1A]" style={{ letterSpacing: '-0.02em' }}>BiOQUILL™</span>
+            {/* Separator + Tagline */}
+            <div className="hidden md:flex items-center gap-3 ml-1">
+              <div style={{ width: 1, height: 22, background: 'rgba(26,26,26,0.25)' }} />
+              <div className="flex flex-col justify-center leading-tight">
+                <span className="text-[13px] font-medium text-[#1A1A1A]">Precision intelligence.</span>
+                <span className="text-[13px] font-medium text-[#1A1A1A]">From pipeline to patients.</span>
+              </div>
+            </div>
           </div>
-
-          {/* Center: Nav links */}
-          <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-8">
-            {[
-              { label: 'Platform', mode: 'platform' as const },
-              { label: 'Methodology', mode: 'methodology' as const },
-              { label: 'Strategy Hub', mode: 'strategy-hub' as const },
-              { label: 'Pricing', mode: 'pricing' as const },
-            ].map(item => (
-              <button
-                key={item.mode}
-                onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('lpi-2'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
-                className={`text-sm font-medium whitespace-nowrap transition-colors ${topNavMode === item.mode ? 'text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-0.5' : 'text-[#1A1A1A]/80 hover:text-[#1A1A1A]'}`}
-              >
-                {item.label}
-              </button>
-            ))}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="text-sm font-medium text-[#1A1A1A]/80 hover:text-[#1A1A1A] transition-colors flex items-center gap-1.5">
-                  <Search className="h-3.5 w-3.5" /> Search
-                  {(searchQuery || phaseFilter !== 'all') && (
-                    <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-[#1A1A1A]/15 text-[#1A1A1A]">
-                      {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
-                    </Badge>
-                  )}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-4" align="end">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Search molecules</label>
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <input
-                        type="text"
-                        placeholder="Name, company, or therapeutic area..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-                      />
-                      {searchQuery && (
-                        <button 
-                          onClick={() => setSearchQuery('')}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Phase filter</label>
-                    <div className="flex flex-wrap gap-1">
-                      {['all', 'Phase I', 'Phase II', 'Phase III', 'Approved'].map((phase) => (
-                        <Button
-                          key={phase}
-                          variant={phaseFilter === phase ? 'default' : 'outline'}
-                          size="sm"
-                          className="h-7 px-2 text-xs"
-                          onClick={() => setPhaseFilter(phase)}
-                        >
-                          {phase === 'all' ? 'All' : phase.replace('Phase ', 'P')}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  {(searchQuery || phaseFilter !== 'all') && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="w-full text-muted-foreground"
-                      onClick={() => { setSearchQuery(''); setPhaseFilter('all'); }}
-                    >
-                      Clear filters
-                    </Button>
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </nav>
 
           {/* Right: Data refreshed pill */}
           <div className="flex items-center pr-6 shrink-0">
             <span className="text-xs text-[#1A1A1A]/75 whitespace-nowrap" style={{ background: 'rgba(255,255,255,0.35)', borderRadius: 20, padding: '4px 12px' }}>
-              Data refreshed: 06/03/2026
+              Data refreshed: 05/03/2026
             </span>
           </div>
         </div>
       </header>
 
-      {/* Spacer for fixed header */}
-      <div style={{ height: 48 }} />
+      {/* Navy Navigation Bar */}
+      <nav className="fixed left-0 right-0 z-40 flex items-center justify-center" style={{ top: 48, height: 44, backgroundColor: '#0E1D35' }}>
+        <div className="flex items-center gap-6">
+          {[
+            { label: 'Platform', mode: 'platform' as const },
+            { label: 'Models', mode: 'models' as const },
+            { label: 'Methodology', mode: 'methodology' as const },
+            { label: 'Strategy Hub', mode: 'strategy-hub' as const },
+            { label: 'Pricing', mode: 'pricing' as const },
+          ].map(item => (
+            <button
+              key={item.mode}
+              onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('lpi-2'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
+              className={`text-sm font-medium whitespace-nowrap transition-colors px-2 py-1 ${topNavMode === item.mode ? 'text-white border-b-2 border-[#F5C518]' : 'text-white/70 hover:text-white'}`}
+            >
+              {item.label}
+            </button>
+          ))}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="text-sm font-medium text-white/70 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
+                <Search className="h-3.5 w-3.5" /> Search
+                {(searchQuery || phaseFilter !== 'all') && (
+                  <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
+                    {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
+                  </Badge>
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" align="end">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Search molecules</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Name, company, or therapeutic area..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    {searchQuery && (
+                      <button 
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Phase filter</label>
+                  <div className="flex flex-wrap gap-1">
+                    {['all', 'Phase I', 'Phase II', 'Phase III', 'Approved'].map((phase) => (
+                      <Button
+                        key={phase}
+                        variant={phaseFilter === phase ? 'default' : 'outline'}
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => setPhaseFilter(phase)}
+                      >
+                        {phase === 'all' ? 'All' : phase.replace('Phase ', 'P')}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                {(searchQuery || phaseFilter !== 'all') && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full text-muted-foreground"
+                    onClick={() => { setSearchQuery(''); setPhaseFilter('all'); }}
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </nav>
+
+      {/* Spacer for both fixed bars (48 + 44 = 92px) */}
+      <div style={{ height: 92 }} />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
