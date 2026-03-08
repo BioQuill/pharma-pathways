@@ -41,7 +41,7 @@ interface TherapeuticAreaData {
 
 const top100Data: TherapeuticAreaData[] = [
   {
-    name: "Oncology/Hematology",
+    name: "Oncology & Hematology",
     drugs: [
       { name: "Iberdomide", company: "Bristol Myers Squibb", mechanism: "Oral CELMoD", indication: "Multiple myeloma", peakSales: "$2-3B", status: "Phase 3", nct: "TBD" },
       { name: "Mezigdomide", company: "Bristol Myers Squibb", mechanism: "Oral CELMoD", indication: "Multiple myeloma", peakSales: "$1-2B", status: "Phase 3", nct: "TBD" },
