@@ -581,7 +581,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "10. Hematology",
+    name: "Hematology (non-oncology)",
     markets: [
       { market: "US", clinical: 35, economic: 25, access: 25, political: 15, notes: "Oncology-hematology overlap; rare blood disorders orphan premium" },
       { market: "US Medicare", clinical: 40, economic: 20, access: 25, political: 15, notes: "Elderly hematologic malignancies; Part B infusions; Part D oral" },
