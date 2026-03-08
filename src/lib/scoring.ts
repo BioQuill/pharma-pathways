@@ -1,5 +1,188 @@
 // Probability and scoring calculations for pharmaceutical molecules
 import { getTTMMonthsForTA } from './ttmData';
+
+// ─── LPI (Launch Probability Index) — XGBoost-inspired 6-category scorer ───
+// Accepts raw fields from molecules_master.min.json and returns a calibrated
+// per-molecule launch probability with confidence interval.
+
+export interface LPIResult {
+  score: number;       // 0-100
+  ci: string;          // e.g. "57%-75%"
+  ciLow: number;
+  ciHigh: number;
+  label: 'High' | 'Moderate' | 'Low';
+  breakdown: {
+    clinical: number;
+    scientific: number;
+    regulatory: number;
+    sponsor: number;
+    market: number;
+    safety: number;
+  };
+}
+
+export interface LPIMoleculeRow {
+  phase?: string;
+  has_results?: boolean;
+  status?: string;
+  approval_status?: string;
+  sponsor?: string;
+  therapeutic_area?: string;
+  study_title?: string;
+  brief_summary?: string;
+  conditions?: string;
+}
+
+// ── Sub-scorers ──
+
+function scorePhase(phase: string | undefined): number {
+  if (!phase) return 5;
+  const p = phase.toLowerCase();
+  if (/phase\s*3\s*\/\s*4|phase\s*iv|phase\s*4/i.test(p)) return 24;
+  if (/phase\s*3|phase\s*iii/i.test(p)) return 22;
+  if (/phase\s*2\s*\/\s*3|phase\s*ii\s*\/\s*iii/i.test(p)) return 16;
+  if (/phase\s*2|phase\s*ii/i.test(p)) return 12;
+  if (/phase\s*1\s*\/\s*2|phase\s*i\s*\/\s*ii/i.test(p)) return 8;
+  if (/phase\s*1|phase\s*i/i.test(p) && !/phase\s*1\//i.test(p)) return 5;
+  if (/nda|bla|pre-registration/i.test(p)) return 24;
+  if (/approved/i.test(p)) return 24;
+  return 5;
+}
+
+function scoreHasResults(hasResults: boolean | undefined): number {
+  return hasResults ? 4 : 0;
+}
+
+function scoreStatus(status: string | undefined): number {
+  if (!status) return 0;
+  const s = status.toUpperCase();
+  if (s === 'COMPLETED') return 3;
+  if (s === 'RECRUITING' || s === 'ENROLLING_BY_INVITATION') return 2;
+  if (s === 'ACTIVE_NOT_RECRUITING' || s === 'ACTIVE, NOT RECRUITING') return 1;
+  return 0;
+}
+
+function scoreApprovalStatus(approvalStatus: string | undefined): number {
+  if (!approvalStatus) return 5;
+  const a = approvalStatus.toUpperCase();
+  if (a.startsWith('APPROVED')) return 20;
+  if (a === 'LIKELY_IN_REVIEW') return 17;
+  if (a.includes('COMPLETED_PH3')) return 14;
+  if (a.includes('COMPLETED_PH2')) return 10;
+  if (a === 'ACTIVE_PIPELINE') return 8;
+  return 5;
+}
+
+function scienceBonus(mol: LPIMoleculeRow): number {
+  const phase = (mol.phase || '').toLowerCase();
+  if (mol.has_results && (phase.includes('phase 3') || phase.includes('phase iii') || phase.includes('phase3'))) return 3;
+  return 0;
+}
+
+function scoreRegulatory(mol: LPIMoleculeRow): number {
+  let pts = 0;
+  const approvalStatus = (mol.approval_status || '').toUpperCase();
+  if (approvalStatus.startsWith('APPROVED')) pts += 18;
+  else if (approvalStatus.includes('COMPLETED_PH3')) pts += 12;
+  else if (approvalStatus === 'LIKELY_IN_REVIEW') pts += 15;
+  else pts += 6;
+
+  const text = ((mol.study_title || '') + ' ' + (mol.brief_summary || '')).toLowerCase();
+  if (text.includes('breakthrough')) pts += 3;
+  if (text.includes('fast track')) pts += 2;
+  if (text.includes('accelerated')) pts += 2;
+
+  const phase = (mol.phase || '').toLowerCase();
+  if (mol.has_results && (phase.includes('phase 3') || phase.includes('phase iii') || phase.includes('phase3'))) pts += 3;
+
+  return Math.min(18, pts);
+}
+
+const BIG_PHARMA = [
+  'pfizer', 'roche', 'novartis', 'astrazeneca', 'johnson & johnson', 'j&j',
+  'merck', 'eli lilly', 'lilly', 'bristol-myers squibb', 'bms',
+  'abbvie', 'sanofi', 'gsk', 'glaxosmithkline', 'bayer',
+  'boehringer ingelheim', 'boehringer', 'takeda', 'novo nordisk',
+];
+
+const LARGE_BIOTECH = [
+  'amgen', 'biogen', 'regeneron', 'vertex', 'moderna', 'biontech',
+  'gilead', 'alexion', 'alnylam', 'bluebird', 'seagen',
+];
+
+function scoreSponsor(sponsor: string | undefined): number {
+  if (!sponsor) return 5;
+  const s = sponsor.toLowerCase();
+  if (BIG_PHARMA.some(p => s.includes(p))) return 15;
+  if (LARGE_BIOTECH.some(p => s.includes(p))) return 12;
+  if (/university|hospital|institute|national|academia/i.test(s)) return 5;
+  return 8; // mid-size biotech
+}
+
+const MARKET_TIER1 = ['oncology', 'hematology', 'cardiovascular', 'neurology'];
+const MARKET_TIER2 = ['endocrinology', 'metabol', 'immunology', 'inflammation', 'infectious', 'respiratory', 'pulmonary'];
+
+function scoreMarket(ta: string | undefined): number {
+  if (!ta) return 6;
+  const t = ta.toLowerCase();
+  if (MARKET_TIER1.some(k => t.includes(k))) return 10;
+  if (MARKET_TIER2.some(k => t.includes(k))) return 8;
+  return 6;
+}
+
+function scoreSafety(mol: LPIMoleculeRow): number {
+  const text = ((mol.study_title || '') + ' ' + (mol.brief_summary || '') + ' ' + (mol.conditions || '')).toLowerCase();
+  if (text.includes('black box') || text.includes('rems') || text.includes('boxed warning')) return 0;
+  if (text.includes('well-tolerated') || text.includes('clean safety') || text.includes('well tolerated') || text.includes('favorable safety')) return 7;
+  return 4; // neutral
+}
+
+/**
+ * Compute LPI (Launch Probability Index) from raw molecule JSON fields.
+ * 6-category XGBoost-inspired weighted model returning 30-92% calibrated score.
+ */
+export function computeLPI(molecule: LPIMoleculeRow): LPIResult {
+  // CLINICAL (30 pts max)
+  const clinicalRaw = scorePhase(molecule.phase) + scoreHasResults(molecule.has_results) + scoreStatus(molecule.status);
+  const clinical = Math.min(1, clinicalRaw / 30);
+
+  // SCIENTIFIC (20 pts max)
+  const scientificRaw = scoreApprovalStatus(molecule.approval_status) + scienceBonus(molecule);
+  const scientific = Math.min(1, scientificRaw / 23); // max possible = 20+3
+
+  // REGULATORY (18 pts max)
+  const regulatory = Math.min(1, scoreRegulatory(molecule) / 18);
+
+  // SPONSOR (15 pts max)
+  const sponsor = Math.min(1, scoreSponsor(molecule.sponsor) / 15);
+
+  // MARKET (10 pts max)
+  const market = Math.min(1, scoreMarket(molecule.therapeutic_area) / 10);
+
+  // SAFETY (7 pts max)
+  const safety = Math.min(1, scoreSafety(molecule) / 7);
+
+  // Composite weighted score
+  const rawScore = (clinical * 0.30) + (scientific * 0.20) + (regulatory * 0.18) + (sponsor * 0.15) + (market * 0.10) + (safety * 0.07);
+
+  // Scale to 0-100, clamp to 30-92%
+  const pLaunch = Math.min(92, Math.max(30, Math.round(rawScore * 100)));
+
+  // Confidence interval
+  const phase = (molecule.phase || '').toLowerCase();
+  const ciWidth = (phase.includes('phase 3') || phase.includes('phase iii') || phase.includes('phase3')) && molecule.has_results ? 8 : 15;
+  const ciLow = Math.max(5, pLaunch - ciWidth);
+  const ciHigh = Math.min(97, pLaunch + ciWidth);
+
+  return {
+    score: pLaunch,
+    ci: `${ciLow}%-${ciHigh}%`,
+    ciLow,
+    ciHigh,
+    label: pLaunch >= 75 ? 'High' : pLaunch >= 55 ? 'Moderate' : 'Low',
+    breakdown: { clinical, scientific, regulatory, sponsor, market, safety },
+  };
+}
 import { canonicalizeTAKey } from './taCanonical';
 
 export interface ProbabilityScores {

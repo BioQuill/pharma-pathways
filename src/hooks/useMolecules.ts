@@ -7,6 +7,7 @@ import {
   calculateOverallScore,
   normalizeTherapeuticArea,
   TA_MAX_TTM,
+  computeLPI,
 } from '@/lib/scoring';
 import { generateLaunchFactors } from '@/lib/launchFactors';
 import { getManufacturingCapability } from '@/lib/manufacturingCapability';
@@ -152,6 +153,7 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
   const trackRecord = guessTrackRecord(company);
   const indication = raw.conditions || raw.primary_drug || '';
   const isFailed = raw.status === 'TERMINATED' || raw.status === 'WITHDRAWN';
+  const approvalStatus = determineApprovalStatus(raw);
 
   const scores = calculateProbabilityScores(phase, indication, ta, isFailed);
   const marketData = generateMarketProjections(
@@ -166,8 +168,21 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
   const mfg = getManufacturingCapability(company);
   const overallScore = calculateOverallScore(scores, marketData, phase, ta, mfg.scaleUpIndex);
 
-  // Apply recalibrated BQ Pipeline Score
-  const recalibratedScore = isFailed ? 0 : calculateRecalibratedScore(phase, ta, company);
+  // Compute LPI using the 6-category XGBoost-inspired model
+  const lpiResult = isFailed
+    ? { score: 0, ci: '0%-0%', ciLow: 0, ciHigh: 0, label: 'Low' as const, breakdown: { clinical: 0, scientific: 0, regulatory: 0, sponsor: 0, market: 0, safety: 0 } }
+    : computeLPI({
+        phase: raw.phase,
+        has_results: raw.has_results,
+        status: raw.status,
+        approval_status: approvalStatus,
+        sponsor: raw.sponsor,
+        therapeutic_area: raw.therapeutic_area,
+        study_title: raw.study_title,
+        brief_summary: raw.brief_summary,
+        conditions: raw.conditions,
+      });
+  const recalibratedScore = lpiResult.score;
 
   // Compute elapsed months from start_date for LPI signal
   let elapsedMonths = 0;
@@ -182,8 +197,7 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
   const taBenchmark = TA_MAX_TTM[normalizedTA] || TA_MAX_TTM['GENERAL'];
   const lpiFromElapsed = Math.min(100, Math.round((elapsedMonths / taBenchmark) * 100));
   
-  // Determine approval status and model applicability
-  const approvalStatus = determineApprovalStatus(raw);
+  // approvalStatus already computed above
   const modelApplicability = determineModelApplicability(approvalStatus);
 
   return {
@@ -227,6 +241,11 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
       ta_benchmark: taBenchmark,
       approval_status: approvalStatus,
       model_applicability: modelApplicability,
+      lpi_ci: lpiResult.ci,
+      lpi_ci_low: lpiResult.ciLow,
+      lpi_ci_high: lpiResult.ciHigh,
+      lpi_label: lpiResult.label,
+      lpi_breakdown: lpiResult.breakdown,
     },
   } as MoleculeProfile & { _raw: any };
 }
