@@ -56,10 +56,10 @@ const BASE_WEIGHTS = {
 type TAMultipliers = Record<string, Record<string, number>>;
 
 const TA_MULTIPLIERS: TAMultipliers = {
-  'ONCOLOGY/HEMATOLOGY': {
+  'ONCOLOGY & HEMATOLOGY': {
     'Biomarker Availability': 1.4,
   },
-  'TRANSPLANT/CELL-GENE': {
+  'HEMATOLOGY (NON-ONCOLOGY)': {
     'CMC Readiness': 1.6,
   },
   // Other TAs use default multiplier of 1.0
