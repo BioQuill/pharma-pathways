@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { isDemoMolecule } from "@/data/demoMolecules";
 import { calculatePTRS } from "@/lib/ptrsEngine";
 
 import { Button } from "@/components/ui/button";
@@ -671,6 +672,7 @@ const IndexInner = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
+  const [recordTypeFilter, setRecordTypeFilter] = useState<'drugs' | 'devices' | 'all'>('drugs');
   const reportRef = useRef<HTMLDivElement>(null);
   const { loadIntoSimulator, setOnNavigateToSimulator, simulatorMolecule } = useSimulatorMolecule();
 
@@ -688,6 +690,12 @@ const IndexInner = () => {
 
   // 7-Area navigation configuration for Platform
   const areaConfig = {
+    testMe: {
+      label: 'TEST ME',
+      tabs: [
+        { value: 'test-me', label: 'Demo Molecules', icon: Star },
+      ]
+    },
     pipeline: {
       label: 'PIPELINE',
       tabs: [
@@ -898,9 +906,9 @@ const IndexInner = () => {
             <PopoverTrigger asChild>
               <button className="text-sm font-bold text-white/80 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
                 <Search className="h-3.5 w-3.5" /> Search
-                {(searchQuery || phaseFilter !== 'all') && (
+                {(searchQuery || phaseFilter !== 'all' || recordTypeFilter !== 'drugs') && (
                   <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
-                    {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
+                    {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : '', recordTypeFilter !== 'drugs' ? '1' : ''].filter(Boolean).length}
                   </Badge>
                 )}
               </button>
@@ -944,12 +952,28 @@ const IndexInner = () => {
                     ))}
                   </div>
                 </div>
-                {(searchQuery || phaseFilter !== 'all') && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Record type</label>
+                  <div className="flex flex-wrap gap-1">
+                    {(['drugs', 'devices', 'all'] as const).map((rt) => (
+                      <Button
+                        key={rt}
+                        variant={recordTypeFilter === rt ? 'default' : 'outline'}
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => setRecordTypeFilter(rt)}
+                      >
+                        {rt === 'drugs' ? 'Drugs only' : rt === 'devices' ? 'Devices only' : 'All'}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                {(searchQuery || phaseFilter !== 'all' || recordTypeFilter !== 'drugs') && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     className="w-full text-muted-foreground"
-                    onClick={() => { setSearchQuery(''); setPhaseFilter('all'); }}
+                    onClick={() => { setSearchQuery(''); setPhaseFilter('all'); setRecordTypeFilter('drugs'); }}
                   >
                     Clear filters
                   </Button>
@@ -1085,6 +1109,108 @@ const IndexInner = () => {
             ) : null}
           </div>
 
+          {/* TEST ME Tab — 40 curated demo molecules */}
+          <TabsContent value="test-me" className="space-y-6">
+            <p className="text-sm text-muted-foreground italic">
+              40 curated molecules across all therapeutic areas — representative pipeline sample
+            </p>
+            <div className="space-y-4">
+              {allMolecules
+                .filter((mol) => isDemoMolecule(mol.name))
+                .slice(0, 40)
+                .map((molecule) => {
+                  const lpi3 = calculateLPI3ForMolecule(molecule);
+                  const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
+                  const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
+                  const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
+                  const compositeScore = Math.round(molecule.overallScore * 0.6 + ttmEfficiency * 0.4);
+                  const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
+                  const dropoutRanking = molecule.scores.dropoutRanking;
+
+                  const getDotColor = (value: number, thresholds: [number, number]) => {
+                    if (value >= thresholds[1]) return 'bg-[hsl(142,76%,36%)]';
+                    if (value >= thresholds[0]) return 'bg-[hsl(45,93%,47%)]';
+                    return 'bg-[hsl(0,72%,51%)]';
+                  };
+
+                  const lpiDot = getDotColor(lpi3Score, [34, 67]);
+                  const ttmDot = ttm !== null ? getDotColor(ttmEfficiency, [34, 67]) : 'bg-muted-foreground';
+                  const scoreDot = getDotColor(compositeScore, [34, 67]);
+                  const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+                  const dropoutDot = dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+
+                  const medalRank = compositeScore >= 67 ? 1 : compositeScore >= 34 ? 2 : 3;
+                  const medalBg = medalRank === 1 ? 'bg-[hsl(45,90%,50%)]' : medalRank === 2 ? 'bg-[hsl(0,0%,75%)]' : 'bg-[hsl(30,60%,45%)]';
+                  const medalBorder = medalRank === 1 ? 'border-[hsl(45,90%,40%)]' : medalRank === 2 ? 'border-[hsl(0,0%,65%)]' : 'border-[hsl(30,60%,35%)]';
+                  const studyUrl = molecule.nctId ? `https://clinicaltrials.gov/study/${molecule.nctId}` : null;
+
+                  return (
+                    <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => { setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
+                      <CardContent className="p-5">
+                        <div className="flex items-start gap-4">
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                              {molecule.name.startsWith('DEVICE:') && (
+                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted text-muted-foreground">DEVICE</Badge>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              <span className="font-medium">{molecule.company}</span>
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {molecule.nctId && <span>{molecule.nctId} | </span>}
+                              <span className="font-medium">{molecule.phase}</span>
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {molecule.indication} | {molecule.therapeuticArea}
+                            </p>
+                          </div>
+                          <div className="flex flex-col items-start shrink-0">
+                            <div className="flex items-center gap-1.5 -ml-2">
+                              <div className={`flex flex-col items-center justify-center rounded-full ${lpiDot} text-black`} style={{ width: 62, height: 62 }} title={`LPI: ${lpi3Score}%`}>
+                                <span className="text-[11px] font-bold leading-none">LPI</span>
+                                <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${ttmDot} text-black`} style={{ width: 62, height: 62 }} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
+                                <span className="text-[11px] font-bold leading-none">TTM</span>
+                                <span className="text-sm font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${scoreDot} text-black`} style={{ width: 62, height: 62 }} title={`Score: ${compositeScore}`}>
+                                <span className="text-[11px] font-bold leading-none">Score</span>
+                                <span className="text-sm font-bold leading-none">{compositeScore}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${tiDot} text-black`} style={{ width: 62, height: 62 }} title={`TI: ${ti.value.toFixed(1)}`}>
+                                <span className="text-[11px] font-bold leading-none">TI</span>
+                                <span className="text-sm font-bold leading-none">{ti.value.toFixed(1)}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${dropoutDot} text-black`} style={{ width: 62, height: 62 }} title={`Dropout: ${dropoutRanking}/5`}>
+                                <span className="text-[11px] font-bold leading-none">Drop</span>
+                                <span className="text-sm font-bold leading-none">{dropoutRanking}/5</span>
+                              </div>
+                            </div>
+                            <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
+                              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} shadow-md`}>
+                                <span className="text-primary font-bold text-lg">{medalRank}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="shrink-0 flex flex-col gap-1">
+                            <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
+                              Full Analysis →
+                            </Button>
+                            <Button size="sm" variant="secondary" className="text-xs" onClick={(e) => { e.stopPropagation(); loadIntoSimulator(molecule); }}>
+                              Use in Simulator →
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+            </div>
+          </TabsContent>
+
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
             {!selectedMolecule ? (
@@ -1169,8 +1295,12 @@ const IndexInner = () => {
                     
                     // Phase filter
                     const matchesPhase = phaseFilter === 'all' || mol.phase.includes(phaseFilter);
+
+                    // Record type filter (DEVICE: prefix)
+                    const isDevice = mol.name.startsWith('DEVICE:');
+                    const matchesRecordType = recordTypeFilter === 'all' || (recordTypeFilter === 'drugs' ? !isDevice : isDevice);
                     
-                    return matchesSearch && matchesPhase;
+                    return matchesSearch && matchesPhase && matchesRecordType;
                   })
                   .slice()
                   .sort((a, b) => {
@@ -1254,8 +1384,13 @@ const IndexInner = () => {
                         <div className="flex items-start gap-4">
                           {/* Left: Text rows */}
                           <div className="flex-1 min-w-0 space-y-1">
-                            {/* Row 1: Drug Name */}
-                            <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                            {/* Row 1: Drug Name + Device Badge */}
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                              {molecule.name.startsWith('DEVICE:') && (
+                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted text-muted-foreground">DEVICE</Badge>
+                              )}
+                            </div>
                             {/* Row 2: Approval Status Badge */}
                             {(() => {
                               const status = (molecule as any)._raw?.approval_status;
