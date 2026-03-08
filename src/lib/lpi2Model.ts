@@ -1,7 +1,7 @@
 // LPI-2 Model: 5-Factor Investment LPI (VC / Investment Model)
 // Used by venture capital funds, licensing teams, and biotech accelerators
 
-import { normalizeTA } from './taCompositeIndex';
+import { canonicalizeTA } from './taCanonical';
 
 // ========================================
 // TYPE DEFINITIONS
