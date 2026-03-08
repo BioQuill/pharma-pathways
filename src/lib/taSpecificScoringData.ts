@@ -24,7 +24,7 @@ export interface TASpecificScoring {
 
 export const taSpecificScoringData: TASpecificScoring[] = [
   {
-    taName: "1. Oncology",
+    taName: "Oncology & Hematology",
     marketScorings: [
       {
         market: "US Markets",
@@ -130,7 +130,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "2. Cardiology",
+    taName: "Cardiovascular",
     marketScorings: [
       {
         market: "US Markets",
@@ -230,7 +230,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "3. Neurology/CNS",
+    taName: "Neurology",
     marketScorings: [
       {
         market: "US Markets",
@@ -336,7 +336,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "4. Dermatology",
+    taName: "Dermatology",
     marketScorings: [
       {
         market: "US Markets",
@@ -412,7 +412,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "5. Endocrinology",
+    taName: "Endocrinology & Metabolism",
     marketScorings: [
       {
         market: "US Markets",
@@ -523,7 +523,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "6. Immunology",
+    taName: "Immunology & Inflammation",
     marketScorings: [
       {
         market: "US Markets",
@@ -630,7 +630,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "7. Infectious Diseases",
+    taName: "Infectious Disease",
     marketScorings: [
       {
         market: "US Markets",
@@ -741,7 +741,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "8. Respiratory",
+    taName: "Respiratory & Pulmonary",
     marketScorings: [
       {
         market: "US Markets",
@@ -846,7 +846,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "9. Gastroenterology",
+    taName: "Gastroenterology & Hepatology",
     marketScorings: [
       {
         market: "US Markets",
@@ -954,7 +954,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "10. Hematology",
+    taName: "Hematology (non-oncology)",
     marketScorings: [
       {
         market: "US Markets",
@@ -1059,7 +1059,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "11. Rheumatology",
+    taName: "Musculoskeletal & Rheumatology",
     marketScorings: [
       {
         market: "US Markets",
@@ -1168,7 +1168,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "12. Ophthalmology",
+    taName: "Ophthalmology",
     marketScorings: [
       {
         market: "US Markets",
@@ -1276,7 +1276,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "13. Urology/Nephrology",
+    taName: "Nephrology & Renal",
     marketScorings: [
       {
         market: "US Markets",
@@ -1383,7 +1383,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "14. Psychiatry/Mental Health",
+    taName: "Psychiatry & Mental Health",
     marketScorings: [
       {
         market: "US Markets",
@@ -1514,7 +1514,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "15. Transplantation & Cell/Gene Therapy",
+    taName: "Hematology (non-oncology)",
     marketScorings: [
       {
         market: "US Markets",
@@ -1656,7 +1656,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "16. Pediatrics (Cross-Cutting)",
+    taName: "Pediatrics",
     marketScorings: [
       {
         market: "US Markets",
@@ -1763,7 +1763,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "17. Pain Management/Anesthesia",
+    taName: "Pain & Anaesthesia",
     marketScorings: [
       {
         market: "US Markets",
@@ -1963,7 +1963,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "18. Rare Diseases/Orphan Drugs",
+    taName: "Rare Disease & Orphan",
     marketScorings: [
       {
         market: "US Markets",
@@ -2082,7 +2082,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "19. Vaccines & Virology",
+    taName: "Vaccines & Preventive",
     marketScorings: [
       {
         market: "US Markets",
@@ -2207,7 +2207,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "20. Women's Health",
+    taName: "Women's Health",
     marketScorings: [
       {
         market: "US Markets",

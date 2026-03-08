@@ -313,7 +313,7 @@ const marketModels: MarketModel[] = [
 // ============ TA-SPECIFIC WEIGHTS DATA ============
 const taWeightsData: { name: string; markets: { market: string; clinical: number; economic: number; access: number; political: number; notes: string }[]; adjustments: { add: { item: string; points: string }[]; subtract: { item: string; points: string }[] } }[] = [
   {
-    name: "1. Oncology",
+    name: "Oncology & Hematology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Payers increasingly scrutinize budget impact despite oncology priority" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Part B/D pathway critical; CMS OCM participation bonus" },
@@ -340,7 +340,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "2. Cardiology",
+    name: "Cardiovascular",
     markets: [
       { market: "US", clinical: 25, economic: 35, access: 25, political: 15, notes: "High scrutiny due to large prevalent populations" },
       { market: "US Medicare", clinical: 30, economic: 30, access: 25, political: 15, notes: "Part D coverage; outcomes-based contracts growing" },
@@ -368,7 +368,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "3. Neurology",
+    name: "Neurology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Mental health parity laws; high unmet need premium" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Alzheimer's/Parkinson's prioritized" },
@@ -398,7 +398,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "4. Dermatology",
+    name: "Dermatology",
     markets: [
       { market: "US", clinical: 25, economic: 30, access: 30, political: 15, notes: "Medical vs. cosmetic distinction critical; prior auth common" },
       { market: "US Medicare", clinical: 25, economic: 30, access: 30, political: 15, notes: "Part D coverage; step therapy typical" },
@@ -426,7 +426,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "5. Endocrinology",
+    name: "Endocrinology & Metabolism",
     markets: [
       { market: "US", clinical: 25, economic: 35, access: 25, political: 15, notes: "Diabetes dominates; obesity coverage growing; budget impact huge" },
       { market: "US Medicare", clinical: 30, economic: 30, access: 25, political: 15, notes: "Part D diabetes coverage extensive; obesity excluded" },
@@ -456,7 +456,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "6. Immunology",
+    name: "Immunology & Inflammation",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Biologics common; prior auth extensive; specialty pharmacy" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Part B infusibles; Part D subcutaneous; cost-sharing concern" },
@@ -488,7 +488,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "7. Infectious Disease",
+    name: "Infectious Disease",
     markets: [
       { market: "US", clinical: 35, economic: 25, access: 25, political: 15, notes: "AMR priority; hospital formulary critical; QIDP incentives" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Part A/B hospital; Part D outpatient; stewardship programs" },
@@ -519,7 +519,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "8. Respiratory",
+    name: "Respiratory & Pulmonary",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Severe asthma biologics growing; COPD prevalent; inhaler competition" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "COPD elderly; Part D inhalers; Part B biologics" },
@@ -549,7 +549,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "9. Gastroenterology",
+    name: "Gastroenterology & Hepatology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "IBD biologics high cost; GERD/IBS competitive; liver disease emerging" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "IBD elderly segment; cirrhosis complications; Part B infusions" },
@@ -581,7 +581,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "10. Hematology",
+    name: "Hematology (non-oncology)",
     markets: [
       { market: "US", clinical: 35, economic: 25, access: 25, political: 15, notes: "Oncology-hematology overlap; rare blood disorders orphan premium" },
       { market: "US Medicare", clinical: 40, economic: 20, access: 25, political: 15, notes: "Elderly hematologic malignancies; Part B infusions; Part D oral" },
@@ -612,7 +612,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "11. Musculoskeletal & Rheumatology",
+    name: "Musculoskeletal & Rheumatology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "RA biologics mature market; biosimilars emerging; JAK inhibitors" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Elderly RA/OA; Part B infusions; Part D oral/subcutaneous" },
@@ -643,7 +643,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "12. Ophthalmology",
+    name: "Ophthalmology",
     markets: [
       { market: "US", clinical: 35, economic: 25, access: 25, political: 15, notes: "Retinal diseases (AMD, DME); Medicare Part B buy-and-bill critical" },
       { market: "US Medicare", clinical: 40, economic: 20, access: 25, political: 15, notes: "Elderly AMD prevalent; Part B medical benefit; ASP+6% reimbursement" },
@@ -675,7 +675,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "13. Nephrology & Renal",
+    name: "Nephrology & Renal",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "CKD progression, prostate cancer, BPH; dialysis cost-offset valued" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Elderly CKD/ESRD; Part D oral; Part B ESAs/dialysis drugs" },
@@ -703,7 +703,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "14. Psychiatry/Mental Health",
+    name: "Psychiatry & Mental Health",
     markets: [
       { market: "US Commercial", clinical: 30, economic: 30, access: 25, political: 15, notes: "Mental Health Parity Act; suicide prevention priority; prior auth restricted" },
       { market: "US Medicare", clinical: 30, economic: 30, access: 25, political: 15, notes: "Elderly depression; dementia-related agitation; Part D coverage" },
@@ -740,7 +740,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "15. Hematology (non-oncology)",
+    name: "Hematology (non-oncology)",
     markets: [
       { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Breakthrough therapies; curative intent; ultra-high cost tolerance; outcomes-based contracts" },
       { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B cell/gene therapy; NCD pathway; CED" },
@@ -783,7 +783,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "16. Pediatrics (Cross-Cutting)",
+    name: "Pediatrics",
     markets: [
       { market: "US Commercial", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +10% base bonus; applies on top of underlying TA weights" },
       { market: "UK NICE", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +15% base bonus; NHS children's health priority" },
@@ -819,7 +819,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "17. Pain & Anaesthesia",
+    name: "Pain & Anaesthesia",
     markets: [
       { market: "US Commercial", clinical: 30, economic: 25, access: 25, political: 20, notes: "Opioid crisis; DEA scheduling; REMS; non-opioid alternatives prioritized" },
       { market: "US Medicare", clinical: 30, economic: 25, access: 25, political: 20, notes: "Elderly chronic pain; Part D opioid restrictions; non-opioid preference" },
@@ -856,7 +856,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "18. Rare Disease & Orphan",
+    name: "Rare Disease & Orphan",
     markets: [
       { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Orphan Drug Act; 7-year exclusivity; high willingness to pay; ultra-rare pricing flexibility" },
       { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B/D coverage; CED pathway for gene therapy; PRV incentives" },
@@ -887,7 +887,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "19. Vaccines & Preventive",
+    name: "Vaccines & Preventive",
     markets: [
       { market: "US Commercial", clinical: 35, economic: 25, access: 30, political: 10, notes: "ACIP recommendations = guaranteed coverage; VFC program; pharmacy administration" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 30, political: 10, notes: "Part D vaccines (IRA); adult immunization growing; no cost-sharing" },
@@ -918,7 +918,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "20. Women's Health",
+    name: "Women's Health",
     markets: [
       { market: "US Commercial", clinical: 30, economic: 25, access: 25, political: 20, notes: "ACA mandates contraception; reproductive rights politics; menopause growing" },
       { market: "US Medicare", clinical: 25, economic: 30, access: 25, political: 20, notes: "Elderly women osteoporosis/menopause; fertility/obesity excluded" },

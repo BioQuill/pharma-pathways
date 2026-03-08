@@ -1,7 +1,7 @@
 // LPI-2 Model: 5-Factor Investment LPI (VC / Investment Model)
 // Used by venture capital funds, licensing teams, and biotech accelerators
 
-import { normalizeTA } from './taCompositeIndex';
+import { canonicalizeTA } from './taCanonical';
 
 // ========================================
 // TYPE DEFINITIONS
@@ -94,7 +94,7 @@ function scoreBiologicalPlausibility(
   phase: string,
   indication: string
 ): LPI2Factor {
-  const ta = normalizeTA(therapeuticArea);
+  const ta = canonicalizeTA(therapeuticArea);
   
   // Sub-factors for biological plausibility
   const geneticEvidence = getGeneticEvidenceScore(ta, indication);
@@ -138,7 +138,7 @@ function scoreTranslationalEvidence(
   phase: string,
   companyTrackRecord: string
 ): LPI2Factor {
-  const ta = normalizeTA(therapeuticArea);
+  const ta = canonicalizeTA(therapeuticArea);
   
   const preclinicalReproducibility = getPreclinicalReproducibilityScore(ta, phase);
   const biomarkerAvailability = getBiomarkerAvailabilityScore(ta);
@@ -221,7 +221,7 @@ function scoreRegulatoryAttractiveness(
   indication: string,
   phase: string
 ): LPI2Factor {
-  const ta = normalizeTA(therapeuticArea);
+  const ta = canonicalizeTA(therapeuticArea);
   
   const orphanStatus = getOrphanStatusScore(ta, indication);
   const unmetNeed = getUnmetNeedScore(ta, indication);
@@ -306,8 +306,8 @@ function scoreTeamAndSponsor(
 
 function getGeneticEvidenceScore(ta: string, indication: string): number {
   // TAs with strong genetic evidence base
-  const highGeneticTA = ['oncology/hematology', 'rare diseases/orphan drugs', 'immunology & inflammation'];
-  const mediumGeneticTA = ['cardiovascular', 'neurology/cns', 'endocrinology & metabolism'];
+  const highGeneticTA = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Immunology & Inflammation'];
+  const mediumGeneticTA = ['Cardiovascular', 'Neurology', 'Endocrinology & Metabolism'];
   
   if (highGeneticTA.includes(ta)) return 75 + Math.random() * 20;
   if (mediumGeneticTA.includes(ta)) return 55 + Math.random() * 25;
@@ -333,14 +333,14 @@ function getPreclinicalReproducibilityScore(ta: string, phase: string): number {
 }
 
 function getBiomarkerAvailabilityScore(ta: string): number {
-  const highBiomarkerTA = ['oncology/hematology', 'immunology & inflammation', 'cardiovascular'];
+  const highBiomarkerTA = ['Oncology & Hematology', 'Immunology & Inflammation', 'Cardiovascular'];
   if (highBiomarkerTA.includes(ta)) return 70 + Math.random() * 25;
   return 45 + Math.random() * 35;
 }
 
 function getAnimalModelRelevanceScore(ta: string): number {
   // Some TAs have less translatable animal models
-  const lowTranslatability = ['psychiatry/mental health', 'neurology/cns', 'pain management/anesthesia'];
+  const lowTranslatability = ['Psychiatry & Mental Health', 'Neurology', 'Pain & Anaesthesia'];
   if (lowTranslatability.includes(ta)) return 35 + Math.random() * 30;
   return 55 + Math.random() * 35;
 }
@@ -364,19 +364,19 @@ function getProtocolDesignScore(phase: string): number {
 }
 
 function getOrphanStatusScore(ta: string, indication: string): number {
-  const orphanLikely = ['rare diseases/orphan drugs', 'oncology/hematology', 'neurology/cns'];
+  const orphanLikely = ['Rare Disease & Orphan', 'Oncology & Hematology', 'Neurology'];
   if (orphanLikely.includes(ta)) return 70 + Math.random() * 25;
   return 30 + Math.random() * 40;
 }
 
 function getUnmetNeedScore(ta: string, indication: string): number {
-  const highUnmetNeed = ['oncology/hematology', 'rare diseases/orphan drugs', 'neurology/cns', 'psychiatry/mental health'];
+  const highUnmetNeed = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Neurology', 'Psychiatry & Mental Health'];
   if (highUnmetNeed.includes(ta)) return 75 + Math.random() * 20;
   return 50 + Math.random() * 35;
 }
 
 function getExpeditedPathwayScore(ta: string, phase: string): number {
-  const expeditedLikely = ['oncology/hematology', 'rare diseases/orphan drugs', 'infectious diseases'];
+  const expeditedLikely = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Infectious Disease'];
   const base = expeditedLikely.includes(ta) ? 65 : 40;
   const phaseBonus = { 'Approved': 20, 'Phase III': 15, 'Phase II': 10, 'Phase I': 5 };
   const bonus = phaseBonus[phase as keyof typeof phaseBonus] || 0;
