@@ -862,6 +862,7 @@ const IndexInner = () => {
     { value: 'top-100', label: 'Top 100', icon: Target },
     { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
     { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
+    { value: 'monte-carlo-hub', label: 'Monte Carlo Simulation', icon: Activity },
   ] as const;
 
   type AreaKey = keyof typeof areaConfig;
