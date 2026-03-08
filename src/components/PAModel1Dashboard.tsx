@@ -703,7 +703,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "14. Psychiatry/Mental Health",
+    name: "Psychiatry & Mental Health",
     markets: [
       { market: "US Commercial", clinical: 30, economic: 30, access: 25, political: 15, notes: "Mental Health Parity Act; suicide prevention priority; prior auth restricted" },
       { market: "US Medicare", clinical: 30, economic: 30, access: 25, political: 15, notes: "Elderly depression; dementia-related agitation; Part D coverage" },
