@@ -783,7 +783,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "16. Pediatrics (Cross-Cutting)",
+    name: "Pediatrics",
     markets: [
       { market: "US Commercial", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +10% base bonus; applies on top of underlying TA weights" },
       { market: "UK NICE", clinical: 0, economic: 0, access: 0, political: 0, notes: "Overlay modifier: +15% base bonus; NHS children's health priority" },
