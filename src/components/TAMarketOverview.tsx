@@ -656,7 +656,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'TL1A Phase 3 IBD data and MASH combination trial designs (2026)',
   },
-  'NEPHROLOGY/RENAL': {
+  'NEPHROLOGY & RENAL': {
     approvedDrugsTitle: 'Key Approved Nephrology Therapies:',
     approvedDrugs: [
       { name: 'Farxiga (dapagliflozin)', details: 'SGLT2 inhibitor, CKD and heart failure, renal protection proven' },
