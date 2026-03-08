@@ -197,8 +197,7 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
   const taBenchmark = TA_MAX_TTM[normalizedTA] || TA_MAX_TTM['GENERAL'];
   const lpiFromElapsed = Math.min(100, Math.round((elapsedMonths / taBenchmark) * 100));
   
-  // Determine approval status and model applicability
-  const approvalStatus = determineApprovalStatus(raw);
+  // approvalStatus already computed above
   const modelApplicability = determineModelApplicability(approvalStatus);
 
   return {
