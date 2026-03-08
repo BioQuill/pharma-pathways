@@ -183,11 +183,11 @@ function calculateDropoutRanking(phase: string, therapeuticArea: string, taDropo
 function calculateRegulatoryPathwayProbabilities(normalizedTA: string, phase: string): ProbabilityScores['regulatoryPathway'] {
   // TA-specific regulatory pathway probabilities
   const taPathways: Record<string, { standard: number; accelerated: number; breakthrough: number; orphan: number }> = {
-    'ONCOLOGY/HEMATOLOGY': { standard: 0.35, accelerated: 0.35, breakthrough: 0.20, orphan: 0.10 },
-    'RARE DISEASES/ORPHAN': { standard: 0.20, accelerated: 0.25, breakthrough: 0.15, orphan: 0.40 },
-    'INFECTIOUS DISEASES': { standard: 0.50, accelerated: 0.30, breakthrough: 0.15, orphan: 0.05 },
-    'NEUROLOGY/CNS': { standard: 0.55, accelerated: 0.25, breakthrough: 0.15, orphan: 0.05 },
-    'TRANSPLANT/CELL-GENE': { standard: 0.30, accelerated: 0.30, breakthrough: 0.25, orphan: 0.15 },
+    'ONCOLOGY & HEMATOLOGY': { standard: 0.35, accelerated: 0.35, breakthrough: 0.20, orphan: 0.10 },
+    'RARE DISEASE & ORPHAN': { standard: 0.20, accelerated: 0.25, breakthrough: 0.15, orphan: 0.40 },
+    'INFECTIOUS DISEASE': { standard: 0.50, accelerated: 0.30, breakthrough: 0.15, orphan: 0.05 },
+    'NEUROLOGY': { standard: 0.55, accelerated: 0.25, breakthrough: 0.15, orphan: 0.05 },
+    'HEMATOLOGY (NON-ONCOLOGY)': { standard: 0.30, accelerated: 0.30, breakthrough: 0.25, orphan: 0.15 },
     'GENERAL': { standard: 0.60, accelerated: 0.25, breakthrough: 0.10, orphan: 0.05 },
   };
   
