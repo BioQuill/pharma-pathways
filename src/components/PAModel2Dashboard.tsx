@@ -371,7 +371,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "19. Transplant & Cell/Gene Therapy",
+    ta: "19. Hematology (non-oncology)",
     benchmarks: [
       { molecule: "Zolgensma (onasemnogene)", indication: "SMA type 1", usApproval: "Yes", niceRec: "Yes (installments)", gba: "Orphan exempt", icer: "~£1.8M", keyEndpoint: "Survival, motor milestones", successFactor: "One-time cure, pediatric" },
       { molecule: "Casgevy (exa-cel, CRISPR)", indication: "β-thalassemia, SCD", usApproval: "Yes", niceRec: "Yes", gba: "Considerable (3)", icer: "~£1.65M", keyEndpoint: "Transfusion independence", successFactor: "First CRISPR therapy" },
