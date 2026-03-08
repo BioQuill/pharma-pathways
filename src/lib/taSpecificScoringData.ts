@@ -741,7 +741,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "8. Respiratory",
+    taName: "Respiratory & Pulmonary",
     marketScorings: [
       {
         market: "US Markets",
