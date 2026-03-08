@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -100,6 +100,9 @@ import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChar
 import { MethodologyContent } from "@/components/MethodologyContent";
 import { PricingContent } from "@/components/PricingContent";
 import { ModelsContent } from "@/components/ModelsContent";
+import { SimulatorMoleculeProvider, useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
+import { MoleculePicker } from "@/components/MoleculePicker";
 
 // TimelinePhase interface imported from moleculesData
 
@@ -219,6 +222,7 @@ const DueDiligenceComparisonChart = () => {
 
 // PTRS Calculator Component
 const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
+  const { simulatorMolecule } = useSimulatorMolecule();
   const [calculationMode, setCalculationMode] = useState<"ta" | "molecule">("ta");
   const [selectedMoleculeId, setSelectedMoleculeId] = useState<string>("");
   const [therapeuticArea, setTherapeuticArea] = useState("oncology");
@@ -230,6 +234,14 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
   const [regulatoryPrecedent, setRegulatoryPrecedent] = useState([75]);
   const [safetyProfile, setSafetyProfile] = useState([70]);
   const ptrsReportRef = useRef<HTMLDivElement>(null);
+
+  // Auto-select simulator molecule when context changes
+  useEffect(() => {
+    if (simulatorMolecule && simulatorMolecule.id !== selectedMoleculeId) {
+      setCalculationMode("molecule");
+      handleMoleculeSelect(simulatorMolecule.id);
+    }
+  }, [simulatorMolecule]);
 
   // Base rates by therapeutic area
   const taBaseRates: Record<string, { pts: number; prs: number }> = {
@@ -681,7 +693,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     </div>
   );
 };
-const Index = () => {
+const IndexInner = () => {
   const { molecules: allMolecules, loading: moleculesLoading, error: moleculesError } = useMolecules();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
@@ -690,6 +702,16 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
+  const { loadIntoSimulator, setOnNavigateToSimulator, simulatorMolecule } = useSimulatorMolecule();
+
+  // Register simulator navigation callback
+  useEffect(() => {
+    setOnNavigateToSimulator(() => {
+      setTopNavMode('platform');
+      setActiveTab('ptrs');
+      setSelectedMolecule(null);
+    });
+  }, [setOnNavigateToSimulator]);
 
    // Top nav mode: 'platform', 'strategy-hub', 'models', 'methodology', or 'pricing'
   const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'models' | 'methodology' | 'pricing'>('platform');
@@ -1334,10 +1356,13 @@ const Index = () => {
                             <p className="text-xs font-semibold text-foreground mt-1">{verdict}</p>
                           </div>
 
-                          {/* Right: Full Analysis button */}
-                          <div className="shrink-0">
+                          {/* Right: Action buttons */}
+                          <div className="shrink-0 flex flex-col gap-1">
                             <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
                               Full Analysis →
+                            </Button>
+                            <Button size="sm" variant="secondary" className="text-xs" onClick={(e) => { e.stopPropagation(); loadIntoSimulator(molecule); }}>
+                              Use in Simulator →
                             </Button>
                           </div>
                         </div>
@@ -1711,16 +1736,19 @@ const Index = () => {
 
           {/* TTM Tab */}
           <TabsContent value="ttm" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <TTMBreakdownChart />
           </TabsContent>
 
           {/* Regulatory Tab */}
           <TabsContent value="regulatory" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <TACompositeIndexDashboard />
           </TabsContent>
 
           {/* PTRS Tab */}
           <TabsContent value="ptrs" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -2082,11 +2110,13 @@ const Index = () => {
 
           {/* LPI-2 Tab - 5-Factor Investment Model */}
           <TabsContent value="lpi-2" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <LPI2Dashboard molecules={allMolecules} />
           </TabsContent>
 
           {/* LPI-3 Tab - ML Model */}
           <TabsContent value="lpi-3" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <LPI3Dashboard molecules={allMolecules} />
           </TabsContent>
 
@@ -2165,6 +2195,7 @@ const Index = () => {
 
           {/* Peak Sales Index Tab */}
           <TabsContent value="peak-sales" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PeakSalesIndexDashboard molecules={allMolecules} />
           </TabsContent>
 
@@ -2185,6 +2216,7 @@ const Index = () => {
 
           {/* Portfolio Dashboard Tab */}
           <TabsContent value="portfolio" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PortfolioDashboard 
               molecules={allMolecules} 
               watchlistIds={watchlist.map(w => w.moleculeId)}
@@ -2209,31 +2241,37 @@ const Index = () => {
 
           {/* Pricing & Access Markets Overview Tab */}
           <TabsContent value="pricing-access" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PricingAccessDashboard molecules={allMolecules} />
           </TabsContent>
 
           {/* PA Model 1 Tab */}
           <TabsContent value="pa-model1" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PAModel1Dashboard molecules={allMolecules} />
           </TabsContent>
 
           {/* PA Model 2 Tab */}
           <TabsContent value="pa-model2" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PAModel2Dashboard />
           </TabsContent>
 
           {/* PA Decision Framework Tab */}
           <TabsContent value="pa-framework" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <ModelsDecisionFramework />
           </TabsContent>
 
           {/* PA Combined Comparison Tab */}
           <TabsContent value="pa-comparison" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PAModelComparisonMode />
           </TabsContent>
 
           {/* PA Batch Comparison Tab */}
           <TabsContent value="pa-batch" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PABatchComparison />
           </TabsContent>
 
@@ -2428,5 +2466,11 @@ const Index = () => {
     </div>
   );
 };
+
+const Index = () => (
+  <SimulatorMoleculeProvider>
+    <IndexInner />
+  </SimulatorMoleculeProvider>
+);
 
 export default Index;
