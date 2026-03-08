@@ -191,7 +191,7 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "Clinical cure: 68%, Eradication: 62%", safety: "Nephrotoxicity 12%", icer: "$52K/cure", population: "CRE, resistant gram-negative", price: "IV" },
       ratios: ["Clinical cure: 76%/68% = 1.12", "Microbiologic eradication: 68%/62% = 1.10", "Mortality: 22%/18% = 1.22 (better)", "Safety nephrotoxicity: 12%/8% = 1.50 (better)", "ICER: $52K/$45K = 1.16", "Spectrum: Includes CRAB (novel) = 1.3"],
       compositeScore: "1.23",
-      probability: { baseRate: "US Commercial Infectious Diseases: 70%", composite: "70% × 1.23 = 86.1%", adjustments: ["QIDP designation (US): +10%", "Novel mechanism (new β-lactamase): +8%", "IDSA guideline inclusion: +10%"], final: "86% + 10% + 8% + 10% = 114% → cap at 95%" },
+      probability: { baseRate: "US Commercial Infectious Disease: 70%", composite: "70% × 1.23 = 86.1%", adjustments: ["QIDP designation (US): +10%", "Novel mechanism (new β-lactamase): +8%", "IDSA guideline inclusion: +10%"], final: "86% + 10% + 8% + 10% = 114% → cap at 95%" },
     },
   },
   {
