@@ -211,7 +211,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Pain Management/Anesthesia",
+    name: "Pain & Anaesthesia",
     drugs: [
       { name: "Tanezumab", company: "Pfizer/Lilly", mechanism: "Anti-NGF mAb", indication: "Osteoarthritis pain", peakSales: "$2B+", status: "Phase 3", nct: "TBD" },
       { name: "Fasinumab", company: "Regeneron/Teva", mechanism: "Anti-NGF mAb", indication: "Osteoarthritis pain", peakSales: "$1.5B+", status: "Phase 3", nct: "TBD" },
