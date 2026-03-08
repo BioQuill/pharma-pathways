@@ -1265,7 +1265,10 @@ const IndexInner = () => {
                     const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
                     const dropoutDot = dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
 
-                    const verdict = compositeScore >= 67 ? '→ INTERESTING — worth full analysis' : compositeScore >= 34 ? '→ MONITOR — review at next data update' : '→ CAUTION — high-risk profile';
+                    const medalRank = compositeScore >= 67 ? 1 : compositeScore >= 34 ? 2 : 3;
+                    const medalEmoji = medalRank === 1 ? '🥇' : medalRank === 2 ? '🥈' : '🥉';
+                    const medalBg = medalRank === 1 ? 'bg-[hsl(45,90%,50%)]' : medalRank === 2 ? 'bg-[hsl(0,0%,75%)]' : 'bg-[hsl(30,60%,45%)]';
+                    const medalBorder = medalRank === 1 ? 'border-[hsl(45,90%,40%)]' : medalRank === 2 ? 'border-[hsl(0,0%,65%)]' : 'border-[hsl(30,60%,35%)]';
 
                     // Generate enriched trial info from molecule data
                     const mfg = getManufacturingCapability(molecule.company);
@@ -1353,7 +1356,11 @@ const IndexInner = () => {
                                 <span className="text-xs font-bold leading-none">{dropoutRanking}/5</span>
                               </div>
                             </div>
-                            <p className="text-xs font-semibold text-foreground mt-1">{verdict}</p>
+                            <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
+                              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} text-white font-bold text-lg shadow-md`}>
+                                {medalRank}
+                              </div>
+                            </div>
                           </div>
 
                           {/* Right: Action buttons */}
@@ -1714,11 +1721,10 @@ const IndexInner = () => {
                         The BQ Pipeline Score (0–100) is a composite signal reflecting the estimated strategic attractiveness of a molecule from a development and market access perspective. It is NOT a financial return model, clinical efficacy prediction, or regulatory guarantee. It IS a relative signal for pipeline prioritisation and screening.
                       </p>
                       <div className="mt-3 p-3 bg-muted/30 rounded-lg text-xs space-y-1">
-                        <p className="font-semibold">BQ Score Legend:</p>
-                        <p><span className="text-[hsl(142,76%,36%)] font-bold">75–100 STRONG BUY</span> — Phase III+ with favourable regulatory pathway and access profile</p>
-                        <p><span className="text-[hsl(45,93%,47%)] font-bold">55–74 INTERESTING</span> — Meaningful pipeline signal; warrants full due diligence</p>
-                        <p><span className="text-amber-600 font-bold">35–54 MONITOR</span> — Early stage or headwinds identified; revisit at next data cycle</p>
-                        <p><span className="text-[hsl(0,72%,51%)] font-bold">0–34 PASS</span> — Insufficient data or signal to recommend tracking at this time</p>
+                        <p className="font-semibold">Race to Market Rank:</p>
+                        <p>🥇 <span className="font-bold" style={{color:'hsl(45,90%,40%)'}}>Rank 1 (67–100)</span> — Highest conviction; Phase III+ with favourable regulatory pathway</p>
+                        <p>🥈 <span className="font-bold" style={{color:'hsl(0,0%,55%)'}}>Rank 2 (34–66)</span> — Medium conviction; warrants full due diligence</p>
+                        <p>🥉 <span className="font-bold" style={{color:'hsl(30,60%,35%)'}}>Rank 3 (0–33)</span> — Monitor; revisit at next data cycle</p>
                       </div>
                     </div>
                   </CardContent>

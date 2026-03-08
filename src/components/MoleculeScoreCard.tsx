@@ -83,8 +83,10 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
     return "text-destructive";
   };
 
-  // Verdict
-  const verdict = compScoreVal >= 75 ? '→ STRONG BUY — high conviction' : compScoreVal >= 55 ? '→ INTERESTING — worth full analysis' : compScoreVal >= 35 ? '→ MONITOR — review at next data update' : '→ PASS — insufficient signal';
+  // Medal rank
+  const medalRank = compScoreVal >= 67 ? 1 : compScoreVal >= 34 ? 2 : 3;
+  const medalBg = medalRank === 1 ? 'bg-[hsl(45,90%,50%)]' : medalRank === 2 ? 'bg-[hsl(0,0%,75%)]' : 'bg-[hsl(30,60%,45%)]';
+  const medalBorder = medalRank === 1 ? 'border-[hsl(45,90%,40%)]' : medalRank === 2 ? 'border-[hsl(0,0%,65%)]' : 'border-[hsl(30,60%,35%)]';
 
   return (
     <Card>
@@ -144,7 +146,11 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
                 <span className="text-sm font-bold leading-none">{scores.dropoutRanking}/5</span>
               </div>
             </div>
-            <p className="text-sm font-semibold text-foreground mt-1">{verdict}</p>
+            <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
+              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} text-white font-bold text-lg shadow-md`}>
+                {medalRank}
+              </div>
+            </div>
           </div>
         </div>
 
