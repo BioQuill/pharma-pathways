@@ -1171,7 +1171,7 @@ const IndexInner = () => {
                 {/* Strategy Hub Sub-tabs */}
                 <div className="w-full bg-[#0E1D35] py-2">
                   <div className="container mx-auto px-4 text-center">
-                    <span className="text-white/60 text-xs tracking-wider uppercase font-bold">Strategy Hub</span>
+                    <span className="text-white text-xs tracking-wider uppercase font-bold">Strategy Hub</span>
                   </div>
                 </div>
                 <TabsList className="w-full justify-center bg-[#2B3D5B] border-0 rounded-none h-11 px-4">
