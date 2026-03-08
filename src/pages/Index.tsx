@@ -1143,8 +1143,8 @@ const IndexInner = () => {
                       onClick={() => setActiveTab(area.tabs[0].value)}
                       className={`flex-1 max-w-[220px] py-3 text-center font-bold text-xs tracking-wider uppercase transition-colors ${
                         currentArea === key 
-                          ? 'border-b-2 border-[#FFD700] text-white bg-[#2B3D5B]' 
-                          : 'border-b-2 border-transparent text-white/60 hover:text-white hover:bg-white/5'
+                          ? 'border-b-2 border-[#FFD700] text-white font-bold bg-[#2B3D5B]' 
+                          : 'border-b-2 border-transparent text-white/80 font-bold hover:text-white hover:bg-white/5'
                       }`}
                     >
                       {area.label}
