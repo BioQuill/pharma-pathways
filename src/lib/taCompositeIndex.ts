@@ -44,33 +44,33 @@ const FACTOR_TEMPLATE: Omit<LaunchFactor, 'multiplier' | 'adjustedWeight'>[] = [
 // TA-specific multipliers from the Excel data (key differentiators per TA)
 // Most factors have multiplier 1.0, except special cases noted in data
 const TA_MULTIPLIERS: Record<string, Record<string, number>> = {
-  'ONCOLOGY/HEMATOLOGY': {
-    'Biomarker Availability': 1.4, // Critical for targeted therapies
+  'ONCOLOGY & HEMATOLOGY': {
+    'Biomarker Availability': 1.4,
   },
   'CARDIOVASCULAR': {},
-  'NEUROLOGY/CNS': {},
-  'PSYCHIATRY/MENTAL HEALTH': {},
+  'NEUROLOGY': {},
+  'PSYCHIATRY & MENTAL HEALTH': {},
   'IMMUNOLOGY & INFLAMMATION': {},
-  'RHEUMATOLOGY': {},
-  'INFECTIOUS DISEASES': {},
-  'RESPIRATORY/PULMONOLOGY': {},
+  'MUSCULOSKELETAL & RHEUMATOLOGY': {},
+  'INFECTIOUS DISEASE': {},
+  'RESPIRATORY & PULMONARY': {},
   'GASTROENTEROLOGY & HEPATOLOGY': {},
-  'NEPHROLOGY/RENAL': {},
+  'NEPHROLOGY & RENAL': {},
   'DERMATOLOGY': {},
   'OPHTHALMOLOGY': {},
-  'RARE DISEASES/ORPHAN': {
+  'RARE DISEASE & ORPHAN': {
     'Accelerated Pathway Availability': 1.3,
     'Regulatory Dossier Quality': 1.2,
   },
-  'VACCINES & VIROLOGY': {
+  'VACCINES & PREVENTIVE': {
     'Manufacturing Scalability': 1.5,
     'CMC Readiness': 1.3,
   },
-  'WOMEN\'S HEALTH': {},
+  "WOMEN'S HEALTH": {},
   'UROLOGY': {},
-  'PAIN MANAGEMENT/ANESTHESIA': {},
-  'TRANSPLANT/CELL-GENE': {
-    'CMC Readiness': 1.6, // From Excel - critical for cell/gene therapies
+  'PAIN & ANAESTHESIA': {},
+  'HEMATOLOGY (NON-ONCOLOGY)': {
+    'CMC Readiness': 1.6,
     'Manufacturing Scalability': 1.4,
   },
   'PEDIATRICS': {
