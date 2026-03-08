@@ -51,7 +51,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Cardiovascular/Cardiology",
+    name: "Cardiovascular",
     drugs: [
       { name: "Aficamten (CK-274)", company: "Cytokinetics", mechanism: "Cardiac myosin inhibitor", indication: "Hypertrophic cardiomyopathy", peakSales: "$2.8B by 2030", status: "Approved 2025", nct: "NCT04219826" },
       { name: "Olpasiran", company: "Amgen", mechanism: "siRNA APOC3 inhibitor", indication: "Hypertriglyceridemia", peakSales: "$2B+", status: "Phase 3", nct: "TBD" },
