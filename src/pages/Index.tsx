@@ -671,6 +671,7 @@ const IndexInner = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
+  const [recordTypeFilter, setRecordTypeFilter] = useState<'drugs' | 'devices' | 'all'>('drugs');
   const reportRef = useRef<HTMLDivElement>(null);
   const { loadIntoSimulator, setOnNavigateToSimulator, simulatorMolecule } = useSimulatorMolecule();
 
