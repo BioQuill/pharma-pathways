@@ -1599,7 +1599,10 @@ const IndexInner = () => {
                   </CardContent>
                 </Card>
                 
-                {/* LPI (Launch Probability Index) Analysis Card */}
+                {/* LPI Calibrated — 6-Category Radar + CI (from computeLPI) */}
+                <LPICalibrationCard molecule={activeMolecule} />
+
+                {/* LPI (Launch Probability Index) ML Analysis Card */}
                 <LPI3ReportCard molecule={activeMolecule} />
                 
                 {/* LPI Extended Data - Feature Category Breakdown, Category Weight vs Performance, TA Launch Probability Comparison */}
