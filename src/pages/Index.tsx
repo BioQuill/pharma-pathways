@@ -2196,6 +2196,128 @@ const IndexInner = () => {
             <Top50SmallCapFirms />
           </TabsContent>
 
+          {/* Monte Carlo Simulation Hub Tab */}
+          <TabsContent value="monte-carlo-hub" className="space-y-6">
+            <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
+              <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Activity className="h-5 w-5 text-primary" /> Monte Carlo Simulation Engine</h2>
+              <p className="text-sm text-muted-foreground">Cross-model uncertainty analysis: PTRS → LPI → PA Index → Peak Sales → BB Prob. Outputs P5 / P50 / P95 on each model + final composite.</p>
+            </div>
+
+            {/* Monte Carlo PTRS Simulation */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Monte Carlo PTRS Simulation
+                </CardTitle>
+                <CardDescription>Probability distributions for success outcomes with configurable uncertainty</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloIntegration />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Comparison */}
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-blue-500" />
+                  Monte Carlo Distribution Comparison
+                </CardTitle>
+                <CardDescription>Compare PTRS probability distributions across multiple molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloComparison molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Stress Testing */}
+            <Card className="border-l-4 border-l-destructive">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  Monte Carlo Stress Testing
+                </CardTitle>
+                <CardDescription>Simulate extreme scenarios and assess PTRS resilience</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSStressTesting molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Stress Test */}
+            <Card className="border-l-4 border-l-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-orange-500" />
+                  Portfolio Stress Test
+                </CardTitle>
+                <CardDescription>Run all stress scenarios across your watchlist to identify vulnerable molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioStressTest molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Convergence Analysis */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-purple-500" />
+                  Monte Carlo Convergence Analysis
+                </CardTitle>
+                <CardDescription>Analyze simulation accuracy and find optimal iteration settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MonteCarloConvergenceAnalysis molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Optimization */}
+            <Card className="border-l-4 border-l-green-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                  Portfolio Optimization
+                </CardTitle>
+                <CardDescription>Optimize molecule mix to minimize vulnerability while maximizing expected returns</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioOptimization molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Rebalancing Tool */}
+            <Card className="border-l-4 border-l-teal-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-teal-500" />
+                  Portfolio Rebalancing
+                </CardTitle>
+                <CardDescription>Suggest weight adjustments when market conditions or PTRS scores change over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioRebalancing molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Rebalancing History */}
+            <PTRSRebalancingHistory molecules={allMolecules} />
+
+            {/* Custom Scenario Builder */}
+            <Card className="border-l-4 border-l-indigo-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-indigo-500" />
+                  Custom Scenario Builder
+                </CardTitle>
+                <CardDescription>Define custom stress scenarios with adjustable impact parameters for each PTRS factor</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSCustomScenarioBuilder molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
           {/* Pricing & Access Markets Overview Tab */}
           <TabsContent value="pricing-access" className="space-y-6">
             <SimulatorMoleculeBanner molecules={allMolecules} />
