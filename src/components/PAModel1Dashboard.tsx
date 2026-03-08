@@ -313,7 +313,7 @@ const marketModels: MarketModel[] = [
 // ============ TA-SPECIFIC WEIGHTS DATA ============
 const taWeightsData: { name: string; markets: { market: string; clinical: number; economic: number; access: number; political: number; notes: string }[]; adjustments: { add: { item: string; points: string }[]; subtract: { item: string; points: string }[] } }[] = [
   {
-    name: "1. Oncology",
+    name: "Oncology & Hematology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Payers increasingly scrutinize budget impact despite oncology priority" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Part B/D pathway critical; CMS OCM participation bonus" },
