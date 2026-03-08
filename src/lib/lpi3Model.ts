@@ -67,24 +67,24 @@ const PHASE_SUCCESS_RATES: Record<string, number> = {
 // ========================================
 
 const TA_SUCCESS_MODIFIERS: Record<string, number> = {
-  'ONCOLOGY/HEMATOLOGY': 0.85, // Lower due to complex endpoints
+  'ONCOLOGY & HEMATOLOGY': 0.85,
   'CARDIOVASCULAR': 0.95,
-  'NEUROLOGY/CNS': 0.65, // Much lower - brain penetration, complex endpoints
-  'PSYCHIATRY/MENTAL HEALTH': 0.60,
+  'NEUROLOGY': 0.65,
+  'PSYCHIATRY & MENTAL HEALTH': 0.60,
   'IMMUNOLOGY & INFLAMMATION': 0.90,
-  'RHEUMATOLOGY': 0.88,
-  'INFECTIOUS DISEASES': 1.10, // Higher - clearer endpoints
-  'RESPIRATORY/PULMONOLOGY': 0.92,
+  'MUSCULOSKELETAL & RHEUMATOLOGY': 0.88,
+  'INFECTIOUS DISEASE': 1.10,
+  'RESPIRATORY & PULMONARY': 0.92,
   'GASTROENTEROLOGY & HEPATOLOGY': 0.88,
-  'NEPHROLOGY/RENAL': 0.80,
+  'NEPHROLOGY & RENAL': 0.80,
   'DERMATOLOGY': 1.05,
   'OPHTHALMOLOGY': 0.95,
-  'RARE DISEASES/ORPHAN': 0.75, // Lower n, but regulatory advantages
-  'VACCINES & VIROLOGY': 1.15,
-  'WOMEN\'S HEALTH': 1.0,
+  'RARE DISEASE & ORPHAN': 0.75,
+  'VACCINES & PREVENTIVE': 1.15,
+  "WOMEN'S HEALTH": 1.0,
   'UROLOGY': 0.95,
-  'PAIN MANAGEMENT/ANESTHESIA': 0.70, // Safety concerns
-  'TRANSPLANT/CELL-GENE': 0.55, // Novel, manufacturing challenges
+  'PAIN & ANAESTHESIA': 0.70,
+  'HEMATOLOGY (NON-ONCOLOGY)': 0.55,
   'PEDIATRICS': 0.90,
   'ENDOCRINOLOGY & METABOLISM': 1.10,
   'GENERAL': 0.85,
