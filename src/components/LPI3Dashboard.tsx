@@ -26,7 +26,6 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   calculateLPI3ForMolecule, 
-  DATA_SOURCES,
   type LPI3Prediction,
   type FeatureCategory 
 } from "@/lib/lpi3Model";
