@@ -404,7 +404,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "TULIP",
     phase: "Approved",
     indication: "Systemic Lupus Erythematosus",
-    therapeuticArea: "Rheumatology",
+    therapeuticArea: "Musculoskeletal & Rheumatology",
     company: "AstraZeneca",
     companyTrackRecord: 'fast',
     nctId: "NCT02446912",
