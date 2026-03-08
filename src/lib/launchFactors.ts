@@ -143,56 +143,10 @@ const DELAY_DISTRIBUTION = {
 };
 
 // Map therapeutic area strings to TA keys
+import { canonicalizeTAKey } from './taCanonical';
+
 function normalizeTherapeuticArea(ta: string): string {
-  const taLower = ta.toLowerCase();
-  
-  if (taLower.includes('oncology') || taLower.includes('hematology') || taLower.includes('cancer')) {
-    return 'ONCOLOGY/HEMATOLOGY';
-  }
-  if (taLower.includes('cardio') || taLower.includes('heart')) {
-    return 'CARDIOVASCULAR';
-  }
-  if (taLower.includes('neuro') || taLower.includes('cns') || taLower.includes('alzheimer')) {
-    return 'NEUROLOGY/CNS';
-  }
-  if (taLower.includes('immun') || taLower.includes('inflam')) {
-    return 'IMMUNOLOGY & INFLAMMATION';
-  }
-  if (taLower.includes('infect') || taLower.includes('virus') || taLower.includes('bacter')) {
-    return 'INFECTIOUS DISEASES';
-  }
-  if (taLower.includes('transplant') || taLower.includes('cell') || taLower.includes('gene')) {
-    return 'TRANSPLANT/CELL-GENE';
-  }
-  if (taLower.includes('derma') || taLower.includes('skin')) {
-    return 'DERMATOLOGY';
-  }
-  if (taLower.includes('gastro') || taLower.includes('hepat') || taLower.includes('liver')) {
-    return 'GASTROENTEROLOGY & HEPATOLOGY';
-  }
-  if (taLower.includes('nephro') || taLower.includes('renal') || taLower.includes('kidney')) {
-    return 'NEPHROLOGY/RENAL';
-  }
-  if (taLower.includes('rare') || taLower.includes('orphan')) {
-    return 'RARE DISEASES/ORPHAN';
-  }
-  if (taLower.includes('metabol') || taLower.includes('diabet') || taLower.includes('endocrin')) {
-    return 'ENDOCRINOLOGY & METABOLISM';
-  }
-  if (taLower.includes('respir') || taLower.includes('pulmon') || taLower.includes('lung')) {
-    return 'RESPIRATORY/PULMONOLOGY';
-  }
-  if (taLower.includes('rheum') || taLower.includes('arthritis')) {
-    return 'RHEUMATOLOGY';
-  }
-  if (taLower.includes('ophthal') || taLower.includes('eye')) {
-    return 'OPHTHALMOLOGY';
-  }
-  if (taLower.includes('psych') || taLower.includes('mental')) {
-    return 'PSYCHIATRY/MENTAL HEALTH';
-  }
-  
-  return 'GENERAL';
+  return canonicalizeTAKey(ta);
 }
 
 // Get TA-specific multiplier for a factor
