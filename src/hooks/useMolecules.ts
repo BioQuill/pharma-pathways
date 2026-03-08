@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { type MoleculeProfile } from '@/lib/moleculesData';
+import { canonicalizeTA } from '@/lib/taCanonical';
 import {
   calculateProbabilityScores,
   generateMarketProjections,
