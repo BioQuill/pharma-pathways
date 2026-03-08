@@ -772,7 +772,7 @@ const IndexInner = () => {
   const { molecules: allMolecules, loading: moleculesLoading, error: moleculesError } = useMolecules();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta' | 'ti'>('lpi');
+  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta' | 'ti' | 'ptrs'>('lpi');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
@@ -957,7 +957,10 @@ const IndexInner = () => {
         <div className="flex items-center justify-between h-full px-0">
           {/* Left: Logo circle + wordmark + tagline */}
           <div className="flex items-center shrink-0 pl-2">
-            <img src={bioquillFullLogo} alt="BiOQUILL logo" style={{ height: 48, width: 'auto' }} />
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
+              <img src={bioquillEmblem} alt="BiOQUILL emblem" className="w-10 h-10 object-cover rounded-full" />
+            </div>
+            <span className="ml-2 text-[18px] font-bold text-[#1A1A1A] tracking-tight">BiOQUILL</span>
             {/* Separator + Tagline */}
             <div className="hidden md:flex items-center gap-3 ml-5">
               <div style={{ width: 1, height: 22, background: 'rgba(26,26,26,0.25)' }} />
@@ -990,14 +993,14 @@ const IndexInner = () => {
             <button
               key={item.mode}
               onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('lpi-2'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
-              className={`text-sm font-medium whitespace-nowrap transition-colors px-2 py-1 ${topNavMode === item.mode ? 'text-white border-b-2 border-[#F5C518]' : 'text-white/70 hover:text-white'}`}
+              className={`text-sm font-bold whitespace-nowrap transition-colors px-2 py-1 ${topNavMode === item.mode ? 'text-white border-b-2 border-[#F5C518]' : 'text-white/80 hover:text-white'}`}
             >
               {item.label}
             </button>
           ))}
           <Popover>
             <PopoverTrigger asChild>
-              <button className="text-sm font-medium text-white/70 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
+              <button className="text-sm font-bold text-white/80 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
                 <Search className="h-3.5 w-3.5" /> Search
                 {(searchQuery || phaseFilter !== 'all') && (
                   <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
@@ -1140,8 +1143,8 @@ const IndexInner = () => {
                       onClick={() => setActiveTab(area.tabs[0].value)}
                       className={`flex-1 max-w-[220px] py-3 text-center font-bold text-xs tracking-wider uppercase transition-colors ${
                         currentArea === key 
-                          ? 'border-b-2 border-[#FFD700] text-white bg-[#2B3D5B]' 
-                          : 'border-b-2 border-transparent text-white/60 hover:text-white hover:bg-white/5'
+                          ? 'border-b-2 border-[#FFD700] text-white font-bold bg-[#2B3D5B]' 
+                          : 'border-b-2 border-transparent text-white/80 font-bold hover:text-white hover:bg-white/5'
                       }`}
                     >
                       {area.label}
@@ -1154,7 +1157,7 @@ const IndexInner = () => {
                   {areaConfig[currentArea].tabs.map(tab => {
                     const Icon = tab.icon;
                     return (
-                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90 text-xs">
+                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/80 font-bold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90 text-xs">
                         <Icon className="h-3 w-3" />
                         {tab.label}
                         {tab.value === 'watchlist' && <span className="text-xs">({watchlist.length})</span>}
@@ -1168,14 +1171,14 @@ const IndexInner = () => {
                 {/* Strategy Hub Sub-tabs */}
                 <div className="w-full bg-[#0E1D35] py-2">
                   <div className="container mx-auto px-4 text-center">
-                    <span className="text-white/60 text-xs tracking-wider uppercase font-bold">Strategy Hub</span>
+                    <span className="text-white text-xs tracking-wider uppercase font-bold">Strategy Hub</span>
                   </div>
                 </div>
                 <TabsList className="w-full justify-center bg-[#2B3D5B] border-0 rounded-none h-11 px-4">
                   {strategyHubTabs.map(tab => {
                     const Icon = tab.icon;
                     return (
-                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
+                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/80 font-bold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
                         <Icon className="h-4 w-4" />
                         {tab.label}
                       </TabsTrigger>
@@ -1204,10 +1207,9 @@ const IndexInner = () => {
                 {/* Molecule Distribution Chart + Export */}
                 <div className="mb-6 p-4 border rounded-lg bg-muted/30">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold">Molecules by Therapeutic Area</h3>
+                    <Badge className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full font-semibold">Molecules by Therapeutic Area</Badge>
                     <div className="flex items-center gap-2">
                       <MoleculeExportPanel molecules={allMolecules} />
-                      <Badge variant="secondary" className="text-lg px-3 py-1">{allMolecules.length.toLocaleString()} Molecules</Badge>
                     </div>
                   </div>
                   <MoleculeDistributionChart molecules={allMolecules} />
@@ -1228,14 +1230,15 @@ const IndexInner = () => {
                       { key: 'ttm', label: 'TTM' },
                       { key: 'composite', label: 'Score' },
                       { key: 'ti', label: 'TI' },
-                      { key: 'company', label: 'Company' },
+                      { key: 'ptrs', label: 'PTRS' },
+                      { key: 'company', label: 'Sponsor' },
                       { key: 'ta', label: 'TA' },
                     ].map(({ key, label }) => (
                       <Button
                         key={key}
                         variant={sortBy === key ? 'default' : 'outline'}
                         size="sm"
-                        className="h-7 px-2 text-xs"
+                        className="h-9 px-3 text-base font-bold text-black"
                         onClick={() => {
                           if (sortBy === key) {
                             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -1304,6 +1307,18 @@ const IndexInner = () => {
                       case 'ta':
                         comparison = a.therapeuticArea.localeCompare(b.therapeuticArea);
                         break;
+                      case 'ptrs': {
+                        // Sort by estimated PTRS based on phase
+                        const getPTRS = (mol: typeof a) => {
+                          const p = mol.phase.toLowerCase();
+                          if (p.includes('approved')) return 95;
+                          if (p.includes('iii') || p.includes('3')) return 55;
+                          if (p.includes('ii') || p.includes('2')) return 30;
+                          return 15;
+                        };
+                        comparison = getPTRS(b) - getPTRS(a);
+                        break;
+                      }
                     }
                     return sortOrder === 'asc' ? -comparison : comparison;
                   })
