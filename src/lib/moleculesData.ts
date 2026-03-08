@@ -74,7 +74,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "NP30179",
     phase: "Approved",
     indication: "Relapsed/Refractory Diffuse Large B-Cell Lymphoma",
-    therapeuticArea: "Oncology/Hematology",
+    therapeuticArea: "Oncology & Hematology",
     company: "Roche/Genentech",
     companyTrackRecord: 'fast',
     nctId: "NCT03075696",
