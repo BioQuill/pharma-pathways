@@ -523,7 +523,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "6. Immunology",
+    taName: "Immunology & Inflammation",
     marketScorings: [
       {
         market: "US Markets",
