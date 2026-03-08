@@ -235,6 +235,14 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
   const [safetyProfile, setSafetyProfile] = useState([70]);
   const ptrsReportRef = useRef<HTMLDivElement>(null);
 
+  // Auto-select simulator molecule when context changes
+  useEffect(() => {
+    if (simulatorMolecule && simulatorMolecule.id !== selectedMoleculeId) {
+      setCalculationMode("molecule");
+      handleMoleculeSelect(simulatorMolecule.id);
+    }
+  }, [simulatorMolecule]);
+
   // Base rates by therapeutic area
   const taBaseRates: Record<string, { pts: number; prs: number }> = {
     oncology: { pts: 12, prs: 82 },
