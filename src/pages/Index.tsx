@@ -2107,6 +2107,7 @@ const IndexInner = () => {
 
           {/* LPI-3 Tab - ML Model */}
           <TabsContent value="lpi-3" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <LPI3Dashboard molecules={allMolecules} />
           </TabsContent>
 
