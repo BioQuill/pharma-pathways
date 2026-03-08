@@ -2237,6 +2237,7 @@ const IndexInner = () => {
 
           {/* PA Model 1 Tab */}
           <TabsContent value="pa-model1" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PAModel1Dashboard molecules={allMolecules} />
           </TabsContent>
 
