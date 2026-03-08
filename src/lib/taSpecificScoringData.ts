@@ -954,7 +954,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "10. Hematology",
+    taName: "Hematology (non-oncology)",
     marketScorings: [
       {
         market: "US Markets",
