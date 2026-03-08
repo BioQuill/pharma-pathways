@@ -494,7 +494,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Nipocalimab approvals and BTK inhibitor lupus Phase 3 data (2026)',
   },
-  'INFECTIOUS DISEASES': {
+  'INFECTIOUS DISEASE': {
     approvedDrugsTitle: 'Key Approved Infectious Disease Therapies:',
     approvedDrugs: [
       { name: 'Biktarvy (bictegravir)', details: 'Single-tablet HIV regimen, $12B+ sales, market leader' },
