@@ -91,22 +91,20 @@ export function generateTherapeuticIndex(
 
   // TA-based adjustments
   const taAdjustments: Record<string, number> = {
-    'Oncology/Hematology': 0.7,  // Generally narrower TI
+    'Oncology & Hematology': 0.7,
     'Cardiovascular': 1.0,
-    'Neurology/CNS': 0.85,
-    'Psychiatry/Mental Health': 1.1,
+    'Neurology': 0.85,
+    'Psychiatry & Mental Health': 1.1,
     'Immunology & Inflammation': 0.9,
     'Endocrinology & Metabolism': 1.1,
     'Infectious Disease': 0.9,
-    'Respiratory': 1.0,
-    'Dermatology': 1.2, // Often topical, wider TI
-    'Ophthalmology': 1.3, // Local delivery
-    'Gastroenterology': 1.1,
+    'Respiratory & Pulmonary': 1.0,
+    'Dermatology': 1.2,
+    'Ophthalmology': 1.3,
+    'Gastroenterology & Hepatology': 1.1,
     'Urology': 1.0,
-    'Rare Disease': 0.85,
-    'Rheumatology': 0.9,
-    'Type 2 Diabetes': 1.1,
-    'Obesity': 1.0,
+    'Rare Disease & Orphan': 0.85,
+    'Musculoskeletal & Rheumatology': 0.9,
   };
 
   // Find matching drug class
