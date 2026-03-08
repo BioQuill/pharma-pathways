@@ -52,7 +52,7 @@ const compositeScoreInterpretation = [
 // ============ STEP 3: TA BENCHMARKING TABLES ============
 const taBenchmarkingData = [
   {
-    ta: "1. Oncology/Hematology",
+    ta: "1. Oncology & Hematology",
     benchmarks: [
       { molecule: "Enhertu (T-DXd)", indication: "HER2+ breast cancer", usApproval: "Yes", niceRec: "Yes", gba: "Considerable (3)", icer: "~$180K", keyEndpoint: "+6.8 months OS", successFactor: "Benefit in heavily pre-treated" },
       { molecule: "Tecartus (CAR-T)", indication: "MCL", usApproval: "Yes", niceRec: "Yes (CDF)", gba: "Not assessed", icer: "~$450K", keyEndpoint: "Durable remission", successFactor: "Curative potential, ultra-rare" },
@@ -70,7 +70,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "2. Cardiovascular/Cardiology",
+    ta: "2. Cardiovascular",
     benchmarks: [
       { molecule: "Camzyos (mavacamten)", indication: "HCM", usApproval: "Yes", niceRec: "Yes", gba: "Considerable (3)", icer: "~$95K", keyEndpoint: "Symptom improvement", successFactor: "Disease-modifying HCM" },
       { molecule: "Jardiance (empagliflozin)", indication: "HFrEF", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~$45K", keyEndpoint: "25% hospitalizations ↓", successFactor: "CV outcomes proven" },
@@ -105,7 +105,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "4. Psychiatry/Mental Health",
+    ta: "4. Psychiatry & Mental Health",
     benchmarks: [
       { molecule: "Spravato (esketamine)", indication: "TRD", usApproval: "Yes", niceRec: "Restricted", gba: "Non-quantifiable (5)", icer: "~£52K", keyEndpoint: "MADRS improvement", successFactor: "Rapid-acting, intranasal, REMS" },
       { molecule: "Auvelity (dex/bupropion)", indication: "MDD", usApproval: "Yes", niceRec: "Not reviewed", gba: "Pending", icer: "~$65K", keyEndpoint: "Remission at week 2", successFactor: "Rapid onset, oral" },
@@ -191,7 +191,7 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "Clinical cure: 68%, Eradication: 62%", safety: "Nephrotoxicity 12%", icer: "$52K/cure", population: "CRE, resistant gram-negative", price: "IV" },
       ratios: ["Clinical cure: 76%/68% = 1.12", "Microbiologic eradication: 68%/62% = 1.10", "Mortality: 22%/18% = 1.22 (better)", "Safety nephrotoxicity: 12%/8% = 1.50 (better)", "ICER: $52K/$45K = 1.16", "Spectrum: Includes CRAB (novel) = 1.3"],
       compositeScore: "1.23",
-      probability: { baseRate: "US Commercial Infectious Diseases: 70%", composite: "70% × 1.23 = 86.1%", adjustments: ["QIDP designation (US): +10%", "Novel mechanism (new β-lactamase): +8%", "IDSA guideline inclusion: +10%"], final: "86% + 10% + 8% + 10% = 114% → cap at 95%" },
+      probability: { baseRate: "US Commercial Infectious Disease: 70%", composite: "70% × 1.23 = 86.1%", adjustments: ["QIDP designation (US): +10%", "Novel mechanism (new β-lactamase): +8%", "IDSA guideline inclusion: +10%"], final: "86% + 10% + 8% + 10% = 114% → cap at 95%" },
     },
   },
   {
@@ -230,7 +230,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "11. Nephrology/Renal",
+    ta: "11. Nephrology & Renal",
     benchmarks: [
       { molecule: "Kerendia (finerenone)", indication: "CKD in diabetes", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£24K", keyEndpoint: "CKD progression -18%, CV -14%", successFactor: "Non-steroidal MRA, dual benefit" },
       { molecule: "Filspari (sparsentan)", indication: "IgA nephropathy", usApproval: "Yes", niceRec: "Under review", gba: "Pending", icer: "N/A", keyEndpoint: "Proteinuria ↓", successFactor: "Dual endothelin/angiotensin" },
@@ -297,7 +297,7 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "Endpoint: 32%, GL-3 reduction: 68%", safety: "Infusion reactions 22%, anaphylaxis rare", icer: "$480K/QALY", population: "~500-1000 patients", price: "IV q2w" },
       ratios: ["Clinical endpoint: 38%/32% = 1.19", "Biomarker: 75%/68% = 1.10", "QoL: 12/9 = 1.33", "Safety: 22%/18% = 1.22 (better)", "ICER: $480K/$425K = 1.13", "Dosing: Same = 1.0"],
       compositeScore: "1.16",
-      probability: { baseRate: "US Commercial Rare Diseases: 85%", composite: "85% × 1.16 = 98.6%", adjustments: ["Orphan Drug Act 7-year exclusivity: +0% (in base)", "Pediatric Rare Disease PRV: +5%", "Patient advocacy (strong): +3%"], final: "99% + 5% + 3% = 107% → cap at 95%" },
+      probability: { baseRate: "US Commercial Rare Disease & Orphan: 85%", composite: "85% × 1.16 = 98.6%", adjustments: ["Orphan Drug Act 7-year exclusivity: +0% (in base)", "Pediatric Rare Disease PRV: +5%", "Patient advocacy (strong): +3%"], final: "99% + 5% + 3% = 107% → cap at 95%" },
     },
   },
   {
@@ -367,11 +367,11 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "NRS -2.1, Response: 38%", safety: "Dizziness 22%, sedation", icer: "$85K/QALY", population: "Neuropathic pain", price: "Varied (GABA, SNRI)" },
       ratios: ["Pain reduction: 2.8/2.1 = 1.33", "Response rate: 48%/38% = 1.26", "Function: 2.2/1.7 = 1.29", "Safety dizziness: 22%/8% = 2.75 (better)", "ICER: $85K/$72K = 1.18", "Novel mechanism (Nav1.7 first oral): 1.4"],
       compositeScore: "1.54",
-      probability: { baseRate: "US Commercial Pain Management: 45%", composite: "45% × 1.54 = 69.3%", adjustments: ["Non-opioid, non-scheduled: +15%", "Novel mechanism (first Nav1.7): +12%", "APS/CDC non-opioid priority: +10%"], final: "69% + 15% + 12% + 10% = 106% → cap at 95%" },
+      probability: { baseRate: "US Commercial Pain & Anaesthesia: 45%", composite: "45% × 1.54 = 69.3%", adjustments: ["Non-opioid, non-scheduled: +15%", "Novel mechanism (first Nav1.7): +12%", "APS/CDC non-opioid priority: +10%"], final: "69% + 15% + 12% + 10% = 106% → cap at 95%" },
     },
   },
   {
-    ta: "19. Transplant & Cell/Gene Therapy",
+    ta: "19. Hematology (non-oncology)",
     benchmarks: [
       { molecule: "Zolgensma (onasemnogene)", indication: "SMA type 1", usApproval: "Yes", niceRec: "Yes (installments)", gba: "Orphan exempt", icer: "~£1.8M", keyEndpoint: "Survival, motor milestones", successFactor: "One-time cure, pediatric" },
       { molecule: "Casgevy (exa-cel, CRISPR)", indication: "β-thalassemia, SCD", usApproval: "Yes", niceRec: "Yes", gba: "Considerable (3)", icer: "~£1.65M", keyEndpoint: "Transfusion independence", successFactor: "First CRISPR therapy" },
@@ -385,7 +385,7 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "FVIII 12-40%, ABR -85-90%", safety: "Transaminitis 25-35%, inhibitor rare", icer: "$1.8-2.5M", population: "Hemophilia A/B", price: "AAV liver-directed" },
       ratios: ["Factor expression: 40%/25% = 1.60", "Bleed prevention: 96%/88% = 1.09", "Durability: 5+ vs. 3 years = 1.67", "Safety transaminitis: 30%/18% = 1.67 (better)", "ICER: $2M/$1.4M = 1.43", "Evidence: 5-year vs. 2-3 year = 1.5"],
       compositeScore: "1.49",
-      probability: { baseRate: "US Commercial Transplant/Cell-Gene: 82%", composite: "82% × 1.49 = 122.2%", adjustments: ["RMAT designation: +10%", "Curative intent, single-dose: +8%", "Outcomes-based contract feasible: +5%"], final: "122% + 10% + 8% + 5% = 145% → cap at 95%" },
+      probability: { baseRate: "US Commercial Hematology (non-oncology): 82%", composite: "82% × 1.49 = 122.2%", adjustments: ["RMAT designation: +10%", "Curative intent, single-dose: +8%", "Outcomes-based contract feasible: +5%"], final: "122% + 10% + 8% + 5% = 145% → cap at 95%" },
     },
   },
   {
@@ -405,7 +405,7 @@ const taBenchmarkingData = [
     ],
     pediatricExamples: [
       { name: "Pediatric Oncology (ALL)", baseTA: "Oncology", baseRate: "75%", bonus: "+10%", adjusted: "85%" },
-      { name: "Pediatric Rare Disease (DMD)", baseTA: "Rare Diseases", baseRate: "85%", bonus: "+10%", adjusted: "95%" },
+      { name: "Pediatric Rare Disease (DMD)", baseTA: "Rare Disease & Orphan", baseRate: "85%", bonus: "+10%", adjusted: "95%" },
       { name: "Pediatric Asthma (6-11 years)", baseTA: "Respiratory", baseRate: "62%", bonus: "+10%", adjusted: "72%" },
     ],
   },
@@ -417,7 +417,7 @@ const marketAdjustmentsStep4 = [
     market: "United States 🇺🇸",
     adjustments: [
       { item: "Breakthrough Therapy Designation", value: "+10% to +15%", trigger: "FDA BTD granted" },
-      { item: "QIDP Designation (Infectious Diseases)", value: "+10%", trigger: "GAIN Act designation" },
+      { item: "QIDP Designation (Infectious Disease)", value: "+10%", trigger: "GAIN Act designation" },
       { item: "Orphan Drug Designation", value: "+10%", trigger: "ODA granted" },
       { item: "Pediatric Rare Disease PRV", value: "+8%", trigger: "Eligible disease" },
       { item: "RMAT Designation (Regenerative Medicine)", value: "+12%", trigger: "FDA RMAT granted" },

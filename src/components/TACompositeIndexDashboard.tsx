@@ -44,11 +44,11 @@ const getImpactColor = (impact: number): string => {
 };
 
 const TA_ICONS: Record<string, React.ReactNode> = {
-  'ONCOLOGY/HEMATOLOGY': <Target className="h-4 w-4" />,
+  'ONCOLOGY & HEMATOLOGY': <Target className="h-4 w-4" />,
   'CARDIOVASCULAR': <TrendingUp className="h-4 w-4" />,
-  'NEUROLOGY/CNS': <Beaker className="h-4 w-4" />,
-  'RARE DISEASES/ORPHAN': <AlertTriangle className="h-4 w-4" />,
-  'TRANSPLANT/CELL-GENE': <CheckCircle className="h-4 w-4" />,
+  'NEUROLOGY': <Beaker className="h-4 w-4" />,
+  'RARE DISEASE & ORPHAN': <AlertTriangle className="h-4 w-4" />,
+  'HEMATOLOGY (NON-ONCOLOGY)': <CheckCircle className="h-4 w-4" />,
 };
 
 function FactorRow({ factor }: { factor: LaunchFactor }) {

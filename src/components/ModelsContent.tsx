@@ -606,9 +606,9 @@ Updates: dynamically with every platform data refresh`}</FormulaBlock>
                 <p>Each therapeutic area has a defined total duration. Examples:</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
                   {[
-                    { ta: "Oncology/Hematology", years: "~11 years" },
+                    { ta: "Oncology & Hematology", years: "~11 years" },
                     { ta: "Neurology", years: "~15 years" },
-                    { ta: "Rare Disease", years: "~9 years" },
+                    { ta: "Rare Disease & Orphan", years: "~9 years" },
                     { ta: "Infectious Disease", years: "~10 years" },
                   ].map(t => (
                     <div key={t.ta} className="p-3 bg-muted/50 rounded-lg text-center">

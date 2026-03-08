@@ -47,7 +47,7 @@ export function TTMBreakdownChart() {
             Each therapeutic area (TA) has a typical overall timeline from <strong>initial discovery → preclinical → clinical trials → regulatory review → market access → launch execution</strong>.
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            That total duration is expressed in years (e.g., Oncology/Hematology ≈ 11 years, Neurology ≈ 15 years).
+            That total duration is expressed in years (e.g., Oncology & Hematology ≈ 11 years, Neurology ≈ 15 years).
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed">
             The weighted contributions are applied to that total to show how many years each phase contributes:
