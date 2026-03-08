@@ -819,7 +819,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "17. Pain Management/Anesthesia",
+    name: "17. Pain & Anaesthesia",
     markets: [
       { market: "US Commercial", clinical: 30, economic: 25, access: 25, political: 20, notes: "Opioid crisis; DEA scheduling; REMS; non-opioid alternatives prioritized" },
       { market: "US Medicare", clinical: 30, economic: 25, access: 25, political: 20, notes: "Elderly chronic pain; Part D opioid restrictions; non-opioid preference" },
