@@ -221,7 +221,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Transplantation & Cell/Gene Therapy",
+    name: "Hematology (non-oncology)",
     drugs: [
       { name: "Exa-cel (CTX001)", company: "Vertex/CRISPR Therapeutics", mechanism: "CRISPR gene editing", indication: "Sickle cell disease", peakSales: "$2B+", status: "Approved 2023", nct: "NCT03655678" },
       { name: "Lovo-cel (bb1111)", company: "bluebird bio", mechanism: "Gene therapy", indication: "Sickle cell disease", peakSales: "$1B+", status: "Approved 2023", nct: "NCT02906202" },
