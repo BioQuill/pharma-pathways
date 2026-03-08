@@ -1383,7 +1383,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "14. Psychiatry/Mental Health",
+    taName: "Psychiatry & Mental Health",
     marketScorings: [
       {
         market: "US Markets",
