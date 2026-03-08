@@ -7,6 +7,7 @@ import {
   calculateOverallScore,
   normalizeTherapeuticArea,
   TA_MAX_TTM,
+  computeLPI,
 } from '@/lib/scoring';
 import { generateLaunchFactors } from '@/lib/launchFactors';
 import { getManufacturingCapability } from '@/lib/manufacturingCapability';
