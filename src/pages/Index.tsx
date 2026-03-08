@@ -105,6 +105,7 @@ import { ModelsContent } from "@/components/ModelsContent";
 import { SimulatorMoleculeProvider, useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
 import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
+import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
 
 // TimelinePhase interface imported from moleculesData
 
@@ -864,6 +865,7 @@ const IndexInner = () => {
     { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
     { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
     { value: 'monte-carlo-hub', label: 'Monte Carlo Simulation', icon: Activity },
+    { value: 'capm-alpha', label: 'CAPM Alpha', icon: Landmark },
   ] as const;
 
   type AreaKey = keyof typeof areaConfig;
@@ -2329,6 +2331,16 @@ const IndexInner = () => {
                 <PTRSCustomScenarioBuilder molecules={allMolecules} />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* CAPM Alpha Signals Tab */}
+          <TabsContent value="capm-alpha" className="space-y-6">
+            <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
+              <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Landmark className="h-5 w-5 text-primary" /> CAPM Alpha Signals</h2>
+              <p className="text-sm text-muted-foreground">Risk-adjusted performance vs historical benchmarks (α₁) and current pipeline competition (α₂), with divergence tracking (Δα).</p>
+            </div>
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <CAPMAlphaSignals molecules={allMolecules} />
           </TabsContent>
 
           {/* Pricing & Access Markets Overview Tab */}
