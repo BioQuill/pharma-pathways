@@ -1059,7 +1059,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "11. Rheumatology",
+    taName: "Musculoskeletal & Rheumatology",
     marketScorings: [
       {
         market: "US Markets",
