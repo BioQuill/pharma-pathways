@@ -440,7 +440,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'TL1A inhibitor Phase 3 IBD results and CAR-T autoimmune expansion trials (2026)',
   },
-  'RHEUMATOLOGY': {
+  'MUSCULOSKELETAL & RHEUMATOLOGY': {
     approvedDrugsTitle: 'Key Approved Rheumatology Therapies:',
     approvedDrugs: [
       { name: 'Xeljanz (tofacitinib)', details: 'First oral JAK inhibitor for RA, boxed warning' },
