@@ -2333,6 +2333,16 @@ const IndexInner = () => {
             </Card>
           </TabsContent>
 
+          {/* CAPM Alpha Signals Tab */}
+          <TabsContent value="capm-alpha" className="space-y-6">
+            <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
+              <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Landmark className="h-5 w-5 text-primary" /> CAPM Alpha Signals</h2>
+              <p className="text-sm text-muted-foreground">Risk-adjusted performance vs historical benchmarks (α₁) and current pipeline competition (α₂), with divergence tracking (Δα).</p>
+            </div>
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <CAPMAlphaSignals molecules={allMolecules} />
+          </TabsContent>
+
           {/* Pricing & Access Markets Overview Tab */}
           <TabsContent value="pricing-access" className="space-y-6">
             <SimulatorMoleculeBanner molecules={allMolecules} />
