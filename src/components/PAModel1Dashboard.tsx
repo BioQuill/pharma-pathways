@@ -426,7 +426,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "5. Endocrinology",
+    name: "Endocrinology & Metabolism",
     markets: [
       { market: "US", clinical: 25, economic: 35, access: 25, political: 15, notes: "Diabetes dominates; obesity coverage growing; budget impact huge" },
       { market: "US Medicare", clinical: 30, economic: 30, access: 25, political: 15, notes: "Part D diabetes coverage extensive; obesity excluded" },
