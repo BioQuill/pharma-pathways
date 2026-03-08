@@ -84,24 +84,24 @@ const TA_MULTIPLIERS: Record<string, Record<string, number>> = {
 // Reference: FDA averages ~18 months, EMA ~12-15 months for standard review
 // Accelerated pathways reduce these significantly
 const TA_APPROVAL_TIMES: Record<string, { fda: number; ema: number }> = {
-  'ONCOLOGY/HEMATOLOGY': { fda: 12, ema: 10 }, // Often accelerated
+  'ONCOLOGY & HEMATOLOGY': { fda: 12, ema: 10 },
   'CARDIOVASCULAR': { fda: 18, ema: 15 },
-  'NEUROLOGY/CNS': { fda: 22, ema: 18 }, // Longer due to complex endpoints
-  'PSYCHIATRY/MENTAL HEALTH': { fda: 20, ema: 17 },
+  'NEUROLOGY': { fda: 22, ema: 18 },
+  'PSYCHIATRY & MENTAL HEALTH': { fda: 20, ema: 17 },
   'IMMUNOLOGY & INFLAMMATION': { fda: 16, ema: 14 },
-  'RHEUMATOLOGY': { fda: 16, ema: 14 },
-  'INFECTIOUS DISEASES': { fda: 14, ema: 12 }, // Often priority review
-  'RESPIRATORY/PULMONOLOGY': { fda: 17, ema: 15 },
+  'MUSCULOSKELETAL & RHEUMATOLOGY': { fda: 16, ema: 14 },
+  'INFECTIOUS DISEASE': { fda: 14, ema: 12 },
+  'RESPIRATORY & PULMONARY': { fda: 17, ema: 15 },
   'GASTROENTEROLOGY & HEPATOLOGY': { fda: 18, ema: 15 },
-  'NEPHROLOGY/RENAL': { fda: 18, ema: 15 },
+  'NEPHROLOGY & RENAL': { fda: 18, ema: 15 },
   'DERMATOLOGY': { fda: 15, ema: 13 },
   'OPHTHALMOLOGY': { fda: 16, ema: 14 },
-  'RARE DISEASES/ORPHAN': { fda: 10, ema: 8 }, // Accelerated pathways
-  'VACCINES & VIROLOGY': { fda: 12, ema: 10 },
-  'WOMEN\'S HEALTH': { fda: 17, ema: 14 },
+  'RARE DISEASE & ORPHAN': { fda: 10, ema: 8 },
+  'VACCINES & PREVENTIVE': { fda: 12, ema: 10 },
+  "WOMEN'S HEALTH": { fda: 17, ema: 14 },
   'UROLOGY': { fda: 17, ema: 14 },
-  'PAIN MANAGEMENT/ANESTHESIA': { fda: 19, ema: 16 },
-  'TRANSPLANT/CELL-GENE': { fda: 14, ema: 12 }, // Often breakthrough
+  'PAIN & ANAESTHESIA': { fda: 19, ema: 16 },
+  'HEMATOLOGY (NON-ONCOLOGY)': { fda: 14, ema: 12 },
   'PEDIATRICS': { fda: 18, ema: 15 },
   'ENDOCRINOLOGY & METABOLISM': { fda: 16, ema: 14 },
   'GENERAL': { fda: 18, ema: 15 },
