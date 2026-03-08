@@ -612,7 +612,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "11. Rheumatology",
+    name: "11. Musculoskeletal & Rheumatology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "RA biologics mature market; biosimilars emerging; JAK inhibitors" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Elderly RA/OA; Part B infusions; Part D oral/subcutaneous" },
