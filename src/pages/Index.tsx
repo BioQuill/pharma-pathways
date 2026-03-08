@@ -1733,6 +1733,7 @@ const IndexInner = () => {
 
           {/* Regulatory Tab */}
           <TabsContent value="regulatory" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <TACompositeIndexDashboard />
           </TabsContent>
 
