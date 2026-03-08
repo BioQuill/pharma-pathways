@@ -385,7 +385,7 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "FVIII 12-40%, ABR -85-90%", safety: "Transaminitis 25-35%, inhibitor rare", icer: "$1.8-2.5M", population: "Hemophilia A/B", price: "AAV liver-directed" },
       ratios: ["Factor expression: 40%/25% = 1.60", "Bleed prevention: 96%/88% = 1.09", "Durability: 5+ vs. 3 years = 1.67", "Safety transaminitis: 30%/18% = 1.67 (better)", "ICER: $2M/$1.4M = 1.43", "Evidence: 5-year vs. 2-3 year = 1.5"],
       compositeScore: "1.49",
-      probability: { baseRate: "US Commercial Transplant/Cell-Gene: 82%", composite: "82% × 1.49 = 122.2%", adjustments: ["RMAT designation: +10%", "Curative intent, single-dose: +8%", "Outcomes-based contract feasible: +5%"], final: "122% + 10% + 8% + 5% = 145% → cap at 95%" },
+      probability: { baseRate: "US Commercial Hematology (non-oncology): 82%", composite: "82% × 1.49 = 122.2%", adjustments: ["RMAT designation: +10%", "Curative intent, single-dose: +8%", "Outcomes-based contract feasible: +5%"], final: "122% + 10% + 8% + 5% = 145% → cap at 95%" },
     },
   },
   {
