@@ -15,25 +15,25 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 
 const therapeuticAreas = [
-  { id: "oncology", label: "1. Oncology/Hematology", rates: { usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 } },
+  { id: "oncology", label: "1. Oncology & Hematology", rates: { usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 } },
   { id: "cardiovascular", label: "2. Cardiovascular", rates: { usComm: 60, usMed: 65, uk: 45, germany: 45, japan: 25, china: 25, india: 20, brazil: 25 } },
-  { id: "neurology", label: "3. Neurology/Neuroscience", rates: { usComm: 65, usMed: 70, uk: 50, germany: 50, japan: 30, china: 28, india: 18, brazil: 28 } },
-  { id: "psychiatry", label: "4. Psychiatry/Mental Health", rates: { usComm: 62, usMed: 58, uk: 48, germany: 46, japan: 28, china: 26, india: 15, brazil: 24 } },
+  { id: "neurology", label: "3. Neurology", rates: { usComm: 65, usMed: 70, uk: 50, germany: 50, japan: 30, china: 28, india: 18, brazil: 28 } },
+  { id: "psychiatry", label: "4. Psychiatry & Mental Health", rates: { usComm: 62, usMed: 58, uk: 48, germany: 46, japan: 28, china: 26, india: 15, brazil: 24 } },
   { id: "endocrinology", label: "5. Endocrinology & Metabolism", rates: { usComm: 58, usMed: 62, uk: 42, germany: 40, japan: 28, china: 22, india: 15, brazil: 22 } },
   { id: "immunology", label: "6. Immunology & Inflammation", rates: { usComm: 68, usMed: 70, uk: 48, germany: 50, japan: 32, china: 28, india: 18, brazil: 25 } },
-  { id: "rheumatology", label: "7. Rheumatology", rates: { usComm: 66, usMed: 68, uk: 46, germany: 48, japan: 30, china: 26, india: 18, brazil: 24 } },
-  { id: "infectious", label: "8. Infectious Diseases", rates: { usComm: 70, usMed: 72, uk: 65, germany: 55, japan: 35, china: 32, india: 28, brazil: 32 } },
-  { id: "respiratory", label: "9. Respiratory/Pulmonology", rates: { usComm: 62, usMed: 65, uk: 46, germany: 48, japan: 28, china: 24, india: 20, brazil: 24 } },
+  { id: "rheumatology", label: "7. Musculoskeletal & Rheumatology", rates: { usComm: 66, usMed: 68, uk: 46, germany: 48, japan: 30, china: 26, india: 18, brazil: 24 } },
+  { id: "infectious", label: "8. Infectious Disease", rates: { usComm: 70, usMed: 72, uk: 65, germany: 55, japan: 35, china: 32, india: 28, brazil: 32 } },
+  { id: "respiratory", label: "9. Respiratory & Pulmonary", rates: { usComm: 62, usMed: 65, uk: 46, germany: 48, japan: 28, china: 24, india: 20, brazil: 24 } },
   { id: "gastro", label: "10. Gastroenterology & Hepatology", rates: { usComm: 64, usMed: 68, uk: 47, germany: 48, japan: 30, china: 26, india: 19, brazil: 26 } },
-  { id: "nephrology", label: "11. Nephrology/Renal", rates: { usComm: 63, usMed: 68, uk: 48, germany: 46, japan: 28, china: 26, india: 21, brazil: 26 } },
+  { id: "nephrology", label: "11. Nephrology & Renal", rates: { usComm: 63, usMed: 68, uk: 48, germany: 46, japan: 28, china: 26, india: 21, brazil: 26 } },
   { id: "dermatology", label: "12. Dermatology", rates: { usComm: 55, usMed: 50, uk: 40, germany: 45, japan: 25, china: 20, india: 15, brazil: 20 } },
   { id: "ophthalmology", label: "13. Ophthalmology", rates: { usComm: 72, usMed: 78, uk: 52, germany: 50, japan: 33, china: 28, india: 22, brazil: 28 } },
-  { id: "rareDisease", label: "14. Rare Diseases/Orphan", rates: { usComm: 85, usMed: 90, uk: 85, germany: 75, japan: 50, china: 40, india: 35, brazil: 45 } },
-  { id: "vaccines", label: "15. Vaccines & Virology", rates: { usComm: 68, usMed: 70, uk: 72, germany: 60, japan: 45, china: 50, india: 45, brazil: 48 } },
+  { id: "rareDisease", label: "14. Rare Disease & Orphan", rates: { usComm: 85, usMed: 90, uk: 85, germany: 75, japan: 50, china: 40, india: 35, brazil: 45 } },
+  { id: "vaccines", label: "15. Vaccines & Preventive", rates: { usComm: 68, usMed: 70, uk: 72, germany: 60, japan: 45, china: 50, india: 45, brazil: 48 } },
   { id: "womensHealth", label: "16. Women's Health", rates: { usComm: 52, usMed: 35, uk: 44, germany: 42, japan: 30, china: 28, india: 22, brazil: 26 } },
   { id: "urology", label: "17. Urology", rates: { usComm: 58, usMed: 62, uk: 44, germany: 44, japan: 26, china: 24, india: 20, brazil: 24 } },
-  { id: "pain", label: "18. Pain Management/Anesthesia", rates: { usComm: 45, usMed: 48, uk: 38, germany: 40, japan: 22, china: 20, india: 16, brazil: 20 } },
-  { id: "transplant", label: "19. Transplant & Cell/Gene", rates: { usComm: 82, usMed: 88, uk: 78, germany: 70, japan: 52, china: 38, india: 28, brazil: 32 } },
+  { id: "pain", label: "18. Pain & Anaesthesia", rates: { usComm: 45, usMed: 48, uk: 38, germany: 40, japan: 22, china: 20, india: 16, brazil: 20 } },
+  { id: "hematology", label: "19. Hematology (non-oncology)", rates: { usComm: 82, usMed: 88, uk: 78, germany: 70, japan: 52, china: 38, india: 28, brazil: 32 } },
 ];
 
 const pediatricBonuses: Record<string, number> = {
