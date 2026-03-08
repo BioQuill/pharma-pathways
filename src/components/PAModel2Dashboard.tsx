@@ -52,7 +52,7 @@ const compositeScoreInterpretation = [
 // ============ STEP 3: TA BENCHMARKING TABLES ============
 const taBenchmarkingData = [
   {
-    ta: "1. Oncology/Hematology",
+    ta: "1. Oncology & Hematology",
     benchmarks: [
       { molecule: "Enhertu (T-DXd)", indication: "HER2+ breast cancer", usApproval: "Yes", niceRec: "Yes", gba: "Considerable (3)", icer: "~$180K", keyEndpoint: "+6.8 months OS", successFactor: "Benefit in heavily pre-treated" },
       { molecule: "Tecartus (CAR-T)", indication: "MCL", usApproval: "Yes", niceRec: "Yes (CDF)", gba: "Not assessed", icer: "~$450K", keyEndpoint: "Durable remission", successFactor: "Curative potential, ultra-rare" },
