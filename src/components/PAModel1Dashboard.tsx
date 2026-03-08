@@ -488,7 +488,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "7. Infectious Diseases",
+    name: "7. Infectious Disease",
     markets: [
       { market: "US", clinical: 35, economic: 25, access: 25, political: 15, notes: "AMR priority; hospital formulary critical; QIDP incentives" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Part A/B hospital; Part D outpatient; stewardship programs" },
