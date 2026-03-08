@@ -632,9 +632,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
               <strong>Formula:</strong> PTRS = PTS × PRS = {pts}% × {prs}% = <strong>{ptrs}%</strong>
             </p>
             <p className="text-xs text-muted-foreground mt-2">
-              {calculationMode === "molecule" && selectedMolecule 
-                ? `This calculation uses the profile data from ${selectedMolecule.name} to pre-populate adjustment factors.`
-                : "This calculator provides estimated probabilities based on historical industry data and the parameters you've selected."}
+              PTS based on BIO/Norstella phase transition rates (2011–2023). PRS based on BioQuill empirical approval outcomes from 14,000-trial dataset. Slider inputs modify base rates as multipliers — 50% = no change from industry average.
             </p>
           </div>
 

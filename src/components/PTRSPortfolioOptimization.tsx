@@ -252,8 +252,8 @@ export const PTRSPortfolioOptimization = ({ molecules }: PTRSPortfolioOptimizati
       const diversificationRatio = ((uniqueTAs / THERAPEUTIC_AREAS.length) + 
         (uniquePhases / PHASES.length)) * 50;
 
-      const topWeight = Math.max(...results.map(r => r.weight));
-      const concentrationRisk = topWeight + (100 - diversificationRatio) / 2;
+      const topWeight = results.length > 0 ? Math.max(...results.map(r => r.weight)) : 0;
+      const concentrationRisk = results.length > 0 ? topWeight + (100 - diversificationRatio) / 2 : 0;
 
       const sharpeRatio = portfolioRisk > 0 
         ? ((portfolioReturn - 5) / portfolioRisk) * 10 
