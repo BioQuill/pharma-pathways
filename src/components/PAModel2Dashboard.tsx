@@ -87,7 +87,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "3. Neurology/Neuroscience",
+    ta: "3. Neurology",
     benchmarks: [
       { molecule: "Leqembi (lecanemab)", indication: "Early Alzheimer's", usApproval: "Yes", niceRec: "Restricted (cost)", gba: "Minor", icer: "~£450K", keyEndpoint: "27% CDR-SB slowing", successFactor: "Amyloid clearance, modest benefit" },
       { molecule: "Skyclarys (omaveloxolone)", indication: "Friedreich's ataxia", usApproval: "Yes", niceRec: "Not reviewed", gba: "Orphan exempt", icer: "~$370K", keyEndpoint: "mFARS improvement", successFactor: "Rare disease, first approval" },
