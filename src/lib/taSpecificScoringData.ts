@@ -846,7 +846,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "9. Gastroenterology",
+    taName: "Gastroenterology & Hepatology",
     marketScorings: [
       {
         market: "US Markets",
