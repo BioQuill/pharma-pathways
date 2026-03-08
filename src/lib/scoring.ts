@@ -1,5 +1,6 @@
 // Probability and scoring calculations for pharmaceutical molecules
 import { getTTMMonthsForTA } from './ttmData';
+import { canonicalizeTAKey } from './taCanonical';
 
 export interface ProbabilityScores {
   meetingEndpoints: number; // 0-1
