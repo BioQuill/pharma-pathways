@@ -1308,13 +1308,13 @@ const IndexInner = () => {
                         comparison = a.therapeuticArea.localeCompare(b.therapeuticArea);
                         break;
                       case 'ptrs': {
-                        // Sort by PTRS score based on phase and TA
+                        // Sort by estimated PTRS based on phase
                         const getPTRS = (mol: typeof a) => {
-                          const taKey = getTAKey(mol.therapeuticArea);
-                          const phaseKey = getPhaseKey(mol.phase);
-                          const pts = ptsBaseRates[taKey]?.[phaseKey] ?? 0.30;
-                          const prs = prsBaseRates[taKey]?.rate ?? 0.38;
-                          return pts * prs * 100;
+                          const p = mol.phase.toLowerCase();
+                          if (p.includes('approved')) return 95;
+                          if (p.includes('iii') || p.includes('3')) return 55;
+                          if (p.includes('ii') || p.includes('2')) return 30;
+                          return 15;
                         };
                         comparison = getPTRS(b) - getPTRS(a);
                         break;
