@@ -779,7 +779,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "CHAPTER",
     phase: "Phase III",
     indication: "Hereditary Angioedema",
-    therapeuticArea: "Rare Diseases/Orphan Drugs",
+    therapeuticArea: "Rare Disease & Orphan",
     company: "Pharvaris",
     companyTrackRecord: 'average',
     nctId: "NCT05047068",
