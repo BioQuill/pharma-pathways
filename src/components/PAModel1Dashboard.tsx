@@ -740,7 +740,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "15. Transplantation & Cell/Gene Therapy",
+    name: "15. Hematology (non-oncology)",
     markets: [
       { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Breakthrough therapies; curative intent; ultra-high cost tolerance; outcomes-based contracts" },
       { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B cell/gene therapy; NCD pathway; CED" },
