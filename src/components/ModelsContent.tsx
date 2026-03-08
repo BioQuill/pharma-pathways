@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShieldCheck, TrendingUp, BarChart3, Target, Activity, Clock, Zap } from "lucide-react";
+import { DATA_SOURCES } from "@/lib/lpi3Model";
 
 const ModelSection = ({ title, description, children }: { title: string; description: string; children: React.ReactNode }) => (
   <div className="space-y-6">
