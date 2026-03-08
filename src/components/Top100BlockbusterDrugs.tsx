@@ -61,7 +61,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Neurology/CNS",
+    name: "Neurology",
     drugs: [
       { name: "Tolebrutinib", company: "Sanofi", mechanism: "BTK inhibitor", indication: "Secondary progressive MS", peakSales: "$1.2B by 2030", status: "Phase 3 positive", nct: "TBD" },
       { name: "Donanemab", company: "Eli Lilly", mechanism: "Anti-amyloid mAb", indication: "Alzheimer's disease", peakSales: "$5B+", status: "Approved 2024", nct: "NCT04437511" },
