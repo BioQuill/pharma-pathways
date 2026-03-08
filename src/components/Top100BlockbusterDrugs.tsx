@@ -141,7 +141,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Nephrology/Renal",
+    name: "Nephrology & Renal",
     drugs: [
       { name: "Atrasentan", company: "Chinook/Novartis", mechanism: "Endothelin receptor A", indication: "IgA nephropathy", peakSales: "$1.5B+", status: "Phase 3", nct: "TBD" },
       { name: "Sparsentan", company: "Travere", mechanism: "Dual endothelin/angiotensin blocker", indication: "IgA nephropathy", peakSales: "$1B+", status: "Approved 2023", nct: "NCT03493685" },
