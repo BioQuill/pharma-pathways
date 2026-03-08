@@ -456,7 +456,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "6. Immunology",
+    name: "Immunology & Inflammation",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Biologics common; prior auth extensive; specialty pharmacy" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Part B infusibles; Part D subcutaneous; cost-sharing concern" },
