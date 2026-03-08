@@ -370,7 +370,7 @@ function getOrphanStatusScore(ta: string, indication: string): number {
 }
 
 function getUnmetNeedScore(ta: string, indication: string): number {
-  const highUnmetNeed = ['oncology/hematology', 'rare diseases/orphan drugs', 'neurology/cns', 'psychiatry/mental health'];
+  const highUnmetNeed = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Neurology', 'Psychiatry & Mental Health'];
   if (highUnmetNeed.includes(ta)) return 75 + Math.random() * 20;
   return 50 + Math.random() * 35;
 }
