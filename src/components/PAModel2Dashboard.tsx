@@ -354,7 +354,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "18. Pain Management/Anesthesia",
+    ta: "18. Pain & Anaesthesia",
     benchmarks: [
       { molecule: "Zynrelef (bupivacaine/meloxicam)", indication: "Post-surgical pain", usApproval: "Yes", niceRec: "Not reviewed", gba: "Pending", icer: "~$42K", keyEndpoint: "NRS improvement", successFactor: "Prolonged-release, opioid-sparing" },
       { molecule: "Tanezumab (anti-NGF)", indication: "OA pain", usApproval: "Rejected (2021)", niceRec: "No", gba: "N/A", icer: "N/A", keyEndpoint: "NRS improvement", successFactor: "Rapid joint destruction, black box" },
