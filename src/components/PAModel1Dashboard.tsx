@@ -887,7 +887,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "19. Vaccines & Preventive",
+    name: "Vaccines & Preventive",
     markets: [
       { market: "US Commercial", clinical: 35, economic: 25, access: 30, political: 10, notes: "ACIP recommendations = guaranteed coverage; VFC program; pharmacy administration" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 30, political: 10, notes: "Part D vaccines (IRA); adult immunization growing; no cost-sharing" },
