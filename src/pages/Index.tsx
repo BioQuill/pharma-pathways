@@ -1307,6 +1307,18 @@ const IndexInner = () => {
                       case 'ta':
                         comparison = a.therapeuticArea.localeCompare(b.therapeuticArea);
                         break;
+                      case 'ptrs': {
+                        // Sort by PTRS score based on phase and TA
+                        const getPTRS = (mol: typeof a) => {
+                          const taKey = getTAKey(mol.therapeuticArea);
+                          const phaseKey = getPhaseKey(mol.phase);
+                          const pts = ptsBaseRates[taKey]?.[phaseKey] ?? 0.30;
+                          const prs = prsBaseRates[taKey]?.rate ?? 0.38;
+                          return pts * prs * 100;
+                        };
+                        comparison = getPTRS(b) - getPTRS(a);
+                        break;
+                      }
                     }
                     return sortOrder === 'asc' ? -comparison : comparison;
                   })
