@@ -2101,6 +2101,7 @@ const IndexInner = () => {
 
           {/* LPI-2 Tab - 5-Factor Investment Model */}
           <TabsContent value="lpi-2" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <LPI2Dashboard molecules={allMolecules} />
           </TabsContent>
 
