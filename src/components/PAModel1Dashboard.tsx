@@ -340,7 +340,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "2. Cardiology",
+    name: "Cardiovascular",
     markets: [
       { market: "US", clinical: 25, economic: 35, access: 25, political: 15, notes: "High scrutiny due to large prevalent populations" },
       { market: "US Medicare", clinical: 30, economic: 30, access: 25, political: 15, notes: "Part D coverage; outcomes-based contracts growing" },
