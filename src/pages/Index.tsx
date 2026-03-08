@@ -689,6 +689,12 @@ const IndexInner = () => {
 
   // 7-Area navigation configuration for Platform
   const areaConfig = {
+    testMe: {
+      label: 'TEST ME',
+      tabs: [
+        { value: 'test-me', label: 'Demo Molecules', icon: Star },
+      ]
+    },
     pipeline: {
       label: 'PIPELINE',
       tabs: [
