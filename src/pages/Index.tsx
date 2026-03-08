@@ -772,7 +772,7 @@ const IndexInner = () => {
   const { molecules: allMolecules, loading: moleculesLoading, error: moleculesError } = useMolecules();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta' | 'ti'>('lpi');
+  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta' | 'ti' | 'ptrs'>('lpi');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
