@@ -191,7 +191,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "PASADENA/PADOVA",
     phase: "Phase II/III",
     indication: "Early Parkinson's Disease",
-    therapeuticArea: "Neurology/CNS",
+    therapeuticArea: "Neurology",
     company: "Roche/Prothena",
     companyTrackRecord: 'fast',
     nctId: "NCT03100149",
