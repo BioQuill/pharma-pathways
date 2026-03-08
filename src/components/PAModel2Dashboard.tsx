@@ -70,7 +70,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "2. Cardiovascular/Cardiology",
+    ta: "2. Cardiovascular",
     benchmarks: [
       { molecule: "Camzyos (mavacamten)", indication: "HCM", usApproval: "Yes", niceRec: "Yes", gba: "Considerable (3)", icer: "~$95K", keyEndpoint: "Symptom improvement", successFactor: "Disease-modifying HCM" },
       { molecule: "Jardiance (empagliflozin)", indication: "HFrEF", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~$45K", keyEndpoint: "25% hospitalizations ↓", successFactor: "CV outcomes proven" },
