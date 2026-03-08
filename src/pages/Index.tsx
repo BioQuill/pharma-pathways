@@ -1347,10 +1347,13 @@ const IndexInner = () => {
                             <p className="text-xs font-semibold text-foreground mt-1">{verdict}</p>
                           </div>
 
-                          {/* Right: Full Analysis button */}
-                          <div className="shrink-0">
+                          {/* Right: Action buttons */}
+                          <div className="shrink-0 flex flex-col gap-1">
                             <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); }}>
                               Full Analysis →
+                            </Button>
+                            <Button size="sm" variant="secondary" className="text-xs" onClick={(e) => { e.stopPropagation(); loadIntoSimulator(molecule); }}>
+                              Use in Simulator →
                             </Button>
                           </div>
                         </div>
