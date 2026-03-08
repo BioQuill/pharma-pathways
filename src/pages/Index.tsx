@@ -1710,6 +1710,7 @@ const IndexInner = () => {
 
           {/* TA Market Overview Tab */}
           <TabsContent value="ta-market" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <TAMarketOverview molecules={allMolecules} />
           </TabsContent>
 
