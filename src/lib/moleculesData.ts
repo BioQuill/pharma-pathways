@@ -832,7 +832,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "CMVictory",
     phase: "Phase III",
     indication: "Cytomegalovirus Prevention",
-    therapeuticArea: "Vaccines & Virology",
+    therapeuticArea: "Vaccines & Preventive",
     company: "Moderna",
     companyTrackRecord: 'fast',
     nctId: "NCT05085366",
