@@ -171,7 +171,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Rare Diseases/Orphan",
+    name: "Rare Disease & Orphan",
     drugs: [
       { name: "Apitegromab", company: "Scholar Rock", mechanism: "Myostatin inhibitor", indication: "Spinal muscular atrophy", peakSales: "$2B+", status: "Phase 3, Under FDA review", nct: "TBD" },
       { name: "Acoramidis", company: "BridgeBio", mechanism: "TTR stabilizer", indication: "ATTR cardiomyopathy", peakSales: "$2B+", status: "Approved 2024", nct: "NCT04685408" },
