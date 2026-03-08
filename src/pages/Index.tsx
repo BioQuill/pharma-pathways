@@ -2186,6 +2186,7 @@ const IndexInner = () => {
 
           {/* Peak Sales Index Tab */}
           <TabsContent value="peak-sales" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PeakSalesIndexDashboard molecules={allMolecules} />
           </TabsContent>
 
