@@ -1357,8 +1357,8 @@ const IndexInner = () => {
                               </div>
                             </div>
                             <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
-                              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} text-white font-bold text-lg shadow-md`}>
-                                {medalRank}
+                              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} shadow-md animate-medal-spin`}>
+                                <span className="text-primary font-bold text-lg">{medalRank}</span>
                               </div>
                             </div>
                           </div>
