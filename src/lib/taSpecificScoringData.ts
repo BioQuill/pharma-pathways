@@ -2082,7 +2082,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "19. Vaccines & Virology",
+    taName: "Vaccines & Preventive",
     marketScorings: [
       {
         market: "US Markets",
