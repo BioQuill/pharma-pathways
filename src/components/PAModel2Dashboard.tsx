@@ -417,7 +417,7 @@ const marketAdjustmentsStep4 = [
     market: "United States 🇺🇸",
     adjustments: [
       { item: "Breakthrough Therapy Designation", value: "+10% to +15%", trigger: "FDA BTD granted" },
-      { item: "QIDP Designation (Infectious Diseases)", value: "+10%", trigger: "GAIN Act designation" },
+      { item: "QIDP Designation (Infectious Disease)", value: "+10%", trigger: "GAIN Act designation" },
       { item: "Orphan Drug Designation", value: "+10%", trigger: "ODA granted" },
       { item: "Pediatric Rare Disease PRV", value: "+8%", trigger: "Eligible disease" },
       { item: "RMAT Designation (Regenerative Medicine)", value: "+12%", trigger: "FDA RMAT granted" },
