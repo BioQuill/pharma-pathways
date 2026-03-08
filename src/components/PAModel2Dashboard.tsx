@@ -367,7 +367,7 @@ const taBenchmarkingData = [
       comparatorAvg: { clinicalBenefit: "NRS -2.1, Response: 38%", safety: "Dizziness 22%, sedation", icer: "$85K/QALY", population: "Neuropathic pain", price: "Varied (GABA, SNRI)" },
       ratios: ["Pain reduction: 2.8/2.1 = 1.33", "Response rate: 48%/38% = 1.26", "Function: 2.2/1.7 = 1.29", "Safety dizziness: 22%/8% = 2.75 (better)", "ICER: $85K/$72K = 1.18", "Novel mechanism (Nav1.7 first oral): 1.4"],
       compositeScore: "1.54",
-      probability: { baseRate: "US Commercial Pain Management: 45%", composite: "45% × 1.54 = 69.3%", adjustments: ["Non-opioid, non-scheduled: +15%", "Novel mechanism (first Nav1.7): +12%", "APS/CDC non-opioid priority: +10%"], final: "69% + 15% + 12% + 10% = 106% → cap at 95%" },
+      probability: { baseRate: "US Commercial Pain & Anaesthesia: 45%", composite: "45% × 1.54 = 69.3%", adjustments: ["Non-opioid, non-scheduled: +15%", "Novel mechanism (first Nav1.7): +12%", "APS/CDC non-opioid priority: +10%"], final: "69% + 15% + 12% + 10% = 106% → cap at 95%" },
     },
   },
   {
