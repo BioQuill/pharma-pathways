@@ -195,7 +195,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "9. Respiratory/Pulmonology",
+    ta: "9. Respiratory & Pulmonary",
     benchmarks: [
       { molecule: "Tezspire (tezepelumab)", indication: "Severe asthma", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£32K", keyEndpoint: "Exacerbation -56%", successFactor: "Broad population (no biomarker)" },
       { molecule: "Dupixent (dupilumab)", indication: "Asthma, COPD, AD", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£28K", keyEndpoint: "Exac -50%, FEV1 +350mL", successFactor: "Type 2 inflammation" },
