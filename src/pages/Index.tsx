@@ -1157,7 +1157,7 @@ const IndexInner = () => {
                   {areaConfig[currentArea].tabs.map(tab => {
                     const Icon = tab.icon;
                     return (
-                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/70 font-semibold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90 text-xs">
+                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/80 font-bold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90 text-xs">
                         <Icon className="h-3 w-3" />
                         {tab.label}
                         {tab.value === 'watchlist' && <span className="text-xs">({watchlist.length})</span>}
