@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { isDemoMolecule } from "@/data/demoMolecules";
 import { calculatePTRS } from "@/lib/ptrsEngine";
 
 import { Button } from "@/components/ui/button";
