@@ -121,7 +121,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Respiratory/Pulmonology",
+    name: "Respiratory & Pulmonary",
     drugs: [
       { name: "Brensocatib", company: "Insmed", mechanism: "DPP1 inhibitor", indication: "Bronchiectasis", peakSales: "$2.8B by 2030", status: "Phase 3 positive", nct: "TBD" },
       { name: "Depemokimab", company: "GSK", mechanism: "IL-5 mAb", indication: "Severe asthma", peakSales: "$1B+", status: "Phase 3 positive", nct: "TBD" },
