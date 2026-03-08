@@ -1739,6 +1739,7 @@ const IndexInner = () => {
 
           {/* PTRS Tab */}
           <TabsContent value="ptrs" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
