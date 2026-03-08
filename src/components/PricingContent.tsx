@@ -399,33 +399,11 @@ export const PricingContent = () => {
         {pricingTiers.map((tier) => (
           <Card
             key={tier.name}
-            className={`relative flex flex-col ${
-              tier.highlighted
-                ? "border-2 border-primary shadow-lg shadow-primary/10"
-                : tier.saveBadge && !tier.highlighted
-                ? "border-2 border-[hsl(142,76%,36%)] shadow-lg shadow-[hsl(142,76%,36%)]/10"
-                : "border"
-            }`}
+            className="relative flex flex-col border transition-colors duration-150 ease-in-out hover:bg-[#FFFBEB] hover:border-[#F59E0B]"
           >
-            {tier.highlighted && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-primary text-primary-foreground">Most Popular</Badge>
-              </div>
-            )}
-            {tier.saveBadge && !tier.highlighted && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-[hsl(142,76%,36%)] text-white">{tier.saveBadge}</Badge>
-              </div>
-            )}
             <CardHeader className="pb-2">
               <div className="flex items-center gap-2 mb-1">
-                <div className={`p-2 rounded-lg ${
-                  tier.highlighted 
-                    ? "bg-primary text-primary-foreground" 
-                    : tier.saveBadge
-                    ? "bg-[hsl(142,76%,36%)] text-white"
-                    : "bg-muted"
-                }`}>
+                <div className="p-2 rounded-lg bg-muted">
                   {tier.icon}
                 </div>
                 <div>
