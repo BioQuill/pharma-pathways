@@ -1276,7 +1276,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "13. Urology/Nephrology",
+    taName: "Nephrology & Renal",
     marketScorings: [
       {
         market: "US Markets",
