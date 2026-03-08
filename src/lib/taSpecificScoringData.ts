@@ -1763,7 +1763,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "17. Pain Management/Anesthesia",
+    taName: "Pain & Anaesthesia",
     marketScorings: [
       {
         market: "US Markets",
