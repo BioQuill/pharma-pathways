@@ -12,7 +12,12 @@ import {
   ArrowRight,
   ShieldCheck,
   Target,
-  Activity
+  Activity,
+  AlertTriangle,
+  Scale,
+  LineChart,
+  Gem,
+  Briefcase
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -20,44 +25,80 @@ const modelSuite = [
   {
     name: "PTRS",
     icon: <TrendingUp className="h-5 w-5" />,
+    subtitle: "APPROVAL",
     description: "Probability of Technical and Regulatory Success — grounded in BIO/Norstella published phase transition rates across 20 therapeutic areas.",
-    tab: "ptrs"
   },
   {
     name: "Monte Carlo",
     icon: <Activity className="h-5 w-5" />,
+    subtitle: "APPROVAL",
     description: "10,000-iteration uncertainty propagation through each PTRS input independently, producing P5–P95 confidence ranges.",
-    tab: "monte-carlo"
   },
   {
     name: "TI (Therapeutic Index)",
     icon: <ShieldCheck className="h-5 w-5" />,
+    subtitle: "PIPELINE",
     description: "TD50/ED50 safety margin from pharmacology literature. Classifies drugs as narrow, moderate, or wide therapeutic index.",
-    tab: "ti"
   },
   {
     name: "LPI (Launch Potential Index)",
     icon: <BarChart3 className="h-5 w-5" />,
+    subtitle: "PIPELINE",
     description: "Composite launch probability score combining scientific, clinical, regulatory, sponsor, market, and safety factors.",
-    tab: "lpi"
   },
   {
     name: "Composite Score",
     icon: <Target className="h-5 w-5" />,
+    subtitle: "PIPELINE",
     description: "Overall molecule attractiveness index combining LPI and TTM efficiency into a single 0–100 score.",
-    tab: "composite"
   },
   {
     name: "CAPM Alpha Signals",
     icon: <Zap className="h-5 w-5" />,
+    subtitle: "STRATEGY HUB",
     description: "Risk-adjusted performance vs historical benchmarks (α₁) and current pipeline competition (α₂), with divergence tracking (Δα).",
-    tab: "capm"
   },
   {
     name: "TTM (Time to Market)",
     icon: <Clock className="h-5 w-5" />,
+    subtitle: "APPROVAL",
     description: "Empirical time from first patient in to commercial launch, with 5-phase lifecycle decomposition by therapeutic area.",
-    tab: "ttm"
+  },
+  {
+    name: "TA Risk Index",
+    icon: <AlertTriangle className="h-5 w-5" />,
+    subtitle: "APPROVAL",
+    description: "TA-specific composite risk score combining regulatory precedent, competitive density, and clinical complexity. Feeds directly into LPI as the Regulatory weight component.",
+  },
+  {
+    name: "PA Index-1 — MWPSPI",
+    icon: <Scale className="h-5 w-5" />,
+    subtitle: "PRICING & ACCESS · Model 1",
+    description: "Market-Weighted Payer Support Probability Index. Scores 0-100 by weighting Clinical, Economic, Access and Political factors according to each payer system's documented decision-making priorities across 8 global markets.",
+  },
+  {
+    name: "PA Index-2 — Comparative Payer Likelihood Matrix",
+    icon: <BarChart3 className="h-5 w-5" />,
+    subtitle: "PRICING & ACCESS · Model 2",
+    description: "Uses historical approval/coverage base rates combined with molecule-specific comparator benchmarking across 20 therapeutic areas and 8 global markets.",
+  },
+  {
+    name: "Peak Sales Index",
+    icon: <LineChart className="h-5 w-5" />,
+    subtitle: "LAUNCH & COMMERCIAL",
+    description: "Composite peak sales potential model combining market size, clinical differentiation, commercial execution, strategic positioning, competitive dynamics, market access, and pricing power.",
+  },
+  {
+    name: "$1B Blockbuster Probability",
+    icon: <Gem className="h-5 w-5" />,
+    subtitle: "LAUNCH & COMMERCIAL",
+    description: "Probability of achieving $1B+ peak annual sales via logistic regression on composite Peak Sales Score. Validated r=0.78, 82% accuracy on 100 drug launches 2014-2024.",
+  },
+  {
+    name: "Investment Score",
+    icon: <Briefcase className="h-5 w-5" />,
+    subtitle: "STRATEGY HUB",
+    description: "5-factor VC and licensing assessment model scoring molecules on market potential, clinical success, commercial advantage, strategic positioning, and competitive dynamics.",
   },
 ];
 
@@ -143,8 +184,8 @@ export const MethodologyContent = ({ onNavigateToModels }: MethodologyContentPro
       <div>
         <div className="text-center mb-8">
           <Badge className="mb-3"><BarChart3 className="h-3 w-3 mr-1 inline" /> Model Suite</Badge>
-          <h2 className="text-3xl font-bold">7 Proprietary Models</h2>
-          <p className="text-muted-foreground mt-2">Each model is fully documented with formulas, inputs, outputs, and worked examples in the <strong>Models</strong> tab.</p>
+          <h2 className="text-3xl font-bold">12 Proprietary Models</h2>
+          <p className="text-muted-foreground mt-2">Spanning every stage of the drug development lifecycle — from pipeline discovery to commercial launch.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -157,13 +198,9 @@ export const MethodologyContent = ({ onNavigateToModels }: MethodologyContentPro
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-sm">{model.name}</h3>
+                    <Badge variant="outline" className="text-[10px] mt-0.5 mb-1">{model.subtitle}</Badge>
                     <p className="text-xs text-muted-foreground mt-1">{model.description}</p>
-                    <button 
-                      onClick={() => onNavigateToModels?.(model.tab)}
-                      className="text-xs text-primary font-medium mt-2 flex items-center gap-1 hover:underline"
-                    >
-                      → See full model details <ArrowRight className="h-3 w-3" />
-                    </button>
+                    <p className="text-xs text-muted-foreground/60 italic mt-2">Full details available by request.</p>
                   </div>
                 </div>
               </CardContent>
