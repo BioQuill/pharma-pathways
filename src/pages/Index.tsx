@@ -684,7 +684,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     </div>
   );
 };
-const Index = () => {
+const IndexInner = () => {
   const { molecules: allMolecules, loading: moleculesLoading, error: moleculesError } = useMolecules();
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
@@ -693,6 +693,16 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const reportRef = useRef<HTMLDivElement>(null);
+  const { loadIntoSimulator, setOnNavigateToSimulator, simulatorMolecule } = useSimulatorMolecule();
+
+  // Register simulator navigation callback
+  useEffect(() => {
+    setOnNavigateToSimulator(() => {
+      setTopNavMode('platform');
+      setActiveTab('ptrs');
+      setSelectedMolecule(null);
+    });
+  }, [setOnNavigateToSimulator]);
 
    // Top nav mode: 'platform', 'strategy-hub', 'models', 'methodology', or 'pricing'
   const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'models' | 'methodology' | 'pricing'>('platform');
