@@ -1193,8 +1193,12 @@ const IndexInner = () => {
                     
                     // Phase filter
                     const matchesPhase = phaseFilter === 'all' || mol.phase.includes(phaseFilter);
+
+                    // Record type filter (DEVICE: prefix)
+                    const isDevice = mol.name.startsWith('DEVICE:');
+                    const matchesRecordType = recordTypeFilter === 'all' || (recordTypeFilter === 'drugs' ? !isDevice : isDevice);
                     
-                    return matchesSearch && matchesPhase;
+                    return matchesSearch && matchesPhase && matchesRecordType;
                   })
                   .slice()
                   .sort((a, b) => {
