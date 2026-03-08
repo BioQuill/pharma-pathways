@@ -1133,7 +1133,7 @@ const Index = () => {
                   <div>
                     <h2 className="text-2xl font-semibold">Molecules Database</h2>
                     <p className="text-sm text-muted-foreground">
-                      Showing {allMolecules.length.toLocaleString()} unique molecules · Deduplicated by drug + sponsor, showing most advanced phase
+                      Showing {allMolecules.length.toLocaleString()} trials · One card per NCT ID
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
