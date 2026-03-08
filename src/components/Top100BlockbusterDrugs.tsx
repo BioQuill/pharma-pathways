@@ -101,7 +101,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Rheumatology",
+    name: "Musculoskeletal & Rheumatology",
     drugs: [
       { name: "Deucravacitinib (Sotyktu)", company: "Bristol Myers Squibb", mechanism: "TYK2 inhibitor", indication: "Psoriatic arthritis", peakSales: "$2B+", status: "Phase 3, Approved for psoriasis", nct: "TBD" },
       { name: "Bimekizumab", company: "UCB", mechanism: "IL-17A/F inhibitor", indication: "Psoriatic arthritis", peakSales: "$3B+", status: "Approved 2024", nct: "NCT03895203" },
