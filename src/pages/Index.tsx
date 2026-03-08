@@ -1885,7 +1885,7 @@ const IndexInner = () => {
 
             {/* PTRS Alert System */}
             <PTRSAlertSystem molecules={allMolecules} />
-
+          </TabsContent>
 
             {/* Historical PTRS Trend Lines */}
             <Card>
