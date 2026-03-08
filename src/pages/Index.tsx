@@ -1282,8 +1282,13 @@ const IndexInner = () => {
                         <div className="flex items-start gap-4">
                           {/* Left: Text rows */}
                           <div className="flex-1 min-w-0 space-y-1">
-                            {/* Row 1: Drug Name */}
-                            <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                            {/* Row 1: Drug Name + Device Badge */}
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                              {molecule.name.startsWith('DEVICE:') && (
+                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted text-muted-foreground">DEVICE</Badge>
+                              )}
+                            </div>
                             {/* Row 2: Approval Status Badge */}
                             {(() => {
                               const status = (molecule as any)._raw?.approval_status;
