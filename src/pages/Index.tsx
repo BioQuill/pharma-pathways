@@ -105,6 +105,7 @@ import { ModelsContent } from "@/components/ModelsContent";
 import { SimulatorMoleculeProvider, useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
 import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
+import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
 
 // TimelinePhase interface imported from moleculesData
 
