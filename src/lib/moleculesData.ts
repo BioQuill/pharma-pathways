@@ -992,7 +992,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "ADVANCE/PROGRESS",
     phase: "Approved",
     indication: "Episodic and Chronic Migraine Prevention",
-    therapeuticArea: "Pain Management/Anesthesia",
+    therapeuticArea: "Pain & Anaesthesia",
     company: "AbbVie/Allergan",
     companyTrackRecord: 'fast',
     nctId: "NCT03777059",
