@@ -52,7 +52,7 @@ export const PRS_BASE_RATES: Record<string, { rate: number; asymmetric: boolean 
   'Pediatrics':                   { rate: 0.50, asymmetric: false },
   'Infectious Disease':           { rate: 0.35, asymmetric: false },
   'Ophthalmology':                { rate: 0.16, asymmetric: false },
-  'Musculoskeletal':              { rate: 0.10, asymmetric: false },
+  'Musculoskeletal & Rheumatology':{ rate: 0.10, asymmetric: false },
   'Hematology (non-oncology)':    { rate: 0.10, asymmetric: false },
   'Dental & Oral Health':         { rate: 0.50, asymmetric: false },
   'Urology':                      { rate: 0.50, asymmetric: false },
