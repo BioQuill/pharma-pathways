@@ -230,7 +230,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "11. Nephrology/Renal",
+    ta: "11. Nephrology & Renal",
     benchmarks: [
       { molecule: "Kerendia (finerenone)", indication: "CKD in diabetes", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£24K", keyEndpoint: "CKD progression -18%, CV -14%", successFactor: "Non-steroidal MRA, dual benefit" },
       { molecule: "Filspari (sparsentan)", indication: "IgA nephropathy", usApproval: "Yes", niceRec: "Under review", gba: "Pending", icer: "N/A", keyEndpoint: "Proteinuria ↓", successFactor: "Dual endothelin/angiotensin" },
