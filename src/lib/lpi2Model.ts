@@ -376,7 +376,7 @@ function getUnmetNeedScore(ta: string, indication: string): number {
 }
 
 function getExpeditedPathwayScore(ta: string, phase: string): number {
-  const expeditedLikely = ['oncology/hematology', 'rare diseases/orphan drugs', 'infectious diseases'];
+  const expeditedLikely = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Infectious Disease'];
   const base = expeditedLikely.includes(ta) ? 65 : 40;
   const phaseBonus = { 'Approved': 20, 'Phase III': 15, 'Phase II': 10, 'Phase I': 5 };
   const bonus = phaseBonus[phase as keyof typeof phaseBonus] || 0;
