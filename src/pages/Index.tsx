@@ -906,9 +906,9 @@ const IndexInner = () => {
             <PopoverTrigger asChild>
               <button className="text-sm font-bold text-white/80 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
                 <Search className="h-3.5 w-3.5" /> Search
-                {(searchQuery || phaseFilter !== 'all') && (
+                {(searchQuery || phaseFilter !== 'all' || recordTypeFilter !== 'drugs') && (
                   <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
-                    {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
+                    {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : '', recordTypeFilter !== 'drugs' ? '1' : ''].filter(Boolean).length}
                   </Badge>
                 )}
               </button>
