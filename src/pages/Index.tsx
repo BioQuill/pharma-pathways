@@ -1207,10 +1207,9 @@ const IndexInner = () => {
                 {/* Molecule Distribution Chart + Export */}
                 <div className="mb-6 p-4 border rounded-lg bg-muted/30">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold">Molecules by Therapeutic Area</h3>
+                    <Badge className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full font-semibold">Molecules by Therapeutic Area</Badge>
                     <div className="flex items-center gap-2">
                       <MoleculeExportPanel molecules={allMolecules} />
-                      <Badge variant="secondary" className="text-lg px-3 py-1">{allMolecules.length.toLocaleString()} Molecules</Badge>
                     </div>
                   </div>
                   <MoleculeDistributionChart molecules={allMolecules} />
