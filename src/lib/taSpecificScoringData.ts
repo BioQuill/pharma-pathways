@@ -130,7 +130,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "2. Cardiology",
+    taName: "Cardiovascular",
     marketScorings: [
       {
         market: "US Markets",
