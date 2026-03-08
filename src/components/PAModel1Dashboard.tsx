@@ -918,7 +918,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "20. Women's Health",
+    name: "Women's Health",
     markets: [
       { market: "US Commercial", clinical: 30, economic: 25, access: 25, political: 20, notes: "ACA mandates contraception; reproductive rights politics; menopause growing" },
       { market: "US Medicare", clinical: 25, economic: 30, access: 25, political: 20, notes: "Elderly women osteoporosis/menopause; fertility/obesity excluded" },
