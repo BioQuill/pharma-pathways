@@ -56,6 +56,7 @@ import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
+import { LPICalibrationCard } from "@/components/LPICalibrationCard";
 import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
