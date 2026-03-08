@@ -1963,7 +1963,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "18. Rare Diseases/Orphan Drugs",
+    taName: "Rare Disease & Orphan",
     marketScorings: [
       {
         market: "US Markets",
