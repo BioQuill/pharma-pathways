@@ -2262,6 +2262,7 @@ const IndexInner = () => {
 
           {/* PA Batch Comparison Tab */}
           <TabsContent value="pa-batch" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PABatchComparison />
           </TabsContent>
 
