@@ -411,26 +411,35 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
 
   const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
 
-  // TA display names
+  // TA display names (expanded to match calibration data)
   const taDisplayNames: Record<string, string> = {
-    oncology: "Oncology",
-    cns: "CNS/Neurology",
+    oncology: "Oncology & Hematology",
+    cns: "Neurology",
     cardiovascular: "Cardiovascular",
     infectious: "Infectious Disease",
-    immunology: "Immunology",
-    metabolic: "Metabolic/Endocrine",
-    rareDisease: "Rare Disease",
+    immunology: "Immunology & Inflammation",
+    metabolic: "Endocrinology & Metabolism",
+    rareDisease: "Rare Disease & Orphan",
     dermatology: "Dermatology",
+    respiratory: "Respiratory & Pulmonary",
+    psychiatry: "Psychiatry & Mental Health",
+    ophthalmology: "Ophthalmology",
+    gastroenterology: "Gastroenterology & Hepatology",
+    nephrology: "Nephrology & Renal",
+    musculoskeletal: "Musculoskeletal",
+    vaccines: "Vaccines & Preventive",
+    womensHealth: "Women's Health & Reproductive",
+    pain: "Pain & Anesthesia",
+    pediatrics: "Pediatrics",
+    urology: "Urology",
+    other: "Other",
   };
 
   // Phase display names
   const phaseDisplayNames: Record<string, string> = {
-    preclinical: "Preclinical",
     phase1: "Phase I",
     phase2: "Phase II",
     phase3: "Phase III",
-    nda: "NDA/BLA Filed",
-    approved: "Approved",
   };
 
   // Handle PDF download
