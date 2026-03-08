@@ -14,15 +14,15 @@ export const RM_BY_TA: Record<string, { Rm: number; n_historical: number }> = {
   "Immunology & Inflammation": { Rm: 0.115, n_historical: 404 },
   "Endocrinology & Metabolism": { Rm: 0.102, n_historical: 321 },
   "Respiratory & Pulmonary": { Rm: 0.089, n_historical: 209 },
-  "Womens Health & Reproductive": { Rm: 0.089, n_historical: 35 },
+  "Women's Health": { Rm: 0.089, n_historical: 35 },
   "Oncology & Hematology": { Rm: 0.086, n_historical: 4515 },
   "Ophthalmology": { Rm: 0.086, n_historical: 238 },
-  "Musculoskeletal": { Rm: 0.079, n_historical: 82 },
+  "Musculoskeletal & Rheumatology": { Rm: 0.079, n_historical: 82 },
   "Gastroenterology & Hepatology": { Rm: 0.079, n_historical: 75 },
   "Nephrology & Renal": { Rm: 0.074, n_historical: 127 },
   "Urology": { Rm: 0.074, n_historical: 11 },
   "Neurology": { Rm: 0.066, n_historical: 504 },
-  "Pain & Anesthesia": { Rm: 0.06, n_historical: 28 },
+  "Pain & Anaesthesia": { Rm: 0.06, n_historical: 28 },
   "Psychiatry & Mental Health": { Rm: 0.048, n_historical: 160 },
 };
 
