@@ -412,7 +412,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "5. Endocrinology",
+    taName: "Endocrinology & Metabolism",
     marketScorings: [
       {
         market: "US Markets",
