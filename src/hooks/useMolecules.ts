@@ -60,11 +60,10 @@ function guessTrackRecord(sponsor: string): 'fast' | 'average' | 'slow' {
   return 'average';
 }
 
-/** Map real JSON TA values to normalised scoring TA keys */
+/** Map real JSON TA values to canonical display names */
 function mapTherapeuticArea(ta: string): string {
   if (!ta) return 'Other';
-  // Apply TA canonical normalisation
-  return TA_CANONICAL[ta] || ta;
+  return canonicalizeTA(ta);
 }
 
 /** Determine approval_status from raw molecule data */
