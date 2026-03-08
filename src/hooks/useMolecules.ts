@@ -266,7 +266,7 @@ async function doFetch(): Promise<MoleculeProfile[]> {
   const json = await res.json();
   const rawList: any[] = json.molecules ?? json.data?.molecules ?? (Array.isArray(json) ? json : []);
   const allMolecules = rawList.map((m, i) => transformMolecule(m, i));
-  return deduplicateMolecules(allMolecules);
+  return allMolecules; // One card per NCT — no deduplication
 }
 
 export function useMolecules() {
