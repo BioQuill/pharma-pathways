@@ -548,7 +548,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Lenacapavir PrEP regulatory decisions and antibiotic pull incentive legislation (2025-26)',
   },
-  'RESPIRATORY/PULMONOLOGY': {
+  'RESPIRATORY & PULMONARY': {
     approvedDrugsTitle: 'Key Approved Respiratory Therapies:',
     approvedDrugs: [
       { name: 'Dupixent (dupilumab)', details: 'IL-4/13 for severe asthma, eosinophilic phenotype, $12B+' },
