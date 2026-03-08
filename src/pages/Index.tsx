@@ -2207,6 +2207,7 @@ const IndexInner = () => {
 
           {/* Portfolio Dashboard Tab */}
           <TabsContent value="portfolio" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PortfolioDashboard 
               molecules={allMolecules} 
               watchlistIds={watchlist.map(w => w.moleculeId)}
