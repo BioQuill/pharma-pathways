@@ -202,7 +202,7 @@ export function generateRank1Factors(
 
   // TA-specific score modifiers
   const taScoreModifiers: Record<string, Record<string, number>> = {
-    'ONCOLOGY/HEMATOLOGY': { 'Scientific Target Validation': 0.9 },
+    'ONCOLOGY & HEMATOLOGY': { 'Scientific Target Validation': 0.9 },
     'ENDOCRINOLOGY & METABOLISM': { 'Scientific Target Validation': 1.1, 'Cost-Effectiveness Strength': 1.1 },
   };
 

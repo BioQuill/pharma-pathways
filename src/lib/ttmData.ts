@@ -58,70 +58,37 @@ export function getTTMBreakdownForTA(therapeuticArea: string): TTMBreakdown | un
 
 // Normalize TA name to match TTM data
 export function getTTMMonthsForTA(therapeuticArea: string): number {
+  // Use canonicalizeTA for lookup
+  const match = TTM_BREAKDOWN_DATA.find(item => {
+    const itemLower = item.therapeuticArea.toLowerCase();
+    const taLower = therapeuticArea.toLowerCase();
+    return itemLower === taLower ||
+           itemLower.includes(taLower.split('/')[0]) ||
+           taLower.includes(itemLower.split(' ')[0]);
+  });
+  if (match) return match.totalMonths;
+
+  // Fallback fuzzy match
   const taLower = therapeuticArea.toLowerCase();
-  
-  // Map common TA names to our data
-  if (taLower.includes('oncology') || taLower.includes('hematology') || taLower.includes('cancer')) {
-    return 132;
-  }
-  if (taLower.includes('cardio') || taLower.includes('heart')) {
-    return 162;
-  }
-  if (taLower.includes('neuro') || taLower.includes('cns') || taLower.includes('alzheimer')) {
-    return 180;
-  }
-  if (taLower.includes('psych') || taLower.includes('mental')) {
-    return 126;
-  }
-  if (taLower.includes('metabol') || taLower.includes('diabet') || taLower.includes('endocrin') || taLower.includes('obesity')) {
-    return 156;
-  }
-  if (taLower.includes('immun') || taLower.includes('inflam')) {
-    return 138;
-  }
-  if (taLower.includes('rheum') || taLower.includes('arthritis')) {
-    return 126;
-  }
-  if (taLower.includes('infect') || taLower.includes('virus') || taLower.includes('bacter')) {
-    return 108;
-  }
-  if (taLower.includes('respir') || taLower.includes('pulmon') || taLower.includes('lung')) {
-    return 132;
-  }
-  if (taLower.includes('gastro') || taLower.includes('hepat') || taLower.includes('liver')) {
-    return 150;
-  }
-  if (taLower.includes('nephro') || taLower.includes('renal') || taLower.includes('kidney')) {
-    return 150;
-  }
-  if (taLower.includes('derma') || taLower.includes('skin')) {
-    return 108;
-  }
-  if (taLower.includes('ophthal') || taLower.includes('eye')) {
-    return 138;
-  }
-  if (taLower.includes('rare') || taLower.includes('orphan')) {
-    return 96;
-  }
-  if (taLower.includes('vaccin') || taLower.includes('virol')) {
-    return 90;
-  }
-  if (taLower.includes('women') || taLower.includes('gynec') || taLower.includes('obstet')) {
-    return 126;
-  }
-  if (taLower.includes('urol') || taLower.includes('prostat')) {
-    return 120;
-  }
-  if (taLower.includes('pain') || taLower.includes('anesth')) {
-    return 108;
-  }
-  if (taLower.includes('transplant') || taLower.includes('cell') || taLower.includes('gene')) {
-    return 120;
-  }
-  if (taLower.includes('pediatr') || taLower.includes('child')) {
-    return 156;
-  }
-  
-  // Default to average
+  if (taLower.includes('oncology') || taLower.includes('hematology') || taLower.includes('cancer')) return 132;
+  if (taLower.includes('cardio') || taLower.includes('heart')) return 162;
+  if (taLower.includes('neuro') || taLower.includes('cns') || taLower.includes('alzheimer')) return 180;
+  if (taLower.includes('psych') || taLower.includes('mental')) return 126;
+  if (taLower.includes('metabol') || taLower.includes('diabet') || taLower.includes('endocrin') || taLower.includes('obesity')) return 156;
+  if (taLower.includes('immun') || taLower.includes('inflam')) return 138;
+  if (taLower.includes('musculo') || taLower.includes('rheum') || taLower.includes('arthritis')) return 126;
+  if (taLower.includes('infect') || taLower.includes('virus') || taLower.includes('bacter')) return 108;
+  if (taLower.includes('respir') || taLower.includes('pulmon') || taLower.includes('lung')) return 132;
+  if (taLower.includes('gastro') || taLower.includes('hepat') || taLower.includes('liver')) return 150;
+  if (taLower.includes('nephro') || taLower.includes('renal') || taLower.includes('kidney')) return 150;
+  if (taLower.includes('derma') || taLower.includes('skin')) return 108;
+  if (taLower.includes('ophthal') || taLower.includes('eye')) return 138;
+  if (taLower.includes('rare') || taLower.includes('orphan')) return 96;
+  if (taLower.includes('vaccin') || taLower.includes('virol') || taLower.includes('prevent')) return 90;
+  if (taLower.includes('women') || taLower.includes('gynec') || taLower.includes('obstet')) return 126;
+  if (taLower.includes('urol') || taLower.includes('prostat')) return 120;
+  if (taLower.includes('pain') || taLower.includes('anesth')) return 108;
+  if (taLower.includes('transplant') || (taLower.includes('cell') && taLower.includes('gene'))) return 120;
+  if (taLower.includes('pediatr') || taLower.includes('child')) return 156;
   return 132;
 }

@@ -175,7 +175,7 @@ function extractScientificFeatures(input: MoleculeInput): Feature[] {
     {
       name: 'MOA Novelty',
       description: 'Novel vs validated mechanism of action',
-      value: normalizedTA === 'ONCOLOGY/HEMATOLOGY' ? 0.7 : 0.8, // Novel often in oncology
+      value: normalizedTA === 'ONCOLOGY & HEMATOLOGY' ? 0.7 : 0.8, // Novel often in oncology
       importance: 0.08,
       impact: 'neutral',
     },
