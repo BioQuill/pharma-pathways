@@ -168,9 +168,9 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
           {/* Row 7: Start Date | Completion Date | Status */}
           {molecule && ((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
             <p className="text-sm text-muted-foreground">
-              {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
-              {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
-              {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+              {(molecule as any)._raw.start_date && <span>{(molecule as any)._raw.start_date}</span>}
+              {(molecule as any)._raw.completion_date && <span> | {(molecule as any)._raw.completion_date}</span>}
+              {(molecule as any)._raw.status && <span> | <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
             </p>
           )}
           
@@ -186,11 +186,29 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
             </a>
           )}
           
+          {/* Metadata pills: age_group, sex, has_results */}
+          {molecule && ((molecule as any)._raw?.age_group || (molecule as any)._raw?.sex || (molecule as any)._raw?.has_results !== undefined) && (
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {(molecule as any)._raw?.age_group && (
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{(molecule as any)._raw.age_group}</Badge>
+              )}
+              {(molecule as any)._raw?.sex && (
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{(molecule as any)._raw.sex}</Badge>
+              )}
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                {(molecule as any)._raw?.has_results ? 'Has Results' : 'No Results'}
+              </Badge>
+            </div>
+          )}
+          
           {/* Row 9: Brief Summary */}
           {molecule && (molecule as any)._raw?.brief_summary && (
-            <p className="text-sm text-muted-foreground line-clamp-3">
-              {(molecule as any)._raw.brief_summary}
-            </p>
+            <div className="mt-2">
+              <p className="text-xs font-medium text-muted-foreground mb-1">Brief Summary</p>
+              <p className="text-sm text-muted-foreground">
+                {(molecule as any)._raw.brief_summary}
+              </p>
+            </div>
           )}
           
         </div>

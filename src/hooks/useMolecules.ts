@@ -17,11 +17,9 @@ const DATA_URL =
 let cachedMolecules: MoleculeProfile[] | null = null;
 let fetchPromise: Promise<MoleculeProfile[]> | null = null;
 
-// TA normalisation map — consolidates all variants to a single canonical name
+// TA normalisation map — keep JSON values as-is, only fix true duplicates
 const TA_CANONICAL: Record<string, string> = {
-  'Pain & Anaesthesia': 'Pain & Anesthesia',
   'Musculoskeletal & Rheumatology': 'Musculoskeletal',
-  "Women's Health": 'Womens Health & Reproductive',
 };
 
 // Phase normalisation map
@@ -268,7 +266,7 @@ async function doFetch(): Promise<MoleculeProfile[]> {
   const json = await res.json();
   const rawList: any[] = json.molecules ?? json.data?.molecules ?? (Array.isArray(json) ? json : []);
   const allMolecules = rawList.map((m, i) => transformMolecule(m, i));
-  return deduplicateMolecules(allMolecules);
+  return allMolecules; // One card per NCT — no deduplication
 }
 
 export function useMolecules() {
@@ -316,7 +314,7 @@ export function getCachedMolecules(): MoleculeProfile[] {
   return cachedMolecules || [];
 }
 
-/** Canonical TA list for dropdowns */
+/** Canonical TA list for dropdowns — matches JSON field values exactly */
 export const CANONICAL_TA_LIST = [
   'Oncology & Hematology',
   'Other',
@@ -334,8 +332,8 @@ export const CANONICAL_TA_LIST = [
   'Rare Disease & Orphan',
   'Musculoskeletal',
   'Gastroenterology & Hepatology',
-  'Womens Health & Reproductive',
-  'Pain & Anesthesia',
+  "Women's Health",
+  'Pain & Anaesthesia',
   'Hematology (non-oncology)',
   'Pediatrics',
   'Urology',
