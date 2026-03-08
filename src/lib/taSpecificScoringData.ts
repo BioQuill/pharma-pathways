@@ -2207,7 +2207,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "20. Women's Health",
+    taName: "Women's Health",
     marketScorings: [
       {
         market: "US Markets",
