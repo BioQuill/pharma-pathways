@@ -1514,7 +1514,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "15. Transplantation & Cell/Gene Therapy",
+    taName: "Hematology (non-oncology)",
     marketScorings: [
       {
         market: "US Markets",
