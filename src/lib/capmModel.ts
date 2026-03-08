@@ -14,15 +14,15 @@ export const RM_BY_TA: Record<string, { Rm: number; n_historical: number }> = {
   "Immunology & Inflammation": { Rm: 0.115, n_historical: 404 },
   "Endocrinology & Metabolism": { Rm: 0.102, n_historical: 321 },
   "Respiratory & Pulmonary": { Rm: 0.089, n_historical: 209 },
-  "Womens Health & Reproductive": { Rm: 0.089, n_historical: 35 },
+  "Women's Health": { Rm: 0.089, n_historical: 35 },
   "Oncology & Hematology": { Rm: 0.086, n_historical: 4515 },
   "Ophthalmology": { Rm: 0.086, n_historical: 238 },
-  "Musculoskeletal": { Rm: 0.079, n_historical: 82 },
+  "Musculoskeletal & Rheumatology": { Rm: 0.079, n_historical: 82 },
   "Gastroenterology & Hepatology": { Rm: 0.079, n_historical: 75 },
   "Nephrology & Renal": { Rm: 0.074, n_historical: 127 },
   "Urology": { Rm: 0.074, n_historical: 11 },
   "Neurology": { Rm: 0.066, n_historical: 504 },
-  "Pain & Anesthesia": { Rm: 0.06, n_historical: 28 },
+  "Pain & Anaesthesia": { Rm: 0.06, n_historical: 28 },
   "Psychiatry & Mental Health": { Rm: 0.048, n_historical: 160 },
 };
 
@@ -39,11 +39,11 @@ export const PIPELINE_BENCHMARKS: Record<string, { mean_ptrs: number; median_ptr
   "Psychiatry & Mental Health": { mean_ptrs: 0.1759, median_ptrs: 0.093, std: 0.102, n: 225 },
   "Ophthalmology": { mean_ptrs: 0.2376, median_ptrs: 0.162, std: 0.123, n: 276 },
   "Nephrology & Renal": { mean_ptrs: 0.2162, median_ptrs: 0.143, std: 0.128, n: 166 },
-  "Musculoskeletal": { mean_ptrs: 0.2653, median_ptrs: 0.152, std: 0.139, n: 127 },
+  "Musculoskeletal & Rheumatology": { mean_ptrs: 0.2653, median_ptrs: 0.152, std: 0.139, n: 127 },
   "Gastroenterology & Hepatology": { mean_ptrs: 0.2517, median_ptrs: 0.152, std: 0.136, n: 88 },
   "Hematology (non-oncology)": { mean_ptrs: 0.42, median_ptrs: 0.534, std: 0.15, n: 32 },
-  "Pain & Anesthesia": { mean_ptrs: 0.2193, median_ptrs: 0.116, std: 0.114, n: 39 },
-  "Womens Health & Reproductive": { mean_ptrs: 0.3193, median_ptrs: 0.445, std: 0.151, n: 45 },
+  "Pain & Anaesthesia": { mean_ptrs: 0.2193, median_ptrs: 0.116, std: 0.114, n: 39 },
+  "Women's Health": { mean_ptrs: 0.3193, median_ptrs: 0.445, std: 0.151, n: 45 },
   "Vaccines & Preventive": { mean_ptrs: 0.2103, median_ptrs: 0.184, std: 0.11, n: 222 },
   "Pediatrics": { mean_ptrs: 0.4493, median_ptrs: 0.562, std: 0.158, n: 23 },
   "Urology": { mean_ptrs: 0.1748, median_ptrs: 0.143, std: 0.108, n: 11 },
@@ -98,29 +98,10 @@ export function estimateBeta(inputs: BetaInputs): number {
   return Math.max(0.2, Math.min(2.5, Math.round(raw * 100) / 100));
 }
 
+import { canonicalizeTA } from './taCanonical';
+
 export function mapTAToRmKey(ta: string): string {
-  const taLower = ta.toLowerCase();
-  if (taLower.includes("oncology") || (taLower.includes("hematology") && taLower.includes("oncology"))) return "Oncology & Hematology";
-  if (taLower.includes("hematology")) return "Hematology (non-oncology)";
-  if (taLower.includes("rare") || taLower.includes("orphan")) return "Rare Disease & Orphan";
-  if (taLower.includes("vaccin")) return "Vaccines & Preventive";
-  if (taLower.includes("infectious")) return "Infectious Disease";
-  if (taLower.includes("derma")) return "Dermatology";
-  if (taLower.includes("pediatr")) return "Pediatrics";
-  if (taLower.includes("cardio")) return "Cardiovascular";
-  if (taLower.includes("immun")) return "Immunology & Inflammation";
-  if (taLower.includes("endocr") || taLower.includes("metabol") || taLower.includes("diabet") || taLower.includes("obes")) return "Endocrinology & Metabolism";
-  if (taLower.includes("respir") || taLower.includes("pulmon")) return "Respiratory & Pulmonary";
-  if (taLower.includes("women") || taLower.includes("reprod")) return "Womens Health & Reproductive";
-  if (taLower.includes("ophthalm")) return "Ophthalmology";
-  if (taLower.includes("musculo") || taLower.includes("orthop")) return "Musculoskeletal";
-  if (taLower.includes("gastro") || taLower.includes("hepat")) return "Gastroenterology & Hepatology";
-  if (taLower.includes("nephro") || taLower.includes("renal")) return "Nephrology & Renal";
-  if (taLower.includes("urolog")) return "Urology";
-  if (taLower.includes("neuro") || taLower.includes("cns")) return "Neurology";
-  if (taLower.includes("pain") || taLower.includes("anesth")) return "Pain & Anesthesia";
-  if (taLower.includes("psych") || taLower.includes("mental")) return "Psychiatry & Mental Health";
-  return "Oncology & Hematology"; // default
+  return canonicalizeTA(ta);
 }
 
 export function calculateCAPM(ta: string, actualPTRS: number, betaInputs: BetaInputs): CAPMResult {

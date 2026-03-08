@@ -368,7 +368,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "3. Neurology/CNS",
+    name: "3. Neurology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "Mental health parity laws; high unmet need premium" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Alzheimer's/Parkinson's prioritized" },
@@ -488,7 +488,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "7. Infectious Diseases",
+    name: "7. Infectious Disease",
     markets: [
       { market: "US", clinical: 35, economic: 25, access: 25, political: 15, notes: "AMR priority; hospital formulary critical; QIDP incentives" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Part A/B hospital; Part D outpatient; stewardship programs" },
@@ -612,7 +612,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "11. Rheumatology",
+    name: "11. Musculoskeletal & Rheumatology",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "RA biologics mature market; biosimilars emerging; JAK inhibitors" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Elderly RA/OA; Part B infusions; Part D oral/subcutaneous" },
@@ -675,7 +675,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "13. Urology/Nephrology",
+    name: "13. Nephrology & Renal",
     markets: [
       { market: "US", clinical: 30, economic: 30, access: 25, political: 15, notes: "CKD progression, prostate cancer, BPH; dialysis cost-offset valued" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 25, political: 15, notes: "Elderly CKD/ESRD; Part D oral; Part B ESAs/dialysis drugs" },
@@ -740,7 +740,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "15. Transplantation & Cell/Gene Therapy",
+    name: "15. Hematology (non-oncology)",
     markets: [
       { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Breakthrough therapies; curative intent; ultra-high cost tolerance; outcomes-based contracts" },
       { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B cell/gene therapy; NCD pathway; CED" },
@@ -819,7 +819,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "17. Pain Management/Anesthesia",
+    name: "17. Pain & Anaesthesia",
     markets: [
       { market: "US Commercial", clinical: 30, economic: 25, access: 25, political: 20, notes: "Opioid crisis; DEA scheduling; REMS; non-opioid alternatives prioritized" },
       { market: "US Medicare", clinical: 30, economic: 25, access: 25, political: 20, notes: "Elderly chronic pain; Part D opioid restrictions; non-opioid preference" },
@@ -856,7 +856,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "18. Rare Diseases/Orphan Drugs",
+    name: "18. Rare Disease & Orphan",
     markets: [
       { market: "US Commercial", clinical: 40, economic: 20, access: 25, political: 15, notes: "Orphan Drug Act; 7-year exclusivity; high willingness to pay; ultra-rare pricing flexibility" },
       { market: "US Medicare", clinical: 45, economic: 15, access: 25, political: 15, notes: "Part B/D coverage; CED pathway for gene therapy; PRV incentives" },
@@ -887,7 +887,7 @@ const taWeightsData: { name: string; markets: { market: string; clinical: number
     },
   },
   {
-    name: "19. Vaccines & Virology",
+    name: "19. Vaccines & Preventive",
     markets: [
       { market: "US Commercial", clinical: 35, economic: 25, access: 30, political: 10, notes: "ACIP recommendations = guaranteed coverage; VFC program; pharmacy administration" },
       { market: "US Medicare", clinical: 35, economic: 25, access: 30, political: 10, notes: "Part D vaccines (IRA); adult immunization growing; no cost-sharing" },

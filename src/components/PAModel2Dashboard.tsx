@@ -10,25 +10,25 @@ import { Model2PDFExport } from "@/components/Model2PDFExport";
 
 // ============ STEP 1: HISTORICAL BASE RATES (20 TAs) ============
 const historicalBaseRates = [
-  { ta: "1. Oncology/Hematology", usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 },
-  { ta: "2. Cardiovascular/Cardiology", usComm: 60, usMed: 65, uk: 45, germany: 45, japan: 25, china: 25, india: 20, brazil: 25 },
-  { ta: "3. Neurology/Neuroscience", usComm: 65, usMed: 70, uk: 50, germany: 50, japan: 30, china: 28, india: 18, brazil: 28 },
-  { ta: "4. Psychiatry/Mental Health", usComm: 62, usMed: 58, uk: 48, germany: 46, japan: 28, china: 26, india: 15, brazil: 24 },
-  { ta: "5. Endocrinology & Metabolism", usComm: 58, usMed: 62, uk: 42, germany: 40, japan: 28, china: 22, india: 15, brazil: 22 },
+  { ta: "1. Oncology & Hematology", usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 },
+  { ta: "2. Cardiovascular", usComm: 60, usMed: 65, uk: 45, germany: 45, japan: 25, china: 25, india: 20, brazil: 25 },
+  { ta: "3. Neurology", usComm: 65, usMed: 70, uk: 50, germany: 50, japan: 30, china: 28, india: 18, brazil: 28 },
+  { ta: "4. Psychiatry & Mental Health", usComm: 62, usMed: 58, uk: 48, germany: 46, japan: 28, china: 26, india: 15, brazil: 24 },
+  { ta: "5. Endocrinology & Metabolism", usComm: 92, usMed: 62, uk: 42, germany: 40, japan: 28, china: 22, india: 15, brazil: 22 },
   { ta: "6. Immunology & Inflammation", usComm: 68, usMed: 70, uk: 48, germany: 50, japan: 32, china: 28, india: 18, brazil: 25 },
-  { ta: "7. Rheumatology", usComm: 66, usMed: 68, uk: 46, germany: 48, japan: 30, china: 26, india: 18, brazil: 24 },
-  { ta: "8. Infectious Diseases", usComm: 70, usMed: 72, uk: 65, germany: 55, japan: 35, china: 32, india: 28, brazil: 32 },
-  { ta: "9. Respiratory/Pulmonology", usComm: 62, usMed: 65, uk: 46, germany: 48, japan: 28, china: 24, india: 20, brazil: 24 },
+  { ta: "7. Musculoskeletal & Rheumatology", usComm: 66, usMed: 68, uk: 46, germany: 48, japan: 30, china: 26, india: 18, brazil: 24 },
+  { ta: "8. Infectious Disease", usComm: 70, usMed: 72, uk: 65, germany: 55, japan: 35, china: 32, india: 28, brazil: 32 },
+  { ta: "9. Respiratory & Pulmonary", usComm: 62, usMed: 65, uk: 46, germany: 48, japan: 28, china: 24, india: 20, brazil: 24 },
   { ta: "10. Gastroenterology & Hepatology", usComm: 64, usMed: 68, uk: 47, germany: 48, japan: 30, china: 26, india: 19, brazil: 26 },
-  { ta: "11. Nephrology/Renal", usComm: 63, usMed: 68, uk: 48, germany: 46, japan: 28, china: 26, india: 21, brazil: 26 },
+  { ta: "11. Nephrology & Renal", usComm: 63, usMed: 68, uk: 48, germany: 46, japan: 28, china: 26, india: 21, brazil: 26 },
   { ta: "12. Dermatology", usComm: 55, usMed: 50, uk: 40, germany: 45, japan: 25, china: 20, india: 15, brazil: 20 },
   { ta: "13. Ophthalmology", usComm: 72, usMed: 78, uk: 52, germany: 50, japan: 33, china: 28, india: 22, brazil: 28 },
-  { ta: "14. Rare Diseases/Orphan", usComm: 85, usMed: 90, uk: 85, germany: 75, japan: 50, china: 40, india: 35, brazil: 45 },
-  { ta: "15. Vaccines & Virology", usComm: 68, usMed: 70, uk: 72, germany: 60, japan: 45, china: 50, india: 45, brazil: 48 },
+  { ta: "14. Rare Disease & Orphan", usComm: 85, usMed: 90, uk: 85, germany: 75, japan: 50, china: 40, india: 35, brazil: 45 },
+  { ta: "15. Vaccines & Preventive", usComm: 68, usMed: 70, uk: 72, germany: 60, japan: 45, china: 50, india: 45, brazil: 48 },
   { ta: "16. Women's Health", usComm: 52, usMed: 35, uk: 44, germany: 42, japan: 30, china: 28, india: 22, brazil: 26 },
   { ta: "17. Urology", usComm: 58, usMed: 62, uk: 44, germany: 44, japan: 26, china: 24, india: 20, brazil: 24 },
-  { ta: "18. Pain Management/Anesthesia", usComm: 45, usMed: 48, uk: 38, germany: 40, japan: 22, china: 20, india: 16, brazil: 20 },
-  { ta: "19. Transplant & Cell/Gene Therapy", usComm: 82, usMed: 88, uk: 78, germany: 70, japan: 52, china: 38, india: 28, brazil: 32 },
+  { ta: "18. Pain & Anaesthesia", usComm: 45, usMed: 48, uk: 38, germany: 40, japan: 22, china: 20, india: 16, brazil: 20 },
+  { ta: "19. Hematology (non-oncology)", usComm: 82, usMed: 88, uk: 78, germany: 70, japan: 52, china: 38, india: 28, brazil: 32 },
   { ta: "20. Pediatrics (cross-cutting)", usComm: "+10%", usMed: "+12%", uk: "+15%", germany: "+12%", japan: "+10%", china: "+8%", india: "+12%", brazil: "+10%" },
 ];
 
@@ -87,7 +87,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "3. Neurology/Neuroscience",
+    ta: "3. Neurology",
     benchmarks: [
       { molecule: "Leqembi (lecanemab)", indication: "Early Alzheimer's", usApproval: "Yes", niceRec: "Restricted (cost)", gba: "Minor", icer: "~£450K", keyEndpoint: "27% CDR-SB slowing", successFactor: "Amyloid clearance, modest benefit" },
       { molecule: "Skyclarys (omaveloxolone)", indication: "Friedreich's ataxia", usApproval: "Yes", niceRec: "Not reviewed", gba: "Orphan exempt", icer: "~$370K", keyEndpoint: "mFARS improvement", successFactor: "Rare disease, first approval" },
@@ -159,7 +159,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "7. Rheumatology",
+    ta: "7. Musculoskeletal & Rheumatology",
     benchmarks: [
       { molecule: "Rinvoq (upadacitinib)", indication: "RA", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£28K", keyEndpoint: "ACR 50: 45%, DAS28 remission 30%", successFactor: "JAK1 selective" },
       { molecule: "Olumiant (baricitinib)", indication: "RA, AD", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£24K", keyEndpoint: "ACR 20: 70%", successFactor: "COVID EUA boosted profile" },
@@ -177,7 +177,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "8. Infectious Diseases",
+    ta: "8. Infectious Disease",
     benchmarks: [
       { molecule: "Xacduro (zoliflodacin)", indication: "Gonorrhea", usApproval: "Yes", niceRec: "Not reviewed", gba: "Pending", icer: "N/A", keyEndpoint: "Cure rate", successFactor: "Novel mechanism, AMR priority" },
       { molecule: "Sunlenca (lenacapavir)", indication: "HIV (MDR)", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£42K", keyEndpoint: "Viral suppression", successFactor: "Twice-yearly dosing" },
@@ -195,7 +195,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "9. Respiratory/Pulmonology",
+    ta: "9. Respiratory & Pulmonary",
     benchmarks: [
       { molecule: "Tezspire (tezepelumab)", indication: "Severe asthma", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£32K", keyEndpoint: "Exacerbation -56%", successFactor: "Broad population (no biomarker)" },
       { molecule: "Dupixent (dupilumab)", indication: "Asthma, COPD, AD", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£28K", keyEndpoint: "Exac -50%, FEV1 +350mL", successFactor: "Type 2 inflammation" },
@@ -283,7 +283,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "14. Rare Diseases/Orphan Drugs",
+    ta: "14. Rare Disease & Orphan",
     benchmarks: [
       { molecule: "Zolgensma (onasemnogene)", indication: "SMA type 1", usApproval: "Yes", niceRec: "Yes (installments)", gba: "Orphan exempt", icer: "~£1.8M", keyEndpoint: "Survival, motor milestones", successFactor: "Gene therapy, curative" },
       { molecule: "Evrysdi (risdiplam)", indication: "SMA", usApproval: "Yes", niceRec: "Yes", gba: "Orphan exempt", icer: "~£85K/yr", keyEndpoint: "Motor milestone achievement", successFactor: "Oral SMN2 splicing modifier" },
@@ -301,7 +301,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "15. Vaccines & Virology",
+    ta: "15. Vaccines & Preventive",
     benchmarks: [
       { molecule: "Arexvy (RSV)", indication: "RSV prevention (elderly)", usApproval: "Yes", niceRec: "Yes", gba: "STIKO rec", icer: "~£8K/QALY", keyEndpoint: "VE 82%, severe 94%", successFactor: "First RSV vaccine (elderly)" },
       { molecule: "Abrysvo (RSV)", indication: "RSV (elderly + maternal)", usApproval: "Yes", niceRec: "Yes", gba: "STIKO rec", icer: "~£9K/QALY", keyEndpoint: "VE 67-86%", successFactor: "Dual indication" },
@@ -354,7 +354,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "18. Pain Management/Anesthesia",
+    ta: "18. Pain & Anaesthesia",
     benchmarks: [
       { molecule: "Zynrelef (bupivacaine/meloxicam)", indication: "Post-surgical pain", usApproval: "Yes", niceRec: "Not reviewed", gba: "Pending", icer: "~$42K", keyEndpoint: "NRS improvement", successFactor: "Prolonged-release, opioid-sparing" },
       { molecule: "Tanezumab (anti-NGF)", indication: "OA pain", usApproval: "Rejected (2021)", niceRec: "No", gba: "N/A", icer: "N/A", keyEndpoint: "NRS improvement", successFactor: "Rapid joint destruction, black box" },

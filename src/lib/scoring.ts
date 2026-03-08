@@ -1,5 +1,6 @@
 // Probability and scoring calculations for pharmaceutical molecules
 import { getTTMMonthsForTA } from './ttmData';
+import { canonicalizeTAKey } from './taCanonical';
 
 export interface ProbabilityScores {
   meetingEndpoints: number; // 0-1
@@ -62,25 +63,25 @@ export function calculateFailedTrialScores(): ProbabilityScores {
 
 // TA-specific success rate modifiers based on historical industry data
 const TA_SUCCESS_MODIFIERS: Record<string, { endpoints: number; nextPhase: number; approval: number; dropoutBase: number }> = {
-  'ONCOLOGY/HEMATOLOGY': { endpoints: 0.82, nextPhase: 0.78, approval: 0.75, dropoutBase: 4 },
-  'NEUROLOGY/CNS': { endpoints: 0.72, nextPhase: 0.65, approval: 0.60, dropoutBase: 4 },
-  'PSYCHIATRY/MENTAL HEALTH': { endpoints: 0.70, nextPhase: 0.62, approval: 0.58, dropoutBase: 4 },
+  'ONCOLOGY & HEMATOLOGY': { endpoints: 0.82, nextPhase: 0.78, approval: 0.75, dropoutBase: 4 },
+  'NEUROLOGY': { endpoints: 0.72, nextPhase: 0.65, approval: 0.60, dropoutBase: 4 },
+  'PSYCHIATRY & MENTAL HEALTH': { endpoints: 0.70, nextPhase: 0.62, approval: 0.58, dropoutBase: 4 },
   'CARDIOVASCULAR': { endpoints: 0.88, nextPhase: 0.85, approval: 0.82, dropoutBase: 2 },
   'ENDOCRINOLOGY & METABOLISM': { endpoints: 0.92, nextPhase: 0.88, approval: 0.85, dropoutBase: 2 },
   'IMMUNOLOGY & INFLAMMATION': { endpoints: 0.85, nextPhase: 0.80, approval: 0.78, dropoutBase: 3 },
-  'RHEUMATOLOGY': { endpoints: 0.84, nextPhase: 0.79, approval: 0.76, dropoutBase: 3 },
-  'INFECTIOUS DISEASES': { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
-  'RESPIRATORY/PULMONOLOGY': { endpoints: 0.85, nextPhase: 0.81, approval: 0.78, dropoutBase: 3 },
+  'MUSCULOSKELETAL & RHEUMATOLOGY': { endpoints: 0.84, nextPhase: 0.79, approval: 0.76, dropoutBase: 3 },
+  'INFECTIOUS DISEASE': { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
+  'RESPIRATORY & PULMONARY': { endpoints: 0.85, nextPhase: 0.81, approval: 0.78, dropoutBase: 3 },
   'GASTROENTEROLOGY & HEPATOLOGY': { endpoints: 0.83, nextPhase: 0.78, approval: 0.75, dropoutBase: 3 },
-  'NEPHROLOGY/RENAL': { endpoints: 0.80, nextPhase: 0.75, approval: 0.72, dropoutBase: 3 },
+  'NEPHROLOGY & RENAL': { endpoints: 0.80, nextPhase: 0.75, approval: 0.72, dropoutBase: 3 },
   'DERMATOLOGY': { endpoints: 0.88, nextPhase: 0.85, approval: 0.82, dropoutBase: 2 },
   'OPHTHALMOLOGY': { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
-  'RARE DISEASES/ORPHAN': { endpoints: 0.78, nextPhase: 0.72, approval: 0.68, dropoutBase: 3 },
-  'VACCINES & VIROLOGY': { endpoints: 0.80, nextPhase: 0.75, approval: 0.72, dropoutBase: 3 },
-  'WOMEN\'S HEALTH': { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
+  'RARE DISEASE & ORPHAN': { endpoints: 0.78, nextPhase: 0.72, approval: 0.68, dropoutBase: 3 },
+  'VACCINES & PREVENTIVE': { endpoints: 0.80, nextPhase: 0.75, approval: 0.72, dropoutBase: 3 },
+  "WOMEN'S HEALTH": { endpoints: 0.86, nextPhase: 0.82, approval: 0.80, dropoutBase: 2 },
   'UROLOGY': { endpoints: 0.85, nextPhase: 0.81, approval: 0.78, dropoutBase: 2 },
-  'PAIN MANAGEMENT/ANESTHESIA': { endpoints: 0.82, nextPhase: 0.77, approval: 0.74, dropoutBase: 3 },
-  'TRANSPLANT/CELL-GENE': { endpoints: 0.68, nextPhase: 0.60, approval: 0.55, dropoutBase: 4 },
+  'PAIN & ANAESTHESIA': { endpoints: 0.82, nextPhase: 0.77, approval: 0.74, dropoutBase: 3 },
+  'HEMATOLOGY (NON-ONCOLOGY)': { endpoints: 0.68, nextPhase: 0.60, approval: 0.55, dropoutBase: 4 },
   'PEDIATRICS': { endpoints: 0.84, nextPhase: 0.80, approval: 0.78, dropoutBase: 2 },
   'GENERAL': { endpoints: 0.85, nextPhase: 0.80, approval: 0.78, dropoutBase: 3 },
 };
@@ -88,25 +89,25 @@ const TA_SUCCESS_MODIFIERS: Record<string, { endpoints: number; nextPhase: numbe
 // Maximum TTM (B_max) in MONTHS by therapeutic area for composite score calculation
 // These are the upper bounds used in the normalized composite score formula
 export const TA_MAX_TTM: Record<string, number> = {
-  'ONCOLOGY/HEMATOLOGY': 132,        // 11 years
+  'ONCOLOGY & HEMATOLOGY': 132,        // 11 years
   'CARDIOVASCULAR': 162,             // 13.5 years
-  'NEUROLOGY/CNS': 180,              // 15 years
-  'PSYCHIATRY/MENTAL HEALTH': 126,   // 10.5 years
+  'NEUROLOGY': 180,              // 15 years
+  'PSYCHIATRY & MENTAL HEALTH': 126,   // 10.5 years
   'ENDOCRINOLOGY & METABOLISM': 156, // 13 years
   'IMMUNOLOGY & INFLAMMATION': 138,  // 11.5 years
-  'RHEUMATOLOGY': 126,               // 10.5 years
-  'INFECTIOUS DISEASES': 108,        // 9 years
-  'RESPIRATORY/PULMONOLOGY': 132,    // 11 years
+  'MUSCULOSKELETAL & RHEUMATOLOGY': 126, // 10.5 years
+  'INFECTIOUS DISEASE': 108,        // 9 years
+  'RESPIRATORY & PULMONARY': 132,    // 11 years
   'GASTROENTEROLOGY & HEPATOLOGY': 150, // 12.5 years
-  'NEPHROLOGY/RENAL': 150,           // 12.5 years
+  'NEPHROLOGY & RENAL': 150,           // 12.5 years
   'DERMATOLOGY': 108,                // 9 years
   'OPHTHALMOLOGY': 138,              // 11.5 years
-  'RARE DISEASES/ORPHAN': 96,        // 8 years
-  'VACCINES & VIROLOGY': 90,         // 7.5 years
-  'WOMEN\'S HEALTH': 126,            // 10.5 years
+  'RARE DISEASE & ORPHAN': 96,        // 8 years
+  'VACCINES & PREVENTIVE': 90,         // 7.5 years
+  "WOMEN'S HEALTH": 126,            // 10.5 years
   'UROLOGY': 120,                    // 10 years
-  'PAIN MANAGEMENT/ANESTHESIA': 108, // 9 years
-  'TRANSPLANT/CELL-GENE': 120,       // 10 years
+  'PAIN & ANAESTHESIA': 108, // 9 years
+  'HEMATOLOGY (NON-ONCOLOGY)': 120,       // 10 years
   'PEDIATRICS': 156,                 // 13 years
   'GENERAL': 132,                    // 11 years (average)
 };
@@ -114,73 +115,10 @@ export const TA_MAX_TTM: Record<string, number> = {
 // Alias for backward compatibility
 export const TA_AVERAGE_TTM = TA_MAX_TTM;
 
-// Normalize therapeutic area string to key
-function normalizeTherapeuticArea(ta: string): string {
-  const taLower = ta.toLowerCase();
-  
-  if (taLower.includes('oncology') || taLower.includes('hematology') || taLower.includes('cancer')) {
-    return 'ONCOLOGY/HEMATOLOGY';
-  }
-  if (taLower.includes('cardio') || taLower.includes('heart')) {
-    return 'CARDIOVASCULAR';
-  }
-  if (taLower.includes('neuro') || taLower.includes('cns') || taLower.includes('alzheimer')) {
-    return 'NEUROLOGY/CNS';
-  }
-  if (taLower.includes('psych') || taLower.includes('mental')) {
-    return 'PSYCHIATRY/MENTAL HEALTH';
-  }
-  if (taLower.includes('immun') || taLower.includes('inflam')) {
-    return 'IMMUNOLOGY & INFLAMMATION';
-  }
-  if (taLower.includes('rheum') || taLower.includes('arthritis')) {
-    return 'RHEUMATOLOGY';
-  }
-  if (taLower.includes('infect') || taLower.includes('virus') || taLower.includes('bacter')) {
-    return 'INFECTIOUS DISEASES';
-  }
-  if (taLower.includes('respir') || taLower.includes('pulmon') || taLower.includes('lung')) {
-    return 'RESPIRATORY/PULMONOLOGY';
-  }
-  if (taLower.includes('gastro') || taLower.includes('hepat') || taLower.includes('liver')) {
-    return 'GASTROENTEROLOGY & HEPATOLOGY';
-  }
-  if (taLower.includes('nephro') || taLower.includes('renal') || taLower.includes('kidney')) {
-    return 'NEPHROLOGY/RENAL';
-  }
-  if (taLower.includes('derma') || taLower.includes('skin')) {
-    return 'DERMATOLOGY';
-  }
-  if (taLower.includes('ophthal') || taLower.includes('eye')) {
-    return 'OPHTHALMOLOGY';
-  }
-  if (taLower.includes('rare') || taLower.includes('orphan')) {
-    return 'RARE DISEASES/ORPHAN';
-  }
-  if (taLower.includes('vaccin') || taLower.includes('virol')) {
-    return 'VACCINES & VIROLOGY';
-  }
-  if (taLower.includes('women') || taLower.includes('gynec') || taLower.includes('obstet')) {
-    return 'WOMEN\'S HEALTH';
-  }
-  if (taLower.includes('urol') || taLower.includes('prostat')) {
-    return 'UROLOGY';
-  }
-  if (taLower.includes('pain') || taLower.includes('anesth')) {
-    return 'PAIN MANAGEMENT/ANESTHESIA';
-  }
-  if (taLower.includes('transplant') || taLower.includes('cell') || taLower.includes('gene')) {
-    return 'TRANSPLANT/CELL-GENE';
-  }
-  if (taLower.includes('pediatr') || taLower.includes('child')) {
-    return 'PEDIATRICS';
-  }
-  if (taLower.includes('metabol') || taLower.includes('diabet') || taLower.includes('endocrin') || taLower.includes('obesity')) {
-    return 'ENDOCRINOLOGY & METABOLISM';
-  }
-  
-  return 'GENERAL';
+export function normalizeTherapeuticArea(ta: string): string {
+  return canonicalizeTAKey(ta);
 }
+
 
 // Calculate probability scores based on historical data patterns
 export function calculateProbabilityScores(
@@ -243,11 +181,11 @@ function calculateDropoutRanking(phase: string, therapeuticArea: string, taDropo
 function calculateRegulatoryPathwayProbabilities(normalizedTA: string, phase: string): ProbabilityScores['regulatoryPathway'] {
   // TA-specific regulatory pathway probabilities
   const taPathways: Record<string, { standard: number; accelerated: number; breakthrough: number; orphan: number }> = {
-    'ONCOLOGY/HEMATOLOGY': { standard: 0.35, accelerated: 0.35, breakthrough: 0.20, orphan: 0.10 },
-    'RARE DISEASES/ORPHAN': { standard: 0.20, accelerated: 0.25, breakthrough: 0.15, orphan: 0.40 },
-    'INFECTIOUS DISEASES': { standard: 0.50, accelerated: 0.30, breakthrough: 0.15, orphan: 0.05 },
-    'NEUROLOGY/CNS': { standard: 0.55, accelerated: 0.25, breakthrough: 0.15, orphan: 0.05 },
-    'TRANSPLANT/CELL-GENE': { standard: 0.30, accelerated: 0.30, breakthrough: 0.25, orphan: 0.15 },
+    'ONCOLOGY & HEMATOLOGY': { standard: 0.35, accelerated: 0.35, breakthrough: 0.20, orphan: 0.10 },
+    'RARE DISEASE & ORPHAN': { standard: 0.20, accelerated: 0.25, breakthrough: 0.15, orphan: 0.40 },
+    'INFECTIOUS DISEASE': { standard: 0.50, accelerated: 0.30, breakthrough: 0.15, orphan: 0.05 },
+    'NEUROLOGY': { standard: 0.55, accelerated: 0.25, breakthrough: 0.15, orphan: 0.05 },
+    'HEMATOLOGY (NON-ONCOLOGY)': { standard: 0.30, accelerated: 0.30, breakthrough: 0.25, orphan: 0.15 },
     'GENERAL': { standard: 0.60, accelerated: 0.25, breakthrough: 0.10, orphan: 0.05 },
   };
   
@@ -305,7 +243,7 @@ export function calculateTTMMonths(
   return Math.max(0, monthsRemaining);
 }
 
-export { normalizeTherapeuticArea };
+// normalizeTherapeuticArea is exported above
 
 // Generate empty market projections for failed trials
 export function generateFailedTrialMarketProjections(): MarketData[] {
@@ -576,24 +514,24 @@ export function calculateOverallScore(
   // Get TA Composite Score (0-100) and normalize to 0-1
   const normalizedTA = normalizeTherapeuticArea(therapeuticArea);
   const taBaselineScores: Record<string, number> = {
-    'ONCOLOGY/HEMATOLOGY': 68,
+    'ONCOLOGY & HEMATOLOGY': 68,
     'CARDIOVASCULAR': 72,
-    'NEUROLOGY/CNS': 52,
-    'PSYCHIATRY/MENTAL HEALTH': 48,
+    'NEUROLOGY': 52,
+    'PSYCHIATRY & MENTAL HEALTH': 48,
     'IMMUNOLOGY & INFLAMMATION': 65,
-    'RHEUMATOLOGY': 64,
-    'INFECTIOUS DISEASES': 70,
-    'RESPIRATORY/PULMONOLOGY': 66,
+    'MUSCULOSKELETAL & RHEUMATOLOGY': 64,
+    'INFECTIOUS DISEASE': 70,
+    'RESPIRATORY & PULMONARY': 66,
     'GASTROENTEROLOGY & HEPATOLOGY': 62,
-    'NEPHROLOGY/RENAL': 58,
+    'NEPHROLOGY & RENAL': 58,
     'DERMATOLOGY': 74,
     'OPHTHALMOLOGY': 70,
-    'RARE DISEASES/ORPHAN': 55,
-    'VACCINES & VIROLOGY': 68,
-    'WOMEN\'S HEALTH': 72,
+    'RARE DISEASE & ORPHAN': 55,
+    'VACCINES & PREVENTIVE': 68,
+    "WOMEN'S HEALTH": 72,
     'UROLOGY': 70,
-    'PAIN MANAGEMENT/ANESTHESIA': 60,
-    'TRANSPLANT/CELL-GENE': 45,
+    'PAIN & ANAESTHESIA': 60,
+    'HEMATOLOGY (NON-ONCOLOGY)': 45,
     'PEDIATRICS': 66,
     'ENDOCRINOLOGY & METABOLISM': 76,
     'GENERAL': 65,

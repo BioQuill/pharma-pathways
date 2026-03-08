@@ -41,7 +41,7 @@ interface TherapeuticAreaData {
 
 const top100Data: TherapeuticAreaData[] = [
   {
-    name: "Oncology/Hematology",
+    name: "Oncology & Hematology",
     drugs: [
       { name: "Iberdomide", company: "Bristol Myers Squibb", mechanism: "Oral CELMoD", indication: "Multiple myeloma", peakSales: "$2-3B", status: "Phase 3", nct: "TBD" },
       { name: "Mezigdomide", company: "Bristol Myers Squibb", mechanism: "Oral CELMoD", indication: "Multiple myeloma", peakSales: "$1-2B", status: "Phase 3", nct: "TBD" },
@@ -51,7 +51,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Cardiovascular/Cardiology",
+    name: "Cardiovascular",
     drugs: [
       { name: "Aficamten (CK-274)", company: "Cytokinetics", mechanism: "Cardiac myosin inhibitor", indication: "Hypertrophic cardiomyopathy", peakSales: "$2.8B by 2030", status: "Approved 2025", nct: "NCT04219826" },
       { name: "Olpasiran", company: "Amgen", mechanism: "siRNA APOC3 inhibitor", indication: "Hypertriglyceridemia", peakSales: "$2B+", status: "Phase 3", nct: "TBD" },
@@ -61,7 +61,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Neurology/CNS",
+    name: "Neurology",
     drugs: [
       { name: "Tolebrutinib", company: "Sanofi", mechanism: "BTK inhibitor", indication: "Secondary progressive MS", peakSales: "$1.2B by 2030", status: "Phase 3 positive", nct: "TBD" },
       { name: "Donanemab", company: "Eli Lilly", mechanism: "Anti-amyloid mAb", indication: "Alzheimer's disease", peakSales: "$5B+", status: "Approved 2024", nct: "NCT04437511" },
@@ -71,7 +71,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Psychiatry/Mental Health",
+    name: "Psychiatry & Mental Health",
     drugs: [
       { name: "Pimavanserin", company: "Acadia", mechanism: "5-HT2A inverse agonist", indication: "Major depressive disorder", peakSales: "$1B+", status: "Phase 3", nct: "TBD" },
       { name: "Zuranolone", company: "Biogen/Sage", mechanism: "GABA-A modulator", indication: "Postpartum depression", peakSales: "$1.5B+", status: "Approved 2023", nct: "NCT02978326" },
@@ -101,7 +101,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Rheumatology",
+    name: "Musculoskeletal & Rheumatology",
     drugs: [
       { name: "Deucravacitinib (Sotyktu)", company: "Bristol Myers Squibb", mechanism: "TYK2 inhibitor", indication: "Psoriatic arthritis", peakSales: "$2B+", status: "Phase 3, Approved for psoriasis", nct: "TBD" },
       { name: "Bimekizumab", company: "UCB", mechanism: "IL-17A/F inhibitor", indication: "Psoriatic arthritis", peakSales: "$3B+", status: "Approved 2024", nct: "NCT03895203" },
@@ -111,7 +111,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Infectious Diseases",
+    name: "Infectious Disease",
     drugs: [
       { name: "Zoliflodacin", company: "Innoviva", mechanism: "Topoisomerase II inhibitor", indication: "Gonorrhea", peakSales: "$500M-1B", status: "Phase 3, Filing Q1 2025", nct: "TBD" },
       { name: "Clesrovimab (MK-1654)", company: "Merck", mechanism: "mAb", indication: "RSV prevention (infants)", peakSales: "$2B+", status: "Under FDA review", nct: "TBD" },
@@ -121,7 +121,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Respiratory/Pulmonology",
+    name: "Respiratory & Pulmonary",
     drugs: [
       { name: "Brensocatib", company: "Insmed", mechanism: "DPP1 inhibitor", indication: "Bronchiectasis", peakSales: "$2.8B by 2030", status: "Phase 3 positive", nct: "TBD" },
       { name: "Depemokimab", company: "GSK", mechanism: "IL-5 mAb", indication: "Severe asthma", peakSales: "$1B+", status: "Phase 3 positive", nct: "TBD" },
@@ -141,7 +141,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Nephrology/Renal",
+    name: "Nephrology & Renal",
     drugs: [
       { name: "Atrasentan", company: "Chinook/Novartis", mechanism: "Endothelin receptor A", indication: "IgA nephropathy", peakSales: "$1.5B+", status: "Phase 3", nct: "TBD" },
       { name: "Sparsentan", company: "Travere", mechanism: "Dual endothelin/angiotensin blocker", indication: "IgA nephropathy", peakSales: "$1B+", status: "Approved 2023", nct: "NCT03493685" },
@@ -171,7 +171,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Rare Diseases/Orphan",
+    name: "Rare Disease & Orphan",
     drugs: [
       { name: "Apitegromab", company: "Scholar Rock", mechanism: "Myostatin inhibitor", indication: "Spinal muscular atrophy", peakSales: "$2B+", status: "Phase 3, Under FDA review", nct: "TBD" },
       { name: "Acoramidis", company: "BridgeBio", mechanism: "TTR stabilizer", indication: "ATTR cardiomyopathy", peakSales: "$2B+", status: "Approved 2024", nct: "NCT04685408" },
@@ -181,7 +181,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Vaccines & Virology",
+    name: "Vaccines & Preventive",
     drugs: [
       { name: "mRES (mRNA-1345)", company: "Moderna", mechanism: "mRNA RSV vaccine", indication: "RSV prevention (adults 60+)", peakSales: "$2-3B", status: "Approved 2024", nct: "NCT05127434" },
       { name: "mRNA-1010", company: "Moderna", mechanism: "mRNA influenza vaccine", indication: "Seasonal influenza", peakSales: "$3-5B", status: "Phase 3", nct: "TBD" },
@@ -211,7 +211,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Pain Management/Anesthesia",
+    name: "Pain & Anaesthesia",
     drugs: [
       { name: "Tanezumab", company: "Pfizer/Lilly", mechanism: "Anti-NGF mAb", indication: "Osteoarthritis pain", peakSales: "$2B+", status: "Phase 3", nct: "TBD" },
       { name: "Fasinumab", company: "Regeneron/Teva", mechanism: "Anti-NGF mAb", indication: "Osteoarthritis pain", peakSales: "$1.5B+", status: "Phase 3", nct: "TBD" },
@@ -221,7 +221,7 @@ const top100Data: TherapeuticAreaData[] = [
     ]
   },
   {
-    name: "Transplantation & Cell/Gene Therapy",
+    name: "Hematology (non-oncology)",
     drugs: [
       { name: "Exa-cel (CTX001)", company: "Vertex/CRISPR Therapeutics", mechanism: "CRISPR gene editing", indication: "Sickle cell disease", peakSales: "$2B+", status: "Approved 2023", nct: "NCT03655678" },
       { name: "Lovo-cel (bb1111)", company: "bluebird bio", mechanism: "Gene therapy", indication: "Sickle cell disease", peakSales: "$1B+", status: "Approved 2023", nct: "NCT02906202" },

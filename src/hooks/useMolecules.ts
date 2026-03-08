@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { type MoleculeProfile } from '@/lib/moleculesData';
+import { canonicalizeTA } from '@/lib/taCanonical';
 import {
   calculateProbabilityScores,
   generateMarketProjections,
@@ -17,10 +18,9 @@ const DATA_URL =
 let cachedMolecules: MoleculeProfile[] | null = null;
 let fetchPromise: Promise<MoleculeProfile[]> | null = null;
 
-// TA normalisation map — keep JSON values as-is, only fix true duplicates
-const TA_CANONICAL: Record<string, string> = {
-  'Musculoskeletal & Rheumatology': 'Musculoskeletal',
-};
+// TA normalisation — delegate to central canonical mapper
+const TA_CANONICAL: Record<string, string> = {};
+// All mapping is handled by canonicalizeTA()
 
 // Phase normalisation map
 const PHASE_CANONICAL: Record<string, string> = {
@@ -60,11 +60,10 @@ function guessTrackRecord(sponsor: string): 'fast' | 'average' | 'slow' {
   return 'average';
 }
 
-/** Map real JSON TA values to normalised scoring TA keys */
+/** Map real JSON TA values to canonical display names */
 function mapTherapeuticArea(ta: string): string {
   if (!ta) return 'Other';
-  // Apply TA canonical normalisation
-  return TA_CANONICAL[ta] || ta;
+  return canonicalizeTA(ta);
 }
 
 /** Determine approval_status from raw molecule data */
@@ -314,28 +313,5 @@ export function getCachedMolecules(): MoleculeProfile[] {
   return cachedMolecules || [];
 }
 
-/** Canonical TA list for dropdowns — matches JSON field values exactly */
-export const CANONICAL_TA_LIST = [
-  'Oncology & Hematology',
-  'Other',
-  'Infectious Disease',
-  'Neurology',
-  'Immunology & Inflammation',
-  'Endocrinology & Metabolism',
-  'Cardiovascular',
-  'Respiratory & Pulmonary',
-  'Ophthalmology',
-  'Psychiatry & Mental Health',
-  'Vaccines & Preventive',
-  'Dermatology',
-  'Nephrology & Renal',
-  'Rare Disease & Orphan',
-  'Musculoskeletal',
-  'Gastroenterology & Hepatology',
-  "Women's Health",
-  'Pain & Anaesthesia',
-  'Hematology (non-oncology)',
-  'Pediatrics',
-  'Urology',
-  'Dental & Oral Health',
-];
+/** Canonical TA list for dropdowns — matches the 20 official names exactly */
+export { CANONICAL_TAS as CANONICAL_TA_LIST } from '@/lib/taCanonical';

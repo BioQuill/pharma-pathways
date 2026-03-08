@@ -25,24 +25,24 @@ interface TAMarketOverviewProps {
 
 // Mapping of full TA names to composite index keys
 const TA_NAME_MAP: Record<string, string> = {
-  'Oncology/Hematology': 'ONCOLOGY/HEMATOLOGY',
+  'Oncology & Hematology': 'ONCOLOGY & HEMATOLOGY',
   'Cardiovascular': 'CARDIOVASCULAR',
-  'Neurology/CNS': 'NEUROLOGY/CNS',
-  'Psychiatry/Mental Health': 'PSYCHIATRY/MENTAL HEALTH',
+  'Neurology': 'NEUROLOGY',
+  'Psychiatry & Mental Health': 'PSYCHIATRY & MENTAL HEALTH',
   'Immunology & Inflammation': 'IMMUNOLOGY & INFLAMMATION',
-  'Rheumatology': 'RHEUMATOLOGY',
-  'Infectious Diseases': 'INFECTIOUS DISEASES',
-  'Respiratory/Pulmonology': 'RESPIRATORY/PULMONOLOGY',
+  'Musculoskeletal & Rheumatology': 'MUSCULOSKELETAL & RHEUMATOLOGY',
+  'Infectious Disease': 'INFECTIOUS DISEASE',
+  'Respiratory & Pulmonary': 'RESPIRATORY & PULMONARY',
   'Gastroenterology & Hepatology': 'GASTROENTEROLOGY & HEPATOLOGY',
-  'Nephrology/Renal': 'NEPHROLOGY/RENAL',
+  'Nephrology & Renal': 'NEPHROLOGY & RENAL',
   'Dermatology': 'DERMATOLOGY',
   'Ophthalmology': 'OPHTHALMOLOGY',
-  'Rare Diseases/Orphan Drugs': 'RARE DISEASES/ORPHAN',
-  'Vaccines & Virology': 'VACCINES & VIROLOGY',
-  'Women\'s Health': 'WOMEN\'S HEALTH',
+  'Rare Disease & Orphan': 'RARE DISEASE & ORPHAN',
+  'Vaccines & Preventive': 'VACCINES & PREVENTIVE',
+  "Women's Health": "WOMEN'S HEALTH",
   'Urology': 'UROLOGY',
-  'Pain Management/Anesthesia': 'PAIN MANAGEMENT/ANESTHESIA',
-  'Transplantation & Cell/Gene Therapy': 'TRANSPLANT/CELL-GENE',
+  'Pain & Anaesthesia': 'PAIN & ANAESTHESIA',
+  'Hematology (non-oncology)': 'HEMATOLOGY (NON-ONCOLOGY)',
   'Pediatrics': 'PEDIATRICS',
   'Endocrinology & Metabolism': 'ENDOCRINOLOGY & METABOLISM',
   'Metabolic/Endocrinology': 'ENDOCRINOLOGY & METABOLISM',
@@ -170,7 +170,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Nemolizumab Phase 3 atopic dermatitis results and regulatory submissions (2025-26)',
   },
-  'ONCOLOGY/HEMATOLOGY': {
+  'ONCOLOGY & HEMATOLOGY': {
     approvedDrugsTitle: 'Key Approved Oncology Therapies:',
     approvedDrugs: [
       { name: 'Keytruda (pembrolizumab)', details: 'PD-1 inhibitor, $25B+ sales, 30+ indications across solid tumors' },
@@ -278,7 +278,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Olpasiran Phase 3 CV outcomes trial results (OCEAN(a)-Outcomes, 2026)',
   },
-  'NEUROLOGY/CNS': {
+  'NEUROLOGY': {
     approvedDrugsTitle: 'Key Approved Neurology Therapies:',
     approvedDrugs: [
       { name: 'Leqembi (lecanemab)', details: 'Anti-amyloid for Alzheimer\'s, 27% slowing of decline, IV infusion' },
@@ -440,7 +440,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'TL1A inhibitor Phase 3 IBD results and CAR-T autoimmune expansion trials (2026)',
   },
-  'RHEUMATOLOGY': {
+  'MUSCULOSKELETAL & RHEUMATOLOGY': {
     approvedDrugsTitle: 'Key Approved Rheumatology Therapies:',
     approvedDrugs: [
       { name: 'Xeljanz (tofacitinib)', details: 'First oral JAK inhibitor for RA, boxed warning' },
@@ -494,7 +494,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Nipocalimab approvals and BTK inhibitor lupus Phase 3 data (2026)',
   },
-  'INFECTIOUS DISEASES': {
+  'INFECTIOUS DISEASE': {
     approvedDrugsTitle: 'Key Approved Infectious Disease Therapies:',
     approvedDrugs: [
       { name: 'Biktarvy (bictegravir)', details: 'Single-tablet HIV regimen, $12B+ sales, market leader' },
@@ -548,7 +548,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Lenacapavir PrEP regulatory decisions and antibiotic pull incentive legislation (2025-26)',
   },
-  'RESPIRATORY/PULMONOLOGY': {
+  'RESPIRATORY & PULMONARY': {
     approvedDrugsTitle: 'Key Approved Respiratory Therapies:',
     approvedDrugs: [
       { name: 'Dupixent (dupilumab)', details: 'IL-4/13 for severe asthma, eosinophilic phenotype, $12B+' },
@@ -656,7 +656,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'TL1A Phase 3 IBD data and MASH combination trial designs (2026)',
   },
-  'NEPHROLOGY/RENAL': {
+  'NEPHROLOGY & RENAL': {
     approvedDrugsTitle: 'Key Approved Nephrology Therapies:',
     approvedDrugs: [
       { name: 'Farxiga (dapagliflozin)', details: 'SGLT2 inhibitor, CKD and heart failure, renal protection proven' },
@@ -764,7 +764,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'OPT-302 combination Phase 3 and gene therapy AMD trials (2026)',
   },
-  'RARE DISEASES/ORPHAN': {
+  'RARE DISEASE & ORPHAN': {
     approvedDrugsTitle: 'Key Approved Rare Disease Therapies:',
     approvedDrugs: [
       { name: 'Spinraza (nusinersen)', details: 'ASO for SMA, first disease-modifying therapy' },
@@ -818,7 +818,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'DMD gene therapy regulatory decisions and CRISPR indication expansion (2026)',
   },
-  'VACCINES & VIROLOGY': {
+  'VACCINES & PREVENTIVE': {
     approvedDrugsTitle: 'Key Approved Vaccines:',
     approvedDrugs: [
       { name: 'Comirnaty (BNT162b2)', details: 'mRNA COVID-19 vaccine, first approved mRNA platform' },
@@ -980,7 +980,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'Padcev earlier-line bladder data and next-gen PSMA radioligands (2026)',
   },
-  'PAIN MANAGEMENT/ANESTHESIA': {
+  'PAIN & ANAESTHESIA': {
     approvedDrugsTitle: 'Key Approved Pain/Anesthesia Therapies:',
     approvedDrugs: [
       { name: 'Nucynta (tapentadol)', details: 'Dual MOR/NRI mechanism, moderate abuse deterrent' },
@@ -1034,7 +1034,7 @@ const MARKET_DYNAMICS: Record<string, {
     lastUpdated: 'December 14, 2025',
     nextCatalyst: 'VX-548 chronic pain Phase 3 data and suzetrigine label expansion (2026)',
   },
-  'TRANSPLANT/CELL-GENE': {
+  'HEMATOLOGY (NON-ONCOLOGY)': {
     approvedDrugsTitle: 'Key Approved Transplant/CGT Therapies:',
     approvedDrugs: [
       { name: 'Yescarta (axicabtagene ciloleucel)', details: 'CAR-T for large B-cell lymphoma, $1B+' },

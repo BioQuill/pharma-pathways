@@ -56,10 +56,10 @@ const BASE_WEIGHTS = {
 type TAMultipliers = Record<string, Record<string, number>>;
 
 const TA_MULTIPLIERS: TAMultipliers = {
-  'ONCOLOGY/HEMATOLOGY': {
+  'ONCOLOGY & HEMATOLOGY': {
     'Biomarker Availability': 1.4,
   },
-  'TRANSPLANT/CELL-GENE': {
+  'HEMATOLOGY (NON-ONCOLOGY)': {
     'CMC Readiness': 1.6,
   },
   // Other TAs use default multiplier of 1.0
@@ -143,56 +143,10 @@ const DELAY_DISTRIBUTION = {
 };
 
 // Map therapeutic area strings to TA keys
+import { canonicalizeTAKey } from './taCanonical';
+
 function normalizeTherapeuticArea(ta: string): string {
-  const taLower = ta.toLowerCase();
-  
-  if (taLower.includes('oncology') || taLower.includes('hematology') || taLower.includes('cancer')) {
-    return 'ONCOLOGY/HEMATOLOGY';
-  }
-  if (taLower.includes('cardio') || taLower.includes('heart')) {
-    return 'CARDIOVASCULAR';
-  }
-  if (taLower.includes('neuro') || taLower.includes('cns') || taLower.includes('alzheimer')) {
-    return 'NEUROLOGY/CNS';
-  }
-  if (taLower.includes('immun') || taLower.includes('inflam')) {
-    return 'IMMUNOLOGY & INFLAMMATION';
-  }
-  if (taLower.includes('infect') || taLower.includes('virus') || taLower.includes('bacter')) {
-    return 'INFECTIOUS DISEASES';
-  }
-  if (taLower.includes('transplant') || taLower.includes('cell') || taLower.includes('gene')) {
-    return 'TRANSPLANT/CELL-GENE';
-  }
-  if (taLower.includes('derma') || taLower.includes('skin')) {
-    return 'DERMATOLOGY';
-  }
-  if (taLower.includes('gastro') || taLower.includes('hepat') || taLower.includes('liver')) {
-    return 'GASTROENTEROLOGY & HEPATOLOGY';
-  }
-  if (taLower.includes('nephro') || taLower.includes('renal') || taLower.includes('kidney')) {
-    return 'NEPHROLOGY/RENAL';
-  }
-  if (taLower.includes('rare') || taLower.includes('orphan')) {
-    return 'RARE DISEASES/ORPHAN';
-  }
-  if (taLower.includes('metabol') || taLower.includes('diabet') || taLower.includes('endocrin')) {
-    return 'ENDOCRINOLOGY & METABOLISM';
-  }
-  if (taLower.includes('respir') || taLower.includes('pulmon') || taLower.includes('lung')) {
-    return 'RESPIRATORY/PULMONOLOGY';
-  }
-  if (taLower.includes('rheum') || taLower.includes('arthritis')) {
-    return 'RHEUMATOLOGY';
-  }
-  if (taLower.includes('ophthal') || taLower.includes('eye')) {
-    return 'OPHTHALMOLOGY';
-  }
-  if (taLower.includes('psych') || taLower.includes('mental')) {
-    return 'PSYCHIATRY/MENTAL HEALTH';
-  }
-  
-  return 'GENERAL';
+  return canonicalizeTAKey(ta);
 }
 
 // Get TA-specific multiplier for a factor
@@ -248,7 +202,7 @@ export function generateRank1Factors(
 
   // TA-specific score modifiers
   const taScoreModifiers: Record<string, Record<string, number>> = {
-    'ONCOLOGY/HEMATOLOGY': { 'Scientific Target Validation': 0.9 },
+    'ONCOLOGY & HEMATOLOGY': { 'Scientific Target Validation': 0.9 },
     'ENDOCRINOLOGY & METABOLISM': { 'Scientific Target Validation': 1.1, 'Cost-Effectiveness Strength': 1.1 },
   };
 
