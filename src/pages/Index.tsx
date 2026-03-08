@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { calculatePTRS } from "@/lib/ptrsEngine";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -246,74 +247,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     }
   }, [simulatorMolecule]);
 
-  // === PTRS Calibration Data (from ptrs_calibration.json) ===
-  // PTS base rates by TA and phase (BIO/Norstella 2011-2023)
-  const ptsBaseRates: Record<string, Record<string, number>> = {
-    oncology: { phase1: 0.63, phase2: 0.32, phase3: 0.51 },
-    cns: { phase1: 0.59, phase2: 0.28, phase3: 0.48 },
-    cardiovascular: { phase1: 0.65, phase2: 0.35, phase3: 0.58 },
-    infectious: { phase1: 0.72, phase2: 0.42, phase3: 0.64 },
-    immunology: { phase1: 0.66, phase2: 0.36, phase3: 0.56 },
-    metabolic: { phase1: 0.64, phase2: 0.34, phase3: 0.54 },
-    rareDisease: { phase1: 0.74, phase2: 0.45, phase3: 0.68 },
-    dermatology: { phase1: 0.68, phase2: 0.40, phase3: 0.60 },
-    respiratory: { phase1: 0.62, phase2: 0.33, phase3: 0.52 },
-    psychiatry: { phase1: 0.55, phase2: 0.25, phase3: 0.44 },
-    ophthalmology: { phase1: 0.60, phase2: 0.33, phase3: 0.52 },
-    gastroenterology: { phase1: 0.61, phase2: 0.31, phase3: 0.50 },
-    nephrology: { phase1: 0.60, phase2: 0.30, phase3: 0.50 },
-    musculoskeletal: { phase1: 0.60, phase2: 0.32, phase3: 0.50 },
-    vaccines: { phase1: 0.70, phase2: 0.45, phase3: 0.65 },
-    womensHealth: { phase1: 0.62, phase2: 0.33, phase3: 0.52 },
-    pain: { phase1: 0.58, phase2: 0.28, phase3: 0.46 },
-    pediatrics: { phase1: 0.65, phase2: 0.38, phase3: 0.58 },
-    urology: { phase1: 0.60, phase2: 0.30, phase3: 0.48 },
-    other: { phase1: 0.60, phase2: 0.30, phase3: 0.50 },
-  };
-
-  // PRS base rates by TA (BioQuill empirical from 14,000-trial dataset)
-  const prsBaseRates: Record<string, { rate: number; asymmetric: boolean }> = {
-    oncology: { rate: 0.89, asymmetric: true },
-    dermatology: { rate: 0.79, asymmetric: false },
-    metabolic: { rate: 0.78, asymmetric: false },
-    immunology: { rate: 0.75, asymmetric: false },
-    vaccines: { rate: 0.75, asymmetric: false },
-    respiratory: { rate: 0.65, asymmetric: false },
-    cns: { rate: 0.63, asymmetric: false },
-    cardiovascular: { rate: 0.58, asymmetric: false },
-    womensHealth: { rate: 0.50, asymmetric: false },
-    pain: { rate: 0.50, asymmetric: false },
-    psychiatry: { rate: 0.47, asymmetric: false },
-    nephrology: { rate: 0.44, asymmetric: false },
-    rareDisease: { rate: 0.44, asymmetric: false },
-    gastroenterology: { rate: 0.40, asymmetric: false },
-    pediatrics: { rate: 0.50, asymmetric: false },
-    infectious: { rate: 0.35, asymmetric: false },
-    ophthalmology: { rate: 0.16, asymmetric: false },
-    musculoskeletal: { rate: 0.10, asymmetric: false },
-    urology: { rate: 0.50, asymmetric: false },
-    other: { rate: 0.38, asymmetric: false },
-  };
-
-  // Slider multiplier: converts 0-100 slider to multiplier on base rate
-  const getSliderMultiplier = (value: number): number => {
-    if (value <= 20) return 0.50;
-    if (value <= 40) return 0.75;
-    if (value <= 60) return 1.00;
-    if (value <= 80) return 1.20;
-    return 1.40;
-  };
-
-  // Asymmetric multiplier for PRS when base rate >= 0.80
-  const getAsymmetricMultiplier = (value: number): number => {
-    if (value <= 20) return 0.60;
-    if (value <= 40) return 0.80;
-    if (value <= 60) return 1.00;
-    if (value <= 80) return 1.05;
-    return 1.08;
-  };
-
-  // Phase multipliers no longer used — base rates are per-phase
+  // PTRS engine imported from centralized module
 
   // Get TA key from molecule's therapeutic area
   const getTAKey = (ta: string): string => {
@@ -374,43 +308,19 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     }
   };
 
-  // Calculate PTS: basePTS(TA, phase) * avg(slider multipliers for 3 PTS factors)
-  const calculatePTS = () => {
-    const taRates = ptsBaseRates[therapeuticArea] || ptsBaseRates.other;
-    const baseRate = taRates[currentPhase] || taRates.phase2 || 0.30;
-    
-    const modAvg = (
-      getSliderMultiplier(mechanismNovelty[0]) +
-      getSliderMultiplier(endpointClarity[0]) +
-      getSliderMultiplier(priorTrialData[0])
-    ) / 3;
-    
-    const pts = Math.min(0.95, Math.max(0.03, baseRate * modAvg));
-    return Math.round(pts * 1000) / 10; // return as percentage
-  };
+  // Use centralized PTRS engine
+  const ptrsResult = calculatePTRS(therapeuticArea, currentPhase, {
+    mechanismNovelty: mechanismNovelty[0],
+    endpointClarity: endpointClarity[0],
+    priorTrialData: priorTrialData[0],
+    sponsorExperience: sponsorExperience[0],
+    regulatoryPrecedent: regulatoryPrecedent[0],
+    safetyProfile: safetyProfile[0],
+  });
 
-  // Calculate PRS: basePRS(TA) * avg(slider multipliers for 3 PRS factors)
-  // Uses asymmetric multiplier when base rate >= 0.80
-  const calculatePRS = () => {
-    const prsData = prsBaseRates[therapeuticArea] || prsBaseRates.other;
-    const baseRate = prsData.rate;
-    const useAsymmetric = prsData.asymmetric;
-    
-    const getMult = useAsymmetric ? getAsymmetricMultiplier : getSliderMultiplier;
-    
-    const modAvg = (
-      getMult(sponsorExperience[0]) +
-      getMult(regulatoryPrecedent[0]) +
-      getMult(safetyProfile[0])
-    ) / 3;
-    
-    const prs = Math.min(0.98, Math.max(0.10, baseRate * modAvg));
-    return Math.round(prs * 1000) / 10; // return as percentage
-  };
-
-  const pts = calculatePTS();
-  const prs = calculatePRS();
-  const ptrs = Math.round((pts / 100) * prs * 10) / 10;
+  const pts = ptrsResult.pts_pct;
+  const prs = ptrsResult.prs_pct;
+  const ptrs = ptrsResult.ptrs_pct;
 
   const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
 
@@ -673,8 +583,9 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-blue-600">PTS (Technical Success)</p>
-                    <p className="text-xs text-muted-foreground mt-1">Probability of meeting clinical endpoints</p>
+                    <p className="text-sm font-medium text-blue-600">PTS — Phase Transition Success</p>
+                    <p className="text-xs text-muted-foreground mt-1">Probability of advancing from current phase (next gate transition)</p>
+                    <p className="text-xs text-muted-foreground">Base rate: {(ptrsResult.basePTS * 100).toFixed(0)}% × {ptrsResult.ptsModifier}x modifier</p>
                   </div>
                   <div className="text-3xl font-bold text-blue-600">{pts}%</div>
                 </div>
@@ -688,8 +599,9 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-green-600">PRS (Regulatory Success)</p>
-                    <p className="text-xs text-muted-foreground mt-1">Probability of regulatory approval</p>
+                    <p className="text-sm font-medium text-green-600">PRS — Regulatory Approval</p>
+                    <p className="text-xs text-muted-foreground mt-1">Probability of NDA/BLA approval given submission · Source: BioQuill empirical data (14,000 trials)</p>
+                    <p className="text-xs text-muted-foreground">Base rate: {(ptrsResult.basePRS * 100).toFixed(0)}% × {ptrsResult.prsModifier}x modifier{ptrsResult.basePRS >= 0.80 ? ' (asymmetric)' : ''}</p>
                   </div>
                   <div className="text-3xl font-bold text-green-600">{prs}%</div>
                 </div>
@@ -720,9 +632,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
               <strong>Formula:</strong> PTRS = PTS × PRS = {pts}% × {prs}% = <strong>{ptrs}%</strong>
             </p>
             <p className="text-xs text-muted-foreground mt-2">
-              {calculationMode === "molecule" && selectedMolecule 
-                ? `This calculation uses the profile data from ${selectedMolecule.name} to pre-populate adjustment factors.`
-                : "This calculator provides estimated probabilities based on historical industry data and the parameters you've selected."}
+              PTS based on BIO/Norstella phase transition rates (2011–2023). PRS based on BioQuill empirical approval outcomes from 14,000-trial dataset. Slider inputs modify base rates as multipliers — 50% = no change from industry average.
             </p>
           </div>
 
