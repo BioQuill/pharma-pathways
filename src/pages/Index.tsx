@@ -36,6 +36,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 import topBarLogo from "@/assets/top-bar-logo.png";
 import topBarImage from "@/assets/bioquill-top-bar.png";
+import bioquillEmblem from "@/assets/bioquill-emblem.png";
 import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
@@ -861,6 +862,7 @@ const IndexInner = () => {
     { value: 'top-100', label: 'Top 100', icon: Target },
     { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
     { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
+    { value: 'monte-carlo-hub', label: 'Monte Carlo Simulation', icon: Activity },
   ] as const;
 
   type AreaKey = keyof typeof areaConfig;
@@ -954,8 +956,8 @@ const IndexInner = () => {
         <div className="flex items-center justify-between h-full px-0">
           {/* Left: Logo circle + wordmark + tagline */}
           <div className="flex items-center gap-2.5 pl-4 shrink-0">
-            <div className="flex items-center justify-center rounded-full bg-[#1A1A1A] overflow-visible shrink-0" style={{ width: 56, height: 56, marginTop: -4, marginBottom: -4 }}>
-              <img src={topBarLogo} alt="BiOQUILL emblem" className="w-9 h-9 object-contain" />
+            <div className="flex items-center justify-center rounded-full overflow-hidden shrink-0" style={{ width: 56, height: 56, marginTop: -4, marginBottom: -4 }}>
+              <img src={bioquillEmblem} alt="BiOQUILL emblem" className="w-full h-full object-cover" />
             </div>
             <span className="font-bold text-xl tracking-tight text-[#1A1A1A]" style={{ letterSpacing: '-0.02em' }}>BiOQUILL™</span>
             {/* Separator + Tagline */}
@@ -1884,121 +1886,6 @@ const IndexInner = () => {
             {/* PTRS Alert System */}
             <PTRSAlertSystem molecules={allMolecules} />
 
-            {/* Monte Carlo PTRS Simulation */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Monte Carlo PTRS Simulation
-                </CardTitle>
-                <CardDescription>Probability distributions for success outcomes with configurable uncertainty</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSMonteCarloIntegration />
-              </CardContent>
-            </Card>
-
-            {/* Monte Carlo Comparison */}
-            <Card className="border-l-4 border-l-blue-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-blue-500" />
-                  Monte Carlo Distribution Comparison
-                </CardTitle>
-                <CardDescription>Compare PTRS probability distributions across multiple molecules</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSMonteCarloComparison molecules={allMolecules} />
-              </CardContent>
-            </Card>
-
-            {/* Stress Testing */}
-            <Card className="border-l-4 border-l-destructive">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-destructive" />
-                  Monte Carlo Stress Testing
-                </CardTitle>
-                <CardDescription>Simulate extreme scenarios and assess PTRS resilience</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSStressTesting molecules={allMolecules} />
-              </CardContent>
-            </Card>
-
-            {/* Portfolio Stress Test */}
-            <Card className="border-l-4 border-l-orange-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-orange-500" />
-                  Portfolio Stress Test
-                </CardTitle>
-                <CardDescription>Run all stress scenarios across your watchlist to identify vulnerable molecules</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSPortfolioStressTest molecules={allMolecules} />
-              </CardContent>
-            </Card>
-
-            {/* Monte Carlo Convergence Analysis */}
-            <Card className="border-l-4 border-l-purple-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-purple-500" />
-                  Monte Carlo Convergence Analysis
-                </CardTitle>
-                <CardDescription>Analyze simulation accuracy and find optimal iteration settings</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <MonteCarloConvergenceAnalysis molecules={allMolecules} />
-              </CardContent>
-            </Card>
-
-            {/* Portfolio Optimization */}
-            <Card className="border-l-4 border-l-green-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                  Portfolio Optimization
-                </CardTitle>
-                <CardDescription>Optimize molecule mix to minimize vulnerability while maximizing expected returns</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSPortfolioOptimization molecules={allMolecules} />
-              </CardContent>
-            </Card>
-
-            {/* Portfolio Rebalancing Tool */}
-            <Card className="border-l-4 border-l-teal-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-teal-500" />
-                  Portfolio Rebalancing
-                </CardTitle>
-                <CardDescription>Suggest weight adjustments when market conditions or PTRS scores change over time</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSPortfolioRebalancing molecules={allMolecules} />
-              </CardContent>
-            </Card>
-
-            {/* Rebalancing History */}
-            <PTRSRebalancingHistory molecules={allMolecules} />
-
-            {/* Custom Scenario Builder */}
-            <Card className="border-l-4 border-l-indigo-500">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-indigo-500" />
-                  Custom Scenario Builder
-                </CardTitle>
-                <CardDescription>Define custom stress scenarios with adjustable impact parameters for each PTRS factor</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSCustomScenarioBuilder molecules={allMolecules} />
-              </CardContent>
-            </Card>
-
             {/* Historical PTRS Trend Lines */}
             <Card>
               <CardHeader>
@@ -2306,6 +2193,129 @@ const IndexInner = () => {
           {/* Top 50 Small Cap Firms Tab */}
           <TabsContent value="top-50-smallcap" className="space-y-6">
             <Top50SmallCapFirms />
+          </TabsContent>
+
+          {/* Monte Carlo Simulation Hub Tab */}
+          <TabsContent value="monte-carlo-hub" className="space-y-6">
+            <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
+              <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Activity className="h-5 w-5 text-primary" /> Monte Carlo Simulation Engine</h2>
+              <p className="text-sm text-muted-foreground">Cross-model uncertainty analysis: PTRS → LPI → PA Index → Peak Sales → BB Prob. Outputs P5 / P50 / P95 on each model + final composite.</p>
+            </div>
+
+            {/* Monte Carlo PTRS Simulation */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Monte Carlo PTRS Simulation
+                </CardTitle>
+                <CardDescription>Probability distributions for success outcomes with configurable uncertainty</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloIntegration />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Comparison */}
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-blue-500" />
+                  Monte Carlo Distribution Comparison
+                </CardTitle>
+                <CardDescription>Compare PTRS probability distributions across multiple molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloComparison molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Stress Testing */}
+            <Card className="border-l-4 border-l-destructive">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  Monte Carlo Stress Testing
+                </CardTitle>
+                <CardDescription>Simulate extreme scenarios and assess PTRS resilience</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSStressTesting molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Stress Test */}
+            <Card className="border-l-4 border-l-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-orange-500" />
+                  Portfolio Stress Test
+                </CardTitle>
+                <CardDescription>Run all stress scenarios across your watchlist to identify vulnerable molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioStressTest molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Convergence Analysis */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-purple-500" />
+                  Monte Carlo Convergence Analysis
+                </CardTitle>
+                <CardDescription>Analyze simulation accuracy and find optimal iteration settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MonteCarloConvergenceAnalysis molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Optimization */}
+            <Card className="border-l-4 border-l-green-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                  Portfolio Optimization
+                </CardTitle>
+                <CardDescription>Optimize molecule mix to minimize vulnerability while maximizing expected returns</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioOptimization molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Rebalancing Tool */}
+            <Card className="border-l-4 border-l-teal-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-teal-500" />
+                  Portfolio Rebalancing
+                </CardTitle>
+                <CardDescription>Suggest weight adjustments when market conditions or PTRS scores change over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioRebalancing molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Rebalancing History */}
+            <PTRSRebalancingHistory molecules={allMolecules} />
+
+            {/* Custom Scenario Builder */}
+            <Card className="border-l-4 border-l-indigo-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-indigo-500" />
+                  Custom Scenario Builder
+                </CardTitle>
+                <CardDescription>Define custom stress scenarios with adjustable impact parameters for each PTRS factor</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSCustomScenarioBuilder molecules={allMolecules} />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Pricing & Access Markets Overview Tab */}
