@@ -2105,6 +2105,7 @@ const IndexInner = () => {
 
           {/* Monte Carlo Simulation Hub Tab */}
           <TabsContent value="monte-carlo-hub" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
               <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Activity className="h-5 w-5 text-primary" /> Monte Carlo Simulation Engine</h2>
               <p className="text-sm text-muted-foreground">Cross-model uncertainty analysis: PTRS → LPI → PA Index → Peak Sales → BB Prob. Outputs P5 / P50 / P95 on each model + final composite.</p>
