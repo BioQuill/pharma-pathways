@@ -2256,6 +2256,7 @@ const IndexInner = () => {
 
           {/* PA Combined Comparison Tab */}
           <TabsContent value="pa-comparison" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <PAModelComparisonMode />
           </TabsContent>
 
