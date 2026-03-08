@@ -583,8 +583,9 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-blue-600">PTS (Technical Success)</p>
-                    <p className="text-xs text-muted-foreground mt-1">Probability of meeting clinical endpoints</p>
+                    <p className="text-sm font-medium text-blue-600">PTS — Phase Transition Success</p>
+                    <p className="text-xs text-muted-foreground mt-1">Probability of advancing from current phase (next gate transition)</p>
+                    <p className="text-xs text-muted-foreground">Base rate: {(ptrsResult.basePTS * 100).toFixed(0)}% × {ptrsResult.ptsModifier}x modifier</p>
                   </div>
                   <div className="text-3xl font-bold text-blue-600">{pts}%</div>
                 </div>
@@ -598,8 +599,9 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-green-600">PRS (Regulatory Success)</p>
-                    <p className="text-xs text-muted-foreground mt-1">Probability of regulatory approval</p>
+                    <p className="text-sm font-medium text-green-600">PRS — Regulatory Approval</p>
+                    <p className="text-xs text-muted-foreground mt-1">Probability of NDA/BLA approval given submission · Source: BioQuill empirical data (14,000 trials)</p>
+                    <p className="text-xs text-muted-foreground">Base rate: {(ptrsResult.basePRS * 100).toFixed(0)}% × {ptrsResult.prsModifier}x modifier{ptrsResult.basePRS >= 0.80 ? ' (asymmetric)' : ''}</p>
                   </div>
                   <div className="text-3xl font-bold text-green-600">{prs}%</div>
                 </div>
