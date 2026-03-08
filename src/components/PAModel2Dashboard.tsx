@@ -159,7 +159,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "7. Rheumatology",
+    ta: "7. Musculoskeletal & Rheumatology",
     benchmarks: [
       { molecule: "Rinvoq (upadacitinib)", indication: "RA", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£28K", keyEndpoint: "ACR 50: 45%, DAS28 remission 30%", successFactor: "JAK1 selective" },
       { molecule: "Olumiant (baricitinib)", indication: "RA, AD", usApproval: "Yes", niceRec: "Yes", gba: "Minor (4)", icer: "~£24K", keyEndpoint: "ACR 20: 70%", successFactor: "COVID EUA boosted profile" },
