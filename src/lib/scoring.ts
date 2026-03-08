@@ -243,7 +243,7 @@ export function calculateTTMMonths(
   return Math.max(0, monthsRemaining);
 }
 
-export { normalizeTherapeuticArea };
+// normalizeTherapeuticArea is exported above
 
 // Generate empty market projections for failed trials
 export function generateFailedTrialMarketProjections(): MarketData[] {
