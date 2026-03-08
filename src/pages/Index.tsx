@@ -2442,4 +2442,10 @@ const IndexInner = () => {
   );
 };
 
+const Index = () => (
+  <SimulatorMoleculeProvider>
+    <IndexInner />
+  </SimulatorMoleculeProvider>
+);
+
 export default Index;
