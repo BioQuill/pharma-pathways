@@ -37,6 +37,7 @@ import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
 import topBarLogo from "@/assets/top-bar-logo.png";
 import topBarImage from "@/assets/bioquill-top-bar.png";
 import bioquillEmblem from "@/assets/bioquill-emblem.png";
+import bioquillFullLogo from "@/assets/bioquill-full-logo.png";
 import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
 import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
 import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
@@ -955,13 +956,10 @@ const IndexInner = () => {
       <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 48, backgroundColor: '#F5C518', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
         <div className="flex items-center justify-between h-full px-0">
           {/* Left: Logo circle + wordmark + tagline */}
-          <div className="flex items-center gap-2.5 pl-4 shrink-0">
-            <div className="flex items-center justify-center rounded-full overflow-hidden shrink-0" style={{ width: 56, height: 56, marginTop: -4, marginBottom: -4 }}>
-              <img src={bioquillEmblem} alt="BiOQUILL emblem" className="w-full h-full object-cover" />
-            </div>
-            <span className="font-bold text-xl tracking-tight text-[#1A1A1A]" style={{ letterSpacing: '-0.02em' }}>BiOQUILL™</span>
+          <div className="flex items-center shrink-0 pl-2">
+            <img src={bioquillFullLogo} alt="BiOQUILL logo" style={{ height: 42, width: 'auto' }} />
             {/* Separator + Tagline */}
-            <div className="hidden md:flex items-center gap-3 ml-1">
+            <div className="hidden md:flex items-center gap-3 ml-5">
               <div style={{ width: 1, height: 22, background: 'rgba(26,26,26,0.25)' }} />
               <div className="flex flex-col justify-center leading-tight">
                 <span className="text-[13px] font-medium text-[#1A1A1A]">Precision intelligence.</span>
