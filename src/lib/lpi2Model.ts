@@ -340,7 +340,7 @@ function getBiomarkerAvailabilityScore(ta: string): number {
 
 function getAnimalModelRelevanceScore(ta: string): number {
   // Some TAs have less translatable animal models
-  const lowTranslatability = ['psychiatry/mental health', 'neurology/cns', 'pain management/anesthesia'];
+  const lowTranslatability = ['Psychiatry & Mental Health', 'Neurology', 'Pain & Anaesthesia'];
   if (lowTranslatability.includes(ta)) return 35 + Math.random() * 30;
   return 55 + Math.random() * 35;
 }
