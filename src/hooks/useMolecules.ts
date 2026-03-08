@@ -313,28 +313,5 @@ export function getCachedMolecules(): MoleculeProfile[] {
   return cachedMolecules || [];
 }
 
-/** Canonical TA list for dropdowns — matches JSON field values exactly */
-export const CANONICAL_TA_LIST = [
-  'Oncology & Hematology',
-  'Other',
-  'Infectious Disease',
-  'Neurology',
-  'Immunology & Inflammation',
-  'Endocrinology & Metabolism',
-  'Cardiovascular',
-  'Respiratory & Pulmonary',
-  'Ophthalmology',
-  'Psychiatry & Mental Health',
-  'Vaccines & Preventive',
-  'Dermatology',
-  'Nephrology & Renal',
-  'Rare Disease & Orphan',
-  'Musculoskeletal',
-  'Gastroenterology & Hepatology',
-  "Women's Health",
-  'Pain & Anaesthesia',
-  'Hematology (non-oncology)',
-  'Pediatrics',
-  'Urology',
-  'Dental & Oral Health',
-];
+/** Canonical TA list for dropdowns — matches the 20 official names exactly */
+export { CANONICAL_TAS as CANONICAL_TA_LIST } from '@/lib/taCanonical';
