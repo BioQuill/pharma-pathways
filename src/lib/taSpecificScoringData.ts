@@ -1656,7 +1656,7 @@ export const taSpecificScoringData: TASpecificScoring[] = [
     ],
   },
   {
-    taName: "16. Pediatrics (Cross-Cutting)",
+    taName: "Pediatrics",
     marketScorings: [
       {
         market: "US Markets",
