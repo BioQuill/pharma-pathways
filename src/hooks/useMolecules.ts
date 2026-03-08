@@ -314,7 +314,7 @@ export function getCachedMolecules(): MoleculeProfile[] {
   return cachedMolecules || [];
 }
 
-/** Canonical TA list for dropdowns */
+/** Canonical TA list for dropdowns — matches JSON field values exactly */
 export const CANONICAL_TA_LIST = [
   'Oncology & Hematology',
   'Other',
@@ -332,8 +332,8 @@ export const CANONICAL_TA_LIST = [
   'Rare Disease & Orphan',
   'Musculoskeletal',
   'Gastroenterology & Hepatology',
-  'Womens Health & Reproductive',
-  'Pain & Anesthesia',
+  "Women's Health",
+  'Pain & Anaesthesia',
   'Hematology (non-oncology)',
   'Pediatrics',
   'Urology',
