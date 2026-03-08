@@ -303,20 +303,23 @@ score where lower TTM = higher efficiency score.`}</FormulaBlock>
             </Card>
 
             <Card>
-              <CardHeader><CardTitle>Verdict Thresholds</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Race to Market Rank</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="p-4 rounded-lg bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30 text-center">
-                    <div className="text-2xl font-bold text-[hsl(142,76%,36%)]">75–100</div>
-                    <div className="font-semibold mt-1">STRONG BUY</div>
+                  <div className="p-4 rounded-lg bg-[hsl(45,90%,50%)]/10 border border-[hsl(45,90%,40%)]/30 text-center">
+                    <div className="text-4xl">🥇</div>
+                    <div className="text-2xl font-bold" style={{color:'hsl(45,90%,40%)'}}>67–100</div>
+                    <div className="font-semibold mt-1">Rank 1</div>
                   </div>
-                  <div className="p-4 rounded-lg bg-[hsl(45,93%,47%)]/10 border border-[hsl(45,93%,47%)]/30 text-center">
-                    <div className="text-2xl font-bold text-[hsl(45,93%,47%)]">55–74</div>
-                    <div className="font-semibold mt-1">INTERESTING</div>
+                  <div className="p-4 rounded-lg bg-[hsl(0,0%,75%)]/10 border border-[hsl(0,0%,65%)]/30 text-center">
+                    <div className="text-4xl">🥈</div>
+                    <div className="text-2xl font-bold" style={{color:'hsl(0,0%,55%)'}}>34–66</div>
+                    <div className="font-semibold mt-1">Rank 2</div>
                   </div>
-                  <div className="p-4 rounded-lg bg-[hsl(0,72%,51%)]/10 border border-[hsl(0,72%,51%)]/30 text-center">
-                    <div className="text-2xl font-bold text-[hsl(0,72%,51%)]">0–54</div>
-                    <div className="font-semibold mt-1">CAUTION</div>
+                  <div className="p-4 rounded-lg bg-[hsl(30,60%,45%)]/10 border border-[hsl(30,60%,35%)]/30 text-center">
+                    <div className="text-4xl">🥉</div>
+                    <div className="text-2xl font-bold" style={{color:'hsl(30,60%,35%)'}}>0–33</div>
+                    <div className="font-semibold mt-1">Rank 3</div>
                   </div>
                 </div>
               </CardContent>
