@@ -105,7 +105,7 @@ const taBenchmarkingData = [
     },
   },
   {
-    ta: "4. Psychiatry/Mental Health",
+    ta: "4. Psychiatry & Mental Health",
     benchmarks: [
       { molecule: "Spravato (esketamine)", indication: "TRD", usApproval: "Yes", niceRec: "Restricted", gba: "Non-quantifiable (5)", icer: "~£52K", keyEndpoint: "MADRS improvement", successFactor: "Rapid-acting, intranasal, REMS" },
       { molecule: "Auvelity (dex/bupropion)", indication: "MDD", usApproval: "Yes", niceRec: "Not reviewed", gba: "Pending", icer: "~$65K", keyEndpoint: "Remission at week 2", successFactor: "Rapid onset, oral" },
