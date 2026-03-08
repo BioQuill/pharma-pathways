@@ -1256,13 +1256,13 @@ const Index = () => {
                           {/* Left: Text rows */}
                           <div className="flex-1 min-w-0 space-y-1">
                             {/* Row 1: Drug Name */}
-                            <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(var(--foreground))]">{molecule.name}</h3>
-                            {/* Approval Status Badge */}
+                            <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                            {/* Row 2: Approval Status Badge */}
                             {(() => {
                               const status = (molecule as any)._raw?.approval_status;
                               if (!status || status === 'ACTIVE_PIPELINE') return null;
                               const badgeConfig: Record<string, { color: string; text: string }> = {
-                                'APPROVED_2024': { color: 'bg-[hsl(142,76%,36%)] text-white', text: '✓ Approved' },
+                                'APPROVED_2024': { color: 'bg-[hsl(142,76%,36%)] text-white', text: '✓ APPROVED' },
                                 'LIKELY_IN_REVIEW': { color: 'bg-blue-500 text-white', text: '⏳ In Review' },
                                 'RECENTLY_COMPLETED_PH3': { color: 'bg-amber-500 text-white', text: 'Completed Ph3' },
                                 'COMPLETED_PH3': { color: 'bg-slate-400 text-white', text: 'Completed Ph3' },
@@ -1271,7 +1271,7 @@ const Index = () => {
                               const cfg = badgeConfig[status] || badgeConfig['COMPLETED_PH3'];
                               return <Badge className={`text-[10px] px-1.5 py-0 ${cfg.color}`}>{cfg.text}</Badge>;
                             })()}
-                            {/* Row 2: Sponsor & Ticker */}
+                            {/* Row 3: Sponsor */}
                             <div className="flex items-center gap-2 text-sm">
                               <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
                               {mfg?.ticker && (
@@ -1282,27 +1282,27 @@ const Index = () => {
                                 </a>
                               )}
                             </div>
-                            {/* Row 3: NCT ID | Phase */}
+                            {/* Row 4: NCT ID | Phase */}
                             <p className="text-xs text-muted-foreground">
                               {molecule.nctId && <span>{molecule.nctId} | </span>}
                               <span className="font-medium">{molecule.phase}</span>
                             </p>
-                            {/* Row 4: Condition | TA */}
+                            {/* Row 5: Conditions | TA */}
                             <p className="text-xs text-muted-foreground">
                               {molecule.indication} | {molecule.therapeuticArea}
                             </p>
-                            {/* Row 5: Study Title */}
+                            {/* Row 6: Study Title */}
                             {molecule.trialName && (
                               <p className="text-xs text-muted-foreground italic line-clamp-1" title={molecule.trialName}>
                                 {molecule.trialName}
                               </p>
                             )}
-                            {/* Row 6: Start Date | Completion Date | Status */}
+                            {/* Row 7: Start Date | Completion Date | Status */}
                             {((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
                               <p className="text-xs text-muted-foreground">
-                                {(molecule as any)._raw.start_date && <span>Start: {(molecule as any)._raw.start_date}</span>}
-                                {(molecule as any)._raw.completion_date && <span> | End: {(molecule as any)._raw.completion_date}</span>}
-                                {(molecule as any)._raw.status && <span> | Status: <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+                                {(molecule as any)._raw.start_date && <span>{(molecule as any)._raw.start_date}</span>}
+                                {(molecule as any)._raw.completion_date && <span> | {(molecule as any)._raw.completion_date}</span>}
+                                {(molecule as any)._raw.status && <span> | <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
                               </p>
                             )}
                           </div>
