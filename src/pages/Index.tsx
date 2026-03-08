@@ -949,12 +949,44 @@ const IndexInner = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Top Bar Image + Navy Navigation Bar */}
-      <header className="sticky top-0 z-10 w-full">
-        {/* Top Bar - using uploaded brand image, 1-1.2cm height */}
-        <div className="w-full" style={{ height: '38px' }}>
-          <img src={topBarImage} alt="BiOQUILL - Precision intelligence. From pipeline to patients." className="w-full h-full object-cover object-bottom" />
-        </div>
+      {/* BioQuill Yellow Top Bar per bioquill_topbar_config.json */}
+      <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 48, backgroundColor: '#F5C518', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
+        <div className="flex items-center justify-between h-full px-0">
+          {/* Left: Logo circle + wordmark */}
+          <div className="flex items-center gap-2.5 pl-4 shrink-0">
+            <div className="flex items-center justify-center rounded-full bg-[#1A1A1A] overflow-visible shrink-0" style={{ width: 56, height: 56, marginTop: -4, marginBottom: -4 }}>
+              <img src={topBarLogo} alt="BiOQUILL emblem" className="w-9 h-9 object-contain" />
+            </div>
+            <span className="font-bold text-xl tracking-tight text-[#1A1A1A]" style={{ letterSpacing: '-0.02em' }}>BiOQUILL™</span>
+          </div>
+
+          {/* Center: Nav links */}
+          <nav className="absolute left-1/2 -translate-x-1/2 flex items-center gap-8">
+            {[
+              { label: 'Platform', mode: 'platform' as const },
+              { label: 'Methodology', mode: 'methodology' as const },
+              { label: 'Strategy Hub', mode: 'strategy-hub' as const },
+              { label: 'Pricing', mode: 'pricing' as const },
+            ].map(item => (
+              <button
+                key={item.mode}
+                onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('lpi-2'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
+                className={`text-sm font-medium whitespace-nowrap transition-colors ${topNavMode === item.mode ? 'text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-0.5' : 'text-[#1A1A1A]/80 hover:text-[#1A1A1A]'}`}
+              >
+                {item.label}
+              </button>
+            ))}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="text-sm font-medium text-[#1A1A1A]/80 hover:text-[#1A1A1A] transition-colors flex items-center gap-1.5">
+                  <Search className="h-3.5 w-3.5" /> Search
+                  {(searchQuery || phaseFilter !== 'all') && (
+                    <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-[#1A1A1A]/15 text-[#1A1A1A]">
+                      {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : ''].filter(Boolean).length}
+                    </Badge>
+                  )}
+                </button>
+              </PopoverTrigger>
         
         {/* Top Navy Navigation Bar */}
         <div className="bg-[#0E1D35] w-full">
