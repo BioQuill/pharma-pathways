@@ -306,8 +306,8 @@ function scoreTeamAndSponsor(
 
 function getGeneticEvidenceScore(ta: string, indication: string): number {
   // TAs with strong genetic evidence base
-  const highGeneticTA = ['oncology/hematology', 'rare diseases/orphan drugs', 'immunology & inflammation'];
-  const mediumGeneticTA = ['cardiovascular', 'neurology/cns', 'endocrinology & metabolism'];
+  const highGeneticTA = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Immunology & Inflammation'];
+  const mediumGeneticTA = ['Cardiovascular', 'Neurology', 'Endocrinology & Metabolism'];
   
   if (highGeneticTA.includes(ta)) return 75 + Math.random() * 20;
   if (mediumGeneticTA.includes(ta)) return 55 + Math.random() * 25;
