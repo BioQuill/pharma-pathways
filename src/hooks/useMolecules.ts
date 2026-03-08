@@ -17,11 +17,9 @@ const DATA_URL =
 let cachedMolecules: MoleculeProfile[] | null = null;
 let fetchPromise: Promise<MoleculeProfile[]> | null = null;
 
-// TA normalisation map — consolidates all variants to a single canonical name
+// TA normalisation map — keep JSON values as-is, only fix true duplicates
 const TA_CANONICAL: Record<string, string> = {
-  'Pain & Anaesthesia': 'Pain & Anesthesia',
   'Musculoskeletal & Rheumatology': 'Musculoskeletal',
-  "Women's Health": 'Womens Health & Reproductive',
 };
 
 // Phase normalisation map
