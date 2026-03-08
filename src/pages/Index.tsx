@@ -1000,7 +1000,7 @@ const IndexInner = () => {
           ))}
           <Popover>
             <PopoverTrigger asChild>
-              <button className="text-sm font-medium text-white/70 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
+              <button className="text-sm font-bold text-white/80 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
                 <Search className="h-3.5 w-3.5" /> Search
                 {(searchQuery || phaseFilter !== 'all') && (
                   <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
