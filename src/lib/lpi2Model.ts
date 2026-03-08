@@ -364,7 +364,7 @@ function getProtocolDesignScore(phase: string): number {
 }
 
 function getOrphanStatusScore(ta: string, indication: string): number {
-  const orphanLikely = ['rare diseases/orphan drugs', 'oncology/hematology', 'neurology/cns'];
+  const orphanLikely = ['Rare Disease & Orphan', 'Oncology & Hematology', 'Neurology'];
   if (orphanLikely.includes(ta)) return 70 + Math.random() * 25;
   return 30 + Math.random() * 40;
 }
