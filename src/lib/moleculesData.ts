@@ -457,7 +457,7 @@ export const additionalMolecules: MoleculeProfile[] = [
     trialName: "MELODY/MEDLEY",
     phase: "Approved",
     indication: "RSV Prevention in Infants",
-    therapeuticArea: "Infectious Diseases",
+    therapeuticArea: "Infectious Disease",
     company: "Sanofi/AstraZeneca",
     companyTrackRecord: 'fast',
     nctId: "NCT03959488",
