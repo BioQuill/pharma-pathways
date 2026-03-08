@@ -957,7 +957,7 @@ const IndexInner = () => {
         <div className="flex items-center justify-between h-full px-0">
           {/* Left: Logo circle + wordmark + tagline */}
           <div className="flex items-center shrink-0 pl-2">
-            <img src={bioquillFullLogo} alt="BiOQUILL logo" style={{ height: 42, width: 'auto' }} />
+            <img src={bioquillFullLogo} alt="BiOQUILL logo" style={{ height: 48, width: 'auto' }} />
             {/* Separator + Tagline */}
             <div className="hidden md:flex items-center gap-3 ml-5">
               <div style={{ width: 1, height: 22, background: 'rgba(26,26,26,0.25)' }} />
