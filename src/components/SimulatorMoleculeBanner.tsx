@@ -1,6 +1,6 @@
 import { Pill, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useSimulatorMolecule } from '@/contexts/SimulatorMoleculeContext';
+import { useSessionMolecule } from '@/contexts/SessionMoleculeContext';
 import { MoleculePicker } from '@/components/MoleculePicker';
 import { type MoleculeProfile } from '@/lib/moleculesData';
 
