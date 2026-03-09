@@ -822,7 +822,8 @@ const IndexInner = () => {
     }
   };
 
-  const activeMolecule = allMolecules.find(m => m.id === selectedMolecule);
+  // DD Report molecule: prefer locally-selected (Full Analysis click), fallback to session molecule
+  const activeMolecule = allMolecules.find(m => m.id === selectedMolecule) || simulatorMolecule;
 
   if (moleculesLoading) {
     return (
