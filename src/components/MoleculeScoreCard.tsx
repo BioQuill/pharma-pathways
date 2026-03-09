@@ -34,9 +34,8 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const lpi3Result = molecule ? calculateLPI3ForMolecule(molecule) : null;
   const lpi3Score = lpi3Result ? Math.round(lpi3Result.calibratedProbability * 100) : overallScore;
   const ti = molecule ? getTherapeuticIndexForMolecule(molecule) : null;
-  const ttmMonthsVal = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
-  const ttmEff = ttmMonthsVal !== null ? Math.max(0, Math.min(100, 100 - ((ttmMonthsVal - 1) * (100 / 99)))) : 50;
-  const compScoreVal = Math.round(overallScore * 0.6 + ttmEff * 0.4);
+  const ttmMonthsVal = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, molecule?.approval_status || '', molecule?.status || '', molecule?.study_title || molecule?.trialName || '');
+  const compScoreVal = calculateCompositeScore(lpi3Score, ttmMonthsVal, therapeuticArea);
 
   const getDotColor = (value: number, thresholds: [number, number]) => {
     if (value >= thresholds[1]) return 'bg-[hsl(142,76%,36%)]';
