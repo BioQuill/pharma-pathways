@@ -1314,7 +1314,7 @@ export function TAMarketOverview({ molecules }: TAMarketOverviewProps) {
     // Get top 5 molecules by LPI-3 score
     const moleculesWithScores = taMolecules.map((mol) => {
       const lpi3 = calculateLPI3ForMolecule(mol);
-      const ttm = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.marketData);
+      const ttm = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, (mol as any).approval_status || '', (mol as any).status || '', (mol as any).study_title || mol.trialName || '');
       return {
         ...mol,
         lpi3Score: Math.round(lpi3.calibratedProbability * 100),

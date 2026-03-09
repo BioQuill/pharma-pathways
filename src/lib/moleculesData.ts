@@ -63,6 +63,13 @@ export interface MoleculeProfile {
     development?: string;
     additionalInfo?: string[];
   };
+  // Real fields from molecules_master.min.json for model input wiring
+  approval_status?: string;
+  has_results?: boolean;
+  status?: string;
+  study_title?: string;
+  conditions?: string;
+  _raw?: Record<string, any>;
 }
 
 // 20 NEW MOLECULES - One per Therapeutic Area with Full Analysis

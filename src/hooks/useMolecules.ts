@@ -213,9 +213,15 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
     clinicalTrialsSearchTerm: raw.primary_drug || undefined,
     scores,
     marketData,
-    overallScore: recalibratedScore, // Use recalibrated score
+    overallScore: recalibratedScore,
     launchFactors,
     trialName: raw.study_title || undefined,
+    // Top-level real fields for model input wiring (B2)
+    approval_status: approvalStatus,
+    has_results: raw.has_results ?? false,
+    status: raw.status || '',
+    study_title: raw.study_title || '',
+    conditions: raw.conditions || '',
     drugInfo: {
       class: raw.interventions || 'Unknown',
       administration: 'Unknown',
@@ -247,7 +253,7 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
       lpi_label: lpiResult.label,
       lpi_breakdown: lpiResult.breakdown,
     },
-  } as MoleculeProfile & { _raw: any };
+  } as MoleculeProfile;
 }
 
 /** Deduplicate molecules by primary_drug + sponsor, keeping most advanced phase */

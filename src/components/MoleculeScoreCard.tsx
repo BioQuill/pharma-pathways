@@ -60,7 +60,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const timeToBlockbuster = calculateTimeToBlockbuster(marketData);
   const revenueScore = calculateRevenueScore(marketData);
   const ttmPercent = calculateTTMPercent(phase, therapeuticArea, companyTrackRecord, marketData);
-  const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
+  const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, molecule?.approval_status || '', molecule?.status || '', molecule?.study_title || molecule?.trialName || '');
   
   // Calculate composite score using new TA-specific formula:
   // A_norm = (LPI-1)/99, B_norm = (TTM-1)/(B_max-1)
