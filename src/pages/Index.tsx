@@ -77,7 +77,7 @@ import PTRSCustomScenarioBuilder from "@/components/PTRSCustomScenarioBuilder";
 import { PTRSPortfolioRebalancing } from "@/components/PTRSPortfolioRebalancing";
 import PTRSRebalancingHistory from "@/components/PTRSRebalancingHistory";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
 import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
 import { useWatchlist } from "@/hooks/useWatchlist";
