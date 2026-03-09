@@ -157,9 +157,7 @@ export const formatWatermarkDate = (): string => {
 // Get watermark text for PDF reports
 export const getReportWatermark = (companyName?: string, userEmail?: string): string => {
   const date = formatWatermarkDate();
-  const company = companyName || 'Client Company';
-  const email = userEmail || 'user@company.com';
-  return `BioQuill | ${company} | ${email} | Downloaded: ${date} | Licensed for internal use only — redistribution prohibited`;
+  return `BioQuill | bioquill.com | Downloaded: ${date} | Licensed for internal use only — redistribution prohibited`;
 };
 
 // Generate PDF from React-PDF document and trigger download
