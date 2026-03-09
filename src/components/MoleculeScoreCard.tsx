@@ -44,6 +44,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   };
 
   const lpiDot = getDotColor(lpi3Score, [34, 67]);
+  const ttmEff = ttmMonthsVal !== null ? Math.max(0, Math.min(100, 100 - ((ttmMonthsVal - 1) * (100 / 99)))) : 50;
   const ttmDot = ttmMonthsVal !== null ? getDotColor(ttmEff, [34, 67]) : 'bg-muted-foreground';
   const scoreDot = getDotColor(compScoreVal, [34, 67]);
   const tiDot = ti ? (ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]') : 'bg-muted-foreground';
