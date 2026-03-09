@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, X, Pill } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type MoleculeProfile } from '@/lib/moleculesData';
-import { useSimulatorMolecule } from '@/contexts/SimulatorMoleculeContext';
+import { useSessionMolecule } from '@/contexts/SessionMoleculeContext';
 
 interface MoleculePickerProps {
   molecules: MoleculeProfile[];
