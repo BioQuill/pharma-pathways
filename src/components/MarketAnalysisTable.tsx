@@ -6,6 +6,7 @@ import { Globe, Calendar, DollarSign, TrendingUp } from "lucide-react";
 
 interface MarketAnalysisTableProps {
   marketData: MarketData[];
+  approvalStatus?: string;
 }
 
 // Country flag URLs using flagcdn (round format)
@@ -25,7 +26,8 @@ const getFlagUrl = (code: string) => {
   return `https://flagcdn.com/w40/${countryMap[code] || 'xx'}.png`;
 };
 
-export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
+export function MarketAnalysisTable({ marketData, approvalStatus }: MarketAnalysisTableProps) {
+  const isApproved = approvalStatus?.startsWith('APPROVED');
   const formatCurrency = (value: number) => `$${value.toFixed(0)}M`;
   const formatPercent = (value: number) => `${(value * 100).toFixed(0)}%`;
   
@@ -92,7 +94,7 @@ export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
                     <TableCell>
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
-                        {market.estimatedLaunchDate}
+                        {isApproved ? 'Launched' : market.estimatedLaunchDate}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -146,6 +148,9 @@ export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
             </p>
           </div>
         </div>
+        {isApproved && (
+          <p className="text-xs text-muted-foreground italic mt-4 dd-caption">* Projections shown as post-launch revenue benchmarks for comparator reference</p>
+        )}
       </CardContent>
     </Card>
   );

@@ -1453,335 +1453,395 @@ const IndexInner = () => {
                   />
                 )}
                 
-                <MoleculeScoreCard
-                  moleculeName={activeMolecule.name}
-                  trialName={activeMolecule.trialName}
-                  scores={activeMolecule.scores}
-                  phase={activeMolecule.phase}
-                  indication={activeMolecule.indication}
-                  therapeuticArea={activeMolecule.therapeuticArea}
-                  overallScore={activeMolecule.overallScore}
-                  nctId={activeMolecule.nctId}
-                  marketData={activeMolecule.marketData}
-                  companyTrackRecord={activeMolecule.companyTrackRecord}
-                  company={activeMolecule.company}
-                  molecule={activeMolecule}
-                />
-
-
-                {/* Therapeutic Index Analysis Section */}
-                {(() => {
-                  const ti = getTherapeuticIndexForMolecule(activeMolecule);
-                  const tiColor = getTherapeuticIndexColor(ti.classification);
-                  const tiBgColor = getTherapeuticIndexBgColor(ti.classification);
-                  
-                  return (
-                    <Card className="border-l-4 border-l-chart-4">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <ShieldCheck className="h-5 w-5" />
-                          Therapeutic Index (TI) Analysis
-                        </CardTitle>
-                        <CardDescription>
-                          Safety margin assessment based on TD50/ED50 ratio
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          {/* TI Score Display */}
-                          <div className="flex flex-col items-center justify-center p-6 rounded-lg bg-muted/50">
-                            <div className={`text-5xl font-bold ${tiColor}`}>
-                              {ti.value.toFixed(1)}
-                            </div>
-                            <div className="mt-2 text-sm text-muted-foreground">Therapeutic Index</div>
-                            <Badge className={`mt-2 ${tiBgColor} text-white`}>
-                              {ti.classification === 'narrow' ? 'Narrow TI' : ti.classification === 'moderate' ? 'Moderate TI' : 'Wide TI'}
-                            </Badge>
-                          </div>
-                          
-                          {/* TD50/ED50 Values */}
-                          <div className="space-y-4">
-                            <h4 className="font-semibold flex items-center gap-2">
-                              <Activity className="h-4 w-4" />
-                              Dose-Response Parameters
-                            </h4>
-                            <div className="space-y-3">
-                              <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
-                                <div>
-                                  <span className="text-sm font-medium">ED50</span>
-                                  <p className="text-xs text-muted-foreground">Effective Dose 50%</p>
-                                </div>
-                                <span className="text-lg font-semibold text-[hsl(142,76%,36%)]">{ti.ed50} units</span>
-                              </div>
-                              <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
-                                <div>
-                                  <span className="text-sm font-medium">TD50</span>
-                                  <p className="text-xs text-muted-foreground">Toxic Dose 50%</p>
-                                </div>
-                                <span className="text-lg font-semibold text-[hsl(0,72%,51%)]">{ti.td50} units</span>
-                              </div>
-                              <div className="flex justify-between items-center p-3 rounded-md bg-primary/10 border border-primary/20">
-                                <div>
-                                  <span className="text-sm font-medium">Safety Margin</span>
-                                  <p className="text-xs text-muted-foreground">TD50 ÷ ED50</p>
-                                </div>
-                                <span className={`text-lg font-bold ${tiColor}`}>{ti.value.toFixed(1)}x</span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Monitoring & Safety Notes */}
-                          <div className="space-y-4">
-                            <h4 className="font-semibold flex items-center gap-2">
-                              {ti.monitoringRequired ? <AlertTriangle className="h-4 w-4 text-[hsl(45,93%,47%)]" /> : <ShieldCheck className="h-4 w-4 text-[hsl(142,76%,36%)]" />}
-                              Safety Assessment
-                            </h4>
-                            
-                            <div className={`p-4 rounded-md ${ti.monitoringRequired ? 'bg-[hsl(45,93%,47%)]/10 border border-[hsl(45,93%,47%)]/30' : 'bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30'}`}>
-                              <div className="flex items-start gap-2">
-                                {ti.monitoringRequired ? (
-                                  <AlertTriangle className="h-5 w-5 text-[hsl(45,93%,47%)] mt-0.5 shrink-0" />
-                                ) : (
-                                  <ShieldCheck className="h-5 w-5 text-[hsl(142,76%,36%)] mt-0.5 shrink-0" />
-                                )}
-                                <div>
-                                  <p className="font-medium text-sm">
-                                    {ti.monitoringRequired ? 'Monitoring Required' : 'Standard Monitoring Sufficient'}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    {ti.monitoringRequired 
-                                      ? 'Drug level monitoring, dose adjustments, and regular safety assessments recommended'
-                                      : 'Routine clinical monitoring as per standard protocols'}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="p-4 rounded-md bg-muted/30">
-                              <p className="text-sm font-medium mb-1">Clinical Notes</p>
-                              <p className="text-sm text-muted-foreground">{ti.notes}</p>
-                            </div>
-                            
-                            {/* TI Classification Legend */}
-                            <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t">
-                              <p className="font-medium">TI Classification:</p>
-                              <div className="flex gap-4">
-                                <span className="flex items-center gap-1">
-                                  <span className="w-2 h-2 rounded-full bg-[hsl(0,72%,51%)]"></span>
-                                  Narrow (&lt;2)
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <span className="w-2 h-2 rounded-full bg-[hsl(45,93%,47%)]"></span>
-                                  Moderate (2-10)
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <span className="w-2 h-2 rounded-full bg-[hsl(142,76%,36%)]"></span>
-                                  Wide (&gt;10)
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })()}
-
-                <Card className="border-l-4 border-l-primary">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Search className="h-5 w-5" />
-                      Clinical Studies Summary
-                    </CardTitle>
-                    <CardDescription>
-                      View all registered clinical trials for {activeMolecule.name}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex flex-wrap gap-3">
-                        <a
-                          href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Table&limit=25&sort=StudyFirstPostDate`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          View All Trials Table
-                        </a>
-                        <a
-                          href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Map`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
-                        >
-                          <Globe className="h-4 w-4" />
-                          View Trials Map
-                        </a>
-                      </div>
-                      {activeMolecule.trialName && (
-                        <p className="text-sm text-muted-foreground">
-                          Primary trial program: <span className="font-semibold">{activeMolecule.trialName}</span>
-                          {activeMolecule.nctId && (
-                            <> • NCT ID: <a 
-                              href={`https://clinicaltrials.gov/study/${activeMolecule.nctId}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline"
-                            >
-                              {activeMolecule.nctId}
-                            </a></>
-                          )}
-                        </p>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* LPI — Single Source: LPI3ReportCard (uses computeLPI via _raw) */}
-
-                {/* LPI (Launch Probability Index) ML Analysis Card */}
-                <LPI3ReportCard molecule={activeMolecule} />
-                
-                {/* LPI Extended Data - Feature Category Breakdown, Category Weight vs Performance, TA Launch Probability Comparison */}
-                <LPIExtendedReportCard molecule={activeMolecule} />
-                
-                {activeMolecule.launchFactors && (
-                  <LaunchFactorsCard
-                    factors={activeMolecule.launchFactors}
+                {/* Molecule Score Card — always first */}
+                <div className="dd-model-card">
+                  <MoleculeScoreCard
                     moleculeName={activeMolecule.name}
+                    trialName={activeMolecule.trialName}
+                    scores={activeMolecule.scores}
+                    phase={activeMolecule.phase}
+                    indication={activeMolecule.indication}
                     therapeuticArea={activeMolecule.therapeuticArea}
+                    overallScore={activeMolecule.overallScore}
+                    nctId={activeMolecule.nctId}
+                    marketData={activeMolecule.marketData}
+                    companyTrackRecord={activeMolecule.companyTrackRecord}
                     company={activeMolecule.company}
+                    molecule={activeMolecule}
                   />
+                </div>
+
+                {/* ═══ STAGE 1 — CAN IT SUCCEED? ═══ */}
+                <div className="dd-stage-divider">STAGE 1 — CAN IT SUCCEED?</div>
+
+                {/* 1. PTRS Analysis */}
+                <div className="dd-model-card">
+                  <PTRSReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* 2. LPI Analysis */}
+                <div className="dd-model-card">
+                  <LPI3ReportCard molecule={activeMolecule} />
+                </div>
+
+                {/* LPI Extended Data */}
+                <div className="dd-model-card">
+                  <LPIExtendedReportCard molecule={activeMolecule} />
+                </div>
+
+                {/* 3. Therapeutic Index Analysis */}
+                <div className="dd-model-card">
+                  {(() => {
+                    const ti = getTherapeuticIndexForMolecule(activeMolecule);
+                    const tiColor = getTherapeuticIndexColor(ti.classification);
+                    const tiBgColor = getTherapeuticIndexBgColor(ti.classification);
+                    
+                    return (
+                      <Card className="border-l-4 border-l-chart-4">
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2 dd-section-header">
+                            <ShieldCheck className="h-5 w-5" />
+                            Therapeutic Index (TI) Analysis
+                          </CardTitle>
+                          <CardDescription>
+                            Safety margin assessment based on TD50/ED50 ratio
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="flex flex-col items-center justify-center p-6 rounded-lg bg-muted/50 dd-sub-card">
+                              <div className={`text-5xl font-bold dd-data-value ${tiColor}`}>
+                                {ti.value.toFixed(1)}
+                              </div>
+                              <div className="mt-2 text-sm text-muted-foreground dd-data-label">Therapeutic Index</div>
+                              <Badge className={`mt-2 ${tiBgColor} text-white`}>
+                                {ti.classification === 'narrow' ? 'Narrow TI' : ti.classification === 'moderate' ? 'Moderate TI' : 'Wide TI'}
+                              </Badge>
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <h4 className="font-semibold flex items-center gap-2 dd-sub-header">
+                                <Activity className="h-4 w-4" />
+                                Dose-Response Parameters
+                              </h4>
+                              <div className="space-y-3">
+                                <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
+                                  <div>
+                                    <span className="text-sm font-medium">ED50</span>
+                                    <p className="text-xs text-muted-foreground">Effective Dose 50%</p>
+                                  </div>
+                                  <span className="text-lg font-semibold text-[hsl(142,76%,36%)] dd-data-value-sm">{ti.ed50} units</span>
+                                </div>
+                                <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
+                                  <div>
+                                    <span className="text-sm font-medium">TD50</span>
+                                    <p className="text-xs text-muted-foreground">Toxic Dose 50%</p>
+                                  </div>
+                                  <span className="text-lg font-semibold text-[hsl(0,72%,51%)] dd-data-value-sm">{ti.td50} units</span>
+                                </div>
+                                <div className="flex justify-between items-center p-3 rounded-md bg-primary/10 border border-primary/20">
+                                  <div>
+                                    <span className="text-sm font-medium">Safety Margin</span>
+                                    <p className="text-xs text-muted-foreground">TD50 ÷ ED50</p>
+                                  </div>
+                                  <span className={`text-lg font-bold dd-data-value-sm ${tiColor}`}>{ti.value.toFixed(1)}x</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <h4 className="font-semibold flex items-center gap-2 dd-sub-header">
+                                {ti.monitoringRequired ? <AlertTriangle className="h-4 w-4 text-[hsl(45,93%,47%)]" /> : <ShieldCheck className="h-4 w-4 text-[hsl(142,76%,36%)]" />}
+                                Safety Assessment
+                              </h4>
+                              
+                              <div className={`p-4 rounded-md ${ti.monitoringRequired ? 'bg-[hsl(45,93%,47%)]/10 border border-[hsl(45,93%,47%)]/30' : 'bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30'}`}>
+                                <div className="flex items-start gap-2">
+                                  {ti.monitoringRequired ? (
+                                    <AlertTriangle className="h-5 w-5 text-[hsl(45,93%,47%)] mt-0.5 shrink-0" />
+                                  ) : (
+                                    <ShieldCheck className="h-5 w-5 text-[hsl(142,76%,36%)] mt-0.5 shrink-0" />
+                                  )}
+                                  <div>
+                                    <p className="font-medium text-sm">
+                                      {ti.monitoringRequired ? 'Monitoring Required' : 'Standard Monitoring Sufficient'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      {ti.monitoringRequired 
+                                        ? 'Drug level monitoring, dose adjustments, and regular safety assessments recommended'
+                                        : 'Routine clinical monitoring as per standard protocols'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="p-4 rounded-md bg-muted/30">
+                                <p className="text-sm font-medium mb-1">Clinical Notes</p>
+                                <p className="text-sm text-muted-foreground">{ti.notes}</p>
+                              </div>
+                              
+                              <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t dd-caption">
+                                <p className="font-medium">TI Classification:</p>
+                                <div className="flex gap-4">
+                                  <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-[hsl(0,72%,51%)]"></span>
+                                    Narrow (&lt;2)
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-[hsl(45,93%,47%)]"></span>
+                                    Moderate (2-10)
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-[hsl(142,76%,36%)]"></span>
+                                    Wide (&gt;10)
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })()}
+                </div>
+
+                {/* ═══ STAGE 2 — HOW LONG WILL IT TAKE? ═══ */}
+                <div className="dd-stage-divider">STAGE 2 — HOW LONG WILL IT TAKE?</div>
+
+                {/* 5. Regulatory Approval Timeline */}
+                <div className="dd-model-card">
+                  <RegulatoryTimelineChart />
+                </div>
+
+                {/* Regulatory Pathway Calculator — interactive, hidden in PDF */}
+                <div className="pdf-interactive-hide">
+                  <RegulatoryPathwayCalculator />
+                </div>
+                <p className="pdf-interactive-replacement">Interactive regulatory pathway modelling available at bioquill.com</p>
+
+                {/* 6. Clinical Studies Summary */}
+                <div className="dd-model-card">
+                  <Card className="border-l-4 border-l-primary">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 dd-section-header">
+                        <Search className="h-5 w-5" />
+                        Clinical Studies Summary
+                      </CardTitle>
+                      <CardDescription>
+                        View all registered clinical trials for {activeMolecule.name}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {/* Interactive buttons — hidden in PDF */}
+                        <div className="flex flex-wrap gap-3 pdf-interactive-hide">
+                          <a
+                            href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Table&limit=25&sort=StudyFirstPostDate`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            View All Trials Table
+                          </a>
+                          <a
+                            href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Map`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
+                          >
+                            <Globe className="h-4 w-4" />
+                            View Trials Map
+                          </a>
+                        </div>
+                        <p className="pdf-interactive-replacement">Full trial data: ClinicalTrials.gov — {activeMolecule.nctId || 'N/A'}</p>
+                        {activeMolecule.trialName && (
+                          <p className="text-sm text-muted-foreground">
+                            Primary trial program: <span className="font-semibold">{activeMolecule.trialName}</span>
+                            {activeMolecule.nctId && (
+                              <> • NCT ID: <a 
+                                href={`https://clinicaltrials.gov/study/${activeMolecule.nctId}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline"
+                              >
+                                {activeMolecule.nctId}
+                              </a></>
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* ═══ STAGE 3 — IS IT WORTH THE RACE? ═══ */}
+                <div className="dd-stage-divider">STAGE 3 — IS IT WORTH THE RACE?</div>
+
+                {/* 7. Peak Sales Composite Index — via Launch Factors */}
+                {activeMolecule.launchFactors && (
+                  <div className="dd-model-card">
+                    <LaunchFactorsCard
+                      factors={activeMolecule.launchFactors}
+                      moleculeName={activeMolecule.name}
+                      therapeuticArea={activeMolecule.therapeuticArea}
+                      company={activeMolecule.company}
+                    />
+                  </div>
                 )}
-                
-                {/* Investment Score Analysis Card */}
-                <InvestmentScoreReportCard molecule={{
-                  id: activeMolecule.id,
-                  name: activeMolecule.name,
-                  phase: activeMolecule.phase,
-                  therapeuticArea: activeMolecule.therapeuticArea,
-                  indication: activeMolecule.indication,
-                  company: activeMolecule.company,
-                  companyTrackRecord: activeMolecule.companyTrackRecord,
-                }} />
-                
-                {/* PTRS Analysis */}
-                <PTRSReportCard molecule={{
-                  id: activeMolecule.id,
-                  name: activeMolecule.name,
-                  phase: activeMolecule.phase,
-                  therapeuticArea: activeMolecule.therapeuticArea,
-                  company: activeMolecule.company,
-                  companyTrackRecord: activeMolecule.companyTrackRecord,
-                }} />
 
-                {/* CAPM Alpha Signals */}
-                <CAPMReportCard molecule={{
-                  id: activeMolecule.id,
-                  name: activeMolecule.name,
-                  phase: activeMolecule.phase,
-                  therapeuticArea: activeMolecule.therapeuticArea,
-                  company: activeMolecule.company,
-                  companyTrackRecord: activeMolecule.companyTrackRecord,
-                }} />
+                {/* 8. Global Revenue Heat Map — reduced to 80% in PDF */}
+                <div className="dd-model-card dd-heatmap-container">
+                  <MarketHeatMap marketData={activeMolecule.marketData} />
+                </div>
 
-                {/* PA Index Summary */}
-                <PAIndexReportCard molecule={{
-                  id: activeMolecule.id,
-                  name: activeMolecule.name,
-                  phase: activeMolecule.phase,
-                  therapeuticArea: activeMolecule.therapeuticArea,
-                }} />
-
-                {/* Monte Carlo Stress Test */}
-                <MonteCarloReportCard molecule={{
-                  id: activeMolecule.id,
-                  name: activeMolecule.name,
-                  phase: activeMolecule.phase,
-                  therapeuticArea: activeMolecule.therapeuticArea,
-                  company: activeMolecule.company,
-                  companyTrackRecord: activeMolecule.companyTrackRecord,
-                }} />
-                
-                {activeMolecule.patents && activeMolecule.patents.length > 0 && (
-                  <PatentTimeline
-                    moleculeName={activeMolecule.name}
-                    patents={activeMolecule.patents}
-                    regulatoryExclusivity={activeMolecule.regulatoryExclusivity}
+                {/* 9. Global Market Analysis */}
+                <div className="dd-model-card">
+                  <MarketAnalysisTable 
+                    marketData={activeMolecule.marketData} 
+                    approvalStatus={(activeMolecule as any)._raw?.approval_status}
                   />
+                </div>
+
+                {/* ═══ STAGE 4 — HOW TO WIN IT? ═══ */}
+                <div className="dd-stage-divider">STAGE 4 — HOW TO WIN IT?</div>
+
+                {/* 10. CAPM Alpha Signals */}
+                <div className="dd-model-card">
+                  <CAPMReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* 11. Investment Score Analysis */}
+                <div className="dd-model-card">
+                  <InvestmentScoreReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    indication: activeMolecule.indication,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* 12. PA Index Summary */}
+                <div className="dd-model-card">
+                  <PAIndexReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                  }} />
+                </div>
+
+                {/* 13. Monte Carlo Stress Test */}
+                <div className="dd-model-card">
+                  <MonteCarloReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* Optional sections */}
+                {activeMolecule.patents && activeMolecule.patents.length > 0 && (
+                  <div className="dd-model-card">
+                    <PatentTimeline
+                      moleculeName={activeMolecule.name}
+                      patents={activeMolecule.patents}
+                      regulatoryExclusivity={activeMolecule.regulatoryExclusivity}
+                    />
+                  </div>
                 )}
                 
                 {activeMolecule.competitiveLandscape && (
-                  <CompetitiveAnalysis
-                    moleculeName={activeMolecule.name}
-                    landscape={activeMolecule.competitiveLandscape}
-                  />
-                )}
-                
-                <MarketHeatMap marketData={activeMolecule.marketData} />
-                
-                <MarketAnalysisTable marketData={activeMolecule.marketData} />
-                
-                <RegulatoryTimelineChart />
-                
-                <RegulatoryPathwayCalculator />
-                
-                {activeMolecule.hasRetrospective && activeMolecule.retrospectivePhases && (
-                  <RetrospectiveTimeline
-                    moleculeName={activeMolecule.name}
-                    indication={activeMolecule.indication}
-                    sponsor={activeMolecule.company}
-                    phases={activeMolecule.retrospectivePhases}
-                  />
+                  <div className="dd-model-card">
+                    <CompetitiveAnalysis
+                      moleculeName={activeMolecule.name}
+                      landscape={activeMolecule.competitiveLandscape}
+                    />
+                  </div>
                 )}
 
-                {/* Metric Definitions */}
-                <Card className="mt-8 border-t-4 border-t-muted">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Metric Definitions</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-primary">LPI% (Launch Probability Index)</h4>
-                        <p className="text-sm text-muted-foreground">
-                          LPI (Launch Probability Index) estimates the probability this molecule will reach commercial launch, given its current phase, therapeutic area maturity, regulatory pathway designation, and access profile. LPI is NOT purely phase-dependent. A Phase I orphan drug in a consecrated therapeutic area may score higher than a Phase III drug in a novel indication with HTA uncertainty.
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1 italic">Source: BioQuill scoring model v1.0 | Benchmarked against GLP-1 class retrospective validation</p>
-                        <div className="flex items-center gap-4 text-xs mt-2">
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> &gt;75%: High launch probability</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 50-75%: Moderate</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> &lt;30%: Very low</span>
+                {activeMolecule.hasRetrospective && activeMolecule.retrospectivePhases && (
+                  <div className="dd-model-card">
+                    <RetrospectiveTimeline
+                      moleculeName={activeMolecule.name}
+                      indication={activeMolecule.indication}
+                      sponsor={activeMolecule.company}
+                      phases={activeMolecule.retrospectivePhases}
+                    />
+                  </div>
+                )}
+
+                {/* ═══ REFERENCE ═══ */}
+                <div className="dd-stage-divider">REFERENCE</div>
+
+                {/* 14. Metric Definitions — always last */}
+                <div className="dd-model-card">
+                  <Card className="border-t-4 border-t-muted">
+                    <CardHeader>
+                      <CardTitle className="text-lg dd-section-header">Metric Definitions</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-primary dd-sub-header">LPI% (Launch Probability Index)</h4>
+                          <p className="text-sm text-muted-foreground">
+                            LPI (Launch Probability Index) estimates the probability this molecule will reach commercial launch, given its current phase, therapeutic area maturity, regulatory pathway designation, and access profile. LPI is NOT purely phase-dependent. A Phase I orphan drug in a consecrated therapeutic area may score higher than a Phase III drug in a novel indication with HTA uncertainty.
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 italic dd-caption">Source: BioQuill scoring model v1.0 | Benchmarked against GLP-1 class retrospective validation</p>
+                          <div className="flex items-center gap-4 text-xs mt-2">
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> &gt;75%: High launch probability</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 50-75%: Moderate</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> &lt;30%: Very low</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-primary dd-sub-header">Est. TTM (Time To Market)</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Modelled estimate of months from current development stage to first regulatory approval. TTM = Clinical TTM + Regulatory TTM + Access TTM. Based on TA-median benchmarks from 319 approved drugs (FDA + EMA, 2000–2025). All values are estimates with ±6–18 months uncertainty range.
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 italic dd-caption">Source: BioQuill benchmark dataset · "With Results" CTG subset</p>
+                          <div className="flex items-center gap-4 text-xs mt-2">
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Fast (low months)</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> Average</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Slow (high months)</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-primary">Est. TTM (Time To Market)</h4>
+                      <div className="pt-4 border-t">
+                        <h4 className="font-semibold text-primary mb-2 dd-sub-header">BQ Pipeline Score (Composite)</h4>
                         <p className="text-sm text-muted-foreground">
-                          Modelled estimate of months from current development stage to first regulatory approval. TTM = Clinical TTM + Regulatory TTM + Access TTM. Based on TA-median benchmarks from 319 approved drugs (FDA + EMA, 2000–2025). All values are estimates with ±6–18 months uncertainty range.
+                          The BQ Pipeline Score (0–100) is a composite signal reflecting the estimated strategic attractiveness of a molecule from a development and market access perspective. It is NOT a financial return model, clinical efficacy prediction, or regulatory guarantee. It IS a relative signal for pipeline prioritisation and screening.
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1 italic">Source: BioQuill benchmark dataset · "With Results" CTG subset</p>
-                        <div className="flex items-center gap-4 text-xs mt-2">
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Fast (low months)</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> Average</span>
-                          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Slow (high months)</span>
+                        <div className="mt-3 p-3 bg-muted/30 rounded-lg text-xs space-y-1">
+                          <p className="font-semibold">Race to Market Rank:</p>
+                          <p>🥇 <span className="font-bold" style={{color:'hsl(45,90%,40%)'}}>Rank 1 (67–100)</span> — Highest conviction; Phase III+ with favourable regulatory pathway</p>
+                          <p>🥈 <span className="font-bold" style={{color:'hsl(0,0%,55%)'}}>Rank 2 (34–66)</span> — Medium conviction; warrants full due diligence</p>
+                          <p>🥉 <span className="font-bold" style={{color:'hsl(30,60%,35%)'}}>Rank 3 (0–33)</span> — Monitor; revisit at next data cycle</p>
                         </div>
                       </div>
-                    </div>
-                    <div className="pt-4 border-t">
-                      <h4 className="font-semibold text-primary mb-2">BQ Pipeline Score (Composite)</h4>
-                      <p className="text-sm text-muted-foreground">
-                        The BQ Pipeline Score (0–100) is a composite signal reflecting the estimated strategic attractiveness of a molecule from a development and market access perspective. It is NOT a financial return model, clinical efficacy prediction, or regulatory guarantee. It IS a relative signal for pipeline prioritisation and screening.
-                      </p>
-                      <div className="mt-3 p-3 bg-muted/30 rounded-lg text-xs space-y-1">
-                        <p className="font-semibold">Race to Market Rank:</p>
-                        <p>🥇 <span className="font-bold" style={{color:'hsl(45,90%,40%)'}}>Rank 1 (67–100)</span> — Highest conviction; Phase III+ with favourable regulatory pathway</p>
-                        <p>🥈 <span className="font-bold" style={{color:'hsl(0,0%,55%)'}}>Rank 2 (34–66)</span> — Medium conviction; warrants full due diligence</p>
-                        <p>🥉 <span className="font-bold" style={{color:'hsl(30,60%,35%)'}}>Rank 3 (0–33)</span> — Monitor; revisit at next data cycle</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             ) : null}
           </TabsContent>

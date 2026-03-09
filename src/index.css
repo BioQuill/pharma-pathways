@@ -121,3 +121,170 @@ All colors MUST be HSL.
     background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
   }
 }
+
+/* ═══════════════════════════════════════════════
+   PDF EXPORT MODE — applied only during html2canvas capture
+   ═══════════════════════════════════════════════ */
+
+.pdf-export-mode {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+.pdf-export-mode * {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+/* DM Mono for numerical data values */
+.pdf-export-mode .pdf-num,
+.pdf-export-mode [data-pdf-num] {
+  font-family: 'DM Mono', monospace !important;
+}
+
+/* Model section headers — ALL CAPS navy */
+.pdf-export-mode .dd-section-header {
+  text-transform: uppercase !important;
+  font-family: 'Manrope', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  color: #1e3a5f !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Sub-section headers */
+.pdf-export-mode .dd-sub-header {
+  font-family: 'Manrope', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: #1e3a5f !important;
+}
+
+/* Model section cards — universal navy border template */
+.pdf-export-mode .dd-model-card {
+  border: 2.5px solid #1e3a5f !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  background: #ffffff !important;
+  margin-bottom: 24px !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
+/* Sub-sections within a card */
+.pdf-export-mode .dd-sub-card {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  background: #f8fafc !important;
+}
+
+/* "What this means" narrative box */
+.pdf-export-mode .dd-narrative-box {
+  background: #fffbeb !important;
+  border-left: 4px solid #d97706 !important;
+  border-radius: 0 8px 8px 0 !important;
+  padding: 16px 20px !important;
+  margin-top: 16px !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
+.pdf-export-mode .dd-narrative-heading {
+  font-family: 'Manrope', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  color: #b45309 !important;
+}
+
+.pdf-export-mode .dd-narrative-body {
+  font-family: 'Manrope', sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 13px !important;
+  font-style: italic !important;
+  color: #1a1a1a !important;
+}
+
+/* Body text — near black */
+.pdf-export-mode p,
+.pdf-export-mode span,
+.pdf-export-mode td,
+.pdf-export-mode li,
+.pdf-export-mode div {
+  color: #1a1a1a !important;
+}
+
+/* Captions / source lines — allowed grey */
+.pdf-export-mode .dd-caption {
+  font-size: 10px !important;
+  color: #6b7280 !important;
+}
+
+/* Data numbers — DM Mono large */
+.pdf-export-mode .dd-data-value {
+  font-family: 'DM Mono', monospace !important;
+  font-weight: 500 !important;
+  font-size: 24px !important;
+}
+
+.pdf-export-mode .dd-data-value-sm {
+  font-family: 'DM Mono', monospace !important;
+  font-weight: 500 !important;
+}
+
+/* Small data labels */
+.pdf-export-mode .dd-data-label {
+  font-family: 'Manrope', sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 11px !important;
+  color: #1a1a1a !important;
+}
+
+/* Stage divider bands */
+.dd-stage-divider {
+  width: 100%;
+  background: #1e3a5f;
+  color: #ffffff;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 12px 24px;
+  border-radius: 8px;
+  margin: 32px 0 24px 0;
+  page-break-before: always;
+  break-before: always;
+}
+
+/* Page break control */
+.pdf-export-mode .dd-model-card,
+.pdf-export-mode .dd-narrative-box,
+.pdf-export-mode .recharts-wrapper,
+.pdf-export-mode svg.recharts-surface {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
+/* Heat map reduction to 80% */
+.pdf-export-mode .dd-heatmap-container {
+  transform: scale(0.8) !important;
+  transform-origin: top center !important;
+  width: 100% !important;
+}
+
+/* Hide interactive elements in PDF */
+.pdf-export-mode .pdf-interactive-hide {
+  display: none !important;
+}
+
+/* Static replacement text for interactive elements */
+.pdf-interactive-replacement {
+  display: none;
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.pdf-export-mode .pdf-interactive-replacement {
+  display: block !important;
+}
