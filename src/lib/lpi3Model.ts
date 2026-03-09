@@ -579,26 +579,89 @@ export function calculateLPI3ForMolecule(
     company: string;
     companyTrackRecord?: 'fast' | 'average' | 'slow';
     isFailed?: boolean;
+    // Real fields from molecules_master.min.json (direct or via _raw)
+    approval_status?: string;
+    has_results?: boolean;
+    status?: string;
+    study_title?: string;
+    conditions?: string;
+    trialName?: string;
+    indication?: string;
+    _raw?: {
+      approval_status?: string;
+      has_results?: boolean;
+      status?: string;
+      study_title?: string;
+      brief_summary?: string;
+      conditions?: string;
+      [key: string]: any;
+    };
   }
 ): LPI3Prediction {
   // Map company to sponsor type
   const sponsorType = getSponsorType(molecule.company);
-  
-  // Use molecule id for deterministic random values
-  const seed = hashCode(molecule.id);
-  const hasBreakthroughSeed = seededRandom(seed);
-  
+
+  // Extract real fields: prefer direct, fallback to _raw
+  const raw = (molecule as any)._raw || {};
+  const approvalStatus = molecule.approval_status || raw.approval_status || '';
+  const hasResults = molecule.has_results ?? raw.has_results ?? false;
+  const molStatus = molecule.status || raw.status || '';
+  const studyTitle = molecule.study_title || molecule.trialName || raw.study_title || '';
+  const conditions = molecule.conditions || molecule.indication || raw.conditions || '';
+
+  const taLower = (molecule.therapeuticArea || '').toLowerCase();
+  const titleLower = studyTitle.toLowerCase();
+  const conditionsLower = conditions.toLowerCase();
+
+  // Derive hasBiomarker from real fields
+  const hasBiomarker =
+    titleLower.includes('biomarker') ||
+    titleLower.includes('targeted') ||
+    titleLower.includes('companion diagnostic') ||
+    conditionsLower.includes('biomarker') ||
+    taLower.includes('oncology');
+
+  // Derive hasBreakthroughDesignation from study_title — NOT random seed
+  const hasBreakthroughDesignation =
+    titleLower.includes('breakthrough') ||
+    titleLower.includes('fast track') ||
+    titleLower.includes('accelerated approval') ||
+    titleLower.includes('priority review');
+
+  // Derive hasOrphanDesignation from conditions AND study_title
+  const hasOrphanDesignation =
+    taLower.includes('rare') ||
+    conditionsLower.includes('orphan') ||
+    conditionsLower.includes('rare disease') ||
+    titleLower.includes('orphan');
+
+  // Derive cmcComplexity from keywords
+  const textAll = titleLower + ' ' + conditionsLower;
+  let cmcComplexity = 2;
+  if (textAll.includes('gene therapy') || textAll.includes('gene transfer')) cmcComplexity = 4;
+  else if (textAll.includes('cell therapy') || textAll.includes('car-t') || textAll.includes('car t')) cmcComplexity = 4;
+  else if (textAll.includes('mrna') || textAll.includes('biologic') || textAll.includes('antibody') || textAll.includes('monoclonal')) cmcComplexity = 3;
+
+  // Derive companyTrackRecord from sponsorType (remove default 'average' fallback)
+  let companyTrackRecord: 'fast' | 'average' | 'slow';
+  if (sponsorType === 'top_10_pharma' || sponsorType === 'top_20_pharma') {
+    companyTrackRecord = 'fast';
+  } else if (sponsorType === 'large_biotech' || sponsorType === 'mid_pharma') {
+    companyTrackRecord = 'average';
+  } else {
+    companyTrackRecord = 'slow';
+  }
+
   const input: MoleculeInput = {
     phase: molecule.phase,
     therapeuticArea: molecule.therapeuticArea,
     sponsorType,
-    companyTrackRecord: molecule.companyTrackRecord || 'average',
-    // These would come from real data in production
-    hasBiomarker: molecule.therapeuticArea.toLowerCase().includes('oncology'),
-    hasBreakthroughDesignation: molecule.phase === 'Phase III' && hasBreakthroughSeed > 0.6,
-    hasOrphanDesignation: molecule.therapeuticArea.toLowerCase().includes('rare'),
-    cmcComplexity: molecule.therapeuticArea.toLowerCase().includes('gene') ? 4 : 
-                   molecule.therapeuticArea.toLowerCase().includes('cell') ? 4 : 2,
+    companyTrackRecord,
+    hasBiomarker,
+    hasBreakthroughDesignation,
+    hasFastTrack: titleLower.includes('fast track'),
+    hasOrphanDesignation,
+    cmcComplexity,
   };
 
   if (molecule.isFailed) {
@@ -607,6 +670,35 @@ export function calculateLPI3ForMolecule(
 
   const prediction = calculateLPI3(input);
   prediction.moleculeId = molecule.id;
+
+  // ── Post-calculation adjustments using real status fields ──
+  let adjusted = prediction.calibratedProbability;
+  const approvalUpper = approvalStatus.toUpperCase();
+  const phaseLower = (molecule.phase || '').toLowerCase();
+
+  if (approvalUpper.includes('APPROVED')) {
+    adjusted = adjusted + (0.95 - adjusted) * 0.6;
+  } else if (approvalUpper === 'COMPLETED_PH3' || approvalUpper === 'RECENTLY_COMPLETED_PH3') {
+    adjusted = adjusted + (0.85 - adjusted) * 0.35;
+  }
+
+  if (hasResults && (phaseLower.includes('iii') || phaseLower.includes('phase 3'))) {
+    adjusted = Math.min(0.95, adjusted * 1.08);
+  }
+
+  const statusUpper = molStatus.toUpperCase();
+  if (statusUpper === 'ACTIVE_NOT_RECRUITING' || statusUpper === 'ACTIVE, NOT RECRUITING') {
+    adjusted = Math.min(0.95, adjusted * 1.04);
+  }
+
+  if (statusUpper === 'RECRUITING' && (phaseLower.includes('phase i') || phaseLower === 'phase 1') && !phaseLower.includes('/')) {
+    adjusted = adjusted * 0.95;
+  }
+
+  prediction.calibratedProbability = Math.max(0.02, Math.min(0.95, adjusted));
+  // Recalculate CI with adjusted probability
+  const newCI = calculateConfidenceInterval(prediction.calibratedProbability);
+  prediction.confidenceInterval = newCI;
 
   return prediction;
 }
