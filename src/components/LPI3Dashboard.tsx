@@ -152,8 +152,8 @@ const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProf
           </div>
           <div className="text-right">
             <Badge variant="outline" className="mb-1">{molecule.phase}</Badge>
-            <div className={`text-3xl font-bold ${prediction.calibratedProbability >= 0.5 ? 'text-green-600' : prediction.calibratedProbability >= 0.3 ? 'text-yellow-600' : 'text-red-600'}`}>
-              {Math.round(prediction.calibratedProbability * 100)}%
+            <div className={`text-3xl font-bold ${(molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) >= 50 ? 'text-green-600' : (molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) >= 30 ? 'text-yellow-600' : 'text-red-600'}`}>
+              {molecule._raw?.lpi_score ?? molecule.overallScore ?? 0}%
             </div>
             <div 
               className="text-xs text-muted-foreground cursor-help" 
