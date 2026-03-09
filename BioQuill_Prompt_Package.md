@@ -599,87 +599,179 @@ Do not add Stripe integration in this prompt (handled separately).
 
 ---
 
-## PROMPT H1 — Single Source of Truth Architecture Refactor
-*Estimated cost: 5-7 credits — send BEFORE Prompt H2*
-*Do not send until Prompts A-F are complete and verified*
+## PROMPT B1 — Molecule Selector Fix + NCT ID Display + TEST ME Removal
+*Estimated cost: 3-4 credits — send BEFORE B2*
 
 ---
 
 ```
-TASK: Architecture refactor only — no UI changes, no new features.
-Fix the dual molecule object problem so that the Full DD Report and all 
-simulator dashboards use one single source of truth.
+TASK: Three UI fixes. No model logic changes. No calibration file changes.
+
+=== FIX 1: REMOVE TEST ME SUB-TAB ===
+Remove the "TEST ME" sub-tab from the Platform tab navigation entirely.
+It should not appear anywhere in the UI.
+
+=== FIX 2: DISPLAY NCT ID IN ALL SIMULATOR TABS ===
+Every simulator tab (LPI, TTM, PTRS, TI, Peak Sales, Investment Score,
+CAPM Alpha, PA Index-1, PA Index-2, Monte Carlo) must display the
+selected molecule's NCT ID prominently alongside the molecule name.
+
+Current: shows "Pembrolizumab • Merck Sharp & Dohme LLC • Phase III"
+Required: shows "Pembrolizumab • NCT07216703 • Phase III • Merck Sharp & Dohme LLC"
+
+The NCT ID must be read from the molecule's nct_id field in
+molecules_master.min.json — not hardcoded or derived.
+
+=== FIX 3: REMOVE HARDCODED MOLECULE LISTS FROM ALL SIMULATOR TABS ===
 
 CURRENT PROBLEM (confirmed by audit):
-- Simulators use: SimulatorMoleculeContext (session state from MoleculePicker)
-- Full DD Report uses: activeMolecule from Overview cards (different object instance)
-- Both call the same pure functions BUT with potentially different field mappings
-  when molecules are loaded from the 14K master dataset
-- Result: numerical discrepancies are possible between simulator outputs 
-  and Full DD Report outputs for the same molecule
+- LPI simulator tab shows a hardcoded left-panel list:
+  (AZD5335, Pembrolizumab, Calderasib, rilzabrutinib, Volrustomig etc.)
+  all showing identical 65-67% scores
+- This list is NOT connected to molecules_master.min.json
+- Clicking "Use in Simulator →" on a Pipeline card does NOT populate
+  this list — the simulator ignores the selected molecule entirely
+- The same hardcoded list problem exists in other simulator tabs
 
-REQUIRED CHANGES:
+REQUIRED FIX:
+1. Remove ALL hardcoded molecule selector lists from every simulator tab
+2. Simulator tabs must NOT have their own molecule picker
+3. The ONLY way to load a molecule into any simulator is via
+   "Use in Simulator →" button on a Pipeline/Overview card
+4. When a molecule is loaded via "Use in Simulator →", it must:
+   a. Set the session context bar (molecule name, NCT ID, phase, TA)
+   b. Auto-populate ALL simulator tabs with that molecule's data
+   c. Show the molecule's real computed scores — not hardcoded values
+5. If no molecule has been selected via "Use in Simulator →", simulator
+   tabs should show an empty state:
+   "Select a molecule from the Pipeline tab to begin simulation"
+   with a link: "→ Go to Pipeline"
+6. The session context bar must be visible on ALL simulator tabs
+   showing: [molecule name] | [NCT ID] | [Phase] | [TA] | [Change →]
 
-1. CREATE a new unified context: src/context/ReportMoleculeContext.tsx
-   This is the single source of truth for the selected molecule across 
-   the entire platform.
-   
+AFFECTED FILES to audit and fix:
+- src/components/LPI3Dashboard.tsx — remove hardcoded molecule list
+- src/components/LPI2Dashboard.tsx — remove hardcoded molecule list
+- src/components/TTMBreakdownChart.tsx — remove hardcoded molecule list
+- src/components/PeakSalesIndexDashboard.tsx — check and fix
+- src/components/CAPMAlphaSignals.tsx — check and fix
+- src/components/PAModel1Dashboard.tsx — check and fix
+- src/components/PAModel2Dashboard.tsx — check and fix
+- src/components/PTRSMonteCarloIntegration.tsx — check and fix
+- src/components/MonteCarloSimulation.tsx — check and fix
+
+Do NOT modify any model calculation logic.
+Do NOT modify any calibration files.
+Do NOT change scoring.ts, lpi3Model.ts, lpi2Model.ts, or ttmData.ts.
+```
+
+---
+
+## PROMPT H1 — Single Source of Truth Architecture Refactor
+*Estimated cost: 5-7 credits — send AFTER B1 and B2 are verified*
+
+---
+
+```
+TASK: Architecture refactor only. No UI changes. No model logic changes.
+No calibration file changes. Wiring only.
+
+CONFIRMED PROBLEMS (from audit):
+
+PROBLEM 1 — Three LPI models producing different numbers:
+- computeLPI() in scoring.ts → produces card badge LPI%
+  Called by: useMolecules.ts for every molecule in the 14K dataset
+  Input: raw JSON fields directly from molecules_master.min.json ✅
+- calculateLPI3ForMolecule() in lpi3Model.ts → produces simulator LPI%
+  Called by: LPI3Dashboard, LPI3ReportCard, LPIExtendedReportCard,
+  MoleculeScoreCard, PortfolioDashboard
+  Input: structured profile with fabricated fields (being fixed in B2)
+- calculateLPI2ForMolecule() in lpi2Model.ts → produces Investment Score
+  Called by: InvestmentScoreReportCard, LPI2Dashboard
+  Input: structured profile with Math.random() (being fixed in B2)
+Result: same molecule shows different LPI% on card vs simulator vs report
+
+PROBLEM 2 — DD Report and simulators use different molecule objects:
+- Simulators: SimulatorMoleculeContext (session state)
+- DD Report: activeMolecule from Overview cards
+- Different transformation paths → potential field mapping differences
+
+PROBLEM 3 — DD Report shows both LPICalibrationCard (computeLPI) AND
+LPI3ReportCard (calculateLPI3ForMolecule) side by side — two different
+LPI numbers for the same molecule in the same report
+
+REQUIRED CHANGES — wiring only, no model logic:
+
+1. ESTABLISH computeLPI() in scoring.ts as THE single LPI source
+   - computeLPI() already correctly reads all raw fields from
+     molecules_master.min.json via useMolecules.ts
+   - Its output (lpi_score, lpi_breakdown, lpi_ci) is already stored
+     on each molecule's _raw object by useMolecules.ts
+   - This pre-computed value must be used everywhere
+
+2. REMOVE LPICalibrationCard OR LPI3ReportCard from the DD Report
+   — keep only ONE LPI section. Use the computeLPI() output
+   (molecule._raw.lpi_score) as the displayed value.
+   The DD Report must never show two different LPI numbers.
+
+3. CREATE unified session context: src/context/SessionMoleculeContext.tsx
    Interface:
    {
-     molecule: MoleculeProfile | null,
-     rawRow: MoleculeRow | null,        // original row from molecules_master.min.json
+     rawRow: MoleculeRow | null,       // original row from molecules_master.min.json
      nctId: string | null,
-     setMolecule: (molecule: MoleculeProfile, rawRow: MoleculeRow) => void,
+     setMolecule: (rawRow: MoleculeRow) => void,
      clearMolecule: () => void
    }
+   The rawRow contains ALL pre-computed scores already attached by
+   useMolecules.ts (lpi_score, ttm_months, composite_score, etc.)
 
-2. TRIGGER: "Use in Simulator →" button on any Overview card calls 
-   ReportMoleculeContext.setMolecule() with BOTH the MoleculeProfile 
-   AND the original raw JSON row. This is the ONLY place molecule 
-   selection is set.
+4. TRIGGER: "Use in Simulator →" button calls
+   SessionMoleculeContext.setMolecule(rawRow) — passing the complete
+   raw molecule object with all pre-computed scores attached.
+   This is the ONLY place session molecule is set.
 
-3. WIRE all simulator dashboards to read from ReportMoleculeContext:
+5. WIRE all simulator dashboards to read from SessionMoleculeContext:
    - src/components/LPI3Dashboard.tsx
    - src/components/LPI2Dashboard.tsx
+   - src/components/TTMBreakdownChart.tsx
    - src/components/PeakSalesIndexDashboard.tsx
    - src/components/MonteCarloSimulation.tsx
    - src/components/CAPMAlphaSignals.tsx
    - src/components/PAModel1Dashboard.tsx
    - src/components/PAModel2Dashboard.tsx
    - src/components/PTRSMonteCarloIntegration.tsx
-   Replace any local molecule state or SimulatorMoleculeContext 
-   reads with ReportMoleculeContext reads.
+   Each component reads molecule._raw fields and pre-computed scores
+   from SessionMoleculeContext. No local molecule state.
 
-4. WIRE all report card components to read from ReportMoleculeContext:
-   - src/components/LPI3ReportCard.tsx
+6. WIRE all DD Report card components to read from SessionMoleculeContext:
+   - src/components/LPI3ReportCard.tsx (or LPICalibrationCard — keep one)
    - src/components/InvestmentScoreReportCard.tsx
    - src/components/MoleculeScoreCard.tsx
    - src/components/LPIExtendedReportCard.tsx
-   Replace activeMolecule reads with ReportMoleculeContext reads.
 
-5. ENSURE the _raw → MoleculeProfile transformation is done ONCE 
-   at context set time (in the "Use in Simulator →" handler), 
-   not independently in each component. Both simulators and report 
-   components receive the SAME pre-transformed MoleculeProfile object.
+7. DEPRECATE SimulatorMoleculeContext — migrate all consumers to
+   SessionMoleculeContext, then remove SimulatorMoleculeContext entirely.
 
-6. DEPRECATE SimulatorMoleculeContext — migrate all its consumers 
-   to ReportMoleculeContext, then remove it.
+8. DEPRECATE activeMolecule pattern in Overview cards for report
+   generation — report renders only when SessionMoleculeContext has
+   a molecule set.
 
-7. DEPRECATE the activeMolecule pattern in Overview cards for report 
-   generation — the report must only render when ReportMoleculeContext 
-   has a molecule set.
+CRITICAL RULES:
+- Do NOT modify scoring.ts model logic
+- Do NOT modify lpi3Model.ts
+- Do NOT modify lpi2Model.ts
+- Do NOT modify ttmData.ts
+- Do NOT modify any JSON calibration files
+- Do NOT change any calculation weights or formulas
+- Wiring and context only
 
-VERIFICATION after implementation:
-- Pick any molecule from the 14K dataset via "Use in Simulator →"
-- Check LPI% shown on the Overview card badge
-- Check LPI% shown in LPI3Dashboard simulator
-- Check LPI% shown in Full DD Report
-- All three must show identical numbers
-- Repeat for TI, Peak Sales Score, Investment Score, TTM
-- If any discrepancy exists, the refactor is incomplete
-
-Do NOT add any new UI elements, new models, or new features in this prompt.
-Architecture refactor only.
+VERIFICATION:
+- Click "Use in Simulator →" on any Pipeline card (e.g. Pembrolizumab
+  NCT07216703)
+- LPI% on card badge = LPI% in simulator tab = LPI% in DD Report
+- NCT ID shown in simulator session bar matches the card clicked
+- TTM in simulator matches TTM badge on card
+- No molecule from the hardcoded demo list appears in simulator
 ```
 
 ---
@@ -877,17 +969,265 @@ patient population."
 
 ---
 
-## UPDATED SEND ORDER (complete package)
+## SEND ORDER — Current Status
 
 | Prompt | Description | Credits | Status |
 |--------|-------------|---------|--------|
-| A | TA canonical names sweep | 3-4 | Send now |
-| LPI | Scoring fix — src/lib/scoring.ts | — | Send now |
-| B | CAPM restructure + selector fix | 4-5 | Send now |
-| C | Device flagging | 2-3 | Send now |
-| D | Methodology tab 5 missing models | 3-4 | Send now |
-| E | ALPHA rename + Stripe | 4-6 | After Stripe keys added |
-| F | Pricing card hover fix | 1-2 | Send now |
-| G | Pricing page redesign | 4-5 | TBD — pricing structure being finalised |
-| H1 | Single source of truth refactor | 5-7 | After A-F verified |
-| H2 | Missing models + narrative layer | 8-10 | After H1 verified |
+| A | TA canonical names sweep | 3-4 | ✅ Done |
+| B | CAPM restructure + molecule selector | 4-5 | ✅ Done (partial bugs remain → fixed in B1) |
+| C | Device flagging | 2-3 | ✅ Done |
+| D | Methodology tab 5 missing models | 3-4 | ✅ Done |
+| F | Pricing card hover fix | 1-2 | ✅ Done |
+| E | Stripe integration | 4-6 | ⏳ After Stripe keys added |
+| G | Pricing page redesign | 4-5 | ⏳ TBD |
+| **B1** | **Selector fix + NCT ID + TEST ME removal** | **3-4** | **→ Send next** |
+| **B2** | **LPI input wiring + LPI-2 deterministic + TTM rebuild** | **5-7** | **→ Send after B1 verified** |
+| **H1** | **Single source of truth architecture** | **5-7** | **→ Send after B2 verified** |
+| **H2** | **Missing models + narrative layer in DD Report** | **8-10** | **→ Send after H1 verified** |
+| **AUDIT** | **Full platform model audit** | **—** | **→ Send after H2 verified** |
+
+---
+
+## PROMPT B2 — LPI & TTM Input Wiring Fix
+*Estimated cost: 5-7 credits — send AFTER B1, BEFORE H1*
+
+---
+
+```
+TASK: Fix the INPUT WIRING to three model functions so they receive real
+molecule fields from molecules_master.min.json instead of fabricated or
+hardcoded values. Do NOT change any model logic, weights, calibration
+constants, or formulas. Wiring and input mapping only.
+
+GOLDEN RULE: Do NOT modify scoring.ts model logic, lpi3Model.ts internal
+calculations, lpi2Model.ts formulas, ttmData.ts benchmark values, or any
+JSON calibration files. Only fix what fields are passed as inputs.
+
+=== PART 1: FIX INPUT WIRING for calculateLPI3ForMolecule() ===
+
+FILE: src/lib/lpi3Model.ts — wrapper function calculateLPI3ForMolecule()
+DO NOT touch calculateLPI3() internal logic — that is the model itself.
+ONLY fix the wrapper that prepares inputs before calling calculateLPI3().
+
+CURRENT PROBLEM — wrapper uses fabricated inputs:
+- hasBreakthroughDesignation = random seed > 0.6 (NOT from real data)
+- hasBiomarker = TA name contains "oncology" only (too narrow)
+- hasOrphanDesignation = TA name contains "rare" only (misses many)
+- companyTrackRecord = always defaults to 'average' for 14K molecules
+- approval_status, has_results, status, study_title, conditions
+  are available in molecules_master.min.json but never passed in
+
+REQUIRED — extend wrapper input interface to accept missing fields:
+Add these optional fields to the molecule parameter object:
+  approval_status?: string
+  has_results?: boolean
+  status?: string        // RECRUITING | ACTIVE_NOT_RECRUITING | COMPLETED
+  study_title?: string
+  conditions?: string
+
+REPLACE fabricated derivations with real field-based logic:
+
+hasBiomarker: derive from study_title and conditions fields:
+  study_title?.toLowerCase().includes('biomarker') ||
+  study_title?.toLowerCase().includes('targeted') ||
+  study_title?.toLowerCase().includes('companion diagnostic') ||
+  conditions?.toLowerCase().includes('biomarker') ||
+  therapeuticArea?.toLowerCase().includes('oncology')
+
+hasBreakthroughDesignation: derive from study_title — NOT random seed:
+  study_title?.toLowerCase().includes('breakthrough') ||
+  study_title?.toLowerCase().includes('fast track') ||
+  study_title?.toLowerCase().includes('accelerated approval') ||
+  study_title?.toLowerCase().includes('priority review')
+
+hasOrphanDesignation: derive from conditions AND study_title:
+  therapeuticArea?.toLowerCase().includes('rare') ||
+  conditions?.toLowerCase().includes('orphan') ||
+  conditions?.toLowerCase().includes('rare disease') ||
+  study_title?.toLowerCase().includes('orphan')
+
+cmcComplexity: extend beyond gene/cell therapy:
+  gene therapy keywords → 4
+  cell therapy keywords → 4
+  mRNA or biologic or antibody keywords → 3
+  default → 2
+
+companyTrackRecord: derive from sponsorType (already computed):
+  sponsorType === 'big_pharma' → 'fast'
+  sponsorType === 'large_biotech' → 'average'
+  all others → 'slow'
+  (Remove the default 'average' fallback entirely)
+
+AFTER calculateLPI3(input) runs, apply these post-calculation
+adjustments using the real status fields — these are observable
+current-state signals, not model parameters:
+  approval_status contains 'APPROVED' → boost toward ceiling
+  approval_status === 'COMPLETED_PH3' → moderate boost
+  has_results === true AND phase includes 'III' → small boost
+  status === 'ACTIVE_NOT_RECRUITING' → small positive signal
+  status === 'RECRUITING' AND Phase I only → small penalty
+
+THEN update all callers to pass the new fields:
+  src/components/LPI3Dashboard.tsx
+  src/components/LPI3ReportCard.tsx
+  src/components/LPIExtendedReportCard.tsx
+  src/components/MoleculeScoreCard.tsx
+  src/components/PortfolioDashboard.tsx
+Each must pass approval_status, has_results, status, study_title,
+conditions from the molecule's raw JSON row.
+
+=== PART 2: FIX Math.random() in calculateLPI2ForMolecule() ===
+
+FILE: src/lib/lpi2Model.ts
+CONFIRMED PROBLEM: sub-factor scoring functions use Math.random()
+making Investment Score non-deterministic — different score on
+every page render for the same molecule. This is a credibility bug.
+
+REQUIRED FIX — replace Math.random() with seeded deterministic random:
+Use the same hashCode() + seededRandom() pattern already implemented
+in lpi3Model.ts. Seed from molecule.id so same molecule always
+produces identical Investment Score.
+
+Do NOT change any weights, formulas, or factor definitions.
+Only replace Math.random() calls with seededRandom(hashCode(molecule.id)).
+Use different seed offsets for different sub-factors to maintain
+score variance across factors:
+  sub-factor 1: seededRandom(seed)
+  sub-factor 2: seededRandom(seed + 1)
+  sub-factor 3: seededRandom(seed + 2)
+  etc.
+
+=== PART 3: REBUILD calculateTTMMonths() in src/lib/scoring.ts ===
+
+CURRENT PROBLEM: function reads estimatedLaunchDate from marketData
+(hardcoded demo data) and returns months to that date.
+This produces flat ~27mo for all 14K molecules.
+
+REQUIRED FIX — replace with phase-based calculation.
+The benchmark data already exists correctly in src/lib/ttmData.ts.
+Do NOT change ttmData.ts values — read from them.
+
+New function signature:
+export function calculateTTMMonths(
+  phase: string,
+  therapeuticArea: string,
+  sponsorType: string,
+  approval_status?: string,
+  status?: string,
+  study_title?: string
+): number | null
+
+CALCULATION using existing ttmData.ts benchmark totals:
+1. Read TA total TTM baseline from ttmData.ts for the molecule's TA
+2. Apply phase remaining fraction:
+   Phase I → 0.73 of total
+   Phase I/II → 0.65
+   Phase II → 0.48
+   Phase II/III → 0.35
+   Phase III → 0.23
+   Phase III/IV → 0.18
+   COMPLETED_PH3 → 0.15
+   approval_status contains APPROVED → 0.07
+3. Apply sponsor speed modifier (read from sponsorType):
+   big_pharma → × 0.85
+   large_biotech → × 1.0
+   mid_biotech | unknown → × 1.20
+4. Apply pathway modifier (from study_title keywords):
+   breakthrough | accelerated → × 0.80
+   fast track | priority review → × 0.85
+   orphan → × 0.90
+   none → × 1.0
+5. Apply status modifier:
+   ACTIVE_NOT_RECRUITING → × 0.90
+   COMPLETED → × 0.85
+   RECRUITING → × 1.0
+6. Return round(baseline × phase_fraction × sponsor × pathway × status)
+   Return null if phase unrecognised
+
+Update all callers to pass new parameters:
+  src/components/MoleculeScoreCard.tsx
+  src/components/TTMBreakdownChart.tsx
+  src/lib/excelExport.ts
+  src/hooks/useMolecules.ts (if it calls calculateTTMMonths)
+  Any other file calling calculateTTMMonths()
+
+VERIFY after all three fixes:
+LPI range: 30-92% with genuine variation (not 61-67% clustering)
+Investment Score: same molecule = same score on every render
+TTM range: Phase I Neurology unknown ~131mo,
+           Phase III Oncology Big Pharma ~25mo,
+           COMPLETED_PH3 ~14-20mo,
+           APPROVED Big Pharma ~6-9mo
+```
+
+---
+
+## FULL PLATFORM AUDIT PROMPT — Run after B1, B2, H1, H2 are all verified
+*Send to Lovable once all four prompts are confirmed working*
+
+---
+
+```
+TASK: Comprehensive platform audit. No changes. Report only.
+
+For EVERY model in the platform, answer ALL of the following:
+
+MODELS TO AUDIT:
+1. LPI (computeLPI in scoring.ts)
+2. LPI-3 (calculateLPI3ForMolecule in lpi3Model.ts)
+3. LPI-2 / Investment Score (calculateLPI2ForMolecule in lpi2Model.ts)
+4. TTM (calculateTTMMonths in scoring.ts)
+5. Composite Score (calculateCompositeScore in scoring.ts)
+6. PTRS (all functions in PTRSMonteCarloIntegration.tsx and related)
+7. TI — Therapeutic Index (getTherapeuticIndexForMolecule)
+8. Peak Sales Index (calculatePeakSalesIndex)
+9. Blockbuster Probability ($1B)
+10. CAPM Alpha Signals (CAPMAlphaSignals.tsx)
+11. PA Index-1 MWPSPI (PAModel1Dashboard.tsx)
+12. PA Index-2 Comparative Payer Likelihood (PAModel2Dashboard.tsx)
+13. Monte Carlo Simulation (MonteCarloSimulation.tsx)
+14. TA Risk Index (if implemented)
+
+FOR EACH MODEL, report:
+
+A. MODEL CALIBRATION SOURCE
+   - Which files were used to BUILD and CALIBRATE this model?
+   - List every JSON, CSV, or constant file that defines weights,
+     base rates, calibration points, or benchmark values
+   - Are these files static/frozen or dynamic?
+
+B. PREDICTION INPUT SOURCE
+   - Which database/file does this model READ FROM to generate
+     predictions for live molecules?
+   - Does it read from molecules_master.min.json? If yes, which fields?
+   - Does it read from any hardcoded demo molecule list? If yes, list it
+   - Does it read from any other source?
+
+C. WHERE IT RUNS
+   - List every component, hook, or utility that calls this model
+   - For each caller: what tab/page does it appear on?
+   - Is it called on page load, on molecule selection, or on user action?
+
+D. WHAT IT OUTPUTS
+   - What is the output variable name and type?
+   - Where is the output stored? (molecule object, component state, context)
+   - Where is the output displayed in the UI?
+
+E. CONSISTENCY CHECK
+   - Does this model run in MORE THAN ONE place for the same molecule?
+   - If yes: do all instances use the same input source and produce
+     identical outputs? Or can they diverge?
+   - Specifically: does the molecule card badge use the same model
+     instance as the simulator tab? As the DD Report?
+
+F. OUT-OF-SCOPE CONNECTIONS
+   - Does this model connect to or affect anything OUTSIDE the
+     Platform/Strategy Hub tabs?
+   - Does it affect exports, PDFs, URLs, or external API calls?
+   - Any connections that seem unintended or surprising?
+
+Format the response as a table for sections A-D, then prose for E-F.
+Do not make any changes. Audit and report only.
+```
+
+
