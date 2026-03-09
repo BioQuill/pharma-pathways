@@ -16,7 +16,7 @@ import {
   Eye
 } from "lucide-react";
 import { WatchlistItem } from "@/hooks/useWatchlist";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 import { type MoleculeProfile } from "@/lib/moleculesData";
 
 interface WatchlistPanelProps {
@@ -123,8 +123,7 @@ export function WatchlistPanel({
       <CardContent>
         <div className="space-y-4">
           {watchlistMolecules.map((molecule) => {
-              const lpiResult = calculateLPI3ForMolecule(molecule);
-              const lpiScore = lpiResult.calibratedProbability * 100;
+              const lpiScore = (molecule as any)._raw?.lpi_score ?? molecule.overallScore ?? 50;
               const addedDate = new Date(molecule.watchlistItem.addedAt);
               
               return (

@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { Search, X, Pill } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { type MoleculeProfile } from '@/lib/moleculesData';
-import { useSimulatorMolecule } from '@/contexts/SimulatorMoleculeContext';
+import { useSessionMolecule } from '@/contexts/SessionMoleculeContext';
 
 interface MoleculePickerProps {
   molecules: MoleculeProfile[];
@@ -16,7 +16,7 @@ interface MoleculePickerProps {
 }
 
 export function MoleculePicker({ molecules, value, onChange, label = 'Select Molecule', compact = false }: MoleculePickerProps) {
-  const { simulatorMolecule, setSimulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule, setSessionMolecule: setSimulatorMolecule } = useSessionMolecule();
   const selected = value !== undefined ? value : simulatorMolecule;
   const setSelected = onChange || setSimulatorMolecule;
   

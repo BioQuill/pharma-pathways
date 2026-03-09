@@ -25,6 +25,7 @@ interface MoleculeProfile {
   conditions?: string;
   indication?: string;
   trialName?: string;
+  overallScore?: number;
   _raw?: Record<string, any>;
 }
 
@@ -33,6 +34,14 @@ interface LPI3ReportCardProps {
 }
 
 export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
+  // Use pre-computed LPI from computeLPI() (Single Source of Truth)
+  const preComputedLPI = (molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) / 100;
+  const preComputedCI = {
+    lower: ((molecule._raw?.lpi_ci_low as number) ?? preComputedLPI * 100 * 0.7) / 100,
+    upper: ((molecule._raw?.lpi_ci_high as number) ?? Math.min(preComputedLPI * 100 * 1.3, 100)) / 100,
+  };
+
+  // Still use lpi3Model for radar chart visualization breakdown only
   const prediction = useMemo(() => {
     return calculateLPI3ForMolecule(molecule);
   }, [molecule]);
@@ -68,12 +77,12 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
           </div>
           <div className="text-right">
             <div 
-              className={`w-16 h-16 rounded-full flex items-center justify-center text-white ${getScoreBgColor(prediction.calibratedProbability)}`}
+              className={`w-16 h-16 rounded-full flex items-center justify-center text-white ${getScoreBgColor(preComputedLPI)}`}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <div className="text-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <div className="text-xl font-bold" style={{ lineHeight: '1.2' }}>
-                  {(prediction.calibratedProbability * 100).toFixed(0)}%
+                  {(preComputedLPI * 100).toFixed(0)}%
                 </div>
                 <div className="text-[10px] opacity-90" style={{ lineHeight: '1.2' }}>LPI</div>
               </div>
@@ -82,7 +91,7 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
               className="text-xs text-muted-foreground mt-1 cursor-help" 
               title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data."
             >
-              CI: {(prediction.confidenceInterval.lower * 100).toFixed(0)}%-{(prediction.confidenceInterval.upper * 100).toFixed(0)}%
+              CI: {(preComputedCI.lower * 100).toFixed(0)}%-{(preComputedCI.upper * 100).toFixed(0)}%
             </div>
           </div>
         </div>
@@ -140,7 +149,7 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
 
         <ModelNarrative>
           <p>{generateLPINarrative(
-            prediction.calibratedProbability,
+            preComputedLPI,
             molecule.phase,
             molecule.therapeuticArea,
             prediction.featureCategories.reduce((best, c) => {

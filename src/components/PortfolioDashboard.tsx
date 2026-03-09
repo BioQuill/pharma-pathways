@@ -30,8 +30,7 @@ import {
   BarChart3,
   PieChart as PieChartIcon
 } from "lucide-react";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
-// TTM calculation done inline with phase-based estimation
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 
 import { type MoleculeProfile } from "@/lib/moleculesData";
 
@@ -45,8 +44,7 @@ const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'
 export function PortfolioDashboard({ molecules, watchlistIds = [] }: PortfolioDashboardProps) {
   const stats = useMemo(() => {
     const lpiScores = molecules.map(m => {
-      const result = calculateLPI3ForMolecule(m);
-      const lpi = result.calibratedProbability * 100;
+      const lpi = (m as any)._raw?.lpi_score ?? m.overallScore ?? 50;
       // Derive recommendation and risk from probability
       const recommendation = lpi >= 70 ? 'Strong Buy' : lpi >= 55 ? 'Buy' : lpi >= 40 ? 'Hold' : 'Sell';
       const riskLevel = lpi >= 60 ? 'Low' : lpi >= 40 ? 'Medium' : 'High';

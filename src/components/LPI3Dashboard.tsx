@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -46,6 +46,7 @@ interface MoleculeProfile {
   conditions?: string;
   indication?: string;
   trialName?: string;
+  overallScore?: number;
   _raw?: Record<string, any>;
 }
 
@@ -151,14 +152,14 @@ const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProf
           </div>
           <div className="text-right">
             <Badge variant="outline" className="mb-1">{molecule.phase}</Badge>
-            <div className={`text-3xl font-bold ${prediction.calibratedProbability >= 0.5 ? 'text-green-600' : prediction.calibratedProbability >= 0.3 ? 'text-yellow-600' : 'text-red-600'}`}>
-              {Math.round(prediction.calibratedProbability * 100)}%
+            <div className={`text-3xl font-bold ${(molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) >= 50 ? 'text-green-600' : (molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) >= 30 ? 'text-yellow-600' : 'text-red-600'}`}>
+              {molecule._raw?.lpi_score ?? molecule.overallScore ?? 0}%
             </div>
             <div 
               className="text-xs text-muted-foreground cursor-help" 
               title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data."
             >
-              CI: {(prediction.confidenceInterval.lower * 100).toFixed(0)}% - {(prediction.confidenceInterval.upper * 100).toFixed(0)}%
+              CI: {(molecule._raw?.lpi_ci_low ?? 0)}% - {(molecule._raw?.lpi_ci_high ?? 0)}%
             </div>
           </div>
         </div>
@@ -220,7 +221,7 @@ const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProf
 };
 
 export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
-  const { simulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
 
   // If no molecule selected via "Use in Simulator →", show empty state
   if (!simulatorMolecule) {
@@ -264,11 +265,11 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold text-primary">{Math.round(prediction.calibratedProbability * 100)}%</div>
+              <div className="text-2xl font-bold text-primary">{simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 0}%</div>
               <div className="text-xs text-muted-foreground">Launch Probability</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold">{(prediction.confidenceInterval.lower * 100).toFixed(0)}%–{(prediction.confidenceInterval.upper * 100).toFixed(0)}%</div>
+              <div className="text-2xl font-bold">{simulatorMolecule._raw?.lpi_ci_low ?? 0}%–{simulatorMolecule._raw?.lpi_ci_high ?? 0}%</div>
               <div className="text-xs text-muted-foreground">95% Confidence Interval</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">

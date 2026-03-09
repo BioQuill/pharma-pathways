@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Plus, TrendingUp, Clock, Target } from 'lucide-react';
 import { MoleculeProfile } from '@/lib/moleculesData';
-import { calculateLPI3ForMolecule } from '@/lib/lpi3Model';
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 import { calculateCompositeScore, calculateTTMMonths } from '@/lib/scoring';
 
 interface MoleculeComparisonProps {
@@ -45,8 +45,7 @@ export function MoleculeComparison({ molecules }: MoleculeComparisonProps) {
   const availableMolecules = molecules.filter(m => !selectedIds.includes(m.id));
 
   const getMoleculeMetrics = (molecule: MoleculeProfile) => {
-    const lpi3 = calculateLPI3ForMolecule(molecule);
-    const lpi3Percent = lpi3.calibratedProbability * 100;
+    const lpi3Percent = (molecule as any)._raw?.lpi_score ?? molecule.overallScore ?? 50;
     const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.approval_status || '', molecule.status || '', molecule.study_title || molecule.trialName || '');
     const composite = calculateCompositeScore(lpi3Percent, ttm ?? 0, molecule.therapeuticArea);
     return { lpi3: lpi3Percent, ttm: ttm ?? 0, composite };

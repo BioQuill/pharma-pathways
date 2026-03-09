@@ -1,6 +1,6 @@
 // LPI-2 Dashboard: 5-Factor Investment LPI Model (VC / Investment Model)
 import { useState, useMemo } from "react";
-import { useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -267,7 +267,7 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
 
 // Main Dashboard Component
 export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
-  const { simulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
 
   // If no molecule selected via "Use in Simulator →", show empty state
   if (!simulatorMolecule) {

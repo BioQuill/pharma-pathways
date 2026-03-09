@@ -19,7 +19,7 @@ import {
   FileSpreadsheet
 } from "lucide-react";
 import { exportMoleculesToExcel, exportLPIDetailedToExcel, exportTherapeuticAreaSummary, exportComparisonToExcel } from "@/lib/excelExport";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 
 interface MoleculeProfile {
   id: string;
@@ -31,6 +31,8 @@ interface MoleculeProfile {
   indication?: string;
   companyTrackRecord?: 'fast' | 'average' | 'slow';
   isFailed?: boolean;
+  overallScore?: number;
+  _raw?: Record<string, any>;
 }
 
 interface MoleculeExportPanelProps {
@@ -84,8 +86,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
 
       // LPI range filter
       if (minLPI || maxLPI) {
-        const lpi = calculateLPI3ForMolecule(mol);
-        const lpiScore = Math.round(lpi.calibratedProbability * 100);
+        const lpiScore = (mol as any)._raw?.lpi_score ?? (mol as any).overallScore ?? 50;
         if (minLPI && lpiScore < parseInt(minLPI)) return false;
         if (maxLPI && lpiScore > parseInt(maxLPI)) return false;
       }
@@ -240,8 +241,8 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
             <ScrollArea className="h-[250px] border rounded-lg p-2">
               <div className="space-y-1">
                 {filteredMolecules.slice(0, 50).map(mol => {
-                  const lpi = calculateLPI3ForMolecule(mol);
-                  const lpiScore = Math.round(lpi.calibratedProbability * 100);
+                  const lpiScore = (mol as any)._raw?.lpi_score ?? (mol as any).overallScore ?? 50;
+                  
                   return (
                     <div 
                       key={mol.id} 
@@ -327,8 +328,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
                         </thead>
                         <tbody>
                           {comparisonMolecules.map(mol => {
-                            const lpi = calculateLPI3ForMolecule(mol);
-                            const lpiScore = Math.round(lpi.calibratedProbability * 100);
+                            const lpiScore = (mol as any)._raw?.lpi_score ?? (mol as any).overallScore ?? 50;
                             return (
                               <tr key={mol.id} className="border-t">
                                 <td className="p-2 font-medium">{mol.name}</td>

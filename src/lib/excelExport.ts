@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { calculateLPI3ForMolecule } from './lpi3Model';
+import { calculateLPI3ForMolecule } from './lpi3Model'; // Used for category breakdown in Excel exports only
 import { getTTMMonthsForTA } from './ttmData';
 import { calculateProbabilityScores } from './scoring';
 
@@ -14,6 +14,7 @@ interface MoleculeProfile {
   trialName?: string;
   companyTrackRecord?: 'fast' | 'average' | 'slow';
   isFailed?: boolean;
+  overallScore?: number;
   revenueProjection?: { year1: number; year2: number };
   approval_status?: string;
   has_results?: boolean;
@@ -26,15 +27,14 @@ interface MoleculeProfile {
 export function exportMoleculesToExcel(molecules: MoleculeProfile[], filename = 'molecules-data') {
   // Prepare data with all calculated scores
   const data = molecules.map((mol) => {
-    const lpi3 = calculateLPI3ForMolecule(mol);
-    const lpiScore = Math.round(lpi3.calibratedProbability * 100);
-    const ciLower = Math.round(lpi3.confidenceInterval.lower * 100);
-    const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
+    const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
+    const ciLower = (mol as any)._raw?.lpi_ci_low ?? Math.round(lpiScore * 0.7);
+    const ciUpper = (mol as any)._raw?.lpi_ci_high ?? Math.min(Math.round(lpiScore * 1.3), 100);
     const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
     const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
     
     // Calculate composite score
-    const lpiNormalized = lpi3.calibratedProbability;
+    const lpiNormalized = lpiScore / 100;
     const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
     const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
 
@@ -79,8 +79,8 @@ export function exportMoleculesToExcel(molecules: MoleculeProfile[], filename = 
 export function exportLPIDetailedToExcel(molecules: MoleculeProfile[], filename = 'lpi-detailed') {
   // Prepare detailed LPI data
   const data = molecules.map((mol) => {
-    const lpi3 = calculateLPI3ForMolecule(mol);
-    const lpiScore = Math.round(lpi3.calibratedProbability * 100);
+    const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown only
+    const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
     
     // Aggregate category scores
     const categoryScores: Record<string, number> = {};
@@ -136,8 +136,7 @@ export function exportTherapeuticAreaSummary(molecules: MoleculeProfile[], filen
 
   const data = Object.entries(taGroups).map(([ta, mols]) => {
     const lpiScores = mols.map((mol) => {
-      const lpi3 = calculateLPI3ForMolecule(mol);
-      return lpi3.calibratedProbability * 100;
+      return (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
     });
     const avgLPI = lpiScores.reduce((a, b) => a + b, 0) / lpiScores.length;
     const minLPI = Math.min(...lpiScores);
@@ -214,15 +213,15 @@ export function exportComparisonToExcel(molecules: MoleculeProfile[], filename =
     const row: Record<string, string | number> = { 'Metric': metric };
     
     molecules.forEach((mol, idx) => {
-      const lpi3 = calculateLPI3ForMolecule(mol);
-      const lpiScore = Math.round(lpi3.calibratedProbability * 100);
+      const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
       const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
       const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
       
-      const lpiNormalized = lpi3.calibratedProbability;
+      const lpiNormalized = lpiScore / 100;
       const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
       const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
 
+      const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown
       const categoryScores: Record<string, number> = {};
       lpi3.featureCategories.forEach((cat) => {
         const avgScore = cat.features.reduce((sum, f) => sum + f.value, 0) / cat.features.length;
@@ -240,8 +239,8 @@ export function exportComparisonToExcel(molecules: MoleculeProfile[], filename =
         'Therapeutic Area': mol.therapeuticArea,
         'Indication': mol.indication || 'N/A',
         'LPI Score (%)': lpiScore,
-        'CI Lower (%)': Math.round(lpi3.confidenceInterval.lower * 100),
-        'CI Upper (%)': Math.round(lpi3.confidenceInterval.upper * 100),
+        'CI Lower (%)': mol._raw?.lpi_ci_low ?? Math.round(lpiScore * 0.7),
+        'CI Upper (%)': mol._raw?.lpi_ci_high ?? Math.min(Math.round(lpiScore * 1.3), 100),
         'Risk Level': riskLevel,
         'Approval Probability (%)': Math.round(probScores.approval * 100),
         'Next Phase Probability (%)': Math.round(probScores.nextPhase * 100),
@@ -269,8 +268,8 @@ export function exportComparisonToExcel(molecules: MoleculeProfile[], filename =
 
   // Also add individual molecule sheets
   molecules.forEach((mol, idx) => {
-    const lpi3 = calculateLPI3ForMolecule(mol);
-    const lpiScore = Math.round(lpi3.calibratedProbability * 100);
+    const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown only
+    const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
     const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
     const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
 

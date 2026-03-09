@@ -77,7 +77,7 @@ import PTRSCustomScenarioBuilder from "@/components/PTRSCustomScenarioBuilder";
 import { PTRSPortfolioRebalancing } from "@/components/PTRSPortfolioRebalancing";
 import PTRSRebalancingHistory from "@/components/PTRSRebalancingHistory";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
 import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
 import { useWatchlist } from "@/hooks/useWatchlist";
@@ -1249,8 +1249,7 @@ const IndexInner = () => {
                     return sortOrder === 'asc' ? -comparison : comparison;
                   })
                   .map((molecule) => {
-                    const lpi3 = calculateLPI3ForMolecule(molecule);
-                    const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
+                    const lpi3Score = molecule._raw?.lpi_score ?? molecule.overallScore ?? 50;
                     const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.approval_status || '', molecule.status || '', molecule.study_title || molecule.trialName || '');
                     const compositeScore = calculateCompositeScore(lpi3Score, ttm, molecule.therapeuticArea);
                     const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);

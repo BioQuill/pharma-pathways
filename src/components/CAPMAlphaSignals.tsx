@@ -12,7 +12,7 @@ import {
   type BetaInputs, type MechanismType, type DesignationType, type SponsorTier, type PriorData, type CAPMResult
 } from "@/lib/capmModel";
 import type { MoleculeProfile } from "@/lib/moleculesData";
-import { useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { MoleculePicker } from "@/components/MoleculePicker";
 
 // Maps molecule phase string to CAPM phase key
@@ -38,7 +38,7 @@ function estimatePTRS(mol: MoleculeProfile): number {
 }
 
 export function CAPMAlphaSignals({ molecules }: { molecules: MoleculeProfile[] }) {
-  const { simulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
   
   // Local molecule override (when user picks from inline MoleculePicker)
   const [localMol, setLocalMol] = useState<MoleculeProfile | null>(null);

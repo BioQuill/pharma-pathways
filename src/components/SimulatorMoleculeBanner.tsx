@@ -1,6 +1,6 @@
 import { Pill, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useSimulatorMolecule } from '@/contexts/SimulatorMoleculeContext';
+import { useSessionMolecule } from '@/contexts/SessionMoleculeContext';
 import { MoleculePicker } from '@/components/MoleculePicker';
 import { type MoleculeProfile } from '@/lib/moleculesData';
 
@@ -11,7 +11,7 @@ interface SimulatorMoleculeBannerProps {
 }
 
 export function SimulatorMoleculeBanner({ molecules, showFields = ['sponsor', 'status', 'dates'] }: SimulatorMoleculeBannerProps) {
-  const { simulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
 
   return (
     <div className="p-4 rounded-lg border bg-muted/30 space-y-3">
