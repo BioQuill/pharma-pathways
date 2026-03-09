@@ -2497,9 +2497,9 @@ const IndexInner = () => {
 };
 
 const Index = () => (
-  <SimulatorMoleculeProvider>
+  <SessionMoleculeProvider>
     <IndexInner />
-  </SimulatorMoleculeProvider>
+  </SessionMoleculeProvider>
 );
 
 export default Index;
