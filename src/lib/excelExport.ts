@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import { calculateLPI3ForMolecule } from './lpi3Model'; // Used for category breakdown in Excel exports only
 import { getTTMMonthsForTA } from './ttmData';
-import { calculateProbabilityScores } from './scoring';
+import { calculateProbabilityScores, calculateTTMMonths, calculateCompositeScore } from './scoring';
 
 interface MoleculeProfile {
   id: string;
