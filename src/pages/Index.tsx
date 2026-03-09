@@ -228,7 +228,7 @@ const DueDiligenceComparisonChart = () => {
 
 // PTRS Calculator Component
 const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
-  const ctx1 = useSessionMolecule(); const simulatorMolecule = ctx1.sessionMolecule;
+  const ctx1 = useSessionMolecule(); const simulatorMolecule = ctx1.sessionMolecule
   const [calculationMode, setCalculationMode] = useState<"ta" | "molecule">("ta");
   const [selectedMoleculeId, setSelectedMoleculeId] = useState<string>("");
   const [therapeuticArea, setTherapeuticArea] = useState("oncology");
@@ -674,7 +674,7 @@ const IndexInner = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const [recordTypeFilter, setRecordTypeFilter] = useState<'drugs' | 'devices' | 'all'>('drugs');
   const reportRef = useRef<HTMLDivElement>(null);
-  const { loadIntoSimulator, setOnNavigatessionMolecule: simulatorMolecule } = useSessionMo = usessionMoonlecule();
+  const {ctx2 = useSessionMolecule(); const { loadIntoSimulator, setOnNavigateToSimulator } = ctx2; const simulatorMolecule = ctx2.sessionMolecule
 
   // Register simulator navigation callback
   useEffect(() => {
