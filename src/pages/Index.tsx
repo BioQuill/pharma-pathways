@@ -97,6 +97,7 @@ import {
   generateMarketProjections, 
   calculateOverallScore,
   calculateTTMMonths,
+  calculateCompositeScore,
   type ProbabilityScores,
   type MarketData
 } from "@/lib/scoring";
