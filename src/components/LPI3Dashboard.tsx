@@ -265,11 +265,11 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold text-primary">{Math.round(prediction.calibratedProbability * 100)}%</div>
+              <div className="text-2xl font-bold text-primary">{simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 0}%</div>
               <div className="text-xs text-muted-foreground">Launch Probability</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold">{(prediction.confidenceInterval.lower * 100).toFixed(0)}%–{(prediction.confidenceInterval.upper * 100).toFixed(0)}%</div>
+              <div className="text-2xl font-bold">{simulatorMolecule._raw?.lpi_ci_low ?? 0}%–{simulatorMolecule._raw?.lpi_ci_high ?? 0}%</div>
               <div className="text-xs text-muted-foreground">95% Confidence Interval</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">
