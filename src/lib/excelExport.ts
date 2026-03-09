@@ -266,8 +266,8 @@ export function exportComparisonToExcel(molecules: MoleculeProfile[], filename =
 
   // Also add individual molecule sheets
   molecules.forEach((mol, idx) => {
-    const lpi3 = calculateLPI3ForMolecule(mol);
-    const lpiScore = Math.round(lpi3.calibratedProbability * 100);
+    const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown only
+    const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
     const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
     const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
 
