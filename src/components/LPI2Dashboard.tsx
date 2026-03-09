@@ -267,32 +267,21 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
 
 // Main Dashboard Component
 export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
-  const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
-  
-  const predictions = useMemo(() => {
-    return molecules.map(mol => ({
-      molecule: mol,
-      prediction: calculateLPI2ForMolecule(mol),
-    }));
-  }, [molecules]);
-  
-  const selectedData = predictions.find(p => p.molecule.id === selectedMolecule);
-  
-  // Aggregate statistics
-  const avgScore = Math.round(predictions.reduce((sum, p) => sum + p.prediction.totalScore, 0) / predictions.length);
-  const strongBuys = predictions.filter(p => p.prediction.recommendation === 'Strong Buy').length;
-  const buys = predictions.filter(p => p.prediction.recommendation === 'Buy').length;
-  const holds = predictions.filter(p => p.prediction.recommendation === 'Hold').length;
-  const passes = predictions.filter(p => p.prediction.recommendation === 'Pass').length;
-  
-  // Portfolio comparison chart data
-  const portfolioChartData = predictions
-    .sort((a, b) => b.prediction.totalScore - a.prediction.totalScore)
-    .map(p => ({
-      name: p.molecule.name.length > 12 ? p.molecule.name.substring(0, 12) + '...' : p.molecule.name,
-      score: p.prediction.totalScore,
-      recommendation: p.prediction.recommendation,
-    }));
+  const { simulatorMolecule } = useSimulatorMolecule();
+
+  // If no molecule selected via "Use in Simulator →", show empty state
+  if (!simulatorMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center space-y-3">
+          <p className="text-lg font-semibold text-muted-foreground">Select a molecule from the Pipeline tab to begin simulation</p>
+          <p className="text-sm text-muted-foreground">Click "Use in Simulator →" on any molecule card to load it here.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const prediction = calculateLPI2ForMolecule(simulatorMolecule);
   
   return (
     <div className="space-y-6">
