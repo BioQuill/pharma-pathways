@@ -1159,18 +1159,8 @@ export const additionalMolecules: MoleculeProfile[] = [
   }
 ];
 
-// Helper function to calculate overall scores for all molecules using the true LPI3 model
-import { calculateLPI3ForMolecule } from './lpi3Model';
-
+// Overall scores are now pre-computed by computeLPI() in useMolecules.ts — Single Source of Truth (H1)
 export function calculateMoleculeOverallScores(molecules: MoleculeProfile[]): MoleculeProfile[] {
-  return molecules.map(mol => {
-    // Use the LPI3 ML-based model for consistent scoring across the app
-    const lpi3Prediction = calculateLPI3ForMolecule(mol);
-    const lpiScore = Math.round(lpi3Prediction.calibratedProbability * 100);
-    
-    return {
-      ...mol,
-      overallScore: lpiScore
-    };
-  });
+  // No-op: overallScore is already set during molecule transformation
+  return molecules;
 }
