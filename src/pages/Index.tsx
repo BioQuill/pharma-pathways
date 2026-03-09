@@ -674,7 +674,10 @@ const IndexInner = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const [recordTypeFilter, setRecordTypeFilter] = useState<'drugs' | 'devices' | 'all'>('drugs');
   const reportRef = useRef<HTMLDivElement>(null);
-  const {ctx2 = useSessionMolecule(); const { loadIntoSimulator, setOnNavigateToSimulator } = ctx2; const simulatorMolecule = ctx2.sessionMolecule
+  const _ctx = useSessionMolecule();
+  const loadIntoSimulator = _ctx.loadIntoSimulator;
+  const setOnNavigateToSimulator = _ctx.setOnNavigateToSimulator;
+  const simulatorMolecule = _ctx.sessionMolecule;
 
   // Register simulator navigation callback
   useEffect(() => {
