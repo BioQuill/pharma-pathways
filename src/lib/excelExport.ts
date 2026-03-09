@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import { calculateLPI3ForMolecule } from './lpi3Model'; // Used for category breakdown in Excel exports only
 import { getTTMMonthsForTA } from './ttmData';
-import { calculateProbabilityScores } from './scoring';
+import { calculateProbabilityScores, calculateTTMMonths, calculateCompositeScore } from './scoring';
 
 interface MoleculeProfile {
   id: string;
@@ -30,13 +30,11 @@ export function exportMoleculesToExcel(molecules: MoleculeProfile[], filename = 
     const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
     const ciLower = (mol as any)._raw?.lpi_ci_low ?? Math.round(lpiScore * 0.7);
     const ciUpper = (mol as any)._raw?.lpi_ci_high ?? Math.min(Math.round(lpiScore * 1.3), 100);
-    const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
+    const ttmMonths = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord || 'average', mol.approval_status || '', mol.status || '', mol.study_title || '');
     const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
     
-    // Calculate composite score
-    const lpiNormalized = lpiScore / 100;
-    const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
-    const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
+    // Use canonical composite score formula
+    const compositeScore = calculateCompositeScore(lpiScore, ttmMonths, mol.therapeuticArea);
 
     return {
       'Molecule Name': mol.name,
@@ -214,12 +212,10 @@ export function exportComparisonToExcel(molecules: MoleculeProfile[], filename =
     
     molecules.forEach((mol, idx) => {
       const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
-      const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
+      const ttmMonths = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord || 'average', mol.approval_status || '', mol.status || '', mol.study_title || '');
       const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
       
-      const lpiNormalized = lpiScore / 100;
-      const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
-      const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
+      const compositeScore = calculateCompositeScore(lpiScore, ttmMonths, mol.therapeuticArea);
 
       const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown
       const categoryScores: Record<string, number> = {};

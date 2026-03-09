@@ -65,7 +65,8 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   // Calculate composite score using new TA-specific formula:
   // A_norm = (LPI-1)/99, B_norm = (TTM-1)/(B_max-1)
   // Score = 100 * (0.7 * A_norm + 0.3 * (1 - B_norm))
-  const compositeScore = calculateCompositeScore(overallScore, ttmMonths, therapeuticArea);
+  // Use compScoreVal (already computed from lpi3Score) — avoid divergence with overallScore prop
+  const compositeScore = compScoreVal;
   
   const getBlockbusterColor = (years: number | null) => {
     if (years === null) return "text-muted-foreground";

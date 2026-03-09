@@ -505,6 +505,20 @@ export function generateFailedTrialMarketProjections(): MarketData[] {
   }));
 }
 
+// Deterministic seeded random helpers (replaces Math.random() — H1.5 Bonus Fix)
+function hashCodeForSeed(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+function seededRandomValue(seed: number): number {
+  const s = ((seed * 1664525 + 1013904223) & 0x7fffffff);
+  return s / 0x7fffffff;
+}
+
 // Generate market-specific projections based on company track record and regulatory landscape
 export function generateMarketProjections(
   molecule: string,
@@ -574,14 +588,19 @@ export function generateMarketProjections(
     const baseRevenue = 250; // Base $250M for major market
     const multiplier = marketSizeMultiplier[market.code as keyof typeof marketSizeMultiplier] || 0.1;
 
+    // Deterministic seeded random based on molecule name + market code
+    const seed = hashCodeForSeed(molecule + market.code);
+    const r1 = seededRandomValue(seed);
+    const r2 = seededRandomValue(seed + 7919);
+
     return {
       country: market.name,
       countryCode: market.code,
       estimatedLaunchDate: launchDate.toISOString().split('T')[0],
       marketAccessStrategy: generateMarketAccessStrategy(market.code),
       revenueProjection: {
-        year1: Math.round(baseRevenue * multiplier * (0.3 + Math.random() * 0.2)),
-        year2: Math.round(baseRevenue * multiplier * (0.6 + Math.random() * 0.3)),
+        year1: Math.round(baseRevenue * multiplier * (0.3 + r1 * 0.2)),
+        year2: Math.round(baseRevenue * multiplier * (0.6 + r2 * 0.3)),
       },
       regulatoryComplexity: calculateRegulatoryComplexity(market.code),
     };
