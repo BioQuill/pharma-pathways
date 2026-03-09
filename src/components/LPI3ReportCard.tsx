@@ -8,6 +8,7 @@ import {
 } from "recharts";
 import { Brain, AlertTriangle } from "lucide-react";
 import { calculateLPI3ForMolecule, type LPI3Prediction } from "@/lib/lpi3Model";
+import { ModelNarrative, generateLPINarrative } from "./ModelNarrative";
 
 interface MoleculeProfile {
   id: string;
