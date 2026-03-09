@@ -159,7 +159,7 @@ const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProf
               className="text-xs text-muted-foreground cursor-help" 
               title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data."
             >
-              CI: {(prediction.confidenceInterval.lower * 100).toFixed(0)}% - {(prediction.confidenceInterval.upper * 100).toFixed(0)}%
+              CI: {(molecule._raw?.lpi_ci_low ?? 0)}% - {(molecule._raw?.lpi_ci_high ?? 0)}%
             </div>
           </div>
         </div>
