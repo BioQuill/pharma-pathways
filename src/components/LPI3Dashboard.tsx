@@ -46,6 +46,7 @@ interface MoleculeProfile {
   conditions?: string;
   indication?: string;
   trialName?: string;
+  overallScore?: number;
   _raw?: Record<string, any>;
 }
 
