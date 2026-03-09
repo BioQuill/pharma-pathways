@@ -446,6 +446,10 @@ export function calculateLPI2ForMolecule(molecule: {
   company: string;
   companyTrackRecord: 'fast' | 'average' | 'slow';
 }): LPI2Prediction {
+  // Set deterministic seed from molecule id
+  _currentSeed = hashCode(molecule.id);
+  _subFactorIndex = 0;
+
   // Calculate each factor
   const biologicalPlausibility = scoreBiologicalPlausibility(
     molecule.therapeuticArea,
