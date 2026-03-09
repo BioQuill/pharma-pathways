@@ -1250,9 +1250,8 @@ const IndexInner = () => {
                   .map((molecule) => {
                     const lpi3 = calculateLPI3ForMolecule(molecule);
                     const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
-                    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
-                    const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
-                    const compositeScore = Math.round(molecule.overallScore * 0.6 + ttmEfficiency * 0.4);
+                    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.approval_status || '', molecule.status || '', molecule.study_title || molecule.trialName || '');
+                    const compositeScore = calculateCompositeScore(lpi3Score, ttm, molecule.therapeuticArea);
                     const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
                     const dropoutRanking = molecule.scores.dropoutRanking;
 
