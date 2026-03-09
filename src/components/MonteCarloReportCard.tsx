@@ -1,9 +1,12 @@
 // Monte Carlo Stress Test Report Card for Full DD Report
+// Wired to runPTRSMonteCarlo() from ptrsEngine.ts — same engine as simulator (H1.5 Fix 2)
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3 } from "lucide-react";
 import { ModelNarrative, generateMonteCarloNarrative } from "./ModelNarrative";
+import { runPTRSMonteCarlo, TA_KEY_TO_DISPLAY, type PTRSSliders } from "@/lib/ptrsEngine";
+import { canonicalizeTA } from "@/lib/taCanonical";
 
 interface MonteCarloReportCardProps {
   molecule: {
@@ -16,72 +19,75 @@ interface MonteCarloReportCardProps {
   };
 }
 
-// Deterministic seeded random for consistent results
-function seededRandom(seed: number): () => number {
-  let s = seed;
-  return () => {
-    s = (s * 1664525 + 1013904223) & 0x7fffffff;
-    return s / 0x7fffffff;
-  };
-}
-
-function hashCode(str: string): number {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+function getTAKey(ta: string): string {
+  const taLower = ta.toLowerCase();
+  for (const [key, display] of Object.entries(TA_KEY_TO_DISPLAY)) {
+    if (display.toLowerCase() === taLower || taLower.includes(display.toLowerCase().split(' ')[0])) {
+      return key;
+    }
   }
-  return Math.abs(hash);
+  if (taLower.includes("oncology") || taLower.includes("hematology")) return "oncology";
+  if (taLower.includes("neuro") || taLower.includes("cns")) return "cns";
+  if (taLower.includes("cardio")) return "cardiovascular";
+  if (taLower.includes("infect")) return "infectious";
+  if (taLower.includes("immun") || taLower.includes("inflam")) return "immunology";
+  if (taLower.includes("metabol") || taLower.includes("endocr")) return "metabolic";
+  if (taLower.includes("rare") || taLower.includes("orphan")) return "rareDisease";
+  if (taLower.includes("derma")) return "dermatology";
+  if (taLower.includes("respir") || taLower.includes("pulmon")) return "respiratory";
+  if (taLower.includes("psych") || taLower.includes("mental")) return "psychiatry";
+  if (taLower.includes("ophthal")) return "ophthalmology";
+  if (taLower.includes("gastro") || taLower.includes("hepat")) return "gastroenterology";
+  if (taLower.includes("nephro") || taLower.includes("renal")) return "nephrology";
+  if (taLower.includes("musculo") || taLower.includes("rheum")) return "musculoskeletal";
+  if (taLower.includes("vaccin")) return "vaccines";
+  if (taLower.includes("women")) return "womensHealth";
+  if (taLower.includes("pain") || taLower.includes("anesth")) return "pain";
+  if (taLower.includes("pediatr")) return "pediatrics";
+  if (taLower.includes("urol")) return "urology";
+  return "other";
 }
 
-function getPhaseMultiplier(phase: string): number {
+function getPhaseKey(phase: string): string {
   const p = phase.toLowerCase();
-  if (p.includes("approved")) return 1.0;
-  if (p.includes("phase 3") || p.includes("phase iii")) return 0.55;
-  if (p.includes("phase 2") || p.includes("phase ii")) return 0.30;
-  if (p.includes("phase 1") || p.includes("phase i")) return 0.15;
-  return 0.10;
+  if (p.includes("approved")) return "phase3";
+  if (p.includes("phase 3") || p.includes("phase iii")) return "phase3";
+  if (p.includes("phase 2/3") || p.includes("phase ii/iii")) return "phase2/3";
+  if (p.includes("phase 2") || p.includes("phase ii")) return "phase2";
+  if (p.includes("phase 1/2") || p.includes("phase i/ii")) return "phase1/2";
+  if (p.includes("phase 1") || p.includes("phase i")) return "phase1";
+  return "phase2";
 }
 
 export function MonteCarloReportCard({ molecule }: MonteCarloReportCardProps) {
   const results = useMemo(() => {
-    const rand = seededRandom(hashCode(molecule.id));
-    const N = 10000;
-    const basePTRS = getPhaseMultiplier(molecule.phase);
-    const baseLPI = basePTRS * 1.2; // approximate
-    const basePeakSales = 800 + rand() * 4000; // $M base
-
-    // Run simplified Monte Carlo
-    const ptrsResults: number[] = [];
-    const lpiResults: number[] = [];
-    const peakSalesResults: number[] = [];
+    const taKey = getTAKey(molecule.therapeuticArea);
+    const phaseKey = getPhaseKey(molecule.phase);
     
-    for (let i = 0; i < N; i++) {
-      const ptrsVar = basePTRS * (0.6 + rand() * 0.8);
-      const lpiVar = baseLPI * (0.6 + rand() * 0.8);
-      const peakVar = basePeakSales * (0.3 + rand() * 1.4);
-      ptrsResults.push(Math.min(1, Math.max(0, ptrsVar)));
-      lpiResults.push(Math.min(1, Math.max(0, lpiVar)));
-      peakSalesResults.push(Math.max(0, peakVar));
-    }
-
-    const percentile = (arr: number[], p: number) => {
-      const sorted = [...arr].sort((a, b) => a - b);
-      return sorted[Math.floor(sorted.length * p / 100)];
+    // Default sliders at 50 (industry average) — same as report context
+    const sliders: PTRSSliders = {
+      mechanismNovelty: 50,
+      endpointClarity: 50,
+      priorTrialData: 50,
+      sponsorExperience: molecule.companyTrackRecord === 'fast' ? 70 : molecule.companyTrackRecord === 'slow' ? 30 : 50,
+      regulatoryPrecedent: 50,
+      safetyProfile: 50,
     };
 
-    const blockbusterProb = peakSalesResults.filter(v => v >= 1000).length / N;
+    // Use real PTRS MC engine with 1000 iterations for report (vs 10000 in simulator)
+    const mc = runPTRSMonteCarlo(taKey, phaseKey, sliders, { iterations: 1000, uncertaintyPct: 0.15 });
 
     return {
-      ptrs: { p5: percentile(ptrsResults, 5), p50: percentile(ptrsResults, 50), p95: percentile(ptrsResults, 95) },
-      lpi: { p5: percentile(lpiResults, 5), p50: percentile(lpiResults, 50), p95: percentile(lpiResults, 95) },
-      peakSales: { p5: percentile(peakSalesResults, 5), p50: percentile(peakSalesResults, 50), p95: percentile(peakSalesResults, 95) },
-      blockbuster: { p5: blockbusterProb * 0.6, p50: blockbusterProb, p95: Math.min(1, blockbusterProb * 1.4) },
-      iterations: N,
+      p5: mc.p5,
+      p50: mc.median,
+      p95: mc.p95,
+      mean: mc.mean,
+      stdDev: mc.stdDev,
+      iterations: 1000,
     };
   }, [molecule]);
 
-  const fmtPct = (v: number) => `${(v * 100).toFixed(0)}%`;
-  const fmtSales = (v: number) => v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v.toFixed(0)}M`;
+  const fmtPct = (v: number) => `${v.toFixed(1)}%`;
 
   return (
     <Card className="border-2 border-primary/20">
@@ -97,7 +103,7 @@ export function MonteCarloReportCard({ molecule }: MonteCarloReportCardProps) {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b">
-                <th className="text-left py-2 text-muted-foreground">Model</th>
+                <th className="text-left py-2 text-muted-foreground">Metric</th>
                 <th className="text-center py-2 text-muted-foreground">🐻 Bear (P5)</th>
                 <th className="text-center py-2 text-muted-foreground font-semibold">📊 Base (P50)</th>
                 <th className="text-center py-2 text-muted-foreground">🐂 Bull (P95)</th>
@@ -106,38 +112,31 @@ export function MonteCarloReportCard({ molecule }: MonteCarloReportCardProps) {
             <tbody className="divide-y divide-border/30">
               <tr>
                 <td className="py-2 font-medium">PTRS</td>
-                <td className="text-center font-mono text-[hsl(0,72%,51%)]">{fmtPct(results.ptrs.p5)}</td>
-                <td className="text-center font-mono font-semibold">{fmtPct(results.ptrs.p50)}</td>
-                <td className="text-center font-mono text-[hsl(142,76%,36%)]">{fmtPct(results.ptrs.p95)}</td>
-              </tr>
-              <tr>
-                <td className="py-2 font-medium">LPI</td>
-                <td className="text-center font-mono text-[hsl(0,72%,51%)]">{fmtPct(results.lpi.p5)}</td>
-                <td className="text-center font-mono font-semibold">{fmtPct(results.lpi.p50)}</td>
-                <td className="text-center font-mono text-[hsl(142,76%,36%)]">{fmtPct(results.lpi.p95)}</td>
-              </tr>
-              <tr>
-                <td className="py-2 font-medium">Peak Sales</td>
-                <td className="text-center font-mono text-[hsl(0,72%,51%)]">{fmtSales(results.peakSales.p5)}</td>
-                <td className="text-center font-mono font-semibold">{fmtSales(results.peakSales.p50)}</td>
-                <td className="text-center font-mono text-[hsl(142,76%,36%)]">{fmtSales(results.peakSales.p95)}</td>
-              </tr>
-              <tr>
-                <td className="py-2 font-medium">Blockbuster Prob.</td>
-                <td className="text-center font-mono text-[hsl(0,72%,51%)]">{fmtPct(results.blockbuster.p5)}</td>
-                <td className="text-center font-mono font-semibold">{fmtPct(results.blockbuster.p50)}</td>
-                <td className="text-center font-mono text-[hsl(142,76%,36%)]">{fmtPct(results.blockbuster.p95)}</td>
+                <td className="text-center font-mono text-[hsl(0,72%,51%)]">{fmtPct(results.p5)}</td>
+                <td className="text-center font-mono font-semibold">{fmtPct(results.p50)}</td>
+                <td className="text-center font-mono text-[hsl(142,76%,36%)]">{fmtPct(results.p95)}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
+        <div className="grid grid-cols-2 gap-4 text-center text-xs">
+          <div className="p-3 bg-muted/30 rounded-lg">
+            <div className="text-lg font-bold">{fmtPct(results.mean)}</div>
+            <div className="text-muted-foreground">Mean PTRS</div>
+          </div>
+          <div className="p-3 bg-muted/30 rounded-lg">
+            <div className="text-lg font-bold">{results.stdDev.toFixed(2)}%</div>
+            <div className="text-muted-foreground">Std Deviation</div>
+          </div>
+        </div>
+
         <div className="p-3 bg-muted/20 rounded-lg text-xs text-muted-foreground">
-          Under stress conditions, peak sales range from {fmtSales(results.peakSales.p5)} (P5) to {fmtSales(results.peakSales.p95)} (P95).
+          Under stress conditions, PTRS ranges from {fmtPct(results.p5)} (P5) to {fmtPct(results.p95)} (P95) with a median of {fmtPct(results.p50)}.
         </div>
 
         <ModelNarrative>
-          <p>{generateMonteCarloNarrative(results.peakSales.p5, results.peakSales.p50, results.peakSales.p95, results.iterations)}</p>
+          <p>{generateMonteCarloNarrative(results.p5, results.p50, results.p95, results.iterations)}</p>
         </ModelNarrative>
       </CardContent>
     </Card>

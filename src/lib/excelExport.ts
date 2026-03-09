@@ -212,12 +212,10 @@ export function exportComparisonToExcel(molecules: MoleculeProfile[], filename =
     
     molecules.forEach((mol, idx) => {
       const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
-      const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
+      const ttmMonths = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord || 'average', mol.approval_status || '', mol.status || '', mol.study_title || '');
       const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
       
-      const lpiNormalized = lpiScore / 100;
-      const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
-      const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
+      const compositeScore = calculateCompositeScore(lpiScore, ttmMonths, mol.therapeuticArea);
 
       const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown
       const categoryScores: Record<string, number> = {};
