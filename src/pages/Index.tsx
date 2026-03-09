@@ -59,7 +59,10 @@ import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
 // LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)d (H1)
 import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
-import { MoleculeComparison } from "@/components/MoleculeComparison";
+import { PTRSReportCard } from "@/components/PTRSReportCard";
+import { CAPMReportCard } from "@/components/CAPMReportCard";
+import { PAIndexReportCard } from "@/components/PAIndexReportCard";
+import { MonteCarloReportCard } from "@/components/MonteCarloReportCard";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
 import { PTRSMoleculeComparison } from "@/components/PTRSMoleculeComparison";
 import { PTRSHistoricalTracking } from "@/components/PTRSHistoricalTracking";
