@@ -26,10 +26,9 @@ interface MoleculeProfile {
 export function exportMoleculesToExcel(molecules: MoleculeProfile[], filename = 'molecules-data') {
   // Prepare data with all calculated scores
   const data = molecules.map((mol) => {
-    const lpi3 = calculateLPI3ForMolecule(mol);
-    const lpiScore = Math.round(lpi3.calibratedProbability * 100);
-    const ciLower = Math.round(lpi3.confidenceInterval.lower * 100);
-    const ciUpper = Math.round(lpi3.confidenceInterval.upper * 100);
+    const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
+    const ciLower = (mol as any)._raw?.lpi_ci_low ?? Math.round(lpiScore * 0.7);
+    const ciUpper = (mol as any)._raw?.lpi_ci_high ?? Math.min(Math.round(lpiScore * 1.3), 100);
     const ttmMonths = getTTMMonthsForTA(mol.therapeuticArea);
     const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
     
