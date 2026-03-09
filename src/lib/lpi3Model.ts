@@ -673,21 +673,20 @@ export function calculateLPI3ForMolecule(
 
   // ── Post-calculation adjustments using real status fields ──
   let adjusted = prediction.calibratedProbability;
-  const approvalStatus = (molecule.approval_status || '').toUpperCase();
+  const approvalUpper = approvalStatus.toUpperCase();
   const phaseLower = (molecule.phase || '').toLowerCase();
 
-  if (approvalStatus.includes('APPROVED')) {
-    // Boost toward ceiling
+  if (approvalUpper.includes('APPROVED')) {
     adjusted = adjusted + (0.95 - adjusted) * 0.6;
-  } else if (approvalStatus === 'COMPLETED_PH3' || approvalStatus === 'RECENTLY_COMPLETED_PH3') {
+  } else if (approvalUpper === 'COMPLETED_PH3' || approvalUpper === 'RECENTLY_COMPLETED_PH3') {
     adjusted = adjusted + (0.85 - adjusted) * 0.35;
   }
 
-  if (molecule.has_results && (phaseLower.includes('iii') || phaseLower.includes('phase 3'))) {
+  if (hasResults && (phaseLower.includes('iii') || phaseLower.includes('phase 3'))) {
     adjusted = Math.min(0.95, adjusted * 1.08);
   }
 
-  const statusUpper = (molecule.status || '').toUpperCase();
+  const statusUpper = molStatus.toUpperCase();
   if (statusUpper === 'ACTIVE_NOT_RECRUITING' || statusUpper === 'ACTIVE, NOT RECRUITING') {
     adjusted = Math.min(0.95, adjusted * 1.04);
   }
