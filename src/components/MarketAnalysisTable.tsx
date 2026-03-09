@@ -148,6 +148,9 @@ export function MarketAnalysisTable({ marketData, approvalStatus }: MarketAnalys
             </p>
           </div>
         </div>
+        {isApproved && (
+          <p className="text-xs text-muted-foreground italic mt-4 dd-caption">* Projections shown as post-launch revenue benchmarks for comparator reference</p>
+        )}
       </CardContent>
     </Card>
   );
