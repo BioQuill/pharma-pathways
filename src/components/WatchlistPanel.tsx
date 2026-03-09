@@ -16,7 +16,7 @@ import {
   Eye
 } from "lucide-react";
 import { WatchlistItem } from "@/hooks/useWatchlist";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 import { type MoleculeProfile } from "@/lib/moleculesData";
 
 interface WatchlistPanelProps {
