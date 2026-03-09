@@ -26,7 +26,8 @@ const getFlagUrl = (code: string) => {
   return `https://flagcdn.com/w40/${countryMap[code] || 'xx'}.png`;
 };
 
-export function MarketAnalysisTable({ marketData }: MarketAnalysisTableProps) {
+export function MarketAnalysisTable({ marketData, approvalStatus }: MarketAnalysisTableProps) {
+  const isApproved = approvalStatus?.startsWith('APPROVED');
   const formatCurrency = (value: number) => `$${value.toFixed(0)}M`;
   const formatPercent = (value: number) => `${(value * 100).toFixed(0)}%`;
   
