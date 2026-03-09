@@ -165,12 +165,27 @@ export function computeLPI(molecule: LPIMoleculeRow): LPIResult {
   // Composite weighted score
   const rawScore = (clinical * 0.30) + (scientific * 0.20) + (regulatory * 0.18) + (sponsor * 0.15) + (market * 0.10) + (safety * 0.07);
 
-  // Scale to 0-100, clamp to 30-92%
-  const pLaunch = Math.min(92, Math.max(30, Math.round(rawScore * 100)));
+  // Scale to 0-100, clamp to 25-97%
+  let pLaunch = Math.min(97, Math.max(25, Math.round(rawScore * 100)));
 
-  // Confidence interval
+  // Post-clamp approval bonus
+  const approvalUpper = (molecule.approval_status || '').toUpperCase();
+  if (approvalUpper.startsWith('APPROVED') || approvalUpper.includes('APPROVED')) {
+    pLaunch = Math.min(97, pLaunch + 8);
+  } else if (approvalUpper.includes('COMPLETED_PH3')) {
+    pLaunch = Math.min(97, pLaunch + 4);
+  }
+
+  // Confidence interval — tighter for approved molecules
   const phase = (molecule.phase || '').toLowerCase();
-  const ciWidth = (phase.includes('phase 3') || phase.includes('phase iii') || phase.includes('phase3')) && molecule.has_results ? 8 : 15;
+  let ciWidth: number;
+  if (approvalUpper.startsWith('APPROVED') || approvalUpper.includes('APPROVED')) {
+    ciWidth = 4;
+  } else if ((phase.includes('phase 3') || phase.includes('phase iii') || phase.includes('phase3')) && molecule.has_results) {
+    ciWidth = 8;
+  } else {
+    ciWidth = 15;
+  }
   const ciLow = Math.max(5, pLaunch - ciWidth);
   const ciHigh = Math.min(97, pLaunch + ciWidth);
 
