@@ -57,7 +57,7 @@ import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
-import { LPICalibrationCard } from "@/components/LPICalibrationCard";
+// LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)d (H1)
 import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
@@ -105,7 +105,7 @@ import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChar
 import { MethodologyContent } from "@/components/MethodologyContent";
 import { PricingContent } from "@/components/PricingContent";
 import { ModelsContent } from "@/components/ModelsContent";
-import { SimulatorMoleculeProvider, useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+import { SessionMoleculeProvider, useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
 import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
@@ -228,7 +228,8 @@ const DueDiligenceComparisonChart = () => {
 
 // PTRS Calculator Component
 const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
-  const { simulatorMolecule } = useSimulatorMolecule();
+  const _ptrsCtx = useSessionMolecule();
+  const simulatorMolecule = _ptrsCtx.sessionMolecule;
   const [calculationMode, setCalculationMode] = useState<"ta" | "molecule">("ta");
   const [selectedMoleculeId, setSelectedMoleculeId] = useState<string>("");
   const [therapeuticArea, setTherapeuticArea] = useState("oncology");
@@ -674,7 +675,10 @@ const IndexInner = () => {
   const [phaseFilter, setPhaseFilter] = useState<string>('all');
   const [recordTypeFilter, setRecordTypeFilter] = useState<'drugs' | 'devices' | 'all'>('drugs');
   const reportRef = useRef<HTMLDivElement>(null);
-  const { loadIntoSimulator, setOnNavigateToSimulator, simulatorMolecule } = useSimulatorMolecule();
+  const _ctx = useSessionMolecule();
+  const loadIntoSimulator = _ctx.loadIntoSimulator;
+  const setOnNavigateToSimulator = _ctx.setOnNavigateToSimulator;
+  const simulatorMolecule = _ctx.sessionMolecule;
 
   // Register simulator navigation callback
   useEffect(() => {
@@ -818,7 +822,8 @@ const IndexInner = () => {
     }
   };
 
-  const activeMolecule = allMolecules.find(m => m.id === selectedMolecule);
+  // DD Report molecule: prefer locally-selected (Full Analysis click), fallback to session molecule
+  const activeMolecule = allMolecules.find(m => m.id === selectedMolecule) || simulatorMolecule;
 
   if (moleculesLoading) {
     return (
@@ -1626,8 +1631,7 @@ const IndexInner = () => {
                   </CardContent>
                 </Card>
                 
-                {/* LPI Calibrated — 6-Category Radar + CI (from computeLPI) */}
-                <LPICalibrationCard molecule={activeMolecule} />
+                {/* LPI — Single Source: LPI3ReportCard (uses computeLPI via _raw) */}
 
                 {/* LPI (Launch Probability Index) ML Analysis Card */}
                 <LPI3ReportCard molecule={activeMolecule} />
@@ -2498,9 +2502,9 @@ const IndexInner = () => {
 };
 
 const Index = () => (
-  <SimulatorMoleculeProvider>
+  <SessionMoleculeProvider>
     <IndexInner />
-  </SimulatorMoleculeProvider>
+  </SessionMoleculeProvider>
 );
 
 export default Index;
