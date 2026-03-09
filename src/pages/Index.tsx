@@ -1626,8 +1626,7 @@ const IndexInner = () => {
                   </CardContent>
                 </Card>
                 
-                {/* LPI Calibrated — 6-Category Radar + CI (from computeLPI) */}
-                <LPICalibrationCard molecule={activeMolecule} />
+                {/* LPI — Single Source: LPI3ReportCard (uses computeLPI via _raw) */}
 
                 {/* LPI (Launch Probability Index) ML Analysis Card */}
                 <LPI3ReportCard molecule={activeMolecule} />
