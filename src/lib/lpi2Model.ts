@@ -301,48 +301,75 @@ function scoreTeamAndSponsor(
 }
 
 // ========================================
+// DETERMINISTIC SEEDED RANDOM (same pattern as lpi3Model.ts)
+// ========================================
+
+function hashCode(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+// Module-level seed set per calculateLPI2ForMolecule call
+let _currentSeed = 0;
+let _subFactorIndex = 0;
+
+function deterministicRandom(): number {
+  const val = seededRandom(_currentSeed + _subFactorIndex);
+  _subFactorIndex++;
+  return val;
+}
+
+// ========================================
 // SUB-FACTOR SCORING HELPERS
 // ========================================
 
 function getGeneticEvidenceScore(ta: string, indication: string): number {
-  // TAs with strong genetic evidence base
   const highGeneticTA = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Immunology & Inflammation'];
   const mediumGeneticTA = ['Cardiovascular', 'Neurology', 'Endocrinology & Metabolism'];
   
-  if (highGeneticTA.includes(ta)) return 75 + Math.random() * 20;
-  if (mediumGeneticTA.includes(ta)) return 55 + Math.random() * 25;
-  return 40 + Math.random() * 30;
+  if (highGeneticTA.includes(ta)) return 75 + deterministicRandom() * 20;
+  if (mediumGeneticTA.includes(ta)) return 55 + deterministicRandom() * 25;
+  return 40 + deterministicRandom() * 30;
 }
 
 function getPathwayValidationScore(ta: string, phase: string): number {
   const phaseBonus = { 'Approved': 25, 'Phase III': 20, 'Phase II': 10, 'Phase I': 0 };
   const bonus = phaseBonus[phase as keyof typeof phaseBonus] || 0;
-  return Math.min(100, 50 + bonus + Math.random() * 25);
+  return Math.min(100, 50 + bonus + deterministicRandom() * 25);
 }
 
 function getMechanismClarityScore(phase: string): number {
   const phaseScores = { 'Approved': 90, 'Phase III': 80, 'Phase II': 70, 'Phase I': 55 };
   const base = phaseScores[phase as keyof typeof phaseScores] || 50;
-  return Math.min(100, base + Math.random() * 10);
+  return Math.min(100, base + deterministicRandom() * 10);
 }
 
 function getPreclinicalReproducibilityScore(ta: string, phase: string): number {
   const phaseBonus = { 'Approved': 30, 'Phase III': 25, 'Phase II': 15, 'Phase I': 5 };
   const bonus = phaseBonus[phase as keyof typeof phaseBonus] || 0;
-  return Math.min(100, 45 + bonus + Math.random() * 20);
+  return Math.min(100, 45 + bonus + deterministicRandom() * 20);
 }
 
 function getBiomarkerAvailabilityScore(ta: string): number {
   const highBiomarkerTA = ['Oncology & Hematology', 'Immunology & Inflammation', 'Cardiovascular'];
-  if (highBiomarkerTA.includes(ta)) return 70 + Math.random() * 25;
-  return 45 + Math.random() * 35;
+  if (highBiomarkerTA.includes(ta)) return 70 + deterministicRandom() * 25;
+  return 45 + deterministicRandom() * 35;
 }
 
 function getAnimalModelRelevanceScore(ta: string): number {
-  // Some TAs have less translatable animal models
   const lowTranslatability = ['Psychiatry & Mental Health', 'Neurology', 'Pain & Anaesthesia'];
-  if (lowTranslatability.includes(ta)) return 35 + Math.random() * 30;
-  return 55 + Math.random() * 35;
+  if (lowTranslatability.includes(ta)) return 35 + deterministicRandom() * 30;
+  return 55 + deterministicRandom() * 35;
 }
 
 function getINDEnablingScore(phase: string): number {
@@ -365,14 +392,14 @@ function getProtocolDesignScore(phase: string): number {
 
 function getOrphanStatusScore(ta: string, indication: string): number {
   const orphanLikely = ['Rare Disease & Orphan', 'Oncology & Hematology', 'Neurology'];
-  if (orphanLikely.includes(ta)) return 70 + Math.random() * 25;
-  return 30 + Math.random() * 40;
+  if (orphanLikely.includes(ta)) return 70 + deterministicRandom() * 25;
+  return 30 + deterministicRandom() * 40;
 }
 
 function getUnmetNeedScore(ta: string, indication: string): number {
   const highUnmetNeed = ['Oncology & Hematology', 'Rare Disease & Orphan', 'Neurology', 'Psychiatry & Mental Health'];
-  if (highUnmetNeed.includes(ta)) return 75 + Math.random() * 20;
-  return 50 + Math.random() * 35;
+  if (highUnmetNeed.includes(ta)) return 75 + deterministicRandom() * 20;
+  return 50 + deterministicRandom() * 35;
 }
 
 function getExpeditedPathwayScore(ta: string, phase: string): number {
@@ -380,31 +407,30 @@ function getExpeditedPathwayScore(ta: string, phase: string): number {
   const base = expeditedLikely.includes(ta) ? 65 : 40;
   const phaseBonus = { 'Approved': 20, 'Phase III': 15, 'Phase II': 10, 'Phase I': 5 };
   const bonus = phaseBonus[phase as keyof typeof phaseBonus] || 0;
-  return Math.min(100, base + bonus + Math.random() * 15);
+  return Math.min(100, base + bonus + deterministicRandom() * 15);
 }
 
 function getTrackRecordScore(trackRecord: 'fast' | 'average' | 'slow'): number {
   const scores = { 'fast': 85, 'average': 65, 'slow': 45 };
-  return scores[trackRecord] + Math.random() * 10;
+  return scores[trackRecord] + deterministicRandom() * 10;
 }
 
 function getExecutionCapabilityScore(company: string, trackRecord: string): number {
-  // Large pharma companies have better execution capability
   const largePharma = ['Novo Nordisk', 'Eli Lilly', 'Roche', 'Merck', 'Pfizer', 'Johnson & Johnson', 'AstraZeneca', 'Bristol-Myers Squibb'];
   const isLargePharma = largePharma.some(p => company.toLowerCase().includes(p.toLowerCase()));
   
-  if (isLargePharma) return 80 + Math.random() * 15;
-  if (trackRecord === 'fast') return 70 + Math.random() * 15;
-  if (trackRecord === 'average') return 55 + Math.random() * 20;
-  return 40 + Math.random() * 25;
+  if (isLargePharma) return 80 + deterministicRandom() * 15;
+  if (trackRecord === 'fast') return 70 + deterministicRandom() * 15;
+  if (trackRecord === 'average') return 55 + deterministicRandom() * 20;
+  return 40 + deterministicRandom() * 25;
 }
 
 function getFinancialStrengthScore(company: string): number {
   const largePharma = ['Novo Nordisk', 'Eli Lilly', 'Roche', 'Merck', 'Pfizer', 'Johnson & Johnson', 'AstraZeneca', 'Bristol-Myers Squibb'];
   const isLargePharma = largePharma.some(p => company.toLowerCase().includes(p.toLowerCase()));
   
-  if (isLargePharma) return 90 + Math.random() * 10;
-  return 50 + Math.random() * 35;
+  if (isLargePharma) return 90 + deterministicRandom() * 10;
+  return 50 + deterministicRandom() * 35;
 }
 
 // ========================================
