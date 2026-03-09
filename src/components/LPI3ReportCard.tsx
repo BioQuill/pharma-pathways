@@ -148,7 +148,7 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
 
         <ModelNarrative>
           <p>{generateLPINarrative(
-            prediction.calibratedProbability,
+            preComputedLPI,
             molecule.phase,
             molecule.therapeuticArea,
             prediction.featureCategories.reduce((best, c) => {

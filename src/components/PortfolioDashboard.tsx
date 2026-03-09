@@ -44,8 +44,7 @@ const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'
 export function PortfolioDashboard({ molecules, watchlistIds = [] }: PortfolioDashboardProps) {
   const stats = useMemo(() => {
     const lpiScores = molecules.map(m => {
-      const result = calculateLPI3ForMolecule(m);
-      const lpi = result.calibratedProbability * 100;
+      const lpi = (m as any)._raw?.lpi_score ?? m.overallScore ?? 50;
       // Derive recommendation and risk from probability
       const recommendation = lpi >= 70 ? 'Strong Buy' : lpi >= 55 ? 'Buy' : lpi >= 40 ? 'Hold' : 'Sell';
       const riskLevel = lpi >= 60 ? 'Low' : lpi >= 40 ? 'Medium' : 'High';

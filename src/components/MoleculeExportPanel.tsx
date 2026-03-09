@@ -328,8 +328,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
                         </thead>
                         <tbody>
                           {comparisonMolecules.map(mol => {
-                            const lpi = calculateLPI3ForMolecule(mol);
-                            const lpiScore = Math.round(lpi.calibratedProbability * 100);
+                            const lpiScore = (mol as any)._raw?.lpi_score ?? (mol as any).overallScore ?? 50;
                             return (
                               <tr key={mol.id} className="border-t">
                                 <td className="p-2 font-medium">{mol.name}</td>
