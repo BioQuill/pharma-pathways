@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, DollarSign, ShieldCheck, FlaskConical, FileCheck2, Building2 } from "lucide-react";
 import { calculateLPI2ForMolecule, type LPI2Prediction, type LPI2Factor } from "@/lib/lpi2Model";
+import { ModelNarrative, generateInvestmentNarrative } from "./ModelNarrative";
 
 interface MoleculeProfile {
   id: string;
