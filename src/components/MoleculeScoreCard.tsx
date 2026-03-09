@@ -33,7 +33,6 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   // Use pre-computed LPI from computeLPI() — Single Source of Truth (H1)
   const lpi3Score = molecule?._raw?.lpi_score ?? molecule?.overallScore ?? overallScore;
   const ti = molecule ? getTherapeuticIndexForMolecule(molecule) : null;
-  const ti = molecule ? getTherapeuticIndexForMolecule(molecule) : null;
   const ttmMonthsVal = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, molecule?.approval_status || '', molecule?.status || '', molecule?.study_title || molecule?.trialName || '');
   const compScoreVal = calculateCompositeScore(lpi3Score, ttmMonthsVal, therapeuticArea);
 
