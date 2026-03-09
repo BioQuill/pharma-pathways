@@ -241,7 +241,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
             <ScrollArea className="h-[250px] border rounded-lg p-2">
               <div className="space-y-1">
                 {filteredMolecules.slice(0, 50).map(mol => {
-                  const lpi = calculateLPI3ForMolecule(mol);
+                  const lpiScore = (mol as any)._raw?.lpi_score ?? (mol as any).overallScore ?? 50;
                   const lpiScore = Math.round(lpi.calibratedProbability * 100);
                   return (
                     <div 
