@@ -59,7 +59,10 @@ import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
 // LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)d (H1)
 import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
-import { MoleculeComparison } from "@/components/MoleculeComparison";
+import { PTRSReportCard } from "@/components/PTRSReportCard";
+import { CAPMReportCard } from "@/components/CAPMReportCard";
+import { PAIndexReportCard } from "@/components/PAIndexReportCard";
+import { MonteCarloReportCard } from "@/components/MonteCarloReportCard";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
 import { PTRSMoleculeComparison } from "@/components/PTRSMoleculeComparison";
 import { PTRSHistoricalTracking } from "@/components/PTRSHistoricalTracking";
@@ -1437,6 +1440,11 @@ const IndexInner = () => {
                     ← Back to Overview
                   </Button>
                 </div>
+
+                {/* Trial-specific disclaimer */}
+                <p className="text-sm italic text-muted-foreground">
+                  This report reflects {activeMolecule.nctId || 'N/A'} — {activeMolecule.phase} | {(activeMolecule as any)._raw?.conditions || activeMolecule.indication} | {(activeMolecule as any)._raw?.age_group || 'All ages'} | {(activeMolecule as any)._raw?.sex || 'All'}. All model outputs are specific to this trial design and patient population.
+                </p>
                 
                 {activeMolecule.isFailed && activeMolecule.trialName && (
                   <TrialFailureAnalysis
@@ -1655,6 +1663,44 @@ const IndexInner = () => {
                   phase: activeMolecule.phase,
                   therapeuticArea: activeMolecule.therapeuticArea,
                   indication: activeMolecule.indication,
+                  company: activeMolecule.company,
+                  companyTrackRecord: activeMolecule.companyTrackRecord,
+                }} />
+                
+                {/* PTRS Analysis */}
+                <PTRSReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                  company: activeMolecule.company,
+                  companyTrackRecord: activeMolecule.companyTrackRecord,
+                }} />
+
+                {/* CAPM Alpha Signals */}
+                <CAPMReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                  company: activeMolecule.company,
+                  companyTrackRecord: activeMolecule.companyTrackRecord,
+                }} />
+
+                {/* PA Index Summary */}
+                <PAIndexReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                }} />
+
+                {/* Monte Carlo Stress Test */}
+                <MonteCarloReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
                   company: activeMolecule.company,
                   companyTrackRecord: activeMolecule.companyTrackRecord,
                 }} />

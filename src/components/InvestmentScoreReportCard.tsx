@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, DollarSign, ShieldCheck, FlaskConical, FileCheck2, Building2 } from "lucide-react";
 import { calculateLPI2ForMolecule, type LPI2Prediction, type LPI2Factor } from "@/lib/lpi2Model";
+import { ModelNarrative, generateInvestmentNarrative } from "./ModelNarrative";
 
 interface MoleculeProfile {
   id: string;
@@ -156,6 +157,14 @@ export function InvestmentScoreReportCard({ molecule }: InvestmentScoreReportCar
             )}
           </div>
         </div>
+
+        <ModelNarrative>
+          <p>{generateInvestmentNarrative(
+            prediction.totalScore,
+            prediction.factors.sort((a, b) => b.score - a.score).slice(0, 2).map(f => f.name).join(" and "),
+            prediction.factors.sort((a, b) => a.score - b.score)[0]?.name || "N/A",
+          )}</p>
+        </ModelNarrative>
       </CardContent>
     </Card>
   );
