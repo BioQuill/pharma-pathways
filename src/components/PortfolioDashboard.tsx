@@ -30,8 +30,7 @@ import {
   BarChart3,
   PieChart as PieChartIcon
 } from "lucide-react";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
-// TTM calculation done inline with phase-based estimation
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 
 import { type MoleculeProfile } from "@/lib/moleculesData";
 
