@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Globe, TrendingUp, Building2, DollarSign, Activity, Calendar } from "lucide-react";
 import { getAllTACompositeIndexes } from "@/lib/taCompositeIndex";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 import { calculateTTMMonths, type MarketData } from "@/lib/scoring";
 
 interface MoleculeProfile {
