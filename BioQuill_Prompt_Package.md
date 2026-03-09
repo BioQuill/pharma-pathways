@@ -776,8 +776,136 @@ VERIFICATION:
 
 ---
 
+## PROMPT H1.5 — Calculation Divergence Fixes
+*Estimated cost: 4-5 credits — send AFTER H1 verified, BEFORE H2*
+
+---
+
+```
+TASK: Fix four confirmed calculation divergences found in the H3 platform
+audit. No new features. No UI changes. No model logic changes.
+Consistency fixes only.
+
+CONFIRMED ISSUES (from H3 audit — fix all four):
+
+=== FIX 1: COMPOSITE SCORE — WRONG WEIGHTS IN MOLECULESCORECARD ===
+
+CONFIRMED PROBLEM:
+MoleculeScoreCard.tsx uses its own inline formula:
+  overallScore * 0.6 + ttmEff * 0.4
+This is WRONG. The agreed formula in calculateCompositeScore() is:
+  Score = 100 × (0.7 × A_norm + 0.3 × (1 − B_norm))
+Every molecule card currently displays a Score computed with
+wrong weights (0.6/0.4 instead of 0.7/0.3) and without
+proper A_norm/B_norm normalisation.
+
+REQUIRED FIX:
+In MoleculeScoreCard.tsx, replace the inline composite calculation
+entirely with a call to calculateCompositeScore() from scoring.ts:
+  import { calculateCompositeScore } from '../lib/scoring'
+  const score = calculateCompositeScore(lpiScore, ttmMonths, therapeuticArea)
+Do NOT modify calculateCompositeScore() itself — it is correct.
+Remove the inline 0.6/0.4 formula entirely.
+
+Also check Index.tsx — if it has its own inline composite calculation,
+apply the same fix.
+
+=== FIX 2: MONTE CARLO — REPORT CARD USES DIFFERENT ENGINE ===
+
+CONFIRMED PROBLEM:
+MonteCarloReportCard.tsx contains its own simplified seeded Monte Carlo
+with different base calculations — completely independent from the real
+runPTRSMonteCarlo() engine in ptrsEngine.ts.
+The DD Report therefore shows different P5/P50/P95 values than the
+Monte Carlo simulator tab for the same molecule.
+
+REQUIRED FIX:
+Replace MonteCarloReportCard.tsx's inline MC logic entirely.
+Wire it to call runPTRSMonteCarlo() from ptrsEngine.ts with:
+  - molecule's TA and phase from SessionMoleculeContext
+  - default slider values (all at 50) for report context
+  - iterations: 1000 (reduced from simulator's 10,000 for performance)
+Output: same P5/P50/P95 structure as simulator, just with default
+slider inputs and fewer iterations.
+Do NOT modify runPTRSMonteCarlo() or ptrsEngine.ts.
+
+=== FIX 3: PA INDEX — REPORT CARD USES DIFFERENT SCORING ===
+
+CONFIRMED PROBLEM:
+PAIndexReportCard.tsx has its own simplified inline scoring logic
+with different factor weights and calculation path than
+PAModel1Dashboard.tsx and PAModel2Dashboard.tsx.
+The DD Report therefore shows different PA scores than the
+PA Index simulator tabs for the same molecule.
+
+REQUIRED FIX:
+Identify the core scoring functions in PAModel1Dashboard.tsx and
+PAModel2Dashboard.tsx. Extract them into:
+  src/lib/paModel1Engine.ts — PA Index-1 pure calculation function
+  src/lib/paModel2Engine.ts — PA Index-2 pure calculation function
+Wire both PAModel1Dashboard.tsx AND PAIndexReportCard.tsx to call
+the same engine functions with the same inputs.
+Do NOT change any weights, factor definitions, or scoring logic.
+Extract only — do not modify.
+
+=== FIX 4: TTM LEGACY CALLERS — MODIFIERS NOT APPLIED ===
+
+CONFIRMED PROBLEM:
+MoleculeScoreCard.tsx and Index.tsx call calculateTTMMonths() passing
+marketData[] as the 4th argument. The current function signature treats
+array as legacy and ignores it, meaning approval_status and status
+modifiers (implemented in B2) are never applied on molecule cards.
+
+REQUIRED FIX:
+Update all callers of calculateTTMMonths() to pass the correct
+new parameters introduced in B2:
+  calculateTTMMonths(
+    molecule.phase,
+    molecule.therapeuticArea,
+    molecule.companyTrackRecord,   // sponsorType
+    molecule._raw.approval_status, // was: marketData[]
+    molecule._raw.status,          // new
+    molecule._raw.study_title      // new
+  )
+Affected files:
+  src/components/MoleculeScoreCard.tsx
+  src/pages/Index.tsx
+  src/lib/excelExport.ts
+  Any other file still passing marketData[] as 4th arg
+
+Also remove the marketData[] legacy parameter path from
+calculateTTMMonths() entirely — it is no longer needed.
+
+=== BONUS: FIX Peak Sales Math.random() ===
+
+CONFIRMED PROBLEM (from audit):
+generateMarketProjections() in scoring.ts lines 583-584 still uses
+Math.random() making revenue projections non-deterministic.
+
+REQUIRED FIX:
+Replace Math.random() calls in generateMarketProjections() with
+seededRandom(hashCode(molecule.id)) — same pattern used in lpi3Model.ts.
+Use offset seeds for different projection variables.
+Do NOT change any projection formulas or weights.
+
+GOLDEN RULE: Do NOT modify any model logic, weights, calibration
+constants, or formulas in any of the above fixes.
+Extract, wire, and align only.
+
+VERIFY after all fixes:
+1. Pick any molecule — Score badge on card matches Score in simulator
+2. Pick any molecule — Monte Carlo P50 in DD Report ≈ P50 in simulator
+   (small variance acceptable due to reduced iterations in report)
+3. Pick any molecule — PA Index score in DD Report matches PA dashboard
+4. TTM badge on cards changes meaningfully by phase and TA
+5. Peak Sales projection is identical on two consecutive renders
+   of the same molecule
+```
+
+---
+
 ## PROMPT H2 — Full DD Report: Add Missing Models + Interpretive Narrative
-*Estimated cost: 8-10 credits — send ONLY after H1 is verified complete*
+*Estimated cost: 8-10 credits — send ONLY after H1.5 is verified complete*
 
 ---
 
@@ -786,8 +914,10 @@ TASK: Two additions to the Full DD Report:
 (1) Add 4 missing model sections
 (2) Add interpretive narrative to every model output
 
-PREREQUISITE: Prompt H1 must be complete. All report sections must be 
-reading from ReportMoleculeContext before this prompt is sent.
+PREREQUISITE: Prompts H1 AND H1.5 must both be complete and verified.
+All report sections must be reading from SessionMoleculeContext,
+and all four calculation divergences must be resolved before this
+prompt is sent.
 
 --- PART 1: ADD MISSING MODEL SECTIONS TO FULL DD REPORT ---
 
@@ -971,20 +1101,31 @@ patient population."
 
 ## SEND ORDER — Current Status
 
-| Prompt | Description | Credits | Status |
-|--------|-------------|---------|--------|
-| A | TA canonical names sweep | 3-4 | ✅ Done |
-| B | CAPM restructure + molecule selector | 4-5 | ✅ Done (partial bugs remain → fixed in B1) |
-| C | Device flagging | 2-3 | ✅ Done |
-| D | Methodology tab 5 missing models | 3-4 | ✅ Done |
-| F | Pricing card hover fix | 1-2 | ✅ Done |
-| E | Stripe integration | 4-6 | ⏳ After Stripe keys added |
-| G | Pricing page redesign | 4-5 | ⏳ TBD |
-| **B1** | **Selector fix + NCT ID + TEST ME removal** | **3-4** | **→ Send next** |
-| **B2** | **LPI input wiring + LPI-2 deterministic + TTM rebuild** | **5-7** | **→ Send after B1 verified** |
-| **H1** | **Single source of truth architecture** | **5-7** | **→ Send after B2 verified** |
-| **H2** | **Missing models + narrative layer in DD Report** | **8-10** | **→ Send after H1 verified** |
-| **AUDIT** | **Full platform model audit** | **—** | **→ Send after H2 verified** |
+### ✅ COMPLETED
+| Prompt | Description | Credits |
+|--------|-------------|---------|
+| A | TA canonical names sweep | 3-4 |
+| B | CAPM restructure + molecule selector | 4-5 |
+| C | Device flagging | 2-3 |
+| D | Methodology tab 5 missing models | 3-4 |
+| F | Pricing card hover fix | 1-2 |
+| H3 | Full platform model audit (report only) | — |
+
+### 🔴 SEND IN ORDER — DO NOT SKIP STEPS
+| # | Prompt | Description | Credits | Gate |
+|---|--------|-------------|---------|------|
+| 1 | **B1** | Selector fix + NCT ID display + TEST ME removal | 3-4 | Send now |
+| 2 | **B2** | LPI input wiring + LPI-2 deterministic + TTM rebuild | 5-7 | After B1 verified |
+| 3 | **H1** | Single source of truth architecture refactor | 5-7 | After B2 verified |
+| 4 | **H1.5** | Calculation divergence fixes (4 critical issues from H3 audit) | 4-5 | After H1 verified |
+| 5 | **H2** | Missing models + narrative layer in DD Report | 8-10 | After H1.5 verified |
+| 6 | **H3** | Re-run full platform audit — verify all fixes | — | After H2 verified |
+
+### ⏳ PENDING — NOT BLOCKED BY ABOVE
+| Prompt | Description | Credits | Condition |
+|--------|-------------|---------|-----------|
+| E | Stripe integration | 4-6 | After Stripe keys added |
+| G | Pricing page redesign + header update | 4-5 | Can send anytime after H2 |
 
 ---
 
@@ -1231,3 +1372,91 @@ Do not make any changes. Audit and report only.
 ```
 
 
+
+---
+
+## PROMPT G — Pricing Page Redesign + Platform Header Update
+*Estimated cost: 4-5 credits — send after H2*
+
+---
+
+```
+TASK: Two updates — platform header copy and pricing page redesign.
+
+=== PART 1: UPDATE PLATFORM HEADER ===
+
+Replace the yellow top bar content:
+CURRENT: "Precision intelligence. From pipeline to patients."
+NEW PRIMARY: "Know the odds. Understand the pipeline. Win the race."
+NEW SUB-LINE: "High-stakes decisions require assigning probabilities.
+BioQuill makes that possible for every molecule in the global pipeline."
+
+=== PART 2: PRICING PAGE REDESIGN ===
+
+HERO SECTION:
+Headline: "Know the odds. Understand the pipeline. Win the race."
+Sub-headline: "13 proprietary models. 14,000 active molecules.
+20 therapeutic areas. Every asset scored on launch probability,
+time to market, and competitive position."
+Hero stat: "$18,000/year. Every molecule in the global pipeline,
+scored across 13 proprietary models."
+
+ADD FREE TRIAL TIER (top of pricing, most prominent):
+Name: Try BioQuill
+Price: Free — no credit card required
+Includes:
+- 3 molecules, your choice
+- All 13 models
+- Full DD Report for each
+- 14-day access
+CTA button: "Start Free Trial"
+
+PRICING TIERS (updated prices):
+
+1. Analyst — $9,000 bi-annual ($18,000/year)
+   - 10 molecules/month
+   - All 13 models
+   - Full DD Report per molecule
+   - For: Individual analysts, boutique advisors
+
+2. 1 TA — $18,000 bi-annual ($36,000/year)
+   - All molecules in 1 therapeutic area
+   - All 13 models
+   - TA-level competitive landscape
+   - For: Focused pipeline teams, TA specialists
+
+3. Team — $28,000 bi-annual ($56,000/year)
+   - 3 therapeutic areas
+   - Shortlist & Compare
+   - Team sharing
+   - For: BD&L teams, small funds
+
+4. Investor — $45,000/year
+   - Portfolio tracking
+   - CAPM Alpha Signals
+   - Top 100 Rankings
+   - For: Biotech investors, VCs, hedge funds
+
+5. Intelligence — $65,000/year
+   - All 20 therapeutic areas
+   - API access
+   - Automated alerts
+   - For: Large biotech, pharma strategy teams
+
+6. Full — $100,000/year
+   - Everything
+   - Dedicated account manager
+   - Custom model calibration consultation
+   - For: Enterprise pharma, top-tier funds
+
+POSITIONING COPY for pricing page:
+"The analytical rigour that exists inside the world's largest pharma
+companies — available to any team, from $18,000 per year.
+BioQuill is not a data platform. It is a decision framework.
+We don't tell you what is happening in the pipeline.
+We tell you what to do about it."
+
+ANCHOR LINE at bottom of pricing page:
+"In the race to market, the best decision is always
+the most probable one."
+```
