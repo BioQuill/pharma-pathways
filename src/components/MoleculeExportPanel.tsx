@@ -86,8 +86,7 @@ export function MoleculeExportPanel({ molecules }: MoleculeExportPanelProps) {
 
       // LPI range filter
       if (minLPI || maxLPI) {
-        const lpi = calculateLPI3ForMolecule(mol);
-        const lpiScore = Math.round(lpi.calibratedProbability * 100);
+        const lpiScore = (mol as any)._raw?.lpi_score ?? (mol as any).overallScore ?? 50;
         if (minLPI && lpiScore < parseInt(minLPI)) return false;
         if (maxLPI && lpiScore > parseInt(maxLPI)) return false;
       }
