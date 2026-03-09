@@ -7,7 +7,7 @@ import { getManufacturingCapability } from "@/lib/manufacturingCapability";
 import { calculatePeakSalesIndex, getPeakSalesScoreColor, getPeakSalesScoreBgColor, type PeakSalesResult } from "@/lib/peakSalesIndex";
 import { type MoleculeProfile } from "@/lib/moleculesData";
 import { getTherapeuticIndexForMolecule } from "@/lib/therapeuticIndex";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 
 interface MoleculeScoreCardProps {
   moleculeName: string;
