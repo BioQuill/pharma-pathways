@@ -221,6 +221,7 @@ export function exportComparisonToExcel(molecules: MoleculeProfile[], filename =
       const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
       const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
 
+      const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown
       const categoryScores: Record<string, number> = {};
       lpi3.featureCategories.forEach((cat) => {
         const avgScore = cat.features.reduce((sum, f) => sum + f.value, 0) / cat.features.length;
