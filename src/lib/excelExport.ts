@@ -135,8 +135,7 @@ export function exportTherapeuticAreaSummary(molecules: MoleculeProfile[], filen
 
   const data = Object.entries(taGroups).map(([ta, mols]) => {
     const lpiScores = mols.map((mol) => {
-      const lpi3 = calculateLPI3ForMolecule(mol);
-      return lpi3.calibratedProbability * 100;
+      return (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
     });
     const avgLPI = lpiScores.reduce((a, b) => a + b, 0) / lpiScores.length;
     const minLPI = Math.min(...lpiScores);
