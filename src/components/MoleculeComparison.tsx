@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { X, Plus, TrendingUp, Clock, Target } from 'lucide-react';
 import { MoleculeProfile } from '@/lib/moleculesData';
-import { calculateLPI3ForMolecule } from '@/lib/lpi3Model';
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 import { calculateCompositeScore, calculateTTMMonths } from '@/lib/scoring';
 
 interface MoleculeComparisonProps {
