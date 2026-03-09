@@ -31,6 +31,8 @@ interface MoleculeProfile {
   indication?: string;
   companyTrackRecord?: 'fast' | 'average' | 'slow';
   isFailed?: boolean;
+  overallScore?: number;
+  _raw?: Record<string, any>;
 }
 
 interface MoleculeExportPanelProps {
