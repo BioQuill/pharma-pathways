@@ -12,7 +12,7 @@ import {
   type BetaInputs, type MechanismType, type DesignationType, type SponsorTier, type PriorData, type CAPMResult
 } from "@/lib/capmModel";
 import type { MoleculeProfile } from "@/lib/moleculesData";
-import { useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { MoleculePicker } from "@/components/MoleculePicker";
 
 // Maps molecule phase string to CAPM phase key
