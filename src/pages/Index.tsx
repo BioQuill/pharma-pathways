@@ -1204,11 +1204,10 @@ const IndexInner = () => {
                   })
                   .slice()
                   .sort((a, b) => {
-                    const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.marketData) ?? 999;
+                    const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.approval_status || '', mol.status || '', mol.study_title || mol.trialName || '') ?? 999;
                     const getComposite = (mol: typeof a) => {
                       const ttm = getTTM(mol);
-                      const ttmEfficiency = Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99))));
-                      return Math.round(mol.overallScore * 0.6 + ttmEfficiency * 0.4);
+                      return calculateCompositeScore(mol.overallScore, ttm === 999 ? null : ttm, mol.therapeuticArea);
                     };
                     
                     const getTI = (mol: typeof a) => getTherapeuticIndexForMolecule(mol).value;
