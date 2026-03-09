@@ -33,6 +33,14 @@ interface LPI3ReportCardProps {
 }
 
 export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
+  // Use pre-computed LPI from computeLPI() (Single Source of Truth)
+  const preComputedLPI = (molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) / 100;
+  const preComputedCI = {
+    lower: ((molecule._raw?.lpi_ci_low as number) ?? preComputedLPI * 100 * 0.7) / 100,
+    upper: ((molecule._raw?.lpi_ci_high as number) ?? Math.min(preComputedLPI * 100 * 1.3, 100)) / 100,
+  };
+
+  // Still use lpi3Model for radar chart visualization breakdown only
   const prediction = useMemo(() => {
     return calculateLPI3ForMolecule(molecule);
   }, [molecule]);
