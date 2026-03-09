@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
+import { calculateLPI3ForMolecule } from './lpi3Model'; // Used for category breakdown in Excel exports only
 import { getTTMMonthsForTA } from './ttmData';
 import { calculateProbabilityScores } from './scoring';
 
