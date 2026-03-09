@@ -157,6 +157,14 @@ export function InvestmentScoreReportCard({ molecule }: InvestmentScoreReportCar
             )}
           </div>
         </div>
+
+        <ModelNarrative>
+          <p>{generateInvestmentNarrative(
+            prediction.totalScore,
+            prediction.factors.sort((a, b) => b.score - a.score).slice(0, 2).map(f => f.name).join(" and "),
+            prediction.factors.sort((a, b) => a.score - b.score)[0]?.name || "N/A",
+          )}</p>
+        </ModelNarrative>
       </CardContent>
     </Card>
   );

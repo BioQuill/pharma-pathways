@@ -129,6 +129,22 @@ export function LPI3ReportCard({ molecule }: LPI3ReportCardProps) {
             ))}
           </div>
         </div>
+
+        <ModelNarrative>
+          <p>{generateLPINarrative(
+            prediction.calibratedProbability,
+            molecule.phase,
+            molecule.therapeuticArea,
+            prediction.featureCategories.reduce((best, c) => {
+              const avg = c.features.reduce((s, f) => s + f.value, 0) / c.features.length;
+              return avg > best.avg ? { name: c.name, avg } : best;
+            }, { name: '', avg: 0 }).name,
+            prediction.featureCategories.reduce((worst, c) => {
+              const avg = c.features.reduce((s, f) => s + f.value, 0) / c.features.length;
+              return avg < worst.avg ? { name: c.name, avg } : worst;
+            }, { name: '', avg: 1 }).name,
+          )}</p>
+        </ModelNarrative>
       </CardContent>
     </Card>
   );
