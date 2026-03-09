@@ -18,7 +18,11 @@ export function SimulatorMoleculeBanner({ molecules, showFields = ['sponsor', 's
       <MoleculePicker molecules={molecules} label="Molecule for Simulation" />
       
       {simulatorMolecule && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs">
+          <div>
+            <span className="text-muted-foreground">NCT ID:</span>{' '}
+            <span className="font-semibold font-mono">{simulatorMolecule.nctId || '—'}</span>
+          </div>
           <div>
             <span className="text-muted-foreground">Phase:</span>{' '}
             <span className="font-semibold">{simulatorMolecule.phase}</span>

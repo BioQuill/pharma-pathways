@@ -1,5 +1,6 @@
 // LPI-2 Dashboard: 5-Factor Investment LPI Model (VC / Investment Model)
 import { useState, useMemo } from "react";
+import { useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -266,32 +267,21 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
 
 // Main Dashboard Component
 export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
-  const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
-  
-  const predictions = useMemo(() => {
-    return molecules.map(mol => ({
-      molecule: mol,
-      prediction: calculateLPI2ForMolecule(mol),
-    }));
-  }, [molecules]);
-  
-  const selectedData = predictions.find(p => p.molecule.id === selectedMolecule);
-  
-  // Aggregate statistics
-  const avgScore = Math.round(predictions.reduce((sum, p) => sum + p.prediction.totalScore, 0) / predictions.length);
-  const strongBuys = predictions.filter(p => p.prediction.recommendation === 'Strong Buy').length;
-  const buys = predictions.filter(p => p.prediction.recommendation === 'Buy').length;
-  const holds = predictions.filter(p => p.prediction.recommendation === 'Hold').length;
-  const passes = predictions.filter(p => p.prediction.recommendation === 'Pass').length;
-  
-  // Portfolio comparison chart data
-  const portfolioChartData = predictions
-    .sort((a, b) => b.prediction.totalScore - a.prediction.totalScore)
-    .map(p => ({
-      name: p.molecule.name.length > 12 ? p.molecule.name.substring(0, 12) + '...' : p.molecule.name,
-      score: p.prediction.totalScore,
-      recommendation: p.prediction.recommendation,
-    }));
+  const { simulatorMolecule } = useSimulatorMolecule();
+
+  // If no molecule selected via "Use in Simulator →", show empty state
+  if (!simulatorMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center space-y-3">
+          <p className="text-lg font-semibold text-muted-foreground">Select a molecule from the Pipeline tab to begin simulation</p>
+          <p className="text-sm text-muted-foreground">Click "Use in Simulator →" on any molecule card to load it here.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const prediction = calculateLPI2ForMolecule(simulatorMolecule);
   
   return (
     <div className="space-y-6">
@@ -319,26 +309,18 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
             </TabsList>
             
             <TabsContent value="overview">
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-3xl font-bold text-primary">{avgScore}</div>
-                  <div className="text-sm text-muted-foreground">Avg Investment Score</div>
+                  <div className="text-3xl font-bold text-primary">{prediction.totalScore}</div>
+                  <div className="text-sm text-muted-foreground">Investment Score</div>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-3xl font-bold text-[hsl(142,76%,36%)]">{strongBuys}</div>
-                  <div className="text-sm text-muted-foreground">Strong Buys</div>
+                  {getRecommendationBadge(prediction.recommendation)}
+                  <div className="text-sm text-muted-foreground mt-1">Recommendation</div>
                 </div>
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-3xl font-bold text-[hsl(142,50%,50%)]">{buys}</div>
-                  <div className="text-sm text-muted-foreground">Buys</div>
-                </div>
-                <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-3xl font-bold text-[hsl(45,93%,47%)]">{holds}</div>
-                  <div className="text-sm text-muted-foreground">Holds</div>
-                </div>
-                <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-3xl font-bold text-[hsl(0,72%,51%)]">{passes}</div>
-                  <div className="text-sm text-muted-foreground">Passes</div>
+                  {getRiskBadge(prediction.riskLevel)}
+                  <div className="text-sm text-muted-foreground mt-1">Risk Level</div>
                 </div>
               </div>
             </TabsContent>
@@ -403,94 +385,11 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
         </CardContent>
       </Card>
       
-      {/* Portfolio Comparison Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Portfolio Investment Score Comparison</CardTitle>
-          <CardDescription>Investment readiness scores across all molecules</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={portfolioChartData} margin={{ bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="name" 
-                angle={-45} 
-                textAnchor="end" 
-                interval={0}
-                tick={{ fontSize: 10 }}
-                height={60}
-              />
-              <YAxis domain={[0, 100]} />
-              <Tooltip 
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload;
-                    return (
-                      <div className="bg-background border rounded-lg p-2 shadow-lg">
-                        <p className="font-semibold">{data.name}</p>
-                        <p>Score: {data.score}</p>
-                        <p>Recommendation: {data.recommendation}</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-              <Bar dataKey="score" name="Investment Score">
-                {portfolioChartData.map((entry, index) => (
-                  <Cell key={index} fill={getScoreColor(entry.score)} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-      
-      {/* Molecule Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Molecule for Detailed Analysis</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {predictions.map(({ molecule, prediction }) => (
-              <div
-                key={molecule.id}
-                className={`p-3 border rounded-lg cursor-pointer transition-all hover:border-primary ${
-                  selectedMolecule === molecule.id ? 'border-primary bg-primary/5' : ''
-                }`}
-                onClick={() => setSelectedMolecule(molecule.id)}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-semibold">{molecule.name}</div>
-                    <div className="text-xs text-muted-foreground">{molecule.company}</div>
-                    <div className="text-xs text-muted-foreground">{molecule.phase} • {molecule.therapeuticArea}</div>
-                  </div>
-                  <div className="text-right">
-                    <div 
-                      className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                      style={{ backgroundColor: getScoreColor(prediction.totalScore) }}
-                    >
-                      {prediction.totalScore}
-                    </div>
-                    <div className="text-[10px] mt-1">{prediction.recommendation}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-      
       {/* Selected Molecule Analysis */}
-      {selectedData && (
-        <MoleculeAnalysisCard
-          molecule={selectedData.molecule}
-          prediction={selectedData.prediction}
-        />
-      )}
+      <MoleculeAnalysisCard
+        molecule={simulatorMolecule}
+        prediction={prediction}
+      />
       
       {/* Interpretation Guide */}
       <Card>
