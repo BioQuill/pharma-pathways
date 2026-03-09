@@ -57,7 +57,7 @@ import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
-// LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)
+// LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)d (H1)
 import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
 import { MoleculeComparison } from "@/components/MoleculeComparison";
 import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
@@ -105,7 +105,7 @@ import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChar
 import { MethodologyContent } from "@/components/MethodologyContent";
 import { PricingContent } from "@/components/PricingContent";
 import { ModelsContent } from "@/components/ModelsContent";
-import { SimulatorMoleculeProvider, useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
+impoessionMoleculeProvider, useSessionMolecule } from "@/contexts/SessionulatorMoleculeContext";
 import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
 import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
