@@ -1263,6 +1263,7 @@ const IndexInner = () => {
                     };
 
                     const lpiDot = getDotColor(lpi3Score, [34, 67]);
+                    const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
                     const ttmDot = ttm !== null ? getDotColor(ttmEfficiency, [34, 67]) : 'bg-muted-foreground';
                     const scoreDot = getDotColor(compositeScore, [34, 67]);
                     const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
