@@ -1440,6 +1440,11 @@ const IndexInner = () => {
                     ← Back to Overview
                   </Button>
                 </div>
+
+                {/* Trial-specific disclaimer */}
+                <p className="text-sm italic text-muted-foreground">
+                  This report reflects {activeMolecule.nctId || 'N/A'} — {activeMolecule.phase} | {(activeMolecule as any)._raw?.conditions || activeMolecule.indication} | {(activeMolecule as any)._raw?.age_group || 'All ages'} | {(activeMolecule as any)._raw?.sex || 'All'}. All model outputs are specific to this trial design and patient population.
+                </p>
                 
                 {activeMolecule.isFailed && activeMolecule.trialName && (
                   <TrialFailureAnalysis
