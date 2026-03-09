@@ -254,22 +254,14 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold">{molecules.length}</div>
-              <div className="text-xs text-muted-foreground">Molecules Analyzed</div>
+              <div className="text-2xl font-bold text-primary">{Math.round(prediction.calibratedProbability * 100)}%</div>
+              <div className="text-xs text-muted-foreground">Launch Probability</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold text-primary">{Math.round(avgProbability * 100)}%</div>
-              <div className="text-xs text-muted-foreground">Avg Launch Probability</div>
-            </div>
-            <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold text-green-600">{lowRiskCount}</div>
-              <div className="text-xs text-muted-foreground">High Confidence (≥60%)</div>
-            </div>
-            <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold text-red-600">{highRiskCount}</div>
-              <div className="text-xs text-muted-foreground">High Risk (&lt;30%)</div>
+              <div className="text-2xl font-bold">{(prediction.confidenceInterval.lower * 100).toFixed(0)}%–{(prediction.confidenceInterval.upper * 100).toFixed(0)}%</div>
+              <div className="text-xs text-muted-foreground">95% Confidence Interval</div>
             </div>
             <div className="text-center p-3 bg-background rounded-lg">
               <div className="text-2xl font-bold">0.82</div>
@@ -279,93 +271,21 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
         </CardContent>
       </Card>
 
-
-
-
-      {/* Molecule Comparison Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Portfolio Launch Probability Comparison</CardTitle>
-          <CardDescription>Calibrated vs raw probabilities across all molecules</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barChartData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
-                <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 11 }} />
-                <Tooltip 
-                  formatter={(value: number) => `${value.toFixed(1)}%`}
-                  contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
-                />
-                <Legend />
-                <Bar dataKey="probability" name="Calibrated" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]}>
-                  {barChartData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={entry.probability >= 60 ? 'hsl(142, 76%, 36%)' : entry.probability >= 30 ? 'hsl(48, 96%, 53%)' : 'hsl(0, 84%, 60%)'}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Selected Molecule Deep Dive */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Molecule Selector */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Select Molecule for Analysis</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 max-h-96 overflow-y-auto">
-            {predictions.map(({ molecule, prediction }) => (
-              <div
-                key={molecule.id}
-                onClick={() => setSelectedMolecule(molecule.id)}
-                className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                  selectedMolecule === molecule.id || (!selectedMolecule && molecule.id === predictions[0]?.molecule.id)
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border hover:border-primary/50'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-sm">{molecule.name}</div>
-                    <div className="text-xs text-muted-foreground">{molecule.company} • {molecule.phase}</div>
-                  </div>
-                  <Badge className={getScoreColor(prediction.calibratedProbability)}>
-                    {Math.round(prediction.calibratedProbability * 100)}%
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Detailed Analysis */}
-        {selectedPrediction && (
-          <MoleculeAnalysisCard 
-            molecule={selectedPrediction.molecule} 
-            prediction={selectedPrediction.prediction} 
-          />
-        )}
-      </div>
+      {/* Single Molecule Deep Dive */}
+      <MoleculeAnalysisCard 
+        molecule={simulatorMolecule} 
+        prediction={prediction} 
+      />
 
       {/* Feature Categories Breakdown */}
-      {selectedPrediction && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Feature Category Breakdown</h3>
-          <div className="grid md:grid-cols-2 gap-4">
-            {selectedPrediction.prediction.featureCategories.map((category, idx) => (
-              <FeatureCategoryCard key={idx} category={category} />
-            ))}
-          </div>
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Feature Category Breakdown</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          {prediction.featureCategories.map((category, idx) => (
+            <FeatureCategoryCard key={idx} category={category} />
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Category Importance Chart */}
       <Card>
