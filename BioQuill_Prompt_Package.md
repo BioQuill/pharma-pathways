@@ -904,8 +904,245 @@ VERIFY after all fixes:
 
 ---
 
+## PROMPT PDF1 — Full DD Report PDF: Layout, Design & Model Order
+*Estimated cost: 5-6 credits — send AFTER H1.5, BEFORE H2*
+
+---
+
+```
+TASK: Comprehensive PDF export redesign for the Full DD Report.
+No model logic changes. No calculation changes.
+Layout, typography, design, and section order only.
+
+=== FIX 1: TYPOGRAPHY — FONT SYSTEM ===
+
+Import from Google Fonts:
+  Manrope (weights: 400, 500, 600, 700)
+  DM Mono (weights: 400, 500)
+
+Apply ONLY within the PDF export stylesheet (not the live platform UI):
+
+All text elements → Manrope
+All numerical data values → DM Mono
+  (LPI%, TTM months, scores, revenue figures, probability values,
+   any standalone number that is a model output)
+
+Typography scale for PDF:
+  Model section header (ALL CAPS): Manrope 700, 15px, #1e3a5f
+  Sub-section header (Title Case): Manrope 600, 13px, #1e3a5f
+  Body text: Manrope 400, 13px, #1a1a1a
+  Data numbers (model outputs): DM Mono 500, 24-28px, contextual colour
+  Small data labels: Manrope 400, 11px, #1a1a1a
+  Captions / source lines: Manrope 400, 10px, #6b7280
+  "What this means" heading: Manrope 700, 13px, #b45309
+  "What this means" body: Manrope 400, 13px, italic, #1a1a1a
+
+=== FIX 2: MODEL SECTION HEADERS — ALL CAPS ===
+
+Every model section header must be ALL CAPS in the PDF:
+  "LPI (LAUNCH PROBABILITY INDEX) ANALYSIS"
+  "THERAPEUTIC INDEX (TI) ANALYSIS"
+  "PTRS ANALYSIS"
+  "CAPM ALPHA SIGNALS"
+  "INVESTMENT SCORE ANALYSIS"
+  "PA INDEX SUMMARY"
+  "MONTE CARLO STRESS TEST"
+  "PEAK SALES COMPOSITE INDEX"
+  "GLOBAL REVENUE HEAT MAP"
+  "GLOBAL MARKET ANALYSIS"
+  "REGULATORY APPROVAL TIMELINE"
+  "CLINICAL STUDIES SUMMARY"
+  "METRIC DEFINITIONS"
+
+Apply text-transform: uppercase to all model section headers
+in the PDF export stylesheet only.
+
+=== FIX 3: CARD DESIGN — UNIVERSAL TEMPLATE ===
+
+Every model section must be wrapped in a card with:
+  border: 2.5px solid #1e3a5f (dark navy)
+  border-radius: 12px
+  padding: 24px
+  background: #ffffff
+  margin-bottom: 24px
+  page-break-inside: avoid
+  break-inside: avoid
+
+This is the Monte Carlo card style — apply it universally
+to ALL model sections in the PDF.
+
+Sub-sections within a card (e.g. Feature Category Breakdown
+inside LPI card):
+  border: 1px solid #cbd5e1
+  border-radius: 8px
+  padding: 16px
+  background: #f8fafc
+
+=== FIX 4: "WHAT THIS MEANS" BOX REDESIGN ===
+
+Every "What this means" narrative box must use this style:
+  background: #fffbeb (pale yellow)
+  border-left: 4px solid #d97706 (amber)
+  border-radius: 0 8px 8px 0
+  padding: 16px 20px
+  margin-top: 16px
+  page-break-inside: avoid
+  break-inside: avoid
+
+Heading "What this means":
+  Manrope 700, 13px, #b45309, display as bold
+  NOT greyed out — must be clearly visible
+
+Body text:
+  Manrope 400, 13px, italic, #1a1a1a
+  NOT light grey — must be clearly readable in print
+
+=== FIX 5: BODY TEXT — NEAR BLACK ===
+
+All body text in PDF export must use #1a1a1a (near black).
+Remove all instances of grey body text (#6b7280, #9ca3af,
+or any grey variant) from non-caption text in the PDF.
+Grey is permitted ONLY for:
+  - Source/caption lines (10px, #6b7280)
+  - Secondary data labels
+
+=== FIX 6: MODEL SECTION ORDER — JOURNEY TO MARKET ===
+
+Reorder the Full DD Report sections to follow the logical
+journey of a molecule to market. This is the correct order:
+
+STAGE 1 — CAN IT SUCCEED?
+  1. PTRS Analysis
+  2. LPI (Launch Probability Index) Analysis
+  3. Therapeutic Index (TI) Analysis
+
+STAGE 2 — HOW LONG WILL IT TAKE?
+  4. TTM (Time to Market) — if shown as standalone section
+  5. Regulatory Approval Timeline Comparison
+  6. Clinical Studies Summary
+
+STAGE 3 — IS IT WORTH THE RACE?
+  7. Peak Sales Composite Index
+  8. Global Revenue Heat Map (reduced to 80% of current size)
+  9. Global Market Analysis
+
+STAGE 4 — HOW TO WIN IT?
+  10. CAPM Alpha Signals
+  11. Investment Score Analysis
+  12. PA Index Summary
+  13. Monte Carlo Stress Test
+
+REFERENCE:
+  14. Metric Definitions (always last)
+
+The stage labels themselves (STAGE 1 — CAN IT SUCCEED? etc.)
+should appear as section dividers in the PDF:
+  Full-width band, background #1e3a5f, text white
+  Manrope 700, 12px, letter-spacing: 0.1em
+  page-break-before: always for each stage divider
+
+=== FIX 7: GLOBAL REVENUE HEAT MAP — REDUCE SIZE ===
+
+The heat map visualisation is currently too large and
+dominates an entire page. Reduce to 80% of current size:
+  transform: scale(0.8) or width: 80% with proportional height
+  Center the scaled map within its card container
+  This should bring the heat map onto approximately
+  half a page, with the market legend below it
+
+=== FIX 8: PAGE BREAK CONTROL ===
+
+Add to PDF export stylesheet:
+
+Every model section card:
+  page-break-inside: avoid
+  break-inside: avoid
+
+Every stage divider band:
+  page-break-before: always
+  break-before: always
+
+Every chart/visualisation:
+  page-break-inside: avoid
+  break-inside: avoid
+
+Every "What this means" box:
+  page-break-inside: avoid
+  break-inside: avoid
+
+=== FIX 9: REMOVE INTERACTIVE ELEMENTS FROM PDF ===
+
+The following must NOT render in PDF export:
+
+1. Regulatory Pathway Calculator
+   (Filing Strategy toggle, country checkboxes, market grid)
+   → Replace with static one-line text:
+   "Interactive regulatory pathway modelling available
+   at bioquill.com"
+
+2. "View All Trials Table" button
+3. "View Trials Map" button
+   → Replace with:
+   "Full trial data: ClinicalTrials.gov — NCT[ID]"
+
+4. Any toggle, checkbox, dropdown, or button element
+
+=== FIX 10: HEADER ===
+
+Every page header:
+  Remove: "Precision intelligence. From pipeline to patients."
+  Replace with: "Know the odds. Understand the pipeline.
+  Win the race."
+
+Fix the double yellow bar on page 1:
+  Ensure header bar renders exactly once per page
+  The green APPROVED MOLECULE disclaimer must be
+  fully visible and not obscured by the header
+
+=== FIX 11: FOOTER ===
+
+Replace placeholder footer:
+  CURRENT: "BioQuill | Client Company | user@company.com |
+  Downloaded: [date] | Licensed for internal use only"
+  NEW: "BioQuill | bioquill.com | Downloaded: [date] |
+  Licensed for internal use only —
+  redistribution prohibited"
+
+=== FIX 12: APPROVED MOLECULE LAUNCH DATES ===
+
+For molecules where approval_status contains 'APPROVED':
+In the Global Market Analysis table, replace future
+calculated Launch Date values with "Launched"
+Add footnote: "* Projections shown as post-launch
+revenue benchmarks for comparator reference"
+
+=== FIX 13: REMOVE TRAILING BLANK SPACE ===
+
+Remove all blank space after the Metric Definitions section.
+Last page must end cleanly after the last content block.
+
+VERIFY after all fixes:
+1. Generate PDF for Tirzepatide NCT06962280
+2. Fonts are Manrope (text) + DM Mono (numbers) throughout
+3. All model section headers are ALL CAPS in dark navy
+4. Every model section is in a dark navy 2.5px bordered card
+5. "What this means" boxes are pale yellow, bold heading,
+   amber left border, black text — clearly readable
+6. All body text is near-black #1a1a1a
+7. Sections appear in Journey to Market order with
+   stage divider bands
+8. Heat map is 80% of previous size
+9. No interactive elements appear
+10. Header shows new tagline, no double yellow bar
+11. Footer shows bioquill.com
+12. No sections split across pages
+13. No blank space at document end
+```
+
+---
+
 ## PROMPT H2 — Full DD Report: Add Missing Models + Interpretive Narrative
-*Estimated cost: 8-10 credits — send ONLY after H1.5 is verified complete*
+*Estimated cost: 8-10 credits — send ONLY after PDF1 is verified complete*
 
 ---
 
@@ -1111,21 +1348,21 @@ patient population."
 | F | Pricing card hover fix | 1-2 |
 | H3 | Full platform model audit (report only) | — |
 
-### 🔴 SEND IN ORDER — DO NOT SKIP STEPS
+### 🔴 SEND IN THIS EXACT ORDER
 | # | Prompt | Description | Credits | Gate |
 |---|--------|-------------|---------|------|
-| 1 | **B1** | Selector fix + NCT ID display + TEST ME removal | 3-4 | Send now |
-| 2 | **B2** | LPI input wiring + LPI-2 deterministic + TTM rebuild | 5-7 | After B1 verified |
-| 3 | **H1** | Single source of truth architecture refactor | 5-7 | After B2 verified |
-| 4 | **H1.5** | Calculation divergence fixes (4 critical issues from H3 audit) | 4-5 | After H1 verified |
-| 5 | **H2** | Missing models + narrative layer in DD Report | 8-10 | After H1.5 verified |
-| 6 | **H3** | Re-run full platform audit — verify all fixes | — | After H2 verified |
+| 1 | **B2** | Fix LPI inputs, LPI-2 deterministic, rebuild TTM | 5-7 | Send now |
+| 2 | **H1** | Single source of truth — SessionMoleculeContext | 5-7 | After B2 verified |
+| 3 | **H1.5** | Fix 4 calculation divergences from audit | 4-5 | After H1 verified |
+| 4 | **PDF1** | Full DD Report PDF redesign — fonts, typography, card design, model order, page breaks, heat map, tagline | 5-6 | After H1.5 verified |
+| 5 | **H2** | Add PTRS, CAPM, PA Index, Monte Carlo to DD Report + narrative everywhere | 8-10 | After PDF1 verified |
+| 6 | **H3** | Re-run full platform audit — verify everything clean | — | After H2 verified |
 
-### ⏳ PENDING — NOT BLOCKED BY ABOVE
+### ⏳ SEND ANYTIME AFTER H2
 | Prompt | Description | Credits | Condition |
 |--------|-------------|---------|-----------|
-| E | Stripe integration | 4-6 | After Stripe keys added |
-| G | Pricing page redesign + header update | 4-5 | Can send anytime after H2 |
+| **E** | Stripe integration | 4-6 | After Stripe keys added |
+| **G** | Pricing page redesign + header update | 4-5 | Can send anytime after H2 |
 
 ---
 
