@@ -34,7 +34,7 @@ export function exportMoleculesToExcel(molecules: MoleculeProfile[], filename = 
     const probScores = calculateProbabilityScores(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.isFailed);
     
     // Calculate composite score
-    const lpiNormalized = lpi3.calibratedProbability;
+    const lpiNormalized = lpiScore / 100;
     const ttmNormalized = Math.max(0, Math.min(1, 1 - (ttmMonths - 12) / (120 - 12)));
     const compositeScore = Math.round((lpiNormalized * 0.6 + ttmNormalized * 0.4) * 100);
 
