@@ -78,8 +78,8 @@ export function exportMoleculesToExcel(molecules: MoleculeProfile[], filename = 
 export function exportLPIDetailedToExcel(molecules: MoleculeProfile[], filename = 'lpi-detailed') {
   // Prepare detailed LPI data
   const data = molecules.map((mol) => {
-    const lpi3 = calculateLPI3ForMolecule(mol);
-    const lpiScore = Math.round(lpi3.calibratedProbability * 100);
+    const lpi3 = calculateLPI3ForMolecule(mol); // For category breakdown only
+    const lpiScore = (mol as any)._raw?.lpi_score ?? mol.overallScore ?? 50;
     
     // Aggregate category scores
     const categoryScores: Record<string, number> = {};
