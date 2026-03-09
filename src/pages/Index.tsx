@@ -228,7 +228,8 @@ const DueDiligenceComparisonChart = () => {
 
 // PTRS Calculator Component
 const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
-  const ctx1 = useSessionMolecule(); const simulatorMolecule = ctx1.sessionMolecule
+  const _ptrsCtx = useSessionMolecule();
+  const simulatorMolecule = _ptrsCtx.sessionMolecule;
   const [calculationMode, setCalculationMode] = useState<"ta" | "molecule">("ta");
   const [selectedMoleculeId, setSelectedMoleculeId] = useState<string>("");
   const [therapeuticArea, setTherapeuticArea] = useState("oncology");
