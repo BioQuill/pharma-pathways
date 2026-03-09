@@ -1667,6 +1667,44 @@ const IndexInner = () => {
                   companyTrackRecord: activeMolecule.companyTrackRecord,
                 }} />
                 
+                {/* PTRS Analysis */}
+                <PTRSReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                  company: activeMolecule.company,
+                  companyTrackRecord: activeMolecule.companyTrackRecord,
+                }} />
+
+                {/* CAPM Alpha Signals */}
+                <CAPMReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                  company: activeMolecule.company,
+                  companyTrackRecord: activeMolecule.companyTrackRecord,
+                }} />
+
+                {/* PA Index Summary */}
+                <PAIndexReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                }} />
+
+                {/* Monte Carlo Stress Test */}
+                <MonteCarloReportCard molecule={{
+                  id: activeMolecule.id,
+                  name: activeMolecule.name,
+                  phase: activeMolecule.phase,
+                  therapeuticArea: activeMolecule.therapeuticArea,
+                  company: activeMolecule.company,
+                  companyTrackRecord: activeMolecule.companyTrackRecord,
+                }} />
+                
                 {activeMolecule.patents && activeMolecule.patents.length > 0 && (
                   <PatentTimeline
                     moleculeName={activeMolecule.name}
