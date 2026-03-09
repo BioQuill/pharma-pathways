@@ -16,7 +16,7 @@ interface MoleculePickerProps {
 }
 
 export function MoleculePicker({ molecules, value, onChange, label = 'Select Molecule', compact = false }: MoleculePickerProps) {
-  const { simulatorMolecule, setSimulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule, setSessionMolecule: setSimulatorMolecule } = useSessionMolecule();
   const selected = value !== undefined ? value : simulatorMolecule;
   const setSelected = onChange || setSimulatorMolecule;
   

@@ -38,7 +38,7 @@ function estimatePTRS(mol: MoleculeProfile): number {
 }
 
 export function CAPMAlphaSignals({ molecules }: { molecules: MoleculeProfile[] }) {
-  const { simulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
   
   // Local molecule override (when user picks from inline MoleculePicker)
   const [localMol, setLocalMol] = useState<MoleculeProfile | null>(null);
