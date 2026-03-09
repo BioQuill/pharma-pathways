@@ -94,7 +94,7 @@ export function MarketAnalysisTable({ marketData, approvalStatus }: MarketAnalys
                     <TableCell>
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
-                        {market.estimatedLaunchDate}
+                        {isApproved ? 'Launched' : market.estimatedLaunchDate}
                       </div>
                     </TableCell>
                     <TableCell>
