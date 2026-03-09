@@ -1,5 +1,6 @@
 // LPI-2 Dashboard: 5-Factor Investment LPI Model (VC / Investment Model)
 import { useState, useMemo } from "react";
+import { useSimulatorMolecule } from "@/contexts/SimulatorMoleculeContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
