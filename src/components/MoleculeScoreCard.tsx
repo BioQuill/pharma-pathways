@@ -34,9 +34,8 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const lpi3Result = molecule ? calculateLPI3ForMolecule(molecule) : null;
   const lpi3Score = lpi3Result ? Math.round(lpi3Result.calibratedProbability * 100) : overallScore;
   const ti = molecule ? getTherapeuticIndexForMolecule(molecule) : null;
-  const ttmMonthsVal = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
-  const ttmEff = ttmMonthsVal !== null ? Math.max(0, Math.min(100, 100 - ((ttmMonthsVal - 1) * (100 / 99)))) : 50;
-  const compScoreVal = Math.round(overallScore * 0.6 + ttmEff * 0.4);
+  const ttmMonthsVal = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, molecule?.approval_status || '', molecule?.status || '', molecule?.study_title || molecule?.trialName || '');
+  const compScoreVal = calculateCompositeScore(lpi3Score, ttmMonthsVal, therapeuticArea);
 
   const getDotColor = (value: number, thresholds: [number, number]) => {
     if (value >= thresholds[1]) return 'bg-[hsl(142,76%,36%)]';
@@ -45,6 +44,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   };
 
   const lpiDot = getDotColor(lpi3Score, [34, 67]);
+  const ttmEff = ttmMonthsVal !== null ? Math.max(0, Math.min(100, 100 - ((ttmMonthsVal - 1) * (100 / 99)))) : 50;
   const ttmDot = ttmMonthsVal !== null ? getDotColor(ttmEff, [34, 67]) : 'bg-muted-foreground';
   const scoreDot = getDotColor(compScoreVal, [34, 67]);
   const tiDot = ti ? (ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]') : 'bg-muted-foreground';
@@ -61,7 +61,7 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
   const timeToBlockbuster = calculateTimeToBlockbuster(marketData);
   const revenueScore = calculateRevenueScore(marketData);
   const ttmPercent = calculateTTMPercent(phase, therapeuticArea, companyTrackRecord, marketData);
-  const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, marketData);
+  const ttmMonths = calculateTTMMonths(phase, therapeuticArea, companyTrackRecord, molecule?.approval_status || '', molecule?.status || '', molecule?.study_title || molecule?.trialName || '');
   
   // Calculate composite score using new TA-specific formula:
   // A_norm = (LPI-1)/99, B_norm = (TTM-1)/(B_max-1)

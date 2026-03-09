@@ -47,7 +47,7 @@ export function MoleculeComparison({ molecules }: MoleculeComparisonProps) {
   const getMoleculeMetrics = (molecule: MoleculeProfile) => {
     const lpi3 = calculateLPI3ForMolecule(molecule);
     const lpi3Percent = lpi3.calibratedProbability * 100;
-    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
+    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.approval_status || '', molecule.status || '', molecule.study_title || molecule.trialName || '');
     const composite = calculateCompositeScore(lpi3Percent, ttm ?? 0, molecule.therapeuticArea);
     return { lpi3: lpi3Percent, ttm: ttm ?? 0, composite };
   };

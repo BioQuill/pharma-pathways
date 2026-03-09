@@ -32,6 +32,14 @@ interface MoleculeProfile {
   company: string;
   companyTrackRecord?: 'fast' | 'average' | 'slow';
   isFailed?: boolean;
+  approval_status?: string;
+  has_results?: boolean;
+  status?: string;
+  study_title?: string;
+  conditions?: string;
+  indication?: string;
+  trialName?: string;
+  _raw?: Record<string, any>;
 }
 
 interface LPIExtendedReportCardProps {

@@ -97,6 +97,7 @@ import {
   generateMarketProjections, 
   calculateOverallScore,
   calculateTTMMonths,
+  calculateCompositeScore,
   type ProbabilityScores,
   type MarketData
 } from "@/lib/scoring";
@@ -1204,11 +1205,10 @@ const IndexInner = () => {
                   })
                   .slice()
                   .sort((a, b) => {
-                    const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.marketData) ?? 999;
+                    const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.approval_status || '', mol.status || '', mol.study_title || mol.trialName || '') ?? 999;
                     const getComposite = (mol: typeof a) => {
                       const ttm = getTTM(mol);
-                      const ttmEfficiency = Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99))));
-                      return Math.round(mol.overallScore * 0.6 + ttmEfficiency * 0.4);
+                      return calculateCompositeScore(mol.overallScore, ttm === 999 ? null : ttm, mol.therapeuticArea);
                     };
                     
                     const getTI = (mol: typeof a) => getTherapeuticIndexForMolecule(mol).value;
@@ -1251,9 +1251,8 @@ const IndexInner = () => {
                   .map((molecule) => {
                     const lpi3 = calculateLPI3ForMolecule(molecule);
                     const lpi3Score = Math.round(lpi3.calibratedProbability * 100);
-                    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.marketData);
-                    const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
-                    const compositeScore = Math.round(molecule.overallScore * 0.6 + ttmEfficiency * 0.4);
+                    const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.approval_status || '', molecule.status || '', molecule.study_title || molecule.trialName || '');
+                    const compositeScore = calculateCompositeScore(lpi3Score, ttm, molecule.therapeuticArea);
                     const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
                     const dropoutRanking = molecule.scores.dropoutRanking;
 
@@ -1264,6 +1263,7 @@ const IndexInner = () => {
                     };
 
                     const lpiDot = getDotColor(lpi3Score, [34, 67]);
+                    const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
                     const ttmDot = ttm !== null ? getDotColor(ttmEfficiency, [34, 67]) : 'bg-muted-foreground';
                     const scoreDot = getDotColor(compositeScore, [34, 67]);
                     const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
