@@ -210,6 +210,9 @@ export const exportDomToPDF = async (
   const pageHeight = orientation === 'landscape' ? dimensions.width : dimensions.height;
   
   try {
+    // Add pdf-export-mode class for PDF-specific styling
+    element.classList.add('pdf-export-mode');
+    
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
@@ -217,14 +220,16 @@ export const exportDomToPDF = async (
       allowTaint: true,
     });
     
-    // Create PDF from canvas using @react-pdf/renderer
+    // Remove pdf-export-mode class
+    element.classList.remove('pdf-export-mode');
+    
+    // Create PDF from canvas using jspdf
     const imgData = canvas.toDataURL('image/jpeg', 0.98);
     
     // Calculate aspect ratio
     const imgWidth = pageWidth - (margin * 2);
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     
-    // Create a simple PDF with the image
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({
       orientation,
@@ -233,7 +238,6 @@ export const exportDomToPDF = async (
     });
     
     // Add pages as needed
-    let y = margin;
     const maxY = pageHeight - margin;
     
     if (imgHeight <= maxY - margin) {
@@ -283,8 +287,8 @@ export const exportDomToPDF = async (
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
       
-      // Top bar: thin yellow strip (1-1.2cm = ~4mm bar)
-      doc.setFillColor(255, 215, 0); // #FFD700
+      // Top bar: thin yellow strip
+      doc.setFillColor(245, 197, 24); // #F5C518
       doc.rect(0, 0, pageWidth, 12, 'F');
       // Logo text on yellow bar
       doc.setFontSize(6);
@@ -293,7 +297,7 @@ export const exportDomToPDF = async (
       doc.text('BiOQUILL\u2122', 15, 6);
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(4);
-      doc.text('Precision intelligence. From pipeline to patients.', 40, 6);
+      doc.text('Know the odds. Understand the pipeline. Win the race.', 40, 6);
       doc.setFontSize(3.5);
       doc.text('Data refreshed: 05/03/2026', pageWidth - 15, 6, { align: 'right' });
       
@@ -305,6 +309,8 @@ export const exportDomToPDF = async (
     
     doc.save(filename);
   } catch (error) {
+    // Ensure class is removed even on error
+    element.classList.remove('pdf-export-mode');
     console.error('DOM to PDF export failed:', error);
     throw error;
   }
