@@ -19,7 +19,7 @@ import {
   FileSpreadsheet
 } from "lucide-react";
 import { exportMoleculesToExcel, exportLPIDetailedToExcel, exportTherapeuticAreaSummary, exportComparisonToExcel } from "@/lib/excelExport";
-import { calculateLPI3ForMolecule } from "@/lib/lpi3Model";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
 
 interface MoleculeProfile {
   id: string;
