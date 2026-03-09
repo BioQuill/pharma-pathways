@@ -579,20 +579,39 @@ export function calculateLPI3ForMolecule(
     company: string;
     companyTrackRecord?: 'fast' | 'average' | 'slow';
     isFailed?: boolean;
-    // Real fields from molecules_master.min.json
+    // Real fields from molecules_master.min.json (direct or via _raw)
     approval_status?: string;
     has_results?: boolean;
     status?: string;
     study_title?: string;
     conditions?: string;
+    trialName?: string;
+    indication?: string;
+    _raw?: {
+      approval_status?: string;
+      has_results?: boolean;
+      status?: string;
+      study_title?: string;
+      brief_summary?: string;
+      conditions?: string;
+      [key: string]: any;
+    };
   }
 ): LPI3Prediction {
   // Map company to sponsor type
   const sponsorType = getSponsorType(molecule.company);
 
+  // Extract real fields: prefer direct, fallback to _raw
+  const raw = (molecule as any)._raw || {};
+  const approvalStatus = molecule.approval_status || raw.approval_status || '';
+  const hasResults = molecule.has_results ?? raw.has_results ?? false;
+  const molStatus = molecule.status || raw.status || '';
+  const studyTitle = molecule.study_title || molecule.trialName || raw.study_title || '';
+  const conditions = molecule.conditions || molecule.indication || raw.conditions || '';
+
   const taLower = (molecule.therapeuticArea || '').toLowerCase();
-  const titleLower = (molecule.study_title || '').toLowerCase();
-  const conditionsLower = (molecule.conditions || '').toLowerCase();
+  const titleLower = studyTitle.toLowerCase();
+  const conditionsLower = conditions.toLowerCase();
 
   // Derive hasBiomarker from real fields
   const hasBiomarker =
