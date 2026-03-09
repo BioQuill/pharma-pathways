@@ -212,40 +212,29 @@ const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProf
 };
 
 export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
-  const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
+  const { simulatorMolecule } = useSimulatorMolecule();
 
-  const predictions = useMemo(() => {
-    return molecules.map(mol => ({
-      molecule: mol,
-      prediction: calculateLPI3ForMolecule(mol),
-    }));
-  }, [molecules]);
+  // If no molecule selected via "Use in Simulator →", show empty state
+  if (!simulatorMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center space-y-3">
+          <p className="text-lg font-semibold text-muted-foreground">Select a molecule from the Pipeline tab to begin simulation</p>
+          <p className="text-sm text-muted-foreground">Click "Use in Simulator →" on any molecule card to load it here.</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const selectedPrediction = selectedMolecule 
-    ? predictions.find(p => p.molecule.id === selectedMolecule) 
-    : predictions[0];
-
-  // Aggregate stats
-  const avgProbability = predictions.reduce((sum, p) => sum + p.prediction.calibratedProbability, 0) / predictions.length;
-  const highRiskCount = predictions.filter(p => p.prediction.calibratedProbability < 0.3).length;
-  const lowRiskCount = predictions.filter(p => p.prediction.calibratedProbability >= 0.6).length;
-
-  // Data for bar chart
-  const barChartData = predictions
-    .sort((a, b) => b.prediction.calibratedProbability - a.prediction.calibratedProbability)
-    .map(p => ({
-      name: p.molecule.name.split(' ')[0],
-      probability: p.prediction.calibratedProbability * 100,
-      raw: p.prediction.rawProbability * 100,
-    }));
+  const prediction = calculateLPI3ForMolecule(simulatorMolecule);
 
   // Category importance chart
-  const categoryImportance = selectedPrediction?.prediction.featureCategories.map(cat => ({
+  const categoryImportance = prediction.featureCategories.map(cat => ({
     name: cat.name.split('/')[0].split(' ')[0],
     weight: cat.categoryWeight,
     score: (cat.features.reduce((sum, f) => sum + f.value * f.importance, 0) / 
             cat.features.reduce((sum, f) => sum + f.importance, 0)) * 100,
-  })) || [];
+  }));
 
   return (
     <div className="space-y-6">
