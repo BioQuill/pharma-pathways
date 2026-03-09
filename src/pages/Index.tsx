@@ -105,7 +105,7 @@ import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChar
 import { MethodologyContent } from "@/components/MethodologyContent";
 import { PricingContent } from "@/components/PricingContent";
 import { ModelsContent } from "@/components/ModelsContent";
-impoessionMoleculeProvider, useSessionMolecule } from "@/contexts/SessionulatorMoleculeContext";
+import { SessionMoleculeProvider, useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
 import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
