@@ -6,6 +6,7 @@ import { Globe, Calendar, DollarSign, TrendingUp } from "lucide-react";
 
 interface MarketAnalysisTableProps {
   marketData: MarketData[];
+  approvalStatus?: string;
 }
 
 // Country flag URLs using flagcdn (round format)
