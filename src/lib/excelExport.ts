@@ -14,6 +14,7 @@ interface MoleculeProfile {
   trialName?: string;
   companyTrackRecord?: 'fast' | 'average' | 'slow';
   isFailed?: boolean;
+  overallScore?: number;
   revenueProjection?: { year1: number; year2: number };
   approval_status?: string;
   has_results?: boolean;
