@@ -404,26 +404,83 @@ export function calculateTTMPercent(
   return Math.max(0, Math.min(100, Math.round(ttmPercent)));
 }
 
-// Calculate TTM in months - expected months from current stage to first regulatory approval
+// Calculate TTM in months — phase-based calculation using ttmData.ts benchmarks
+// New signature: phase, TA, sponsorType are required; approval_status, status, study_title optional
 export function calculateTTMMonths(
   phase: string,
   therapeuticArea: string,
-  companyTrackRecord: 'fast' | 'average' | 'slow',
-  marketData: MarketData[]
+  companyTrackRecordOrSponsorType: 'fast' | 'average' | 'slow' | string,
+  marketDataOrApprovalStatus?: MarketData[] | string,
+  status?: string,
+  study_title?: string
 ): number | null {
-  if (marketData.length === 0 || marketData[0].estimatedLaunchDate === 'N/A - Trial Failed') {
-    return null;
+  // Get TA total TTM baseline from ttmData.ts
+  const baseline = getTTMMonthsForTA(therapeuticArea);
+
+  // Phase remaining fraction
+  const phaseLower = (phase || '').toLowerCase();
+  let phaseFraction: number | null = null;
+
+  // Check approval_status first (passed as 4th arg string or from old MarketData[] compat)
+  let approvalStatus = '';
+  if (typeof marketDataOrApprovalStatus === 'string') {
+    approvalStatus = marketDataOrApprovalStatus;
+  } else if (Array.isArray(marketDataOrApprovalStatus)) {
+    // Legacy callers pass MarketData[] — extract nothing, use phase only
+    approvalStatus = '';
   }
-  
-  // Get US launch date as primary reference (first approval)
-  const usMarket = marketData.find(m => m.countryCode === 'US');
-  if (!usMarket) return null;
-  
-  const launchDate = new Date(usMarket.estimatedLaunchDate);
-  const now = new Date();
-  const monthsRemaining = Math.round((launchDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 30));
-  
-  return Math.max(0, monthsRemaining);
+
+  if (approvalStatus.toUpperCase().includes('APPROVED')) {
+    phaseFraction = 0.07;
+  } else if (approvalStatus.toUpperCase().includes('COMPLETED_PH3')) {
+    phaseFraction = 0.15;
+  }
+
+  if (phaseFraction === null) {
+    if (/phase\s*(3\s*\/\s*4|iv|4)/i.test(phaseLower)) phaseFraction = 0.18;
+    else if (/phase\s*(iii|3)/i.test(phaseLower) && !/\//i.test(phaseLower.replace(/phase\s*(iii|3)/i, ''))) phaseFraction = 0.23;
+    else if (/phase\s*(ii\s*\/\s*iii|2\s*\/\s*3)/i.test(phaseLower)) phaseFraction = 0.35;
+    else if (/phase\s*(ii|2)/i.test(phaseLower) && !/\//i.test(phaseLower.replace(/phase\s*(ii|2)/i, ''))) phaseFraction = 0.48;
+    else if (/phase\s*(i\s*\/\s*ii|1\s*\/\s*2)/i.test(phaseLower)) phaseFraction = 0.65;
+    else if (/phase\s*(i|1)/i.test(phaseLower)) phaseFraction = 0.73;
+    else if (/nda|bla|pre-registration/i.test(phaseLower)) phaseFraction = 0.15;
+    else if (/approved/i.test(phaseLower)) phaseFraction = 0.07;
+    else return null; // unrecognised phase
+  }
+
+  // Sponsor speed modifier
+  let sponsorMod = 1.0;
+  const sType = companyTrackRecordOrSponsorType;
+  if (sType === 'fast') sponsorMod = 0.85;
+  else if (sType === 'slow') sponsorMod = 1.20;
+  else if (sType === 'average') sponsorMod = 1.0;
+  // Also support sponsorType strings from B2 spec
+  else if (sType === 'big_pharma' || sType === 'top_10_pharma' || sType === 'top_20_pharma') sponsorMod = 0.85;
+  else if (sType === 'large_biotech' || sType === 'mid_pharma') sponsorMod = 1.0;
+  else sponsorMod = 1.20; // mid_biotech, unknown, academic
+
+  // Pathway modifier from study_title keywords
+  let pathwayMod = 1.0;
+  const titleLower = (study_title || '').toLowerCase();
+  if (titleLower.includes('breakthrough') || titleLower.includes('accelerated')) {
+    pathwayMod = 0.80;
+  } else if (titleLower.includes('fast track') || titleLower.includes('priority review')) {
+    pathwayMod = 0.85;
+  } else if (titleLower.includes('orphan')) {
+    pathwayMod = 0.90;
+  }
+
+  // Status modifier
+  let statusMod = 1.0;
+  const statusUpper = (status || '').toUpperCase();
+  if (statusUpper === 'ACTIVE_NOT_RECRUITING' || statusUpper === 'ACTIVE, NOT RECRUITING') {
+    statusMod = 0.90;
+  } else if (statusUpper === 'COMPLETED') {
+    statusMod = 0.85;
+  }
+
+  const ttm = Math.round(baseline * phaseFraction * sponsorMod * pathwayMod * statusMod);
+  return Math.max(1, ttm);
 }
 
 // normalizeTherapeuticArea is exported above
