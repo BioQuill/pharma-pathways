@@ -267,7 +267,7 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
 
 // Main Dashboard Component
 export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
-  const { simulatorMolecule } = useSimulatorMolecule();
+  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
 
   // If no molecule selected via "Use in Simulator →", show empty state
   if (!simulatorMolecule) {
