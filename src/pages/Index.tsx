@@ -1068,16 +1068,6 @@ const IndexInner = () => {
                   )}
                 </div>
 
-                {/* Signal Indicators Legend — below search */}
-                <div className="p-3 rounded-lg bg-muted/50 border">
-                  <div className="flex items-center flex-wrap gap-x-6 gap-y-1 text-xs">
-                    <span className="font-semibold text-sm">Signal indicators:</span>
-                    <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Above benchmark</span>
-                    <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> At benchmark</span>
-                    <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Below benchmark</span>
-                    <span className="text-muted-foreground">Thresholds are TA-specific — hover any metric for details</span>
-                  </div>
-                </div>
 
               </div>
             ) : activeMolecule ? (
@@ -2192,10 +2182,7 @@ const IndexInner = () => {
 
         {/* ═══ MOLECULES DATABASE — always visible on platform page ═══ */}
         {topNavMode === 'platform' && !selectedMolecule && (
-          <div className="mt-6 space-y-4">
-            {/* Spacer between TA chart / model panels and molecule database */}
-            <div style={{ height: 0 }} />
-
+          <div className="mt-0 space-y-4">
             {/* Navy MOLECULES DATABASE header bar */}
             <div
               className="w-full rounded-lg px-4 flex items-center"
@@ -2207,6 +2194,17 @@ const IndexInner = () => {
               >
                 MOLECULES DATABASE
               </span>
+            </div>
+
+            {/* Signal Indicators Legend — right below MOLECULES DATABASE bar */}
+            <div className="p-3 rounded-lg bg-muted/50 border">
+              <div className="flex items-center flex-wrap gap-x-6 gap-y-1 text-xs">
+                <span className="font-semibold text-sm">Signal indicators:</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Above benchmark</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> At benchmark</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Below benchmark</span>
+                <span className="text-muted-foreground">Thresholds are TA-specific — hover any metric for details</span>
+              </div>
             </div>
 
             {/* Header with Sort Icons */}
