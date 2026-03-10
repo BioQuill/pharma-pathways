@@ -697,7 +697,7 @@ export default function Pricing() {
           <div className="w-full bg-[#FFD700] flex items-center justify-center" style={{ height: '28px' }}>
             <div className="flex items-center gap-3">
               <span className="text-[#0E1D35] font-bold text-sm tracking-wide">BiOQUILL</span>
-              <span className="text-[#0E1D35] text-[10px] opacity-80">Precision intelligence. From pipeline to patient.</span>
+              <span className="text-[#0E1D35] text-[10px] opacity-80">Know the odds. Understand the pipeline. Win the race.</span>
             </div>
           </div>
         </Link>
