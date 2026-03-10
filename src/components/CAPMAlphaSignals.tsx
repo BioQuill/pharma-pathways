@@ -245,6 +245,20 @@ export function CAPMAlphaSignals({ molecules }: { molecules: MoleculeProfile[] }
 
   const alphaValue = capmResult ? (capmResult.alpha1 * 100).toFixed(1) : "—";
 
+  const capmNarrative = (() => {
+    if (!capmResult) return "";
+    const daPct = (Math.abs(capmResult.deltaAlpha) * 100).toFixed(1);
+    if (capmResult.alpha1 > 0 && capmResult.alpha2 > 0) {
+      const signal = capmResult.deltaAlpha > 0 ? "advanced vs history" : "retreated";
+      const fav = capmResult.deltaAlpha > 0 ? "favourable" : "cautionary";
+      return `Both historical and pipeline alpha are positive — this molecule outperforms expectations on both benchmarks. Δα of ${daPct}% indicates the field has ${signal}, which is a ${fav} signal for new entrants.`;
+    }
+    if (capmResult.alpha1 > 0 && capmResult.alpha2 <= 0) {
+      return "Strong historical alpha but below current pipeline mean — the TA has become more competitive since historical benchmarks were set. Differentiation strategy is critical.";
+    }
+    return "Below-benchmark performance on both measures. Review mechanism novelty and competitive positioning before investment decision.";
+  })();
+
   return (
     <SimulatorLayout
       badgeValue={alphaValue}
@@ -254,6 +268,7 @@ export function CAPMAlphaSignals({ molecules }: { molecules: MoleculeProfile[] }
       autoBaseline={!!simulatorMolecule && !userAdjusted}
       chart={contextChart}
       parameters={parametersContent}
+      narrative={capmNarrative}
       secondaryStats={capmResult ? [
         { label: "β", value: beta.toFixed(2) },
         { label: "E(R)", value: fmtPct(capmResult.expectedReturn) },
