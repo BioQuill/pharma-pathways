@@ -197,20 +197,34 @@ export const exportDomToPDF = async (
 
   const { orientation = 'portrait', format = 'a4', margin = 10 } = options || {};
   
-  // Dynamic import of html2canvas for rendering
   const html2canvasModule = await import('html2canvas');
   const html2canvas = html2canvasModule.default;
   
-  // Calculate dimensions based on format and orientation
   const dimensions = format === 'a4' 
-    ? { width: 210, height: 297 } // A4 in mm
-    : { width: 216, height: 279 }; // Letter in mm
+    ? { width: 210, height: 297 }
+    : { width: 216, height: 279 };
   
   const pageWidth = orientation === 'landscape' ? dimensions.height : dimensions.width;
   const pageHeight = orientation === 'landscape' ? dimensions.width : dimensions.height;
   
+  // Reserve space for header bar (12mm) and footer watermark (8mm)
+  const headerHeight = 12; // mm
+  const footerHeight = 8; // mm
+  const contentMarginTop = margin + headerHeight;
+  const contentAreaHeight = pageHeight - contentMarginTop - footerHeight;
+  
   try {
-    // Add pdf-export-mode class for PDF-specific styling
+    // Hide sticky platform header and nav during capture
+    const stickyElements = document.querySelectorAll('header[class*="fixed"], nav[class*="fixed"]');
+    const hiddenEls: HTMLElement[] = [];
+    stickyElements.forEach(el => {
+      const htmlEl = el as HTMLElement;
+      if (htmlEl.style.display !== 'none') {
+        hiddenEls.push(htmlEl);
+        htmlEl.style.display = 'none';
+      }
+    });
+    
     element.classList.add('pdf-export-mode');
     
     const canvas = await html2canvas(element, {
@@ -220,97 +234,118 @@ export const exportDomToPDF = async (
       allowTaint: true,
     });
     
-    // Remove pdf-export-mode class
     element.classList.remove('pdf-export-mode');
     
-    // Create PDF from canvas using jspdf
-    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+    // Restore sticky elements
+    hiddenEls.forEach(el => { el.style.display = ''; });
     
-    // Calculate aspect ratio
     const imgWidth = pageWidth - (margin * 2);
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const ratio = canvas.width / imgWidth; // pixels per mm
     
     const { jsPDF } = await import('jspdf');
-    const doc = new jsPDF({
-      orientation,
-      unit: 'mm',
-      format,
+    const doc = new jsPDF({ orientation, unit: 'mm', format });
+    
+    // --- Card-aware slicing ---
+    // Get Y positions of .dd-model-card and .dd-stage-divider elements
+    // relative to the captured element, scaled to canvas pixels
+    const elementRect = element.getBoundingClientRect();
+    const scaleX = canvas.width / elementRect.width;
+    
+    const cardEls = element.querySelectorAll('.dd-model-card, .dd-stage-divider');
+    const cardBoundaries: number[] = []; // Y positions in canvas pixels where cards start
+    cardEls.forEach(cardEl => {
+      const cardRect = (cardEl as HTMLElement).getBoundingClientRect();
+      const relativeY = (cardRect.top - elementRect.top) * scaleX;
+      cardBoundaries.push(Math.round(relativeY));
     });
+    cardBoundaries.sort((a, b) => a - b);
     
-    // Add pages as needed
-    const maxY = pageHeight - margin;
+    // Slice height in canvas pixels for the content area
+    const sliceHeightPx = contentAreaHeight * ratio;
     
-    if (imgHeight <= maxY - margin) {
-      // Single page
-      doc.addImage(imgData, 'JPEG', margin, margin, imgWidth, imgHeight);
-    } else {
-      // Multi-page: slice the image
-      const pageContentHeight = maxY - margin;
-      const ratio = canvas.width / imgWidth;
-      const sliceHeight = pageContentHeight * ratio;
-      
-      let srcY = 0;
-      let page = 0;
-      
-      while (srcY < canvas.height) {
-        if (page > 0) {
-          doc.addPage();
-        }
-        
-        // Create a slice canvas
-        const sliceCanvas = document.createElement('canvas');
-        const remainingHeight = Math.min(sliceHeight, canvas.height - srcY);
-        sliceCanvas.width = canvas.width;
-        sliceCanvas.height = remainingHeight;
-        
-        const ctx = sliceCanvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(
-            canvas,
-            0, srcY, canvas.width, remainingHeight,
-            0, 0, canvas.width, remainingHeight
-          );
-          
-          const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.98);
-          const sliceImgHeight = (remainingHeight * imgWidth) / canvas.width;
-          doc.addImage(sliceData, 'JPEG', margin, margin, imgWidth, sliceImgHeight);
-        }
-        
-        srcY += sliceHeight;
-        page++;
+    let srcY = 0;
+    let page = 0;
+    
+    while (srcY < canvas.height) {
+      if (page > 0) {
+        doc.addPage();
       }
+      
+      // Determine slice end: default is srcY + sliceHeightPx
+      let idealEnd = srcY + sliceHeightPx;
+      
+      if (idealEnd < canvas.height) {
+        // Find the last card boundary that starts before idealEnd
+        // and adjust to avoid splitting cards
+        let bestBreak = idealEnd;
+        
+        // Look for card boundaries near the ideal break point
+        // Find the latest boundary that is before idealEnd (with some tolerance)
+        for (let i = cardBoundaries.length - 1; i >= 0; i--) {
+          const boundary = cardBoundaries[i];
+          if (boundary <= idealEnd && boundary > srcY + sliceHeightPx * 0.4) {
+            bestBreak = boundary;
+            break;
+          }
+        }
+        
+        idealEnd = bestBreak;
+      }
+      
+      const actualSlice = Math.min(idealEnd - srcY, canvas.height - srcY);
+      
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width = canvas.width;
+      sliceCanvas.height = actualSlice;
+      
+      const ctx = sliceCanvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(
+          canvas,
+          0, srcY, canvas.width, actualSlice,
+          0, 0, canvas.width, actualSlice
+        );
+        
+        const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.98);
+        const sliceImgHeight = (actualSlice * imgWidth) / canvas.width;
+        doc.addImage(sliceData, 'JPEG', margin, contentMarginTop, imgWidth, sliceImgHeight);
+      }
+      
+      srcY += actualSlice;
+      page++;
     }
     
-    // Add top bar + watermark to every page
+    // Add header bar + watermark to every page
     const watermarkText = getReportWatermark();
     const totalPages = doc.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
       
-      // Top bar: thin yellow strip
+      // Single yellow header bar — 1cm height
       doc.setFillColor(245, 197, 24); // #F5C518
-      doc.rect(0, 0, pageWidth, 12, 'F');
-      // Logo text on yellow bar
+      doc.rect(0, 0, pageWidth, headerHeight, 'F');
       doc.setFontSize(6);
-      doc.setTextColor(14, 29, 53); // #0E1D35 navy
+      doc.setTextColor(14, 29, 53);
       doc.setFont('Helvetica', 'bold');
-      doc.text('BiOQUILL\u2122', 15, 6);
+      doc.text('BiOQUILL\u2122', 15, headerHeight / 2 + 1);
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(4);
-      doc.text('Know the odds. Understand the pipeline. Win the race.', 40, 6);
+      doc.text('Know the odds. Understand the pipeline. Win the race.', pageWidth / 2, headerHeight / 2 + 1, { align: 'center' });
       doc.setFontSize(3.5);
-      doc.text('Data refreshed: 05/03/2026', pageWidth - 15, 6, { align: 'right' });
+      doc.text('Data refreshed: 05/03/2026', pageWidth - 15, headerHeight / 2 + 1, { align: 'right' });
       
       // Watermark at bottom
       doc.setFontSize(6);
       doc.setTextColor(180, 180, 180);
-      doc.text(watermarkText, pageWidth / 2, pageHeight - 5, { align: 'center' });
+      doc.text(watermarkText, pageWidth / 2, pageHeight - 4, { align: 'center' });
     }
     
     doc.save(filename);
   } catch (error) {
-    // Ensure class is removed even on error
     element.classList.remove('pdf-export-mode');
+    // Restore sticky elements on error too
+    const stickyElements = document.querySelectorAll('header[class*="fixed"], nav[class*="fixed"]');
+    stickyElements.forEach(el => { (el as HTMLElement).style.display = ''; });
     console.error('DOM to PDF export failed:', error);
     throw error;
   }
