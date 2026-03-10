@@ -85,9 +85,9 @@ export function MoleculeDistributionChart({ molecules }: MoleculeDistributionCha
   return (
     <div className="w-full">
       {/* 3-column layout: left TAs | pie chart | right TAs */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center" style={{ gap: '2cm' }}>
         {/* Left column — first 10 TAs */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 w-[200px] flex-shrink-0">
           <TAColumn items={leftTAs} startIndex={0} />
         </div>
 
@@ -115,7 +115,7 @@ export function MoleculeDistributionChart({ molecules }: MoleculeDistributionCha
         </div>
 
         {/* Right column — next 10 TAs */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 w-[200px] flex-shrink-0">
           <TAColumn items={rightTAs} startIndex={10} />
         </div>
       </div>
