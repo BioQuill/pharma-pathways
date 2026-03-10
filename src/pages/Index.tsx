@@ -1053,9 +1053,9 @@ const IndexInner = () => {
                 { id: 'lpi-3', label: 'LPI', sub: 'Launch probability' },
                 { id: 'ti-analysis', label: 'TI', sub: 'Therapeutic index' },
                 { id: 'ttm', label: 'TTM', sub: 'Time to market' },
-                { id: 'regulatory', label: 'Regulatory Timeline', sub: 'Approval pathway' },
+                { id: 'reg-timeline', label: 'Regulatory Timeline', sub: 'Approval pathway' },
                 { id: 'clinical-studies', label: 'Clinical Studies', sub: 'Trial overview' },
-                { id: 'ta-risk', label: 'TA Risk Index', sub: 'Area risk' },
+                { id: 'regulatory', label: 'TA Risk Index', sub: 'Area risk' },
               ].map(card => (
                 <button
                   key={card.id}
@@ -1078,7 +1078,7 @@ const IndexInner = () => {
                 { id: 'peak-sales', label: 'Peak Sales', sub: 'Revenue potential' },
                 { id: 'blockbuster', label: 'Blockbuster Probability', sub: 'Blockbuster odds' },
                 { id: 'pa-model1', label: 'PA Index-1', sub: 'Payer access' },
-                { id: 'pa-model2', label: 'PA Index-2', sub: 'Comparator payer' },
+                { id: 'pa-model2-stub', label: 'PA Index-2', sub: 'Comparator payer' },
                 { id: 'capm-alpha', label: 'CAPM Alpha', sub: 'Risk-adjusted return' },
                 { id: 'lpi-2', label: 'Investment Score', sub: 'Investment grade' },
                 { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario simulation' },
@@ -2222,7 +2222,98 @@ const IndexInner = () => {
             <PeakSalesIndexDashboard molecules={allMolecules} />
           </TabsContent>
 
-          {/* Watchlist Tab */}
+          {/* Blockbuster Probability Tab */}
+          <TabsContent value="blockbuster" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            {simulatorMolecule ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    $1B Blockbuster Probability
+                  </CardTitle>
+                  <CardDescription>Probability of achieving $1B+ peak annual sales via logistic regression on composite Peak Sales Score</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <PeakSalesIndexDashboard molecules={allMolecules} />
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-dashed">
+                <CardContent className="py-16 text-center space-y-3">
+                  <p className="text-lg font-semibold text-muted-foreground">Select a molecule below to run this model</p>
+                  <Button variant="outline" onClick={() => setActiveTab('overview')}>← Go to Pipeline</Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Regulatory Timeline Stub */}
+          <TabsContent value="reg-timeline" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-primary" />
+                  Regulatory Timeline
+                </CardTitle>
+                <CardDescription>Approval pathway modelling and regulatory milestone tracking</CardDescription>
+              </CardHeader>
+              <CardContent className="py-8 text-center space-y-4">
+                <p className="text-muted-foreground">Requires manual comparator input — run in simulator/calculator</p>
+                <Button onClick={() => { setActiveTab('overview'); setTimeout(() => { setSelectedMolecule(simulatorMolecule?.id || null); }, 100); }}>
+                  Open Full Calculator →
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Clinical Studies Stub */}
+          <TabsContent value="clinical-studies" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Search className="h-5 w-5 text-primary" />
+                  Clinical Studies
+                </CardTitle>
+                <CardDescription>Trial overview and ClinicalTrials.gov integration</CardDescription>
+              </CardHeader>
+              <CardContent className="py-8 text-center space-y-4">
+                <p className="text-muted-foreground">Requires manual comparator input — run in simulator/calculator</p>
+                {simulatorMolecule ? (
+                  <a
+                    href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(simulatorMolecule.name.split(' ')[0])}&viewType=Table`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Open Full Calculator →
+                  </a>
+                ) : (
+                  <Button variant="outline" onClick={() => setActiveTab('overview')}>← Select a molecule first</Button>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* PA Index-2 Stub */}
+          <TabsContent value="pa-model2-stub" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  PA Index-2 — Comparative Payer Likelihood Matrix
+                </CardTitle>
+                <CardDescription>Historical approval/coverage base rates with molecule-specific comparator benchmarking</CardDescription>
+              </CardHeader>
+              <CardContent className="py-8 text-center space-y-4">
+                <p className="text-muted-foreground">Requires manual comparator input — run in simulator/calculator</p>
+                <Button onClick={() => { setActiveTab('pa-model2'); }}>
+                  Open Full Calculator →
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
           <TabsContent value="watchlist" className="space-y-6">
             <WatchlistPanel
               watchlist={watchlist}
