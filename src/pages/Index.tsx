@@ -1318,8 +1318,8 @@ const IndexInner = () => {
                 </div>
                 <p className="pdf-interactive-replacement">Interactive regulatory pathway modelling available at bioquill.com</p>
 
-                {/* 6. Clinical Studies Summary */}
-                <div className="dd-model-card">
+                {/* 6. Clinical Studies Summary — hidden in PDF export */}
+                <div className="dd-model-card pdf-interactive-hide">
                   <Card className="border-l-4 border-l-primary">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 dd-section-header">
