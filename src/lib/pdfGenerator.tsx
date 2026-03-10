@@ -229,6 +229,29 @@ export const exportDomToPDF = async (
     
     element.classList.add('pdf-export-mode');
     
+    // CRITICAL: Measure card positions WHILE pdf-export-mode is active
+    // so positions match the canvas (hidden elements affect layout)
+    const elementRect = element.getBoundingClientRect();
+    
+    const topLevelSelectors = ':scope > .dd-model-card:not(.pdf-interactive-hide), :scope > .dd-stage-divider';
+    const topLevelEls = element.querySelectorAll(topLevelSelectors);
+    
+    interface CardBlock { startY: number; endY: number; heightPx: number; }
+    const cardMeasurements: { top: number; bottom: number }[] = [];
+    
+    topLevelEls.forEach(el => {
+      const htmlEl = el as HTMLElement;
+      // Skip elements hidden by pdf-export-mode
+      if (htmlEl.offsetHeight === 0) return;
+      const r = htmlEl.getBoundingClientRect();
+      if (r.height > 0) {
+        cardMeasurements.push({
+          top: r.top - elementRect.top,
+          bottom: r.bottom - elementRect.top,
+        });
+      }
+    });
+    
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
@@ -247,25 +270,12 @@ export const exportDomToPDF = async (
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({ orientation, unit: 'mm', format });
     
-    // --- Strict per-card pagination: NEVER split any card across pages ---
-    const elementRect = element.getBoundingClientRect();
+    // Convert measurements to canvas pixel coordinates
     const scaleX = canvas.width / elementRect.width;
-    
-    // Gather top-level atomic blocks (cards + stage dividers)
-    // These are the ONLY elements we use for pagination boundaries
-    const topLevelSelectors = ':scope > .dd-model-card, :scope > .dd-stage-divider';
-    const topLevelEls = element.querySelectorAll(topLevelSelectors);
-    
-    interface CardBlock { startY: number; endY: number; heightPx: number; }
-    const cards: CardBlock[] = [];
-    
-    topLevelEls.forEach(el => {
-      const r = (el as HTMLElement).getBoundingClientRect();
-      const startY = Math.round((r.top - elementRect.top) * scaleX);
-      const endY = Math.round((r.bottom - elementRect.top) * scaleX);
-      if (endY > startY) {
-        cards.push({ startY, endY, heightPx: endY - startY });
-      }
+    const cards: CardBlock[] = cardMeasurements.map(m => {
+      const startY = Math.round(m.top * scaleX);
+      const endY = Math.round(m.bottom * scaleX);
+      return { startY, endY, heightPx: endY - startY };
     });
     cards.sort((a, b) => a.startY - b.startY);
     
