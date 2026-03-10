@@ -324,12 +324,8 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
               variant="export"
               className="gap-1.5"
               onClick={async () => {
-                const molName = selectedMolecule !== "manual"
-                  ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
-                  : "Manual Input";
-                const molIndication = selectedMolecule !== "manual"
-                  ? allMolecules.find(m => m.id === selectedMolecule)?.indication || ""
-                  : "";
+                const molName = sessionMolecule?.name || "Manual Input";
+                const molIndication = sessionMolecule?.indication || "";
                 const marketObj = markets.find(m => m.id === selectedMarket)!;
                 const taLabels = selectedTAs.map(id => therapeuticAreas.find(t => t.id === id)?.label).filter(Boolean).join(', ');
                 const doc = (
