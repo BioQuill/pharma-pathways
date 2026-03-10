@@ -58,9 +58,7 @@ interface MWPSPICalculatorProps {
 }
 
 export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
-  const fallbackMolecules = useMemo(() => getAllMolecules(), []);
-  const allMolecules = molecules && molecules.length > 0 ? molecules : fallbackMolecules;
-  const [selectedMolecule, setSelectedMolecule] = useState("manual");
+  const { sessionMolecule } = useSessionMolecule();
   const resultRef = useRef<HTMLDivElement>(null);
 
   const [selectedMarket, setSelectedMarket] = useState("us");
@@ -82,20 +80,18 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
   const [politicalScore, setPoliticalScore] = useState([50]);
   const [adjustmentPoints, setAdjustmentPoints] = useState([0]);
 
-  // When a molecule is selected, auto-populate scores and TA
-  const handleMoleculeSelect = (molId: string) => {
-    setSelectedMolecule(molId);
-    if (molId === "manual") return;
-    const mol = allMolecules.find(m => m.id === molId);
-    if (!mol) return;
-    const taId = mapTAToModel1Id(mol.therapeuticArea);
-    if (taId) setSelectedTAs([taId]);
-    const scores = deriveModel1Scores(mol);
-    setClinicalScore([scores.clinical]);
-    setEconomicScore([scores.economic]);
-    setAccessScore([scores.access]);
-    setPoliticalScore([scores.political]);
-  };
+  // Auto-populate when session molecule changes
+  useEffect(() => {
+    if (sessionMolecule) {
+      const taId = mapTAToModel1Id(sessionMolecule.therapeuticArea);
+      if (taId) setSelectedTAs([taId]);
+      const scores = deriveModel1Scores(sessionMolecule);
+      setClinicalScore([scores.clinical]);
+      setEconomicScore([scores.economic]);
+      setAccessScore([scores.access]);
+      setPoliticalScore([scores.political]);
+    }
+  }, [sessionMolecule]);
 
   const market = markets.find(m => m.id === selectedMarket)!;
 
