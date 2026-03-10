@@ -344,6 +344,12 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
     </div>
   );
 
+  const paNarrative = (() => {
+    if (mwpspi >= 70) return `Strong access signal for ${market.label} (${mwpspi}/100 — ${band.label}). Payer support probability is high for this therapeutic area and market combination.`;
+    if (mwpspi >= 50) return `Moderate access signal for ${market.label} (${mwpspi}/100 — ${band.label}). Selective payer engagement is likely; pricing strategy and evidence package will be critical.`;
+    return `Challenging access environment in ${market.label} (${mwpspi}/100 — ${band.label}). Primary barrier: price pressure and HTA evidence requirements. Consider early engagement with payer advisors.`;
+  })();
+
   return (
     <SimulatorLayout
       badgeValue={mwpspi}
@@ -353,6 +359,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
       autoBaseline={!!sessionMolecule && !userAdjusted}
       chart={contextChart}
       parameters={parametersContent}
+      narrative={paNarrative}
       secondaryStats={[
         { label: "Band", value: band.label },
         { label: "Market", value: market.label },

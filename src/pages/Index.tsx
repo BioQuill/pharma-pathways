@@ -560,6 +560,21 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     </div>
   );
 
+  const ptrsNarrative = (() => {
+    const ptrsDec = ptrsResult.ptrs;
+    const ptsDec = ptrsResult.pts;
+    const prsDec = ptrsResult.prs;
+    const ta = taDisplayNames[therapeuticArea] || therapeuticArea;
+    const ph = phaseDisplayNames[currentPhase] || currentPhase;
+    const stronger = prs > pts ? "stronger" : "weaker";
+    if (ptrsDec >= 0.50) {
+      return `Technical and regulatory success probability (${ptrs}%) is above average for ${ta} ${ph} assets. Regulatory confidence (PRS ${prs}%) is ${stronger} than technical confidence (PTS ${pts}%), suggesting ${prs > pts ? "the regulatory pathway is well-established" : "clinical endpoints carry more risk"}.`;
+    }
+    const driver = pts < prs ? "PTS" : "PRS";
+    const driverPct = pts < prs ? pts : prs;
+    return `At ${ptrs}%, combined success probability reflects ${pts < 50 ? "high technical uncertainty" : "regulatory complexity"} for this indication. The ${driver} component at ${driverPct}% is the primary risk driver.`;
+  })();
+
   return (
     <SimulatorLayout
       badgeValue={ptrs}
@@ -568,6 +583,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
       autoBaseline={!!simulatorMolecule && !userAdjusted}
       chart={ptrsContextChart}
       parameters={ptrsParameters}
+      narrative={ptrsNarrative}
       secondaryStats={[
         { label: "PTS", value: `${pts}%` },
         { label: "PRS", value: `${prs}%` },
@@ -767,8 +783,8 @@ const IndexInner = () => {
             <div className="hidden md:flex items-center gap-3 ml-5">
               <div style={{ width: 1, height: 22, background: 'rgba(26,26,26,0.25)' }} />
               <div className="flex flex-col justify-center leading-tight">
-                <span className="text-[13px] font-medium text-[#1A1A1A]">Precision intelligence.</span>
-                <span className="text-[13px] font-medium text-[#1A1A1A]">From pipeline to patients.</span>
+                <span className="text-[13px] font-medium text-[#1A1A1A]">Know the odds. Understand the pipeline.</span>
+                <span className="text-[13px] font-medium text-[#1A1A1A]">Win the race.</span>
               </div>
             </div>
           </div>

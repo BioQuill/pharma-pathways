@@ -273,6 +273,16 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
     </div>
   );
 
+  const investNarrative = (() => {
+    const s = prediction.totalScore;
+    const sortedFactors = [...prediction.factors].sort((a, b) => b.score - a.score);
+    const top = sortedFactors.slice(0, 2).map(f => f.name).join(" and ");
+    const weak = sortedFactors[sortedFactors.length - 1]?.name || "market positioning";
+    if (s >= 75) return `Strong investment signal at ${s}/100. This molecule scores above the platform threshold for VC/BD interest. ${top} are the primary value drivers. Recommended action: full due diligence warranted.`;
+    if (s >= 50) return `Moderate investment signal at ${s}/100. Selective interest is appropriate. ${top} supports consideration but ${weak} requires further validation before commitment.`;
+    return `Weak investment signal at ${s}/100 at current development stage. Monitor for phase advancement, data readout, or partnership announcement as potential re-rating catalysts.`;
+  })();
+
   return (
     <SimulatorLayout
       badgeValue={prediction.totalScore}
@@ -282,6 +292,7 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
       autoBaseline={true}
       chart={contextChart}
       parameters={parametersContent}
+      narrative={investNarrative}
       secondaryStats={[
         { label: "Recommendation", value: prediction.recommendation },
         { label: "Risk", value: prediction.riskLevel },

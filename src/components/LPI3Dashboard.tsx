@@ -287,6 +287,28 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
     </div>
   );
 
+  // Generate narrative
+  const sortedCats = [...prediction.featureCategories].sort((a, b) => {
+    const avgA = a.features.reduce((s, f) => s + f.value, 0) / a.features.length;
+    const avgB = b.features.reduce((s, f) => s + f.value, 0) / b.features.length;
+    return avgB - avgA;
+  });
+  const topCat = sortedCats[0]?.name || "Clinical Signals";
+  const bottomCat = sortedCats[sortedCats.length - 1]?.name || "Safety & History";
+
+  const lpiNarrative = (() => {
+    const pct = lpiScore;
+    if (pct >= 75) {
+      const phaseNote = simulatorMolecule.phase.toLowerCase().includes("phase 3") || simulatorMolecule.phase.toLowerCase().includes("phase iii")
+        ? " Phase III status is the strongest positive signal." : "";
+      return `This molecule shows high launch probability at ${pct}%, placing it among top-performing ${simulatorMolecule.therapeuticArea} pipeline assets. The score is driven primarily by ${topCat}.${phaseNote} Primary risk: ${bottomCat}.`;
+    }
+    if (pct >= 50) {
+      return `This molecule shows moderate launch probability (${pct}%) for a ${simulatorMolecule.phase} asset in ${simulatorMolecule.therapeuticArea}. Strengths: ${topCat}. Key uncertainty: ${bottomCat}.`;
+    }
+    return `This molecule faces significant launch headwinds at ${pct}%. ${simulatorMolecule.phase} assets in ${simulatorMolecule.therapeuticArea} historically face attrition at this stage. Improvement drivers: ${bottomCat}.`;
+  })();
+
   return (
     <SimulatorLayout
       badgeValue={lpiScore}
@@ -295,6 +317,7 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
       autoBaseline={true}
       chart={contextChart}
       parameters={parametersContent}
+      narrative={lpiNarrative}
       secondaryStats={[
         { label: "CI", value: `${ciLow}%–${ciHigh}%` },
         { label: "AUC-ROC", value: "0.82" },
