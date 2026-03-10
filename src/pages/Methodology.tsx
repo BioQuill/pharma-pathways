@@ -575,7 +575,7 @@ export default function Methodology() {
       <footer className="border-t mt-16 py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p>© 2026 BioQuill. Pharmaceutical Intelligence Platform.</p>
-          <p className="text-xs mt-1 italic">Precision intelligence. From pipeline to patient.</p>
+          <p className="text-xs mt-1 italic">Know the odds. Understand the pipeline. Win the race.</p>
         </div>
       </footer>
     </div>
