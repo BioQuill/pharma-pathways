@@ -484,14 +484,11 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
               </TabsList>
 
               <TabsContent value="market" className="space-y-4">
-                {/* TA and Molecule Selection */}
+                {/* TA selector + active molecule display */}
                 <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg border mb-4">
                   <div className="space-y-2">
                     <Label className="font-semibold">Therapeutic Area</Label>
-                    <Select value={selectedTA} onValueChange={(value) => {
-                      setSelectedTA(value);
-                      setSelectedMolecule("custom");
-                    }}>
+                    <Select value={selectedTA} onValueChange={setSelectedTA}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Therapeutic Area..." />
                       </SelectTrigger>
@@ -504,20 +501,17 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-semibold">Molecule</Label>
-                    <Select value={selectedMolecule} onValueChange={setSelectedMolecule}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Molecule..." />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-[300px]">
-                        <SelectItem value="custom">Custom Parameters</SelectItem>
-                        {filteredMolecules.slice(0, 100).map((mol) => (
-                          <SelectItem key={mol.id} value={mol.id}>
-                            {mol.name} ({mol.phase})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label className="font-semibold">Active Molecule</Label>
+                    <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+                      <Pill className="h-4 w-4 text-primary shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {sessionMolecule.nctId} | {sessionMolecule.phase} | {sessionMolecule.therapeuticArea}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground italic">TA baseline estimate — adjust in calculator</p>
                   </div>
                 </div>
 
