@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type MoleculeProfile } from "@/lib/moleculesData";
+import { SimulatorLayout } from "./SimulatorLayout";
 import { 
   calculatePeakSalesIndex,
   calculateBlockbusterProbability,
@@ -373,7 +374,39 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
     );
   }
 
-  return (
+  const peakSalesContextChart = (
+    <div className="space-y-3">
+      <h4 className="text-sm font-semibold">Peak Sales: This Molecule vs TA Benchmarks</h4>
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="w-28 text-xs text-right font-medium truncate">{sessionMolecule.name}</div>
+          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-primary rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${results.compositeScore}%` }}>
+              <span className="text-[10px] font-bold text-primary-foreground">{results.compositeScore}</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-28 text-xs text-right font-medium text-muted-foreground">TA Median</div>
+          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-muted-foreground/30 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: '55%' }}>
+              <span className="text-[10px] font-bold text-muted-foreground">55</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-28 text-xs text-right font-medium text-muted-foreground">Top Decile</div>
+          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-muted-foreground/20 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: '82%' }}>
+              <span className="text-[10px] font-bold text-muted-foreground">82</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const peakSalesParameters = (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Results Summary */}
@@ -769,6 +802,22 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
         </CardContent>
       </Card>
     </div>
+  );
+
+  return (
+    <SimulatorLayout
+      badgeValue={results.compositeScore}
+      badgeLabel="Peak Sales Score"
+      badgeSuffix="/100"
+      principle={`${sessionMolecule.name} has a ${results.blockbusterProbability}% probability of reaching $1B+ peak sales based on 7 composite value drivers.`}
+      autoBaseline={true}
+      chart={peakSalesContextChart}
+      parameters={peakSalesParameters}
+      secondaryStats={[
+        { label: "BB Prob", value: `${results.blockbusterProbability}%` },
+        { label: "Est. Peak", value: `$${results.peakSalesEstimate}B` },
+      ]}
+    />
   );
 };
 

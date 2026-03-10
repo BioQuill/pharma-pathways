@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
@@ -30,6 +29,7 @@ import {
   type LPI3Prediction,
   type FeatureCategory 
 } from "@/lib/lpi3Model";
+import { SimulatorLayout } from "./SimulatorLayout";
 
 interface MoleculeProfile {
   id: string;
@@ -77,6 +77,7 @@ const getScoreBadgeVariant = (score: number): 'default' | 'secondary' | 'destruc
   if (score >= 0.34) return 'secondary';
   return 'destructive';
 };
+
 
 const FeatureCategoryCard = ({ category }: { category: FeatureCategory }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -135,95 +136,9 @@ const FeatureCategoryCard = ({ category }: { category: FeatureCategory }) => {
   );
 };
 
-const MoleculeAnalysisCard = ({ molecule, prediction }: { molecule: MoleculeProfile; prediction: LPI3Prediction }) => {
-  const radarData = prediction.featureCategories.map(cat => ({
-    category: cat.name.split(' ')[0],
-    score: (cat.features.reduce((sum, f) => sum + f.value, 0) / cat.features.length) * 100,
-    fullMark: 100,
-  }));
-
-  return (
-    <Card className="border-2">
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-xl">{molecule.name}</CardTitle>
-            <CardDescription>{molecule.company} • {molecule.therapeuticArea}</CardDescription>
-          </div>
-          <div className="text-right">
-            <Badge variant="outline" className="mb-1">{molecule.phase}</Badge>
-            <div className={`text-3xl font-bold ${(molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) >= 50 ? 'text-green-600' : (molecule._raw?.lpi_score ?? molecule.overallScore ?? 0) >= 30 ? 'text-yellow-600' : 'text-red-600'}`}>
-              {molecule._raw?.lpi_score ?? molecule.overallScore ?? 0}%
-            </div>
-            <div 
-              className="text-xs text-muted-foreground cursor-help" 
-              title="95% Confidence Interval: The true launch probability is expected to fall within this range 95% of the time, based on model uncertainty and historical validation data."
-            >
-              CI: {(molecule._raw?.lpi_ci_low ?? 0)}% - {(molecule._raw?.lpi_ci_high ?? 0)}%
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Risk Flags */}
-        {prediction.riskFlags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {prediction.riskFlags.map((flag, idx) => (
-              <Badge 
-                key={idx} 
-                variant={flag.severity === 'critical' || flag.severity === 'high' ? 'destructive' : 'secondary'}
-                className="text-xs"
-              >
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                {flag.message}
-              </Badge>
-            ))}
-          </div>
-        )}
-
-        {/* Radar Chart */}
-        <div className="h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart data={radarData}>
-              <PolarGrid strokeDasharray="3 3" />
-              <PolarAngleAxis dataKey="category" tick={{ fontSize: 10 }} />
-              <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 8 }} />
-              <Radar
-                name="Score"
-                dataKey="score"
-                stroke="hsl(var(--primary))"
-                fill="hsl(var(--primary))"
-                fillOpacity={0.3}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Top Contributors */}
-        <div>
-          <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
-            <Gauge className="h-4 w-4" />
-            Top Feature Contributions (SHAP)
-          </h4>
-          <div className="space-y-1">
-            {prediction.topContributors.slice(0, 5).map((contrib, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-xs">
-                <span className={`w-2 h-2 rounded-full ${contrib.direction === 'positive' ? 'bg-green-500' : 'bg-red-500'}`} />
-                <span className="flex-1">{contrib.feature}</span>
-                <span className="font-mono">{contrib.direction === 'positive' ? '+' : '-'}{(contrib.contribution * 100).toFixed(1)}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
 export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
   const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
 
-  // If no molecule selected via "Use in Simulator →", show empty state
   if (!simulatorMolecule) {
     return (
       <Card className="border-dashed">
@@ -236,8 +151,10 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
   }
 
   const prediction = calculateLPI3ForMolecule(simulatorMolecule);
+  const lpiScore = simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 0;
+  const ciLow = simulatorMolecule._raw?.lpi_ci_low ?? 0;
+  const ciHigh = simulatorMolecule._raw?.lpi_ci_high ?? 0;
 
-  // Category importance chart
   const categoryImportance = prediction.featureCategories.map(cat => ({
     name: cat.name.split('/')[0].split(' ')[0],
     weight: cat.categoryWeight,
@@ -245,46 +162,92 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
             cat.features.reduce((sum, f) => sum + f.importance, 0)) * 100,
   }));
 
-  return (
-    <div className="space-y-6">
-      {/* Model Overview */}
-      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-primary text-primary-foreground">
-              <Brain className="h-6 w-6" />
-            </div>
-            <div>
-              <CardTitle className="text-xl">LPI: ML-Based Launch Probability Model</CardTitle>
-              <CardDescription>
-                XGBoost classifier with isotonic calibration • SHAP feature importance • Survival analysis integration
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold text-primary">{simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 0}%</div>
-              <div className="text-xs text-muted-foreground">Launch Probability</div>
-            </div>
-            <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold">{simulatorMolecule._raw?.lpi_ci_low ?? 0}%–{simulatorMolecule._raw?.lpi_ci_high ?? 0}%</div>
-              <div className="text-xs text-muted-foreground">95% Confidence Interval</div>
-            </div>
-            <div className="text-center p-3 bg-background rounded-lg">
-              <div className="text-2xl font-bold">0.82</div>
-              <div className="text-xs text-muted-foreground">Model AUC-ROC</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  const radarData = prediction.featureCategories.map(cat => ({
+    category: cat.name.split(' ')[0],
+    score: (cat.features.reduce((sum, f) => sum + f.value, 0) / cat.features.length) * 100,
+    fullMark: 100,
+  }));
 
-      {/* Single Molecule Deep Dive */}
-      <MoleculeAnalysisCard 
-        molecule={simulatorMolecule} 
-        prediction={prediction} 
-      />
+  // Context chart: horizontal bar comparing this molecule vs TA benchmark vs all phases
+  const contextChart = (
+    <div className="space-y-3">
+      <h4 className="text-sm font-semibold">Launch Probability: This Molecule vs Benchmarks</h4>
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="w-28 text-xs text-right font-medium truncate">{simulatorMolecule.name}</div>
+          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-primary rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${lpiScore}%` }}>
+              <span className="text-[10px] font-bold text-primary-foreground">{lpiScore}%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-28 text-xs text-right font-medium text-muted-foreground">TA Benchmark</div>
+          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-muted-foreground/30 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: '55%' }}>
+              <span className="text-[10px] font-bold text-muted-foreground">55%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-28 text-xs text-right font-medium text-muted-foreground">All Phases Avg</div>
+          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+            <div className="h-full bg-muted-foreground/20 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: '42%' }}>
+              <span className="text-[10px] font-bold text-muted-foreground">42%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Parameters: feature categories + radar + category importance
+  const parametersContent = (
+    <div className="space-y-6">
+      {/* Risk Flags */}
+      {prediction.riskFlags.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {prediction.riskFlags.map((flag, idx) => (
+            <Badge 
+              key={idx} 
+              variant={flag.severity === 'critical' || flag.severity === 'high' ? 'destructive' : 'secondary'}
+              className="text-xs"
+            >
+              <AlertTriangle className="h-3 w-3 mr-1" />
+              {flag.message}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Radar Chart */}
+      <div className="h-48">
+        <ResponsiveContainer width="100%" height="100%">
+          <RadarChart data={radarData}>
+            <PolarGrid strokeDasharray="3 3" />
+            <PolarAngleAxis dataKey="category" tick={{ fontSize: 10 }} />
+            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 8 }} />
+            <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
+          </RadarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Top Contributors */}
+      <div>
+        <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+          <Gauge className="h-4 w-4" />
+          Top Feature Contributions (SHAP)
+        </h4>
+        <div className="space-y-1">
+          {prediction.topContributors.slice(0, 5).map((contrib, idx) => (
+            <div key={idx} className="flex items-center gap-2 text-xs">
+              <span className={`w-2 h-2 rounded-full ${contrib.direction === 'positive' ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className="flex-1">{contrib.feature}</span>
+              <span className="font-mono">{contrib.direction === 'positive' ? '+' : '-'}{(contrib.contribution * 100).toFixed(1)}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Feature Categories Breakdown */}
       <div className="space-y-4">
@@ -321,7 +284,22 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
 
+  return (
+    <SimulatorLayout
+      badgeValue={lpiScore}
+      badgeLabel="Launch Probability"
+      principle={`${simulatorMolecule.phase} molecules from ${simulatorMolecule.company || 'this sponsor'} in ${simulatorMolecule.therapeuticArea} have historically launched ${lpiScore}% of the time.`}
+      autoBaseline={true}
+      chart={contextChart}
+      parameters={parametersContent}
+      secondaryStats={[
+        { label: "CI", value: `${ciLow}%–${ciHigh}%` },
+        { label: "AUC-ROC", value: "0.82" },
+      ]}
+    >
       {/* Model Limitations */}
       <Card className="border-yellow-500/30 bg-yellow-50/50 dark:bg-yellow-950/20">
         <CardHeader>
@@ -337,6 +315,6 @@ export function LPI3Dashboard({ molecules }: LPI3DashboardProps) {
           <p><strong>Decision Aid:</strong> This model aids human decision-making but does not replace expert judgment. Always disclose uncertainty to stakeholders.</p>
         </CardContent>
       </Card>
-    </div>
+    </SimulatorLayout>
   );
 }
