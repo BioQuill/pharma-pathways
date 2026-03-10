@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type MoleculeProfile } from "@/lib/moleculesData";
+import { SimulatorLayout } from "./SimulatorLayout";
 import { 
   calculatePeakSalesIndex,
   calculateBlockbusterProbability,
