@@ -195,7 +195,9 @@ export const exportDomToPDF = async (
     return;
   }
 
-  const { orientation = 'portrait', format = 'a4', margin = 10 } = options || {};
+  const { orientation = 'portrait', format = 'a4', margin: userMargin } = options || {};
+  // Use tight margins (6mm) for maximum content area
+  const margin = userMargin ?? 6;
   
   const html2canvasModule = await import('html2canvas');
   const html2canvas = html2canvasModule.default;
@@ -207,9 +209,9 @@ export const exportDomToPDF = async (
   const pageWidth = orientation === 'landscape' ? dimensions.height : dimensions.width;
   const pageHeight = orientation === 'landscape' ? dimensions.width : dimensions.height;
   
-  // Reserve space for header bar (12mm) and footer watermark (8mm)
-  const headerHeight = 12; // mm
-  const footerHeight = 8; // mm
+  // Reserve space for header bar (10mm) and footer watermark (6mm)
+  const headerHeight = 10; // mm
+  const footerHeight = 6; // mm
   const contentMarginTop = margin + headerHeight;
   const contentAreaHeight = pageHeight - contentMarginTop - footerHeight;
   
@@ -275,45 +277,43 @@ export const exportDomToPDF = async (
     // Content area in canvas pixels
     const sliceHeightPx = contentAreaHeight * ratio;
     
-    // Build pages by greedily packing cards
-    // Rule: if a card fits in remaining space, include it. Otherwise, start new page.
-    // Exception: if remaining space >= 30% and the NEXT card fits, keep it.
+    // Build pages by greedily packing cards — never split a card across pages.
+    // Page 1 ALWAYS includes preamble + first card (scale if needed).
     interface PageSlice { startY: number; endY: number; }
     const pages: PageSlice[] = [];
     
     let pageStartY = 0; // start of content for current page (canvas px)
     let currentEndY = 0; // end of content placed on current page so far
     
-    // Include any content before the first card (e.g. trial header, molecule banner)
-    if (cards.length > 0 && cards[0].startY > 0) {
-      currentEndY = cards[0].startY; // everything before first card is "preamble"
-    }
+    // Preamble: everything before first card
+    const preambleEnd = (cards.length > 0 && cards[0].startY > 0) ? cards[0].startY : 0;
     
     for (let i = 0; i < cards.length; i++) {
       const card = cards[i];
-      const spaceUsedOnPage = currentEndY - pageStartY;
-      const spaceRemaining = sliceHeightPx - spaceUsedOnPage;
-      const cardHeight = card.endY - currentEndY; // includes gap between previous card end and this card end
-      const fullCardSpan = card.endY - card.startY;
+      
+      // For the very first card, always include it on page 1 with preamble
+      if (i === 0) {
+        currentEndY = card.endY;
+        continue;
+      }
       
       // Check: does this card fit on the current page?
       const cardFits = (card.endY - pageStartY) <= sliceHeightPx;
       
       if (cardFits) {
-        // Card fits — include it on current page
         currentEndY = card.endY;
       } else {
-        // Card does NOT fit on current page
-        // Finalize current page with content up to this card's start
+        // Finalize current page
         if (currentEndY > pageStartY) {
           pages.push({ startY: pageStartY, endY: currentEndY });
         }
         
-        // Start new page from this card
+        // Start new page from this card's start position
         pageStartY = card.startY;
         currentEndY = card.endY;
         
-        // If single card is taller than a full page, it gets its own page (may overflow slightly)
+        // If single card is taller than a full page, give it its own page
+        const fullCardSpan = card.endY - card.startY;
         if (fullCardSpan > sliceHeightPx) {
           pages.push({ startY: pageStartY, endY: card.endY });
           pageStartY = card.endY;
@@ -322,13 +322,13 @@ export const exportDomToPDF = async (
       }
     }
     
-    // Finalize last page — include any trailing content after last card
-    const finalEnd = Math.max(currentEndY, canvas.height);
+    // Finalize last page
+    const finalEnd = Math.min(Math.max(currentEndY, canvas.height), canvas.height);
     if (finalEnd > pageStartY) {
-      pages.push({ startY: pageStartY, endY: Math.min(finalEnd, canvas.height) });
+      pages.push({ startY: pageStartY, endY: finalEnd });
     }
     
-    // Render each page slice
+    // Render each page slice — scale to fit content area height
     for (let p = 0; p < pages.length; p++) {
       if (p > 0) {
         doc.addPage();
@@ -350,8 +350,24 @@ export const exportDomToPDF = async (
         );
         
         const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.98);
-        const sliceImgHeight = (actualSlice * imgWidth) / canvas.width;
-        doc.addImage(sliceData, 'JPEG', margin, contentMarginTop, imgWidth, sliceImgHeight);
+        
+        // Calculate natural height at full width
+        const naturalHeight = (actualSlice * imgWidth) / canvas.width;
+        
+        // If content is taller than available area, scale down to fit
+        let renderWidth = imgWidth;
+        let renderHeight = naturalHeight;
+        let renderX = margin;
+        
+        if (naturalHeight > contentAreaHeight) {
+          const scaleFactor = contentAreaHeight / naturalHeight;
+          renderWidth = imgWidth * scaleFactor;
+          renderHeight = contentAreaHeight;
+          // Center horizontally after scaling
+          renderX = margin + (imgWidth - renderWidth) / 2;
+        }
+        
+        doc.addImage(sliceData, 'JPEG', renderX, contentMarginTop, renderWidth, renderHeight);
       }
     }
     
@@ -361,23 +377,23 @@ export const exportDomToPDF = async (
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
       
-      // Single yellow header bar — 1cm height
+      // Compact yellow header bar
       doc.setFillColor(245, 197, 24); // #F5C518
       doc.rect(0, 0, pageWidth, headerHeight, 'F');
-      doc.setFontSize(6);
+      doc.setFontSize(5.5);
       doc.setTextColor(14, 29, 53);
       doc.setFont('Helvetica', 'bold');
-      doc.text('BiOQUILL\u2122', 15, headerHeight / 2 + 1);
+      doc.text('BiOQUILL\u2122', margin + 2, headerHeight / 2 + 1);
       doc.setFont('Helvetica', 'normal');
-      doc.setFontSize(4);
-      doc.text('Know the odds. Understand the pipeline. Win the race.', pageWidth / 2, headerHeight / 2 + 1, { align: 'center' });
       doc.setFontSize(3.5);
-      doc.text('Data refreshed: 05/03/2026', pageWidth - 15, headerHeight / 2 + 1, { align: 'right' });
+      doc.text('Know the odds. Understand the pipeline. Win the race.', pageWidth / 2, headerHeight / 2 + 1, { align: 'center' });
+      doc.setFontSize(3);
+      doc.text('Data refreshed: 05/03/2026', pageWidth - margin - 2, headerHeight / 2 + 1, { align: 'right' });
       
       // Watermark at bottom
-      doc.setFontSize(6);
+      doc.setFontSize(5);
       doc.setTextColor(180, 180, 180);
-      doc.text(watermarkText, pageWidth / 2, pageHeight - 4, { align: 'center' });
+      doc.text(watermarkText, pageWidth / 2, pageHeight - 2, { align: 'center' });
     }
     
     doc.save(filename);
