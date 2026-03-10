@@ -41,6 +41,7 @@ export function SimulatorLayout({
   autoBaseline = false,
   chart,
   parameters,
+  narrative,
   children,
 }: SimulatorLayoutProps) {
   const [paramsOpen, setParamsOpen] = useState(false);
