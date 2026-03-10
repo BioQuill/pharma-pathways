@@ -560,6 +560,21 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     </div>
   );
 
+  const ptrsNarrative = (() => {
+    const ptrsDec = ptrsResult.ptrs;
+    const ptsDec = ptrsResult.pts;
+    const prsDec = ptrsResult.prs;
+    const ta = taDisplayNames[therapeuticArea] || therapeuticArea;
+    const ph = phaseDisplayNames[currentPhase] || currentPhase;
+    const stronger = prs > pts ? "stronger" : "weaker";
+    if (ptrsDec >= 0.50) {
+      return `Technical and regulatory success probability (${ptrs}%) is above average for ${ta} ${ph} assets. Regulatory confidence (PRS ${prs}%) is ${stronger} than technical confidence (PTS ${pts}%), suggesting ${prs > pts ? "the regulatory pathway is well-established" : "clinical endpoints carry more risk"}.`;
+    }
+    const driver = pts < prs ? "PTS" : "PRS";
+    const driverPct = pts < prs ? pts : prs;
+    return `At ${ptrs}%, combined success probability reflects ${pts < 50 ? "high technical uncertainty" : "regulatory complexity"} for this indication. The ${driver} component at ${driverPct}% is the primary risk driver.`;
+  })();
+
   return (
     <SimulatorLayout
       badgeValue={ptrs}
@@ -568,6 +583,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
       autoBaseline={!!simulatorMolecule && !userAdjusted}
       chart={ptrsContextChart}
       parameters={ptrsParameters}
+      narrative={ptrsNarrative}
       secondaryStats={[
         { label: "PTS", value: `${pts}%` },
         { label: "PRS", value: `${prs}%` },
