@@ -195,7 +195,9 @@ export const exportDomToPDF = async (
     return;
   }
 
-  const { orientation = 'portrait', format = 'a4', margin = 10 } = options || {};
+  const { orientation = 'portrait', format = 'a4', margin: userMargin } = options || {};
+  // Use tight margins (6mm) for maximum content area
+  const margin = userMargin ?? 6;
   
   const html2canvasModule = await import('html2canvas');
   const html2canvas = html2canvasModule.default;
@@ -207,9 +209,9 @@ export const exportDomToPDF = async (
   const pageWidth = orientation === 'landscape' ? dimensions.height : dimensions.width;
   const pageHeight = orientation === 'landscape' ? dimensions.width : dimensions.height;
   
-  // Reserve space for header bar (12mm) and footer watermark (8mm)
-  const headerHeight = 12; // mm
-  const footerHeight = 8; // mm
+  // Reserve space for header bar (10mm) and footer watermark (6mm)
+  const headerHeight = 10; // mm
+  const footerHeight = 6; // mm
   const contentMarginTop = margin + headerHeight;
   const contentAreaHeight = pageHeight - contentMarginTop - footerHeight;
   
