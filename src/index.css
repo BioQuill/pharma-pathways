@@ -250,8 +250,8 @@ All colors MUST be HSL.
   padding: 12px 24px;
   border-radius: 8px;
   margin: 32px 0 24px 0;
-  page-break-before: always;
-  break-before: always;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
 /* Page break control — absolute rule: never split any card/frame/border-box */
