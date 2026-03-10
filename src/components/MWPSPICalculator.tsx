@@ -80,6 +80,7 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
   const [accessScore, setAccessScore] = useState([50]);
   const [politicalScore, setPoliticalScore] = useState([50]);
   const [adjustmentPoints, setAdjustmentPoints] = useState([0]);
+  const [userAdjusted, setUserAdjusted] = useState(false);
 
   // Auto-populate when session molecule changes
   useEffect(() => {
