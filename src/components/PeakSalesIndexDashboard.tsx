@@ -359,6 +359,20 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
     fullMark: 100
   }));
 
+  if (!sessionMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
