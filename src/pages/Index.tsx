@@ -1104,40 +1104,7 @@ const IndexInner = () => {
         {/* Main Tabs - only show for platform/strategy-hub */}
         {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
           <div className="-mx-4 px-0">
-            {topNavMode === 'platform' ? (
-              <>
-                {/* Area Navigation Bar */}
-                <div className="w-full bg-[#0E1D35] flex justify-center">
-                {(Object.entries(areaConfig) as [AreaKey, typeof areaConfig[AreaKey]][]).filter(([key]) => key !== 'lcm' && key !== 'news').map(([key, area]) => (
-                    <button
-                      key={key}
-                      onClick={() => setActiveTab(area.tabs[0].value)}
-                      className={`flex-1 max-w-[220px] py-3 text-center font-bold text-xs tracking-wider uppercase transition-colors ${
-                        currentArea === key 
-                          ? 'border-b-2 border-[#FFD700] text-white font-bold bg-[#2B3D5B]' 
-                          : 'border-b-2 border-transparent text-white/80 font-bold hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      {area.label}
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Sub-tabs Bar */}
-                <TabsList className="w-full justify-start bg-[#2B3D5B] border-0 rounded-none h-11 px-4 flex-wrap">
-                  {areaConfig[currentArea].tabs.map(tab => {
-                    const Icon = tab.icon;
-                    return (
-                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/80 font-bold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90 text-xs">
-                        <Icon className="h-3 w-3" />
-                        {tab.label}
-                        {tab.value === 'watchlist' && <span className="text-xs">({watchlist.length})</span>}
-                      </TabsTrigger>
-                    );
-                  })}
-                </TabsList>
-              </>
-            ) : topNavMode === 'strategy-hub' ? (
+            {topNavMode === 'strategy-hub' ? (
               <>
                 {/* Strategy Hub Sub-tabs */}
                 <div className="w-full bg-[#0E1D35] py-2">
