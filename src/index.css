@@ -241,8 +241,8 @@ All colors MUST be HSL.
 /* Stage divider bands */
 .dd-stage-divider {
   width: 100%;
-  background: #1e3a5f;
-  color: #ffffff;
+  background: hsl(205, 40%, 75%);
+  color: hsl(215, 25%, 15%);
   font-family: 'Manrope', sans-serif;
   font-weight: 700;
   font-size: 12px;
