@@ -803,6 +803,22 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
       </Card>
     </div>
   );
+
+  return (
+    <SimulatorLayout
+      badgeValue={results.compositeScore}
+      badgeLabel="Peak Sales Score"
+      badgeSuffix="/100"
+      principle={`${sessionMolecule.name} has a ${results.blockbusterProbability}% probability of reaching $1B+ peak sales based on 7 composite value drivers.`}
+      autoBaseline={true}
+      chart={peakSalesContextChart}
+      parameters={peakSalesParameters}
+      secondaryStats={[
+        { label: "BB Prob", value: `${results.blockbusterProbability}%` },
+        { label: "Est. Peak", value: `$${results.peakSalesEstimate}B` },
+      ]}
+    />
+  );
 };
 
 // Historical Validation Data Component
