@@ -78,7 +78,7 @@ import { PTRSPortfolioRebalancing } from "@/components/PTRSPortfolioRebalancing"
 import PTRSRebalancingHistory from "@/components/PTRSRebalancingHistory";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 // LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
-import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
+// MoleculeExportPanel removed — replaced by inline molecule/NCT search selector
 import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { WatchlistPanel } from "@/components/WatchlistPanel";
