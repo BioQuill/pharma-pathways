@@ -11,8 +11,6 @@ import { Document, Page, Text, View, StyleSheet, generateAndDownloadPDF, formatR
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const markets = [
   { id: "us", label: "🇺🇸 United States", clinical: 25, economic: 35, access: 25, political: 15 },
