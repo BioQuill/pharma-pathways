@@ -1001,57 +1001,105 @@ const IndexInner = () => {
         {/* Pricing Content */}
         {topNavMode === 'pricing' && <PricingContent />}
 
-        {/* 6 Dashboard Tiles - calculated from real data */}
-        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && (() => {
-          return (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+        {/* 6 Dashboard Tiles - slimmed to ~48px height */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
               <Card className="bg-white shadow-sm">
-                <CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Active Trials</p>
-                  <p className="text-2xl font-bold text-[#0E1D35] mt-1">14,000</p>
-                  <p className="text-xs text-muted-foreground">Across all phases</p>
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Active Trials</p>
+                  <p className="text-lg font-bold text-[#0E1D35]">14,000</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
-                <CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Molecules</p>
-                  <p className="text-2xl font-bold text-[#0E1D35] mt-1">9,754</p>
-                  <p className="text-xs text-muted-foreground">Unique drug entities</p>
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Molecules</p>
+                  <p className="text-lg font-bold text-[#0E1D35]">9,754</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
-                <CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Recruiting</p>
-                  <p className="text-2xl font-bold text-[hsl(142,76%,36%)] mt-1">8,023</p>
-                  <p className="text-xs text-muted-foreground">Actively enrolling</p>
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Recruiting</p>
+                  <p className="text-lg font-bold text-[hsl(142,76%,36%)]">8,023</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
-                <CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Not Recruiting</p>
-                  <p className="text-2xl font-bold text-[hsl(45,93%,47%)] mt-1">4,612</p>
-                  <p className="text-xs text-muted-foreground">Active, not enrolling</p>
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Not Recruiting</p>
+                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">4,612</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
-                <CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Avg Approval Time</p>
-                  <p className="text-2xl font-bold text-[hsl(142,76%,36%)] mt-1">8.3y</p>
-                  <p className="text-xs text-muted-foreground">FDA historical average (Phase I → approval)</p>
-                  <p className="text-[9px] text-muted-foreground italic">Source: Tufts CSDD / FDA review timelines</p>
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Avg Approval</p>
+                  <p className="text-lg font-bold text-[hsl(142,76%,36%)]">8.3y</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
-                <CardContent className="p-4 text-center">
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Success Rate</p>
-                  <p className="text-2xl font-bold text-[hsl(45,93%,47%)] mt-1">12.4%</p>
-                  <p className="text-xs text-muted-foreground">Industry Phase I → approval rate</p>
-                  <p className="text-[9px] text-muted-foreground italic">Source: BIO / Norstella</p>
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Success Rate</p>
+                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">12.4%</p>
                 </CardContent>
               </Card>
             </div>
-          );
-        })()}
+        )}
+
+        {/* 14 Model Selector Cards — 2 rows of 7 */}
+        {topNavMode === 'platform' && (
+          <div className="mb-6 space-y-2">
+            {/* Row 1: Stage 1 & 2 */}
+            <div className="grid grid-cols-7 gap-2">
+              {[
+                { id: 'ptrs', label: 'PTRS', sub: 'Phase success' },
+                { id: 'lpi-3', label: 'LPI', sub: 'Launch probability' },
+                { id: 'ti-analysis', label: 'TI', sub: 'Therapeutic index' },
+                { id: 'ttm', label: 'TTM', sub: 'Time to market' },
+                { id: 'regulatory', label: 'Regulatory Timeline', sub: 'Approval pathway' },
+                { id: 'clinical-studies', label: 'Clinical Studies', sub: 'Trial overview' },
+                { id: 'ta-risk', label: 'TA Risk Index', sub: 'Area risk' },
+              ].map(card => (
+                <button
+                  key={card.id}
+                  onClick={() => setActiveTab(activeTab === card.id ? 'overview' : card.id)}
+                  className={`rounded-lg px-2 py-2 text-center transition-all duration-150 cursor-pointer border ${
+                    activeTab === card.id
+                      ? 'bg-[#1e3a5f] text-white border-2 border-[#F59E0B] shadow-md'
+                      : 'bg-[#EFF6FF] border-[#BFDBFE] hover:bg-[#FEFCE8] hover:border-[#FDE68A] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                  }`}
+                  style={{ minHeight: 48 }}
+                >
+                  <p className={`text-xs font-semibold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600 }}>{card.label}</p>
+                  <p className={`text-[10px] leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#64748b]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400 }}>{card.sub}</p>
+                </button>
+              ))}
+            </div>
+            {/* Row 2: Stage 3 & 4 */}
+            <div className="grid grid-cols-7 gap-2">
+              {[
+                { id: 'peak-sales', label: 'Peak Sales', sub: 'Revenue potential' },
+                { id: 'blockbuster', label: 'Blockbuster Probability', sub: 'Blockbuster odds' },
+                { id: 'pa-model1', label: 'PA Index-1', sub: 'Payer access' },
+                { id: 'pa-model2', label: 'PA Index-2', sub: 'Comparator payer' },
+                { id: 'capm-alpha', label: 'CAPM Alpha', sub: 'Risk-adjusted return' },
+                { id: 'lpi-2', label: 'Investment Score', sub: 'Investment grade' },
+                { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario simulation' },
+              ].map(card => (
+                <button
+                  key={card.id}
+                  onClick={() => setActiveTab(activeTab === card.id ? 'overview' : card.id)}
+                  className={`rounded-lg px-2 py-2 text-center transition-all duration-150 cursor-pointer border ${
+                    activeTab === card.id
+                      ? 'bg-[#1e3a5f] text-white border-2 border-[#F59E0B] shadow-md'
+                      : 'bg-[#EFF6FF] border-[#BFDBFE] hover:bg-[#FEFCE8] hover:border-[#FDE68A] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                  }`}
+                  style={{ minHeight: 48 }}
+                >
+                  <p className={`text-xs font-semibold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600 }}>{card.label}</p>
+                  <p className={`text-[10px] leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#64748b]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400 }}>{card.sub}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Main Tabs - only show for platform/strategy-hub */}
         {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
