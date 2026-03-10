@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
@@ -6,10 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calculator, TrendingUp, Target, Pill, Download, FileSpreadsheet, ChevronDown, X } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { Button } from "@/components/ui/button";
-import { getAllMolecules, mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
+import { mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
 import { Document, Page, Text, View, StyleSheet, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 
 const markets = [
   { id: "us", label: "🇺🇸 United States", clinical: 25, economic: 35, access: 25, political: 15 },
@@ -57,9 +58,7 @@ interface MWPSPICalculatorProps {
 }
 
 export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
-  const fallbackMolecules = useMemo(() => getAllMolecules(), []);
-  const allMolecules = molecules && molecules.length > 0 ? molecules : fallbackMolecules;
-  const [selectedMolecule, setSelectedMolecule] = useState("manual");
+  const { sessionMolecule } = useSessionMolecule();
   const resultRef = useRef<HTMLDivElement>(null);
 
   const [selectedMarket, setSelectedMarket] = useState("us");
@@ -81,20 +80,18 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
   const [politicalScore, setPoliticalScore] = useState([50]);
   const [adjustmentPoints, setAdjustmentPoints] = useState([0]);
 
-  // When a molecule is selected, auto-populate scores and TA
-  const handleMoleculeSelect = (molId: string) => {
-    setSelectedMolecule(molId);
-    if (molId === "manual") return;
-    const mol = allMolecules.find(m => m.id === molId);
-    if (!mol) return;
-    const taId = mapTAToModel1Id(mol.therapeuticArea);
-    if (taId) setSelectedTAs([taId]);
-    const scores = deriveModel1Scores(mol);
-    setClinicalScore([scores.clinical]);
-    setEconomicScore([scores.economic]);
-    setAccessScore([scores.access]);
-    setPoliticalScore([scores.political]);
-  };
+  // Auto-populate when session molecule changes
+  useEffect(() => {
+    if (sessionMolecule) {
+      const taId = mapTAToModel1Id(sessionMolecule.therapeuticArea);
+      if (taId) setSelectedTAs([taId]);
+      const scores = deriveModel1Scores(sessionMolecule);
+      setClinicalScore([scores.clinical]);
+      setEconomicScore([scores.economic]);
+      setAccessScore([scores.access]);
+      setPoliticalScore([scores.political]);
+    }
+  }, [sessionMolecule]);
 
   const market = markets.find(m => m.id === selectedMarket)!;
 
@@ -114,6 +111,20 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
   const accessContribution = ((accessScore[0] / 100) * market.access).toFixed(1);
   const politicalContribution = ((politicalScore[0] / 100) * market.political).toFixed(1);
 
+  if (!sessionMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border-primary/20">
       <CardHeader>
@@ -126,30 +137,24 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Molecule Selection */}
+        {/* Active Molecule Display */}
         <div className="grid gap-4 md:grid-cols-4 items-end">
           <div className="space-y-2">
             <label className="text-sm font-semibold flex items-center gap-1.5">
-              <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
+              <Pill className="h-3.5 w-3.5" /> Active Molecule
             </label>
-            <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
-              <SelectTrigger>
-                <SelectValue placeholder="Manual input" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                <SelectItem value="manual">— Manual Input —</SelectItem>
-                {allMolecules.map(m => (
-                  <SelectItem key={m.id} value={m.id}>
-                    {m.name} ({m.indication})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {selectedMolecule !== "manual" && (
-              <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
-                Scores auto-populated from molecule data. Adjust sliders to fine-tune.
-              </p>
-            )}
+            <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+              <Pill className="h-4 w-4 text-primary shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {sessionMolecule.nctId} | {sessionMolecule.phase}
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground italic">
+              TA baseline estimate — adjust sliders to fine-tune
+            </p>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold">Select Market</label>
@@ -319,12 +324,8 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
               variant="export"
               className="gap-1.5"
               onClick={async () => {
-                const molName = selectedMolecule !== "manual"
-                  ? allMolecules.find(m => m.id === selectedMolecule)?.name || "Manual"
-                  : "Manual Input";
-                const molIndication = selectedMolecule !== "manual"
-                  ? allMolecules.find(m => m.id === selectedMolecule)?.indication || ""
-                  : "";
+                const molName = sessionMolecule?.name || "Manual Input";
+                const molIndication = sessionMolecule?.indication || "";
                 const marketObj = markets.find(m => m.id === selectedMarket)!;
                 const taLabels = selectedTAs.map(id => therapeuticAreas.find(t => t.id === id)?.label).filter(Boolean).join(', ');
                 const doc = (

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 import { Badge } from "@/components/ui/badge";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, LineChart, Line, Legend, PieChart, Pie, Cell, ScatterChart, Scatter, ZAxis } from "recharts";
@@ -111,14 +112,19 @@ interface PeakSalesCalculatorProps {
 
 // Peak Sales Calculator Component
 const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
+  const { sessionMolecule } = useSessionMolecule();
   const [selectedTA, setSelectedTA] = useState<string>("all");
-  const [selectedMolecule, setSelectedMolecule] = useState<string>("custom");
 
-  // Filter molecules by selected TA
-  const filteredMolecules = selectedTA && selectedTA !== "all"
-    ? molecules.filter(m => m.therapeuticArea.toUpperCase().includes(selectedTA.split("/")[0]) || 
-                            m.therapeuticArea.toUpperCase().includes(selectedTA.split("&")[0].trim()))
-    : molecules;
+  // Auto-populate TA from session molecule
+  useEffect(() => {
+    if (sessionMolecule) {
+      const matchingTA = THERAPEUTIC_AREAS.find(ta => 
+        sessionMolecule.therapeuticArea.toUpperCase().includes(ta.split("/")[0]) ||
+        sessionMolecule.therapeuticArea.toUpperCase().includes(ta.split("&")[0].trim())
+      );
+      if (matchingTA) setSelectedTA(matchingTA);
+    }
+  }, [sessionMolecule]);
 
   // Component 1: Base Market Size (Weight: 25%)
   const [patientPopulation, setPatientPopulation] = useState("large");
@@ -172,49 +178,38 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
   const [hasGenericCompetition, setHasGenericCompetition] = useState(false);
   const [hasBiosimilarCompetition, setHasBiosimilarCompetition] = useState(false);
 
-  // Pre-populate parameters when a molecule is selected
+  // Pre-populate parameters when session molecule changes
   useEffect(() => {
-    if (selectedMolecule && selectedMolecule !== "custom") {
-      const molecule = molecules.find(m => m.id === selectedMolecule);
-      if (molecule) {
-        const matchingTA = THERAPEUTIC_AREAS.find(ta => 
-          molecule.therapeuticArea.toUpperCase().includes(ta.split("/")[0]) ||
-          molecule.therapeuticArea.toUpperCase().includes(ta.split("&")[0].trim())
-        );
-        if (matchingTA && selectedTA === "all") {
-          setSelectedTA(matchingTA);
-        }
+    if (sessionMolecule) {
+      if (sessionMolecule.phase === "Approved") {
+        setEvidenceQuality([95]);
+        setHcpAcceptance([85]);
+      } else if (sessionMolecule.phase.includes("Phase III")) {
+        setEvidenceQuality([75]);
+        setHcpAcceptance([65]);
+      } else if (sessionMolecule.phase.includes("Phase II")) {
+        setEvidenceQuality([55]);
+        setHcpAcceptance([50]);
+      }
 
-        if (molecule.phase === "Approved") {
-          setEvidenceQuality([95]);
-          setHcpAcceptance([85]);
-        } else if (molecule.phase.includes("Phase III")) {
-          setEvidenceQuality([75]);
-          setHcpAcceptance([65]);
-        } else if (molecule.phase.includes("Phase II")) {
-          setEvidenceQuality([55]);
-          setHcpAcceptance([50]);
-        }
+      if (sessionMolecule.therapeuticArea.toLowerCase().includes("rare") || 
+          sessionMolecule.therapeuticArea.toLowerCase().includes("orphan")) {
+        setIsOrphanDrug(true);
+        setHasOrphanDesignation(true);
+        setPatientPopulation("rare");
+      }
 
-        if (molecule.therapeuticArea.toLowerCase().includes("rare") || 
-            molecule.therapeuticArea.toLowerCase().includes("orphan")) {
-          setIsOrphanDrug(true);
-          setHasOrphanDesignation(true);
-          setPatientPopulation("rare");
-        }
-
-        if (molecule.overallScore >= 80) {
-          setEfficacyVsSoC([85]);
-          setSafetyProfile([80]);
-          setClinicalDifferentiation([85]);
-        } else if (molecule.overallScore >= 60) {
-          setEfficacyVsSoC([70]);
-          setSafetyProfile([70]);
-          setClinicalDifferentiation([70]);
-        }
+      if (sessionMolecule.overallScore >= 80) {
+        setEfficacyVsSoC([85]);
+        setSafetyProfile([80]);
+        setClinicalDifferentiation([85]);
+      } else if (sessionMolecule.overallScore >= 60) {
+        setEfficacyVsSoC([70]);
+        setSafetyProfile([70]);
+        setClinicalDifferentiation([70]);
       }
     }
-  }, [selectedMolecule, molecules, selectedTA]);
+  }, [sessionMolecule]);
 
   // Calculate scores based on document formulas
   const calculateBaseMarketScore = (): number => {
@@ -364,6 +359,20 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
     fullMark: 100
   }));
 
+  if (!sessionMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -475,14 +484,11 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
               </TabsList>
 
               <TabsContent value="market" className="space-y-4">
-                {/* TA and Molecule Selection */}
+                {/* TA selector + active molecule display */}
                 <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg border mb-4">
                   <div className="space-y-2">
                     <Label className="font-semibold">Therapeutic Area</Label>
-                    <Select value={selectedTA} onValueChange={(value) => {
-                      setSelectedTA(value);
-                      setSelectedMolecule("custom");
-                    }}>
+                    <Select value={selectedTA} onValueChange={setSelectedTA}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Therapeutic Area..." />
                       </SelectTrigger>
@@ -495,20 +501,17 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="font-semibold">Molecule</Label>
-                    <Select value={selectedMolecule} onValueChange={setSelectedMolecule}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Molecule..." />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-[300px]">
-                        <SelectItem value="custom">Custom Parameters</SelectItem>
-                        {filteredMolecules.slice(0, 100).map((mol) => (
-                          <SelectItem key={mol.id} value={mol.id}>
-                            {mol.name} ({mol.phase})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label className="font-semibold">Active Molecule</Label>
+                    <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+                      <Pill className="h-4 w-4 text-primary shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {sessionMolecule.nctId} | {sessionMolecule.phase} | {sessionMolecule.therapeuticArea}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground italic">TA baseline estimate — adjust in calculator</p>
                   </div>
                 </div>
 
@@ -1050,37 +1053,28 @@ const PortfolioAnalysis = ({ molecules }: { molecules: MoleculeProfile[] }) => {
 
 // Monte Carlo Simulation Wrapper
 const MonteCarloSimulationWrapper = ({ molecules }: { molecules: MoleculeProfile[] }) => {
-  const [selectedMolecule, setSelectedMolecule] = useState<string>("custom");
+  const { sessionMolecule } = useSessionMolecule();
   
-  // Default component scores for custom analysis
-  const defaultScores: ComponentScore[] = [
-    { name: "Base Market Size", score: 80, weight: 0.25, weightedScore: 20 },
-    { name: "Clinical Success", score: 75, weight: 0.20, weightedScore: 15 },
-    { name: "Commercial Advantage", score: 70, weight: 0.18, weightedScore: 12.6 },
-    { name: "Strategic Positioning", score: 75, weight: 0.15, weightedScore: 11.25 },
-    { name: "Competitive Intensity", score: 65, weight: 0.12, weightedScore: 7.8 },
-    { name: "Market Access", score: 80, weight: 0.10, weightedScore: 8 },
-    { name: "Pricing Power", score: 70, weight: 0.10, weightedScore: 7 },
-  ];
+  const componentScores = useMemo<ComponentScore[]>(() => {
+    if (!sessionMolecule) return [];
+    const result = calculatePeakSalesIndex(sessionMolecule);
+    return result.componentScores;
+  }, [sessionMolecule]);
   
-  const [componentScores, setComponentScores] = useState<ComponentScore[]>(defaultScores);
-  const [moleculeName, setMoleculeName] = useState<string>("Custom Analysis");
-  
-  // Update scores when molecule is selected
-  useEffect(() => {
-    if (selectedMolecule && selectedMolecule !== "custom") {
-      const molecule = molecules.find(m => m.id === selectedMolecule);
-      if (molecule) {
-        const result = calculatePeakSalesIndex(molecule);
-        setComponentScores(result.componentScores);
-        setMoleculeName(molecule.name);
-      }
-    } else {
-      setComponentScores(defaultScores);
-      setMoleculeName("Custom Analysis");
-    }
-  }, [selectedMolecule, molecules]);
-  
+  if (!sessionMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -1094,28 +1088,21 @@ const MonteCarloSimulationWrapper = ({ molecules }: { molecules: MoleculeProfile
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <Label className="text-sm font-medium">Select Molecule for Analysis</Label>
-            <Select value={selectedMolecule} onValueChange={setSelectedMolecule}>
-              <SelectTrigger className="mt-2">
-                <SelectValue placeholder="Select a molecule..." />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                <SelectItem value="custom">Custom Parameters</SelectItem>
-                {molecules.slice(0, 100).map((mol) => (
-                  <SelectItem key={mol.id} value={mol.id}>
-                    {mol.name} ({mol.phase})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+            <Pill className="h-4 w-4 text-primary shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {sessionMolecule.nctId} | {sessionMolecule.phase} | {sessionMolecule.therapeuticArea}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
       
       <MonteCarloSimulation 
         componentScores={componentScores} 
-        moleculeName={moleculeName}
+        moleculeName={sessionMolecule.name}
       />
     </div>
   );
@@ -1123,31 +1110,27 @@ const MonteCarloSimulationWrapper = ({ molecules }: { molecules: MoleculeProfile
 
 // PDF Export Wrapper
 const PDFExportWrapper = ({ molecules }: { molecules: MoleculeProfile[] }) => {
-  const [selectedMolecule, setSelectedMolecule] = useState<string>("");
-  const [result, setResult] = useState<PeakSalesResult | null>(null);
-  const [moleculeInfo, setMoleculeInfo] = useState({ 
-    name: "Custom Analysis", 
-    ta: "N/A", 
-    phase: "N/A", 
-    company: "N/A" 
-  });
+  const { sessionMolecule } = useSessionMolecule();
   
-  useEffect(() => {
-    if (selectedMolecule) {
-      const molecule = molecules.find(m => m.id === selectedMolecule);
-      if (molecule) {
-        const peakSalesResult = calculatePeakSalesIndex(molecule);
-        setResult(peakSalesResult);
-        setMoleculeInfo({
-          name: molecule.name,
-          ta: molecule.therapeuticArea,
-          phase: molecule.phase,
-          company: molecule.company
-        });
-      }
-    }
-  }, [selectedMolecule, molecules]);
+  const result = useMemo<PeakSalesResult | null>(() => {
+    if (!sessionMolecule) return null;
+    return calculatePeakSalesIndex(sessionMolecule);
+  }, [sessionMolecule]);
   
+  if (!sessionMolecule || !result) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -1157,49 +1140,29 @@ const PDFExportWrapper = ({ molecules }: { molecules: MoleculeProfile[] }) => {
             Export Peak Sales Report
           </CardTitle>
           <CardDescription>
-            Generate a comprehensive PDF report for individual molecule analysis
+            Generate a comprehensive PDF report for {sessionMolecule.name}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label className="text-sm font-medium">Select Molecule for Report</Label>
-              <Select value={selectedMolecule} onValueChange={setSelectedMolecule}>
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Select a molecule to generate report..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  {molecules.slice(0, 100).map((mol) => (
-                    <SelectItem key={mol.id} value={mol.id}>
-                      {mol.name} ({mol.phase}) - {mol.company}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+            <Pill className="h-4 w-4 text-primary shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {sessionMolecule.nctId} | {sessionMolecule.phase} | {sessionMolecule.company}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
       
-      {result ? (
-        <PeakSalesPDFReport 
-          result={result}
-          moleculeName={moleculeInfo.name}
-          therapeuticArea={moleculeInfo.ta}
-          phase={moleculeInfo.phase}
-          company={moleculeInfo.company}
-        />
-      ) : (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-lg font-medium">Select a Molecule</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Choose a molecule from the dropdown above to generate a comprehensive PDF report
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <PeakSalesPDFReport 
+        result={result}
+        moleculeName={sessionMolecule.name}
+        therapeuticArea={sessionMolecule.therapeuticArea}
+        phase={sessionMolecule.phase}
+        company={sessionMolecule.company}
+      />
     </div>
   );
 };
