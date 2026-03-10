@@ -1053,37 +1053,28 @@ const PortfolioAnalysis = ({ molecules }: { molecules: MoleculeProfile[] }) => {
 
 // Monte Carlo Simulation Wrapper
 const MonteCarloSimulationWrapper = ({ molecules }: { molecules: MoleculeProfile[] }) => {
-  const [selectedMolecule, setSelectedMolecule] = useState<string>("custom");
+  const { sessionMolecule } = useSessionMolecule();
   
-  // Default component scores for custom analysis
-  const defaultScores: ComponentScore[] = [
-    { name: "Base Market Size", score: 80, weight: 0.25, weightedScore: 20 },
-    { name: "Clinical Success", score: 75, weight: 0.20, weightedScore: 15 },
-    { name: "Commercial Advantage", score: 70, weight: 0.18, weightedScore: 12.6 },
-    { name: "Strategic Positioning", score: 75, weight: 0.15, weightedScore: 11.25 },
-    { name: "Competitive Intensity", score: 65, weight: 0.12, weightedScore: 7.8 },
-    { name: "Market Access", score: 80, weight: 0.10, weightedScore: 8 },
-    { name: "Pricing Power", score: 70, weight: 0.10, weightedScore: 7 },
-  ];
+  const componentScores = useMemo<ComponentScore[]>(() => {
+    if (!sessionMolecule) return [];
+    const result = calculatePeakSalesIndex(sessionMolecule);
+    return result.componentScores;
+  }, [sessionMolecule]);
   
-  const [componentScores, setComponentScores] = useState<ComponentScore[]>(defaultScores);
-  const [moleculeName, setMoleculeName] = useState<string>("Custom Analysis");
-  
-  // Update scores when molecule is selected
-  useEffect(() => {
-    if (selectedMolecule && selectedMolecule !== "custom") {
-      const molecule = molecules.find(m => m.id === selectedMolecule);
-      if (molecule) {
-        const result = calculatePeakSalesIndex(molecule);
-        setComponentScores(result.componentScores);
-        setMoleculeName(molecule.name);
-      }
-    } else {
-      setComponentScores(defaultScores);
-      setMoleculeName("Custom Analysis");
-    }
-  }, [selectedMolecule, molecules]);
-  
+  if (!sessionMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -1097,28 +1088,21 @@ const MonteCarloSimulationWrapper = ({ molecules }: { molecules: MoleculeProfile
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <Label className="text-sm font-medium">Select Molecule for Analysis</Label>
-            <Select value={selectedMolecule} onValueChange={setSelectedMolecule}>
-              <SelectTrigger className="mt-2">
-                <SelectValue placeholder="Select a molecule..." />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                <SelectItem value="custom">Custom Parameters</SelectItem>
-                {molecules.slice(0, 100).map((mol) => (
-                  <SelectItem key={mol.id} value={mol.id}>
-                    {mol.name} ({mol.phase})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+            <Pill className="h-4 w-4 text-primary shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {sessionMolecule.nctId} | {sessionMolecule.phase} | {sessionMolecule.therapeuticArea}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
       
       <MonteCarloSimulation 
         componentScores={componentScores} 
-        moleculeName={moleculeName}
+        moleculeName={sessionMolecule.name}
       />
     </div>
   );
