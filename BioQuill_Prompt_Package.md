@@ -1343,19 +1343,22 @@ patient population."
 |--------|-------------|---------|
 | A | TA canonical names sweep | 3-4 |
 | B | CAPM restructure + molecule selector | 4-5 |
+| B1 | NCT ID fix, hardcoded lists removed | 2-3 |
+| B2 | LPI inputs, LPI-2 deterministic, TTM rebuild | 5-7 |
 | C | Device flagging | 2-3 |
 | D | Methodology tab 5 missing models | 3-4 |
 | F | Pricing card hover fix | 1-2 |
+| H1 | SessionMoleculeContext single source of truth | 5-7 |
 | H3 | Full platform model audit (report only) | — |
 
 ### 🔴 SEND IN THIS EXACT ORDER
 | # | Prompt | Description | Credits | Gate |
 |---|--------|-------------|---------|------|
-| 1 | **B2** | Fix LPI inputs, LPI-2 deterministic, rebuild TTM | 5-7 | Send now |
-| 2 | **H1** | Single source of truth — SessionMoleculeContext | 5-7 | After B2 verified |
-| 3 | **H1.5** | Fix 4 calculation divergences from audit | 4-5 | After H1 verified |
-| 4 | **PDF1** | Full DD Report PDF redesign — fonts, typography, card design, model order, page breaks, heat map, tagline | 5-6 | After H1.5 verified |
-| 5 | **H2** | Add PTRS, CAPM, PA Index, Monte Carlo to DD Report + narrative everywhere | 8-10 | After PDF1 verified |
+| 1 | **H1.5** | Fix 4 calculation divergences from audit | 4-5 | Send now |
+| 2 | **SIM1** | Simulator UX — result badges, result-first layout, hide methodology from simulator | 4-5 | After H1.5 verified |
+| 3 | **PDF1** | Full DD Report PDF redesign — fonts, typography, card design, model order | 5-6 | After SIM1 verified |
+| 4 | **PDF2** | Fix card splits + duplicate yellow header | 2-3 | After PDF1 verified |
+| 5 | **H2** | Add PTRS, CAPM, PA Index, Monte Carlo to DD Report + narrative | 8-10 | After PDF2 verified |
 | 6 | **H3** | Re-run full platform audit — verify everything clean | — | After H2 verified |
 
 ### ⏳ SEND ANYTIME AFTER H2
@@ -1540,6 +1543,66 @@ TTM range: Phase I Neurology unknown ~131mo,
 
 ---
 
+## PROMPT PDF2 — PDF Card Splits + Duplicate Header Fix
+*Estimated cost: 2-3 credits — send immediately after PDF1, before H2*
+
+---
+
+```
+TASK: Two targeted PDF export fixes only.
+Do not change any other PDF styling, model logic, or content.
+
+=== FIX 1: NO CARD SPLITS — ZERO TOLERANCE ===
+
+Every navy-bordered card in the PDF must stay whole on one page.
+No card may ever be split across a page boundary under any circumstance.
+
+Rule: if a card does not fit on the remaining space of the current page,
+it must start on a new page entirely.
+
+Implementation:
+  Every card container in the PDF export stylesheet:
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-before: auto;
+
+  For cards taller than one full page — split at logical content boundary:
+
+  Split 1 — "TA-weighted factor / Endocrinology & Metabolism":
+    Card A: TA-weighted factor composite bar + FDA Avg + EMA Avg
+    Card B: General Industry Impact per Life Cycle Phase
+            + Key Failure Points at Phase III list
+  Each card gets its own navy border + page-break-inside: avoid.
+
+  Apply same split logic to any other card exceeding one page height.
+
+=== FIX 2: SINGLE YELLOW HEADER BAR — ONE ONLY ===
+
+Currently two overlapping yellow bars appear at top of each page.
+
+Step 1: Remove ALL existing yellow header bar injection
+        from PDF export code entirely. Delete all of it.
+
+Step 2: Add back exactly ONE yellow bar per page:
+  height: 1cm maximum (~38px)
+  background: BioQuill yellow (existing value)
+  left: BioQuill™ wordmark
+  centre: "Know the odds. Understand the pipeline. Win the race."
+  right: "Data refreshed: [date]"
+  appears once per page, top only, no duplication
+
+Step 3: Suppress the sticky platform header entirely during
+        PDF export — it must not render in the PDF at all.
+
+VERIFY:
+1. Generate PDF for Tirzepatide NCT07165028
+2. Zero cards split across pages — every card whole on one page
+3. Exactly one yellow bar per page, no overlap, no duplication
+4. TA-weighted factor split into two separate whole cards
+```
+
+---
+
 ## FULL PLATFORM AUDIT PROMPT — Run after B1, B2, H1, H2 are all verified
 *Send to Lovable once all four prompts are confirmed working*
 
@@ -1697,3 +1760,280 @@ ANCHOR LINE at bottom of pricing page:
 "In the race to market, the best decision is always
 the most probable one."
 ```
+
+---
+
+## PROMPT UI1 — Platform Page Restructure: Delete Nav Bars + Model Card Grid
+*Estimated cost: 4-5 credits — send before SIM1a*
+
+```
+TASK: Restructure the Platform page layout. Three changes in one pass.
+
+=== CHANGE 1: DELETE BOTH SUB-NAV BARS ===
+
+Remove the following two elements completely — do not replace with anything:
+1. The second navy bar containing: PIPELINE | APPROVAL | PRICING & ACCESS | LAUNCH & COMMERCIAL
+2. The grey sub-bar below it containing: Molecules Database | LPI | TI (and any other tabs in that bar)
+
+All content that previously lived inside those 4 tab panels will be 
+replaced by the new model card grid (see Change 3 below).
+
+=== CHANGE 2: SLIM THE 6 WHITE SUMMARY STAT CARDS ===
+
+The existing 6 white summary stat cards at the top of the Platform page 
+must remain in a single row but be made 50% thinner (reduce height only, 
+not width). Keep the number and label. Remove all excess internal padding.
+Target height: approximately 48px per card.
+
+=== CHANGE 3: ADD 2-ROW MODEL SELECTOR GRID ===
+
+Immediately below the 6 white cards, add a 2-row grid of 14 small model 
+selector cards.
+
+CARD DIMENSIONS: approximately 1cm tall × 2cm wide (use ~48px × 120px 
+as CSS target), evenly spaced, 7 per row.
+
+DEFAULT STATE:
+- Background: light blue (#EFF6FF or equivalent)
+- Border: 1px solid #BFDBFE
+- Border radius: 8px
+- Text: model name in Manrope 600 12px, #1e3a5f
+- Sub-label: 1-2 word descriptor in Manrope 400 10px, #64748b
+
+HOVER STATE:
+- Background shifts to light yellow (#FEFCE8)
+- Border: 1px solid #FDE68A
+- Slight box-shadow lift: 0 2px 8px rgba(0,0,0,0.08)
+- Cursor: pointer
+
+ACTIVE/SELECTED STATE (when a model is open):
+- Background: #1e3a5f (navy)
+- Text: white
+- Border: 2px solid #F59E0B (gold)
+
+ROW 1 — Stage 1 & 2 (7 cards, left to right):
+1. PTRS | "Phase success"
+2. LPI | "Launch probability"
+3. TI | "Therapeutic index"
+4. TTM | "Time to market"
+5. Regulatory Timeline | "Approval pathway"
+6. Clinical Studies | "Trial overview"
+7. TA Risk Index | "Area risk"
+
+ROW 2 — Stage 3 & 4 (7 cards, left to right):
+8.  Peak Sales | "Revenue potential"
+9.  Blockbuster Probability | "Blockbuster odds"
+10. PA Index-1 | "Payer access"
+11. PA Index-2 | "Comparator payer"
+12. CAPM Alpha | "Risk-adjusted return"
+13. Investment Score | "Investment grade"
+14. Monte Carlo | "Scenario simulation"
+
+=== CHANGE 4: MOLECULE SEARCH POSITION ===
+
+The molecule search bar (search by name or NCT ID) must appear 2cm 
+(~80px) below the "Molecules by Therapeutic Area" donut/pie chart — 
+wherever that chart currently sits on the page. It should be permanently 
+visible at that position, not inside any tab or panel.
+
+The molecule card list renders immediately below the search bar.
+
+=== VERIFICATION ===
+After changes:
+- Page has only ONE navy bar (the main navigation)
+- No grey sub-bar
+- 6 white cards are visibly thinner than before
+- 14 model cards appear in 2 rows of 7 below the white cards
+- Hovering any model card turns it light yellow
+- Molecule search bar is visible below the TA donut chart
+- No content has been deleted — it has moved into the model cards
+```
+
+---
+
+## PROMPT UI2 — Wire Model Cards to Simulators
+*Estimated cost: 3-4 credits — send after UI1 verified*
+
+```
+TASK: Wire the 14 model selector cards (added in UI1) to their 
+respective simulator panels. No design changes — wiring only.
+
+BEHAVIOUR:
+- When a model card is clicked, its simulator/calculator opens 
+  inline below the model grid (do not navigate to a new page)
+- The active card switches to navy + gold border (selected state)
+- Clicking the same card again collapses the panel (toggle)
+- Only one panel can be open at a time — clicking a second card 
+  closes the first
+
+MOLECULE CONTEXT:
+- The open simulator must always use the molecule selected via 
+  "Use in Simulator →" from the molecule card list below
+- If no molecule has been selected, show a prompt inside the 
+  simulator panel: "Select a molecule below to run this model"
+- Do NOT use any hardcoded molecule as default
+
+MODEL CARD → SIMULATOR MAPPING (exact, do not remap):
+1.  PTRS              → PTRS simulator tab (existing)
+2.  LPI               → LPI simulator tab (existing)
+3.  TI                → TI simulator tab (existing)
+4.  TTM               → TTM simulator tab (existing)
+5.  Regulatory Timeline → Regulatory Timeline panel
+6.  Clinical Studies  → Clinical Studies panel
+7.  TA Risk Index     → TA Risk Index panel
+8.  Peak Sales        → Peak Sales simulator tab (existing)
+9.  Blockbuster Probability → Blockbuster simulator tab (existing)
+10. PA Index-1        → PA Index-1 simulator tab (existing)
+11. PA Index-2        → PA Index-2 simulator tab (existing)
+12. CAPM Alpha        → CAPM simulator tab (existing)
+13. Investment Score  → Investment Score simulator tab (existing)
+14. Monte Carlo       → Monte Carlo simulator tab (existing)
+
+STUB CARDS (PA Index-2, Regulatory Timeline, Clinical Studies):
+These three models require manual input. When clicked, the panel 
+that opens should show:
+- Model name + one-line description
+- The text: "Requires manual comparator input — run in simulator/calculator"
+- A single CTA button: "Open Full Calculator →" which links to 
+  the appropriate full simulator
+
+VERIFICATION:
+- Clicking LPI card opens LPI simulator inline, uses selected molecule
+- Clicking PTRS card opens PTRS simulator inline, uses selected molecule  
+- Clicking a second card closes the first
+- "Select a molecule below" prompt appears when no molecule is active
+- PA Index-2 shows stub card with correct message
+```
+
+---
+
+## PROMPT SIM1a — Fix Hardcoded Molecule Lists: Connect Models to 14K Master
+*Estimated cost: 4-5 credits — send after UI2 verified*
+
+```
+TASK: Remove all hardcoded molecule lists from simulator tabs and 
+connect Peak Sales, PA Index-1, and Monte Carlo to the live 14K 
+molecules_master.min.json dataset.
+
+ROOT CAUSE:
+Several simulator tabs (Peak Sales, PA Index, Monte Carlo) contain 
+hardcoded molecule arrays that ignore the molecule selected via 
+SessionMoleculeContext. This means "Use in Simulator →" does not 
+work for these models — the simulator always shows its own default 
+molecules regardless of user selection.
+
+CHANGE 1 — REMOVE HARDCODED MOLECULE ARRAYS:
+Search all simulator tab files for hardcoded molecule objects 
+(arrays of molecules with name, phase, TA, company defined inline).
+Delete these arrays. Do not replace with other hardcoded data.
+
+CHANGE 2 — WIRE TO SessionMoleculeContext:
+Each of the three models must read their active molecule from 
+SessionMoleculeContext (the context set when user clicks 
+"Use in Simulator →"). The molecule object passed must include 
+these fields at minimum:
+- id (NCT ID)
+- name
+- phase
+- therapeuticArea
+- company
+- approval_status
+- has_results
+- status
+
+CHANGE 3 — TA BASELINE FALLBACK:
+For Peak Sales, PA Index-1, and Monte Carlo, when the model 
+requires inputs that cannot be derived directly from the molecule 
+JSON row (e.g. pricing assumptions, market penetration curves), 
+use the TA-level benchmark values from taBenchmarks_multiTA.ts 
+as the baseline. Label all TA-derived inputs visibly as:
+"TA baseline estimate — adjust in calculator"
+
+CHANGE 4 — NO MOLECULE SELECTED STATE:
+If SessionMoleculeContext is null (no molecule selected), 
+each simulator shows:
+"Select a molecule using 'Use in Simulator →' to run this model"
+Do NOT auto-select any molecule. Do NOT fall back to hardcoded data.
+
+VERIFICATION:
+1. Select Pembrolizumab via "Use in Simulator →"
+2. Open Peak Sales simulator — must show Pembrolizumab, 
+   Oncology & Hematology, Merck Sharp & Dohme LLC
+3. Open Monte Carlo simulator — must show same molecule
+4. Open PA Index-1 — must show same molecule
+5. Refresh page without selecting → all three show 
+   "Select a molecule" prompt, no data displayed
+```
+
+---
+
+## PROMPT SIM1b — Result Badges + Auto-Parameter Baseline Mode
+*Estimated cost: 4-5 credits — send after SIM1a verified*
+
+```
+TASK: Two changes to all simulator tabs — result badge design 
+and auto-parameter baseline mode for DD Report.
+
+=== CHANGE 1: RESULT BADGE DESIGN (all simulator tabs) ===
+
+Every simulator tab must display its primary result as:
+- Outer ring: gold/amber (#F59E0B), 4px width, circular
+- Inner circle: navy (#1e3a5f) fill
+- Number: white, DM Mono 500, 28px, centred
+- Label below number: white, Manrope 400, 11px (e.g. "Launch Probability")
+- Size: 96px diameter outer ring, 80px inner circle
+- Position: top-right of the simulator panel, prominent
+
+This badge is the ONLY place the primary result number appears 
+large. Do not duplicate the number elsewhere in the same panel.
+
+Secondary stats (CI range, benchmark comparison etc.) appear 
+below the badge in smaller text — Manrope 400 13px, #64748b.
+
+=== CHANGE 2: THREE-LAYER SIMULATOR LAYOUT (all tabs) ===
+
+Each simulator tab must follow this exact structure, top to bottom:
+
+LAYER 1 — RESULT (always visible, never hidden)
+- Result badge (navy/gold as above)
+- One-sentence plain English principle
+  Example for LPI: "Phase III molecules from Big Pharma sponsors 
+  in Tier 1 TAs have historically launched 72% of the time."
+- Link: "→ Full model documentation in the Methodology tab"
+
+LAYER 2 — CONTEXT CHART
+- One chart only — gives perspective on where this molecule sits
+- Chart type per model:
+  * LPI: horizontal bar, this molecule vs TA benchmark vs all phases
+  * PTRS: phase transition funnel
+  * TTM: distribution curve, molecule position marked
+  * Peak Sales: bar chart vs TA median and top decile
+  * Monte Carlo: probability distribution histogram
+  * CAPM: scatter plot, alpha marked
+  * Investment Score: gauge or percentile bar
+  * PA Index-1: horizontal comparison bar vs TA benchmark
+  * All others: most appropriate single chart type
+
+LAYER 3 — PARAMETERS (collapsed by default)
+- Expandable section "Adjust Parameters ▾"
+- When collapsed: shows only "Using TA baseline values"
+- When expanded: shows all adjustable inputs
+- Changes to parameters update the badge in real time
+
+=== CHANGE 3: AUTO-PARAMETER BASELINE FLAG ===
+
+When a simulator is opened from the DD Report (not manually):
+- Parameters are auto-set from molecule fields + TA benchmarks
+- A visible flag appears above the badge: 
+  "Auto-calculated from molecule data · Adjust below"
+- This flag does NOT appear when the user has manually 
+  adjusted any parameter
+
+VERIFICATION:
+- LPI tab shows navy/gold badge with DM Mono number
+- PTRS tab shows same badge style
+- Expanding "Adjust Parameters" on any tab shows inputs
+- Collapsing hides inputs but badge remains visible
+- DD Report auto-open shows the baseline flag
+```
+
