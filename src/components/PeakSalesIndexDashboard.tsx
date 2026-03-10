@@ -178,49 +178,38 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
   const [hasGenericCompetition, setHasGenericCompetition] = useState(false);
   const [hasBiosimilarCompetition, setHasBiosimilarCompetition] = useState(false);
 
-  // Pre-populate parameters when a molecule is selected
+  // Pre-populate parameters when session molecule changes
   useEffect(() => {
-    if (selectedMolecule && selectedMolecule !== "custom") {
-      const molecule = molecules.find(m => m.id === selectedMolecule);
-      if (molecule) {
-        const matchingTA = THERAPEUTIC_AREAS.find(ta => 
-          molecule.therapeuticArea.toUpperCase().includes(ta.split("/")[0]) ||
-          molecule.therapeuticArea.toUpperCase().includes(ta.split("&")[0].trim())
-        );
-        if (matchingTA && selectedTA === "all") {
-          setSelectedTA(matchingTA);
-        }
+    if (sessionMolecule) {
+      if (sessionMolecule.phase === "Approved") {
+        setEvidenceQuality([95]);
+        setHcpAcceptance([85]);
+      } else if (sessionMolecule.phase.includes("Phase III")) {
+        setEvidenceQuality([75]);
+        setHcpAcceptance([65]);
+      } else if (sessionMolecule.phase.includes("Phase II")) {
+        setEvidenceQuality([55]);
+        setHcpAcceptance([50]);
+      }
 
-        if (molecule.phase === "Approved") {
-          setEvidenceQuality([95]);
-          setHcpAcceptance([85]);
-        } else if (molecule.phase.includes("Phase III")) {
-          setEvidenceQuality([75]);
-          setHcpAcceptance([65]);
-        } else if (molecule.phase.includes("Phase II")) {
-          setEvidenceQuality([55]);
-          setHcpAcceptance([50]);
-        }
+      if (sessionMolecule.therapeuticArea.toLowerCase().includes("rare") || 
+          sessionMolecule.therapeuticArea.toLowerCase().includes("orphan")) {
+        setIsOrphanDrug(true);
+        setHasOrphanDesignation(true);
+        setPatientPopulation("rare");
+      }
 
-        if (molecule.therapeuticArea.toLowerCase().includes("rare") || 
-            molecule.therapeuticArea.toLowerCase().includes("orphan")) {
-          setIsOrphanDrug(true);
-          setHasOrphanDesignation(true);
-          setPatientPopulation("rare");
-        }
-
-        if (molecule.overallScore >= 80) {
-          setEfficacyVsSoC([85]);
-          setSafetyProfile([80]);
-          setClinicalDifferentiation([85]);
-        } else if (molecule.overallScore >= 60) {
-          setEfficacyVsSoC([70]);
-          setSafetyProfile([70]);
-          setClinicalDifferentiation([70]);
-        }
+      if (sessionMolecule.overallScore >= 80) {
+        setEfficacyVsSoC([85]);
+        setSafetyProfile([80]);
+        setClinicalDifferentiation([85]);
+      } else if (sessionMolecule.overallScore >= 60) {
+        setEfficacyVsSoC([70]);
+        setSafetyProfile([70]);
+        setClinicalDifferentiation([70]);
       }
     }
-  }, [selectedMolecule, molecules, selectedTA]);
+  }, [sessionMolecule]);
 
   // Calculate scores based on document formulas
   const calculateBaseMarketScore = (): number => {
