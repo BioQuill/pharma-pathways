@@ -274,8 +274,8 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
     return (
       <Card className="border-dashed">
         <CardContent className="py-16 text-center space-y-3">
-          <p className="text-lg font-semibold text-muted-foreground">Select a molecule from the Pipeline tab to begin simulation</p>
-          <p className="text-sm text-muted-foreground">Click "Use in Simulator →" on any molecule card to load it here.</p>
+          <p className="text-lg font-semibold text-muted-foreground">No molecule loaded</p>
+          <p className="text-sm text-muted-foreground">Use the molecule picker above or select a molecule from the database below.</p>
         </CardContent>
       </Card>
     );
