@@ -261,6 +261,13 @@ All colors MUST be HSL.
 .pdf-export-mode svg.recharts-surface {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
+  page-break-before: auto !important;
+}
+
+/* Hide sticky platform header/nav during PDF capture */
+.pdf-export-mode ~ header[class*="fixed"],
+.pdf-export-mode ~ nav[class*="fixed"] {
+  display: none !important;
 }
 
 /* Heat map reduction to 80% */
