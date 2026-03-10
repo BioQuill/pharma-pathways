@@ -78,7 +78,7 @@ import { PTRSPortfolioRebalancing } from "@/components/PTRSPortfolioRebalancing"
 import PTRSRebalancingHistory from "@/components/PTRSRebalancingHistory";
 import { TAMarketOverview } from "@/components/TAMarketOverview";
 // LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
-import { MoleculeExportPanel } from "@/components/MoleculeExportPanel";
+// MoleculeExportPanel removed — replaced by inline molecule/NCT search selector
 import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { WatchlistPanel } from "@/components/WatchlistPanel";
@@ -1146,8 +1146,24 @@ const IndexInner = () => {
                 <div className="mb-6 p-4 border rounded-lg bg-muted/30">
                   <div className="flex items-center justify-between mb-3">
                     <Badge className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full font-semibold">Molecules by Therapeutic Area</Badge>
-                    <div className="flex items-center gap-2">
-                      <MoleculeExportPanel molecules={allMolecules} />
+                    <div className="relative w-72">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+                      <input
+                        type="text"
+                        placeholder="Type molecule name or NCT ID..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-9 pr-9 py-2 text-[13px] rounded-lg border border-[#BFDBFE] bg-[#f0fdf4] placeholder:text-[#64748b] placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400 }}
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                   <MoleculeDistributionChart molecules={allMolecules} />
