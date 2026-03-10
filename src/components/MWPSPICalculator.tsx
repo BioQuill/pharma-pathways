@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calculator, TrendingUp, Target, Pill, Download, FileSpreadsheet, ChevronDown, X } from "lucide-react";
+import { SimulatorLayout } from "./SimulatorLayout";
 import * as XLSX from 'xlsx';
 import { Button } from "@/components/ui/button";
 import { mapTAToModel1Id, deriveModel1Scores } from "@/lib/allMoleculesList";
