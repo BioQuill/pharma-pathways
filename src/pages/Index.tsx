@@ -400,78 +400,77 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
     }
   };
 
-  return (
-    <div className="space-y-6" ref={ptrsReportRef}>
-      {/* PDF Header (hidden on screen, shown in PDF) */}
-      <div className="ptrs-pdf-header hidden">
-        <div className="text-center mb-6 pb-4 border-b">
-          <h1 className="text-2xl font-bold text-primary">BioQuill PTRS Analysis Report</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Generated on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
-          {selectedMolecule && (
-            <div className="mt-3 p-3 bg-primary/5 rounded-lg inline-block">
-              <p className="font-semibold">{selectedMolecule.name}</p>
-              <p className="text-sm text-muted-foreground">{selectedMolecule.company} | {selectedMolecule.indication}</p>
+  // Wrap slider setters to track user adjustment
+  const handleSliderChange = (setter: (v: number[]) => void) => (v: number[]) => {
+    setUserAdjusted(true);
+    setter(v);
+  };
+
+  const ptrsContextChart = (
+    <div className="space-y-3">
+      <h4 className="text-sm font-semibold">Phase Transition Funnel</h4>
+      <div className="grid gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-20 text-xs text-right font-medium text-blue-600">PTS</div>
+          <div className="flex-1 h-6 bg-blue-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-500 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${pts}%` }}>
+              <span className="text-[10px] font-bold text-white">{pts}%</span>
             </div>
-          )}
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-20 text-xs text-right font-medium text-green-600">PRS</div>
+          <div className="flex-1 h-6 bg-green-100 rounded-full overflow-hidden">
+            <div className="h-full bg-green-500 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${prs}%` }}>
+              <span className="text-[10px] font-bold text-white">{prs}%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-20 text-xs text-right font-medium text-purple-600">PTRS</div>
+          <div className="flex-1 h-6 bg-purple-100 rounded-full overflow-hidden">
+            <div className="h-full bg-purple-500 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${Math.min(ptrs * 3, 100)}%` }}>
+              <span className="text-[10px] font-bold text-white">{ptrs}%</span>
+            </div>
+          </div>
         </div>
       </div>
+      <p className="text-xs text-muted-foreground mt-2">
+        <strong>Formula:</strong> PTRS = PTS × PRS = {pts}% × {prs}% = <strong>{ptrs}%</strong>
+      </p>
+    </div>
+  );
 
+  const ptrsParameters = (
+    <div className="space-y-6" ref={ptrsReportRef}>
       {/* Calculation Mode Toggle */}
       <div className="flex items-center justify-between gap-4 p-4 bg-muted/50 rounded-lg border">
         <div className="flex items-center gap-4">
           <Label className="font-medium">Calculate for:</Label>
           <div className="flex gap-2">
-            <Button
-              variant={calculationMode === "ta" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCalculationMode("ta")}
-            >
-              Therapeutic Area
-            </Button>
-            <Button
-              variant={calculationMode === "molecule" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setCalculationMode("molecule")}
-            >
-              Specific Molecule
-            </Button>
+            <Button variant={calculationMode === "ta" ? "default" : "outline"} size="sm" onClick={() => setCalculationMode("ta")}>Therapeutic Area</Button>
+            <Button variant={calculationMode === "molecule" ? "default" : "outline"} size="sm" onClick={() => setCalculationMode("molecule")}>Specific Molecule</Button>
           </div>
         </div>
-        <Button 
-          variant="export" 
-          size="sm" 
-          onClick={handleDownloadPTRSPDF}
-          className="ptrs-pdf-hide gap-2"
-        >
+        <Button variant="export" size="sm" onClick={handleDownloadPTRSPDF} className="ptrs-pdf-hide gap-2">
           <Download className="h-4 w-4" />
           Export PDF
         </Button>
       </div>
 
-      {/* Molecule Selector (when in molecule mode) */}
       {calculationMode === "molecule" && (
         <div className="space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/20">
-          <MoleculePicker
-            molecules={molecules}
-            value={selectedMolecule || null}
-            onChange={(mol) => { if (mol) handleMoleculeSelect(mol.id); else { setSelectedMoleculeId(''); } }}
-            label="Select a Molecule"
-          />
+          <MoleculePicker molecules={molecules} value={selectedMolecule || null} onChange={(mol) => { if (mol) handleMoleculeSelect(mol.id); else { setSelectedMoleculeId(''); } }} label="Select a Molecule" />
         </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Input Parameters */}
         <div className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Therapeutic Area</Label>
               <Select value={therapeuticArea} onValueChange={setTherapeuticArea} disabled={calculationMode === "molecule" && !!selectedMoleculeId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="oncology">Oncology</SelectItem>
                   <SelectItem value="cns">CNS/Neurology</SelectItem>
@@ -487,9 +486,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
             <div className="space-y-2">
               <Label>Current Phase</Label>
               <Select value={currentPhase} onValueChange={setCurrentPhase} disabled={calculationMode === "molecule" && !!selectedMoleculeId}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="preclinical">Preclinical</SelectItem>
                   <SelectItem value="phase1">Phase I</SelectItem>
@@ -504,62 +501,38 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
 
           <div className="space-y-4 pt-2">
             <h4 className="font-medium text-sm text-muted-foreground">Technical Success Factors (PTS)</h4>
-            
             <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span>Mechanism Novelty</span>
-                <span className="font-medium">{mechanismNovelty[0]}%</span>
-              </div>
-              <Slider value={mechanismNovelty} onValueChange={setMechanismNovelty} max={100} step={5} />
+              <div className="flex justify-between text-sm"><span>Mechanism Novelty</span><span className="font-medium">{mechanismNovelty[0]}%</span></div>
+              <Slider value={mechanismNovelty} onValueChange={handleSliderChange(setMechanismNovelty)} max={100} step={5} />
             </div>
-
             <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span>Endpoint Clarity</span>
-                <span className="font-medium">{endpointClarity[0]}%</span>
-              </div>
-              <Slider value={endpointClarity} onValueChange={setEndpointClarity} max={100} step={5} />
+              <div className="flex justify-between text-sm"><span>Endpoint Clarity</span><span className="font-medium">{endpointClarity[0]}%</span></div>
+              <Slider value={endpointClarity} onValueChange={handleSliderChange(setEndpointClarity)} max={100} step={5} />
             </div>
-
             <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span>Prior Trial Data Quality</span>
-                <span className="font-medium">{priorTrialData[0]}%</span>
-              </div>
-              <Slider value={priorTrialData} onValueChange={setPriorTrialData} max={100} step={5} />
+              <div className="flex justify-between text-sm"><span>Prior Trial Data Quality</span><span className="font-medium">{priorTrialData[0]}%</span></div>
+              <Slider value={priorTrialData} onValueChange={handleSliderChange(setPriorTrialData)} max={100} step={5} />
             </div>
           </div>
 
           <div className="space-y-4 pt-2">
             <h4 className="font-medium text-sm text-muted-foreground">Regulatory Success Factors (PRS)</h4>
-            
             <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span>Sponsor Experience</span>
-                <span className="font-medium">{sponsorExperience[0]}%</span>
-              </div>
-              <Slider value={sponsorExperience} onValueChange={setSponsorExperience} max={100} step={5} />
+              <div className="flex justify-between text-sm"><span>Sponsor Experience</span><span className="font-medium">{sponsorExperience[0]}%</span></div>
+              <Slider value={sponsorExperience} onValueChange={handleSliderChange(setSponsorExperience)} max={100} step={5} />
             </div>
-
             <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span>Regulatory Precedent</span>
-                <span className="font-medium">{regulatoryPrecedent[0]}%</span>
-              </div>
-              <Slider value={regulatoryPrecedent} onValueChange={setRegulatoryPrecedent} max={100} step={5} />
+              <div className="flex justify-between text-sm"><span>Regulatory Precedent</span><span className="font-medium">{regulatoryPrecedent[0]}%</span></div>
+              <Slider value={regulatoryPrecedent} onValueChange={handleSliderChange(setRegulatoryPrecedent)} max={100} step={5} />
             </div>
-
             <div className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span>Safety Profile</span>
-                <span className="font-medium">{safetyProfile[0]}%</span>
-              </div>
-              <Slider value={safetyProfile} onValueChange={setSafetyProfile} max={100} step={5} />
+              <div className="flex justify-between text-sm"><span>Safety Profile</span><span className="font-medium">{safetyProfile[0]}%</span></div>
+              <Slider value={safetyProfile} onValueChange={handleSliderChange(setSafetyProfile)} max={100} step={5} />
             </div>
           </div>
         </div>
 
-        {/* Results Display */}
+        {/* Detailed Results */}
         <div className="space-y-4">
           {calculationMode === "molecule" && selectedMolecule && (
             <div className="p-3 bg-primary/10 rounded-lg border border-primary/20 mb-4">
@@ -569,106 +542,37 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
               </p>
             </div>
           )}
-          
-          <div className="grid gap-4">
-            <Card className="bg-blue-50 dark:bg-blue-950/30 border-blue-200">
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-blue-600">PTS — Phase Transition Success</p>
-                    <p className="text-xs text-muted-foreground mt-1">Probability of advancing from current phase (next gate transition)</p>
-                    <p className="text-xs text-muted-foreground">Base rate: {(ptrsResult.basePTS * 100).toFixed(0)}% × {ptrsResult.ptsModifier}x modifier</p>
-                  </div>
-                  <div className="text-3xl font-bold text-blue-600">{pts}%</div>
-                </div>
-                <div className="mt-3 h-2 bg-blue-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full transition-all" style={{ width: `${pts}%` }} />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-green-50 dark:bg-green-950/30 border-green-200">
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-green-600">PRS — Regulatory Approval</p>
-                    <p className="text-xs text-muted-foreground mt-1">Probability of NDA/BLA approval given submission · Source: BioQuill empirical data (14,000 trials)</p>
-                    <p className="text-xs text-muted-foreground">Base rate: {(ptrsResult.basePRS * 100).toFixed(0)}% × {ptrsResult.prsModifier}x modifier{ptrsResult.basePRS >= 0.80 ? ' (asymmetric)' : ''}</p>
-                  </div>
-                  <div className="text-3xl font-bold text-green-600">{prs}%</div>
-                </div>
-                <div className="mt-3 h-2 bg-green-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${prs}%` }} />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-purple-50 dark:bg-purple-950/30 border-purple-200">
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-purple-600">PTRS (Combined)</p>
-                    <p className="text-xs text-muted-foreground mt-1">Overall probability of success</p>
-                  </div>
-                  <div className="text-4xl font-bold text-purple-600">{ptrs}%</div>
-                </div>
-                <div className="mt-3 h-3 bg-purple-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-500 rounded-full transition-all" style={{ width: `${Math.min(ptrs * 3, 100)}%` }} />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="bg-muted/50 rounded-lg p-4 border">
-            <p className="text-xs text-muted-foreground">
-              <strong>Formula:</strong> PTRS = PTS × PRS = {pts}% × {prs}% = <strong>{ptrs}%</strong>
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              PTS based on BIO/Norstella phase transition rates (2011–2023). PRS based on BioQuill empirical approval outcomes from 14,000-trial dataset. Slider inputs modify base rates as multipliers — 50% = no change from industry average.
-            </p>
-          </div>
-
-          {/* Parameters Summary (for PDF) */}
-          <div className="bg-muted/30 rounded-lg p-4 border mt-4">
+          <div className="bg-muted/30 rounded-lg p-4 border">
             <h4 className="text-sm font-semibold mb-3">Input Parameters Summary</h4>
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Therapeutic Area:</span>
-                <span className="font-medium">{taDisplayNames[therapeuticArea]}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Current Phase:</span>
-                <span className="font-medium">{phaseDisplayNames[currentPhase]}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Mechanism Novelty:</span>
-                <span className="font-medium">{mechanismNovelty[0]}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Endpoint Clarity:</span>
-                <span className="font-medium">{endpointClarity[0]}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Prior Trial Data:</span>
-                <span className="font-medium">{priorTrialData[0]}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Sponsor Experience:</span>
-                <span className="font-medium">{sponsorExperience[0]}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Regulatory Precedent:</span>
-                <span className="font-medium">{regulatoryPrecedent[0]}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Safety Profile:</span>
-                <span className="font-medium">{safetyProfile[0]}%</span>
-              </div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Therapeutic Area:</span><span className="font-medium">{taDisplayNames[therapeuticArea]}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Current Phase:</span><span className="font-medium">{phaseDisplayNames[currentPhase]}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Mechanism Novelty:</span><span className="font-medium">{mechanismNovelty[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Endpoint Clarity:</span><span className="font-medium">{endpointClarity[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Prior Trial Data:</span><span className="font-medium">{priorTrialData[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Sponsor Experience:</span><span className="font-medium">{sponsorExperience[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Regulatory Precedent:</span><span className="font-medium">{regulatoryPrecedent[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Safety Profile:</span><span className="font-medium">{safetyProfile[0]}%</span></div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <SimulatorLayout
+      badgeValue={ptrs}
+      badgeLabel="PTRS Score"
+      principle={`${phaseDisplayNames[currentPhase] || 'Phase II'} molecules in ${taDisplayNames[therapeuticArea] || therapeuticArea} have a historical combined PTS × PRS success rate of ${ptrs}%.`}
+      autoBaseline={!!simulatorMolecule && !userAdjusted}
+      chart={ptrsContextChart}
+      parameters={ptrsParameters}
+      secondaryStats={[
+        { label: "PTS", value: `${pts}%` },
+        { label: "PRS", value: `${prs}%` },
+      ]}
+    />
   );
 };
 const IndexInner = () => {
