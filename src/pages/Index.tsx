@@ -113,6 +113,7 @@ import { SessionMoleculeProvider, useSessionMolecule } from "@/contexts/SessionM
 import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
 import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
+import { SimulatorLayout } from "@/components/SimulatorLayout";
 
 // TimelinePhase interface imported from moleculesData
 
