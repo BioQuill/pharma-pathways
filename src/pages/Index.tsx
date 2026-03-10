@@ -1067,10 +1067,7 @@ const IndexInner = () => {
               </div>
             ) : activeMolecule ? (
               <div className="space-y-6" ref={reportRef}>
-                {/* PDF-only header - hidden on screen, shown in PDF */}
-                <div className="hidden print:block pdf-header -mx-4 mb-4" style={{ height: '38px' }}>
-                  <img src={topBarImage} alt="BiOQUILL" className="w-full h-full object-cover object-bottom" />
-                </div>
+                {/* PDF header handled by jsPDF overlay in exportDomToPDF — no HTML header needed */}
                 
                 {/* Approval Status Banner */}
                 {(() => {
