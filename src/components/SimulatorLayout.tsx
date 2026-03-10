@@ -26,6 +26,8 @@ interface SimulatorLayoutProps {
   chart?: React.ReactNode;
   /** Parameter inputs (Layer 3 — collapsible) */
   parameters?: React.ReactNode;
+  /** Interpretive narrative text (rendered as "What this means" box) */
+  narrative?: string;
   /** Additional content after the 3 layers */
   children?: React.ReactNode;
 }
