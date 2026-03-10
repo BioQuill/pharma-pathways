@@ -1039,8 +1039,37 @@ const IndexInner = () => {
           <TabsContent value="overview" className="space-y-6">
             {!selectedMolecule ? (
               <div className="space-y-4">
-                {/* Signal Indicators Legend */}
-                <div className="mb-4 p-3 rounded-lg bg-muted/50 border">
+                {/* Molecule Distribution Chart — compact with TAs flanking pie */}
+                <div className="mb-2 p-3 border rounded-lg bg-muted/30">
+                  <div className="flex items-center mb-2">
+                    <Badge className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full font-semibold">Molecules by Therapeutic Area</Badge>
+                  </div>
+                  <MoleculeDistributionChart molecules={allMolecules} />
+                </div>
+
+                {/* Search input — below pie chart, with dark blue thick border */}
+                <div className="relative w-full max-w-md mx-auto mt-6">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+                  <input
+                    type="text"
+                    placeholder="Type molecule name or NCT ID..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-9 py-2 text-[13px] rounded-lg bg-[#f0fdf4] placeholder:text-[#64748b] placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400, border: '2.5px solid #0E1D35' }}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Signal Indicators Legend — below search */}
+                <div className="p-3 rounded-lg bg-muted/50 border">
                   <div className="flex items-center flex-wrap gap-x-6 gap-y-1 text-xs">
                     <span className="font-semibold text-sm">Signal indicators:</span>
                     <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Above benchmark</span>
@@ -1048,33 +1077,6 @@ const IndexInner = () => {
                     <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Below benchmark</span>
                     <span className="text-muted-foreground">Thresholds are TA-specific — hover any metric for details</span>
                   </div>
-                </div>
-
-                {/* Molecule Distribution Chart + Export */}
-                <div className="mb-6 p-4 border rounded-lg bg-muted/30">
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full font-semibold">Molecules by Therapeutic Area</Badge>
-                    <div className="relative w-72">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
-                      <input
-                        type="text"
-                        placeholder="Type molecule name or NCT ID..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-9 pr-9 py-2 text-[13px] rounded-lg border border-[#BFDBFE] bg-[#f0fdf4] placeholder:text-[#64748b] placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400 }}
-                      />
-                      {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery('')}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <MoleculeDistributionChart molecules={allMolecules} />
                 </div>
 
               </div>
