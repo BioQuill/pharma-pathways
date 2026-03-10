@@ -704,12 +704,6 @@ const IndexInner = () => {
   const handleDownloadPDF = async () => {
     if (!reportRef.current || !activeMolecule) return;
     
-    // Show PDF header temporarily
-    const pdfHeader = reportRef.current.querySelector('.pdf-header');
-    if (pdfHeader) {
-      (pdfHeader as HTMLElement).style.display = 'block';
-    }
-    
     // Hide action buttons temporarily
     const hideButtons = reportRef.current.querySelectorAll('.pdf-hide');
     hideButtons.forEach(btn => {
@@ -718,14 +712,9 @@ const IndexInner = () => {
     
     try {
       const { exportDomToPDF } = await import('@/lib/pdfGenerator');
-      // Set an ID on the element for exportDomToPDF
       reportRef.current.id = 'due-diligence-report-content';
       await exportDomToPDF('due-diligence-report-content', `${activeMolecule.name.replace(/\s+/g, '_')}_Due_Diligence_Report.pdf`, { orientation: 'portrait' });
     } finally {
-      // Restore hidden elements
-      if (pdfHeader) {
-        (pdfHeader as HTMLElement).style.display = 'none';
-      }
       hideButtons.forEach(btn => {
         (btn as HTMLElement).style.display = '';
       });
