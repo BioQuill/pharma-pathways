@@ -783,8 +783,8 @@ const IndexInner = () => {
             <div className="hidden md:flex items-center gap-3 ml-5">
               <div style={{ width: 1, height: 22, background: 'rgba(26,26,26,0.25)' }} />
               <div className="flex flex-col justify-center leading-tight">
-                <span className="text-[13px] font-medium text-[#1A1A1A]">Precision intelligence.</span>
-                <span className="text-[13px] font-medium text-[#1A1A1A]">From pipeline to patients.</span>
+                <span className="text-[13px] font-medium text-[#1A1A1A]">Know the odds. Understand the pipeline.</span>
+                <span className="text-[13px] font-medium text-[#1A1A1A]">Win the race.</span>
               </div>
             </div>
           </div>
