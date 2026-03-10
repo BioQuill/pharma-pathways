@@ -254,14 +254,26 @@ All colors MUST be HSL.
   break-before: always;
 }
 
-/* Page break control */
+/* Page break control — absolute rule: never split any card/frame/border-box */
 .pdf-export-mode .dd-model-card,
 .pdf-export-mode .dd-narrative-box,
+.pdf-export-mode .dd-stage-divider,
 .pdf-export-mode .recharts-wrapper,
-.pdf-export-mode svg.recharts-surface {
+.pdf-export-mode svg.recharts-surface,
+.pdf-export-mode table,
+.pdf-export-mode [class*="border"],
+.pdf-export-mode [class*="rounded"],
+.pdf-export-mode [class*="card"] {
   page-break-inside: avoid !important;
   break-inside: avoid !important;
+  break-inside: avoid-page !important;
   page-break-before: auto !important;
+}
+
+/* Ensure "What this means" boxes stay with their parent card */
+.pdf-export-mode .dd-model-card > * {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
 /* Hide sticky platform header/nav during PDF capture */

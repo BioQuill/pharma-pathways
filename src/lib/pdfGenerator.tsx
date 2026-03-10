@@ -245,23 +245,42 @@ export const exportDomToPDF = async (
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({ orientation, unit: 'mm', format });
     
-    // --- Card-aware slicing ---
-    // Get Y positions of .dd-model-card and .dd-stage-divider elements
-    // relative to the captured element, scaled to canvas pixels
+    // --- Card-aware slicing: never split a card across pages ---
     const elementRect = element.getBoundingClientRect();
     const scaleX = canvas.width / elementRect.width;
     
-    const cardEls = element.querySelectorAll('.dd-model-card, .dd-stage-divider');
-    const cardBoundaries: number[] = []; // Y positions in canvas pixels where cards start
-    cardEls.forEach(cardEl => {
-      const cardRect = (cardEl as HTMLElement).getBoundingClientRect();
-      const relativeY = (cardRect.top - elementRect.top) * scaleX;
-      cardBoundaries.push(Math.round(relativeY));
+    // Gather ALL block elements that must not be split
+    const blockSelectors = '.dd-model-card, .dd-stage-divider, .dd-narrative-box, [class*="border"], table, .recharts-wrapper';
+    const blockEls = element.querySelectorAll(blockSelectors);
+    
+    // Build list of atomic blocks: [startY, endY] in canvas pixels
+    interface Block { startY: number; endY: number; }
+    const blocks: Block[] = [];
+    blockEls.forEach(el => {
+      const r = (el as HTMLElement).getBoundingClientRect();
+      const startY = Math.round((r.top - elementRect.top) * scaleX);
+      const endY = Math.round((r.bottom - elementRect.top) * scaleX);
+      if (endY > startY && endY <= canvas.height + 2) {
+        blocks.push({ startY, endY });
+      }
     });
-    cardBoundaries.sort((a, b) => a - b);
+    blocks.sort((a, b) => a.startY - b.startY);
+    
+    // De-duplicate / merge overlapping blocks
+    const merged: Block[] = [];
+    for (const b of blocks) {
+      const last = merged[merged.length - 1];
+      if (last && b.startY <= last.endY) {
+        last.endY = Math.max(last.endY, b.endY);
+      } else {
+        merged.push({ ...b });
+      }
+    }
     
     // Slice height in canvas pixels for the content area
     const sliceHeightPx = contentAreaHeight * ratio;
+    // 30% threshold: if remaining space >= 30% of page, try to use it
+    const minUsableSpace = sliceHeightPx * 0.30;
     
     let srcY = 0;
     let page = 0;
@@ -271,28 +290,54 @@ export const exportDomToPDF = async (
         doc.addPage();
       }
       
-      // Determine slice end: default is srcY + sliceHeightPx
       let idealEnd = srcY + sliceHeightPx;
       
-      if (idealEnd < canvas.height) {
-        // Find the last card boundary that starts before idealEnd
-        // and adjust to avoid splitting cards
+      if (idealEnd >= canvas.height) {
+        // Last page — take everything remaining
+        idealEnd = canvas.height;
+      } else {
+        // Find the best break point that doesn't split any block
+        // Strategy: find the latest safe Y that is <= idealEnd
+        // A "safe Y" is a point that doesn't fall inside any block
+        
         let bestBreak = idealEnd;
         
-        // Look for card boundaries near the ideal break point
-        // Find the latest boundary that is before idealEnd (with some tolerance)
-        for (let i = cardBoundaries.length - 1; i >= 0; i--) {
-          const boundary = cardBoundaries[i];
-          if (boundary <= idealEnd && boundary > srcY + sliceHeightPx * 0.4) {
-            bestBreak = boundary;
-            break;
+        // Check if idealEnd falls inside any block
+        const conflictBlock = merged.find(b => b.startY < idealEnd && b.endY > idealEnd);
+        
+        if (conflictBlock) {
+          // Option A: break BEFORE this block (at its startY)
+          const breakBefore = conflictBlock.startY;
+          // Option B: break AFTER this block (at its endY) — only if it fits
+          const breakAfter = conflictBlock.endY;
+          
+          if (breakAfter <= srcY + sliceHeightPx * 1.15) {
+            // Block only slightly overflows — include it (allow 15% overflow)
+            bestBreak = breakAfter;
+          } else if (breakBefore > srcY + minUsableSpace) {
+            // Breaking before still uses >= 30% of page — good
+            bestBreak = breakBefore;
+          } else {
+            // Block is huge (taller than a page). We must split it.
+            // Find a sub-boundary: look for nested elements inside the block
+            // Use table rows, paragraphs, or headings as split points
+            bestBreak = idealEnd; // fallback: split at page boundary
+          }
+        } else {
+          // idealEnd doesn't conflict with any block — 
+          // but check if we're cutting just before a block starts (within 20px)
+          // to avoid orphaned whitespace
+          const nearBlock = merged.find(b => b.startY > idealEnd && b.startY - idealEnd < 30 * scaleX);
+          if (nearBlock) {
+            // Pull break back to just before the near block
+            bestBreak = nearBlock.startY;
           }
         }
         
         idealEnd = bestBreak;
       }
       
-      const actualSlice = Math.min(idealEnd - srcY, canvas.height - srcY);
+      const actualSlice = Math.max(1, Math.min(idealEnd - srcY, canvas.height - srcY));
       
       const sliceCanvas = document.createElement('canvas');
       sliceCanvas.width = canvas.width;
