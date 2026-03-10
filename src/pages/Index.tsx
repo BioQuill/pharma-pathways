@@ -2454,7 +2454,261 @@ const IndexInner = () => {
           </Tabs>
         </div>}
 
-        {/* Data Freshness Statement */}
+        {/* ═══ MOLECULES DATABASE — always visible on platform page ═══ */}
+        {topNavMode === 'platform' && !selectedMolecule && (
+          <div className="mt-6 space-y-4">
+            {/* 80px spacer between TA chart / model panels and molecule database */}
+            <div style={{ height: 80 }} />
+
+            {/* Yellow MOLECULES DATABASE header bar */}
+            <div
+              className="w-full rounded-lg border border-[#FDE68A] px-4 flex items-center"
+              style={{ height: 40, backgroundColor: '#FEFCE8' }}
+            >
+              <span
+                className="text-[13px] font-bold text-[#1e3a5f]"
+                style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}
+              >
+                MOLECULES DATABASE
+              </span>
+            </div>
+
+            {/* Header with Sort Icons */}
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Showing {allMolecules.length.toLocaleString()} trials · One card per NCT ID
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                {[
+                  { key: 'lpi', label: 'LPI%' },
+                  { key: 'ttm', label: 'TTM' },
+                  { key: 'composite', label: 'Score' },
+                  { key: 'ti', label: 'TI' },
+                  { key: 'ptrs', label: 'PTRS' },
+                  { key: 'company', label: 'Sponsor' },
+                  { key: 'ta', label: 'TA' },
+                ].map(({ key, label }) => (
+                  <Button
+                    key={key}
+                    variant={sortBy === key ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-9 px-3 text-base font-bold text-black"
+                    onClick={() => {
+                      if (sortBy === key) {
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                      } else {
+                        setSortBy(key as typeof sortBy);
+                        setSortOrder(key === 'company' || key === 'ta' ? 'asc' : 'desc');
+                      }
+                    }}
+                  >
+                    {label}
+                    {sortBy === key && (
+                      <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Molecule Cards */}
+            {allMolecules
+              .filter((mol) => {
+                const query = searchQuery.toLowerCase();
+                const matchesSearch = !query || 
+                  mol.name.toLowerCase().includes(query) ||
+                  mol.company.toLowerCase().includes(query) ||
+                  mol.therapeuticArea.toLowerCase().includes(query) ||
+                  mol.indication.toLowerCase().includes(query) ||
+                  (mol.nctId && mol.nctId.toLowerCase().includes(query)) ||
+                  (mol.trialName && mol.trialName.toLowerCase().includes(query));
+                const matchesPhase = phaseFilter === 'all' || mol.phase.includes(phaseFilter);
+                const isDevice = mol.name.startsWith('DEVICE:');
+                const matchesRecordType = recordTypeFilter === 'all' || (recordTypeFilter === 'drugs' ? !isDevice : isDevice);
+                return matchesSearch && matchesPhase && matchesRecordType;
+              })
+              .slice()
+              .sort((a, b) => {
+                const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.approval_status || '', mol.status || '', mol.study_title || mol.trialName || '') ?? 999;
+                const getComposite = (mol: typeof a) => {
+                  const ttm = getTTM(mol);
+                  return calculateCompositeScore(mol.overallScore, ttm === 999 ? null : ttm, mol.therapeuticArea);
+                };
+                const getTI = (mol: typeof a) => getTherapeuticIndexForMolecule(mol).value;
+                let comparison = 0;
+                switch (sortBy) {
+                  case 'lpi':
+                    comparison = b.overallScore - a.overallScore;
+                    break;
+                  case 'ttm':
+                    comparison = getTTM(a) - getTTM(b);
+                    break;
+                  case 'composite':
+                    comparison = getComposite(b) - getComposite(a);
+                    break;
+                  case 'ti':
+                    comparison = getTI(b) - getTI(a);
+                    break;
+                  case 'company':
+                    comparison = a.company.localeCompare(b.company);
+                    break;
+                  case 'ta':
+                    comparison = a.therapeuticArea.localeCompare(b.therapeuticArea);
+                    break;
+                  case 'ptrs': {
+                    const getPTRS = (mol: typeof a) => {
+                      const p = mol.phase.toLowerCase();
+                      if (p.includes('approved')) return 95;
+                      if (p.includes('iii') || p.includes('3')) return 55;
+                      if (p.includes('ii') || p.includes('2')) return 30;
+                      return 15;
+                    };
+                    comparison = getPTRS(b) - getPTRS(a);
+                    break;
+                  }
+                }
+                return sortOrder === 'asc' ? -comparison : comparison;
+              })
+              .map((molecule) => {
+                const lpi3Score = molecule._raw?.lpi_score ?? molecule.overallScore ?? 50;
+                const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.approval_status || '', molecule.status || '', molecule.study_title || molecule.trialName || '');
+                const compositeScore = calculateCompositeScore(lpi3Score, ttm, molecule.therapeuticArea);
+                const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
+                const dropoutRanking = molecule.scores.dropoutRanking;
+
+                const getDotColor = (value: number, thresholds: [number, number]) => {
+                  if (value >= thresholds[1]) return 'bg-[hsl(142,76%,36%)]';
+                  if (value >= thresholds[0]) return 'bg-[hsl(45,93%,47%)]';
+                  return 'bg-[hsl(0,72%,51%)]';
+                };
+
+                const lpiDot = getDotColor(lpi3Score, [34, 67]);
+                const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
+                const ttmDot = ttm !== null ? getDotColor(ttmEfficiency, [34, 67]) : 'bg-muted-foreground';
+                const scoreDot = getDotColor(compositeScore, [34, 67]);
+                const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+                const dropoutDot = dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+
+                const medalRank = compositeScore >= 67 ? 1 : compositeScore >= 34 ? 2 : 3;
+                const medalBg = medalRank === 1 ? 'bg-[hsl(45,90%,50%)]' : medalRank === 2 ? 'bg-[hsl(0,0%,75%)]' : 'bg-[hsl(30,60%,45%)]';
+                const medalBorder = medalRank === 1 ? 'border-[hsl(45,90%,40%)]' : medalRank === 2 ? 'border-[hsl(0,0%,65%)]' : 'border-[hsl(30,60%,35%)]';
+
+                const mfg = getManufacturingCapability(molecule.company);
+
+                return (
+                  <Card key={molecule.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => { setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
+                    <CardContent className="p-5">
+                      <div className="flex items-start gap-4">
+                        {/* Left: Text rows */}
+                        <div className="flex-1 min-w-0 space-y-1">
+                          {/* Row 1: Drug Name + Device Badge */}
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                            {molecule.name.startsWith('DEVICE:') && (
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted text-muted-foreground">DEVICE</Badge>
+                            )}
+                          </div>
+                          {/* Row 2: Approval Status Badge */}
+                          {(() => {
+                            const status = (molecule as any)._raw?.approval_status;
+                            if (!status || status === 'ACTIVE_PIPELINE') return null;
+                            const badgeConfig: Record<string, { color: string; text: string }> = {
+                              'APPROVED_2024': { color: 'bg-[hsl(142,76%,36%)] text-white', text: '✓ APPROVED' },
+                              'LIKELY_IN_REVIEW': { color: 'bg-blue-500 text-white', text: '⏳ In Review' },
+                              'RECENTLY_COMPLETED_PH3': { color: 'bg-amber-500 text-white', text: 'Completed Ph3' },
+                              'COMPLETED_PH3': { color: 'bg-slate-400 text-white', text: 'Completed Ph3' },
+                              'COMPLETED_PH2': { color: 'bg-gray-300 text-gray-700', text: 'Completed Ph2' },
+                            };
+                            const cfg = badgeConfig[status] || badgeConfig['COMPLETED_PH3'];
+                            return <Badge className={`text-[10px] px-1.5 py-0 ${cfg.color}`}>{cfg.text}</Badge>;
+                          })()}
+                          {/* Row 3: Sponsor */}
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
+                            {mfg?.ticker && (
+                              <a href={`https://finance.yahoo.com/quote/${mfg.ticker}`} target="_blank" rel="noopener noreferrer"
+                                className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                                onClick={(e) => e.stopPropagation()} title="View on Yahoo Finance">
+                                ({mfg.ticker})
+                              </a>
+                            )}
+                          </div>
+                          {/* Row 4: NCT ID | Phase */}
+                          <p className="text-xs text-muted-foreground">
+                            {molecule.nctId && <span>{molecule.nctId} | </span>}
+                            <span className="font-medium">{molecule.phase}</span>
+                          </p>
+                          {/* Row 5: Conditions | TA */}
+                          <p className="text-xs text-muted-foreground">
+                            {molecule.indication} | {molecule.therapeuticArea}
+                          </p>
+                          {/* Row 6: Study Title */}
+                          {molecule.trialName && (
+                            <p className="text-xs text-muted-foreground italic line-clamp-1" title={molecule.trialName}>
+                              {molecule.trialName}
+                            </p>
+                          )}
+                          {/* Row 7: Start Date | Completion Date | Status */}
+                          {((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
+                            <p className="text-xs text-muted-foreground">
+                              {(molecule as any)._raw.start_date && <span>{(molecule as any)._raw.start_date}</span>}
+                              {(molecule as any)._raw.completion_date && <span> | {(molecule as any)._raw.completion_date}</span>}
+                              {(molecule as any)._raw.status && <span> | <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Middle: Signal Dots + Verdict */}
+                        <div className="flex flex-col items-start shrink-0">
+                          <div className="flex items-center gap-1.5 -ml-2">
+                            <div className={`flex flex-col items-center justify-center rounded-full ${lpiDot} text-black`} style={{ width: 62, height: 62 }} title={`LPI: ${lpi3Score}%`}>
+                              <span className="text-[11px] font-bold leading-none">LPI</span>
+                              <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center rounded-full ${ttmDot} text-black`} style={{ width: 62, height: 62 }} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
+                              <span className="text-[11px] font-bold leading-none">TTM</span>
+                              <span className="text-sm font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center rounded-full ${scoreDot} text-black`} style={{ width: 62, height: 62 }} title={`Score: ${compositeScore}`}>
+                              <span className="text-[11px] font-bold leading-none">Score</span>
+                              <span className="text-sm font-bold leading-none">{compositeScore}</span>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center rounded-full ${tiDot} text-black`} style={{ width: 62, height: 62 }} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
+                              <span className="text-[11px] font-bold leading-none">TI</span>
+                              <span className="text-sm font-bold leading-none">{ti.value.toFixed(1)}</span>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center rounded-full ${dropoutDot} text-black`} style={{ width: 62, height: 62 }} title={`Dropout: ${dropoutRanking}/5`}>
+                              <span className="text-[11px] font-bold leading-none">Drop</span>
+                              <span className="text-sm font-bold leading-none">{dropoutRanking}/5</span>
+                            </div>
+                          </div>
+                          <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
+                            <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} shadow-md animate-medal-spin`}>
+                              <span className="text-primary font-bold text-lg">{medalRank}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Action buttons */}
+                        <div className="shrink-0 flex flex-col gap-1">
+                          <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
+                            Full Analysis →
+                          </Button>
+                          <Button size="sm" variant="secondary" className="text-xs" onClick={(e) => { e.stopPropagation(); loadIntoSimulator(molecule); }}>
+                            Use in Simulator →
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+          </div>
+        )}
+
         <div className="mt-4 py-3 px-4 bg-[#FFD700]/10 border border-[#FFD700]/30 rounded-lg text-center">
           <p className="text-sm text-muted-foreground italic">
             "BioQuill intelligence refreshes every Monday — reflecting the latest trial registrations, regulatory decisions, and market access updates from the prior week."
