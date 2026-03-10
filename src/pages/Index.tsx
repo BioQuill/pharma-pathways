@@ -1559,62 +1559,7 @@ const IndexInner = () => {
           {/* PTRS Tab */}
           <TabsContent value="ptrs" className="space-y-6">
             <SimulatorMoleculeBanner molecules={allMolecules} />
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                  PTRS Framework
-                </CardTitle>
-                <CardDescription>Probability of Technical & Regulatory Success</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="bg-muted/50 rounded-lg p-4 border">
-                  <p className="text-foreground leading-relaxed">
-                    Probability of technical and regulatory success (PTRS) is a broad term that encompasses not only the likelihood of a drug successfully navigating clinical trials (the technical aspect) but also the probability of receiving regulatory approval from agencies like the FDA (the regulatory aspect).
-                  </p>
-                </div>
-                
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-lg">Components</h3>
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
-                      <CardContent className="p-4">
-                        <p className="text-sm font-bold text-blue-600 mb-1">PTS</p>
-                        <p className="text-xs text-blue-700 dark:text-blue-400">Probability of Technical Success</p>
-                        <p className="text-sm text-muted-foreground mt-2">Likelihood of meeting clinical endpoints</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-green-50 dark:bg-green-950/20 border-green-200">
-                      <CardContent className="p-4">
-                        <p className="text-sm font-bold text-green-600 mb-1">PRS</p>
-                        <p className="text-xs text-green-700 dark:text-green-400">Probability of Regulatory Success</p>
-                        <p className="text-sm text-muted-foreground mt-2">Likelihood of regulatory approval</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-purple-50 dark:bg-purple-950/20 border-purple-200">
-                      <CardContent className="p-4">
-                        <p className="text-sm font-bold text-purple-600 mb-1">PTRS Formula</p>
-                        <p className="text-lg font-mono text-purple-700 dark:text-purple-400 mt-1">PTRS = PTS × PRS</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Interactive PTRS Calculator */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Interactive PTRS Calculator
-                </CardTitle>
-                <CardDescription>Input clinical trial parameters to calculate PTS, PRS, and overall PTRS</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PTRSCalculator molecules={allMolecules} />
-              </CardContent>
-            </Card>
+            <PTRSCalculator molecules={allMolecules} />
 
             {/* PTRS Molecule Comparison */}
             <PTRSMoleculeComparison molecules={allMolecules} />
