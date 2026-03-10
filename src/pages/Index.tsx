@@ -1153,6 +1153,9 @@ const IndexInner = () => {
                   <MoleculeDistributionChart molecules={allMolecules} />
                 </div>
 
+                {/* 80px spacer between TA chart and molecule search */}
+                <div style={{ height: 80 }} />
+
                 {/* Header with Sort Icons */}
                 <div className="flex items-center justify-between mb-4">
                   <div>
