@@ -112,14 +112,19 @@ interface PeakSalesCalculatorProps {
 
 // Peak Sales Calculator Component
 const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
+  const { sessionMolecule } = useSessionMolecule();
   const [selectedTA, setSelectedTA] = useState<string>("all");
-  const [selectedMolecule, setSelectedMolecule] = useState<string>("custom");
 
-  // Filter molecules by selected TA
-  const filteredMolecules = selectedTA && selectedTA !== "all"
-    ? molecules.filter(m => m.therapeuticArea.toUpperCase().includes(selectedTA.split("/")[0]) || 
-                            m.therapeuticArea.toUpperCase().includes(selectedTA.split("&")[0].trim()))
-    : molecules;
+  // Auto-populate TA from session molecule
+  useEffect(() => {
+    if (sessionMolecule) {
+      const matchingTA = THERAPEUTIC_AREAS.find(ta => 
+        sessionMolecule.therapeuticArea.toUpperCase().includes(ta.split("/")[0]) ||
+        sessionMolecule.therapeuticArea.toUpperCase().includes(ta.split("&")[0].trim())
+      );
+      if (matchingTA) setSelectedTA(matchingTA);
+    }
+  }, [sessionMolecule]);
 
   // Component 1: Base Market Size (Weight: 25%)
   const [patientPopulation, setPatientPopulation] = useState("large");
