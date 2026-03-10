@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { calculateLPI2ForMolecule, LPI2_DATA_SOURCES, type LPI2Prediction, type LPI2Factor } from "@/lib/lpi2Model";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { SimulatorLayout } from "./SimulatorLayout";
 
 interface MoleculeProfile {
   id: string;
@@ -144,61 +145,67 @@ function FactorCard({ factor, isExpanded, onToggle }: { factor: LPI2Factor; isEx
   );
 }
 
-// Molecule Analysis Card
-function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProfile; prediction: LPI2Prediction }) {
+// Main Dashboard Component
+export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
+  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
   const [expandedFactors, setExpandedFactors] = useState<Set<string>>(new Set());
-  
+
+  if (!simulatorMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center space-y-3">
+          <p className="text-lg font-semibold text-muted-foreground">No molecule loaded</p>
+          <p className="text-sm text-muted-foreground">Use the molecule picker above or select a molecule from the database below.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const prediction = calculateLPI2ForMolecule(simulatorMolecule);
+
+  const toggleFactor = (name: string) => {
+    setExpandedFactors(prev => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
+
   const radarData = prediction.factors.map(f => ({
     factor: f.name.split(' ')[0],
     score: f.score,
     fullMark: 100,
   }));
-  
-  const toggleFactor = (name: string) => {
-    setExpandedFactors(prev => {
-      const next = new Set(prev);
-      if (next.has(name)) {
-        next.delete(name);
-      } else {
-        next.add(name);
-      }
-      return next;
-    });
-  };
-  
-  return (
-    <div className="space-y-4">
-      {/* Header */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="text-xl font-bold">{molecule.name}</h3>
-              <p className="text-sm text-muted-foreground">{molecule.company} • {molecule.phase} • {molecule.therapeuticArea}</p>
-              <p className="text-sm mt-1">{molecule.indication}</p>
-            </div>
-            <div className="text-right">
-              <div 
-                className="w-20 h-20 rounded-full flex flex-col items-center justify-center text-white font-bold mx-auto"
-                style={{ backgroundColor: getScoreColor(prediction.totalScore) }}
-              >
-                <div className="text-2xl">{prediction.totalScore}</div>
-                <div className="text-[10px] opacity-90">Investment</div>
-              </div>
-              <div className="flex gap-2 mt-2 justify-end">
-                {getRecommendationBadge(prediction.recommendation)}
-                {getRiskBadge(prediction.riskLevel)}
-              </div>
+
+  // Context chart: gauge/percentile bar
+  const contextChart = (
+    <div className="space-y-3">
+      <h4 className="text-sm font-semibold">Investment Score Percentile</h4>
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <div className="w-28 text-xs text-right font-medium truncate">{simulatorMolecule.name}</div>
+          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+            <div className="h-full rounded-full transition-all flex items-center justify-end pr-2" 
+              style={{ width: `${prediction.totalScore}%`, backgroundColor: getScoreColor(prediction.totalScore) }}>
+              <span className="text-[10px] font-bold text-white">{prediction.totalScore}</span>
             </div>
           </div>
-          <div className="mt-4 p-3 bg-muted rounded-lg">
-            <p className="text-sm font-medium">Investment Readiness Assessment:</p>
-            <p className="text-lg font-semibold text-primary">"{prediction.investmentReadiness}"</p>
-          </div>
-        </CardContent>
-      </Card>
-      
-      {/* Radar Chart + Factor Breakdown */}
+        </div>
+        <div className="flex items-center justify-between text-xs text-muted-foreground px-32">
+          <span>0 — Pass</span>
+          <span>45 — Hold</span>
+          <span>60 — Buy</span>
+          <span>75+ — Strong Buy</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Parameters: factor details + radar + charts
+  const parametersContent = (
+    <div className="space-y-6">
+      {/* Radar + Bar charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -210,30 +217,18 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
                 <PolarGrid />
                 <PolarAngleAxis dataKey="factor" tick={{ fontSize: 11 }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
-                <Radar
-                  name="Score"
-                  dataKey="score"
-                  stroke="hsl(var(--primary))"
-                  fill="hsl(var(--primary))"
-                  fillOpacity={0.4}
-                  strokeWidth={2}
-                />
+                <Radar name="Score" dataKey="score" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.4} strokeWidth={2} />
               </RadarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
-        
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">Factor Weights</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
-              <BarChart 
-                data={prediction.factors} 
-                layout="vertical"
-                margin={{ left: 20, right: 20 }}
-              >
+              <BarChart data={prediction.factors} layout="vertical" margin={{ left: 20, right: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 10 }} />
@@ -248,7 +243,7 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Detailed Factor Cards */}
       <div className="space-y-2">
         <h4 className="font-semibold text-lg">Factor Details</h4>
@@ -261,136 +256,37 @@ function MoleculeAnalysisCard({ molecule, prediction }: { molecule: MoleculeProf
           />
         ))}
       </div>
+
+      {/* Data Sources */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-lg">Data Sources</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {LPI2_DATA_SOURCES.map((source, idx) => (
+              <a key={idx} href={source.url} target="_blank" rel="noopener noreferrer" className="p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-center">
+                <div className="text-sm font-medium">{source.name}</div>
+              </a>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
-}
 
-// Main Dashboard Component
-export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
-  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
-
-  // If no molecule selected via "Use in Simulator →", show empty state
-  if (!simulatorMolecule) {
-    return (
-      <Card className="border-dashed">
-        <CardContent className="py-16 text-center space-y-3">
-          <p className="text-lg font-semibold text-muted-foreground">No molecule loaded</p>
-          <p className="text-sm text-muted-foreground">Use the molecule picker above or select a molecule from the database below.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const prediction = calculateLPI2ForMolecule(simulatorMolecule);
-  
   return (
-    <div className="space-y-6">
-      {/* Model Overview */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-lg bg-primary/10">
-              <TrendingUp className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-xl">Investment Score: 5-Factor Investment Model</CardTitle>
-              <CardDescription>
-                VC / Investment Model • Used by venture capital, licensing teams, and biotech accelerators
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="overview">
-            <TabsList className="mb-4 bg-sky-100 dark:bg-sky-950/30">
-              <TabsTrigger value="overview">Model Overview</TabsTrigger>
-              <TabsTrigger value="factors">5 Factors</TabsTrigger>
-              <TabsTrigger value="sources">Data Sources</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-3xl font-bold text-primary">{prediction.totalScore}</div>
-                  <div className="text-sm text-muted-foreground">Investment Score</div>
-                </div>
-                <div className="text-center p-4 bg-muted rounded-lg">
-                  {getRecommendationBadge(prediction.recommendation)}
-                  <div className="text-sm text-muted-foreground mt-1">Recommendation</div>
-                </div>
-                <div className="text-center p-4 bg-muted rounded-lg">
-                  {getRiskBadge(prediction.riskLevel)}
-                  <div className="text-sm text-muted-foreground mt-1">Risk Level</div>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="factors">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-2 px-3 font-semibold">Factor</th>
-                      <th className="text-center py-2 px-3 font-semibold">Weight</th>
-                      <th className="text-left py-2 px-3 font-semibold">Example KPI</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b">
-                      <td className="py-2 px-3 font-medium">1. Biological Plausibility</td>
-                      <td className="text-center py-2 px-3">30%</td>
-                      <td className="py-2 px-3 text-muted-foreground">Human genetic evidence, pathway role</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="py-2 px-3 font-medium">2. Translational Evidence</td>
-                      <td className="text-center py-2 px-3">25%</td>
-                      <td className="py-2 px-3 text-muted-foreground">Preclinical model reproducibility, biomarkers</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="py-2 px-3 font-medium">3. Clinical Readiness</td>
-                      <td className="text-center py-2 px-3">20%</td>
-                      <td className="py-2 px-3 text-muted-foreground">IND-enabling completeness</td>
-                    </tr>
-                    <tr className="border-b">
-                      <td className="py-2 px-3 font-medium">4. Regulatory Attractiveness</td>
-                      <td className="text-center py-2 px-3">15%</td>
-                      <td className="py-2 px-3 text-muted-foreground">Orphan/exemptions, unmet need</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 px-3 font-medium">5. Team & Sponsor</td>
-                      <td className="text-center py-2 px-3">10%</td>
-                      <td className="py-2 px-3 text-muted-foreground">Track record of clinical advancement</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="sources">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {LPI2_DATA_SOURCES.map((source, idx) => (
-                  <a
-                    key={idx}
-                    href={source.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors text-center"
-                  >
-                    <div className="text-sm font-medium">{source.name}</div>
-                  </a>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-      
-      {/* Selected Molecule Analysis */}
-      <MoleculeAnalysisCard
-        molecule={simulatorMolecule}
-        prediction={prediction}
-      />
-      
+    <SimulatorLayout
+      badgeValue={prediction.totalScore}
+      badgeLabel="Investment Score"
+      badgeSuffix="/100"
+      principle={`${simulatorMolecule.name} scores ${prediction.totalScore}/100 on the 5-factor investment model — recommendation: ${prediction.recommendation}.`}
+      autoBaseline={true}
+      chart={contextChart}
+      parameters={parametersContent}
+      secondaryStats={[
+        { label: "Recommendation", value: prediction.recommendation },
+        { label: "Risk", value: prediction.riskLevel },
+      ]}
+    >
       {/* Interpretation Guide */}
       <Card>
         <CardHeader>
@@ -404,22 +300,10 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
             <div>
               <h4 className="font-semibold mb-2">Score Thresholds</h4>
               <ul className="space-y-1">
-                <li className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]" />
-                  <span><strong>75-100:</strong> Strong Buy — High-conviction opportunity</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[hsl(142,50%,50%)]" />
-                  <span><strong>60-74:</strong> Buy — Solid investment candidate</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]" />
-                  <span><strong>45-59:</strong> Hold — Requires additional due diligence</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]" />
-                  <span><strong>0-44:</strong> Pass — High risk, limited upside</span>
-                </li>
+                <li className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]" /><span><strong>75-100:</strong> Strong Buy</span></li>
+                <li className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[hsl(142,50%,50%)]" /><span><strong>60-74:</strong> Buy</span></li>
+                <li className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]" /><span><strong>45-59:</strong> Hold</span></li>
+                <li className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]" /><span><strong>0-44:</strong> Pass</span></li>
               </ul>
             </div>
             <div>
@@ -434,6 +318,6 @@ export function LPI2Dashboard({ molecules }: LPI2DashboardProps) {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </SimulatorLayout>
   );
 }
