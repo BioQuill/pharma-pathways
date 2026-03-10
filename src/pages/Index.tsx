@@ -246,6 +246,7 @@ const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
   const [regulatoryPrecedent, setRegulatoryPrecedent] = useState([75]);
   const [safetyProfile, setSafetyProfile] = useState([70]);
   const ptrsReportRef = useRef<HTMLDivElement>(null);
+  const [userAdjusted, setUserAdjusted] = useState(false);
 
   // Auto-select simulator molecule when context changes
   useEffect(() => {
