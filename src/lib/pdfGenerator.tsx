@@ -277,45 +277,43 @@ export const exportDomToPDF = async (
     // Content area in canvas pixels
     const sliceHeightPx = contentAreaHeight * ratio;
     
-    // Build pages by greedily packing cards
-    // Rule: if a card fits in remaining space, include it. Otherwise, start new page.
-    // Exception: if remaining space >= 30% and the NEXT card fits, keep it.
+    // Build pages by greedily packing cards — never split a card across pages.
+    // Page 1 ALWAYS includes preamble + first card (scale if needed).
     interface PageSlice { startY: number; endY: number; }
     const pages: PageSlice[] = [];
     
     let pageStartY = 0; // start of content for current page (canvas px)
     let currentEndY = 0; // end of content placed on current page so far
     
-    // Include any content before the first card (e.g. trial header, molecule banner)
-    if (cards.length > 0 && cards[0].startY > 0) {
-      currentEndY = cards[0].startY; // everything before first card is "preamble"
-    }
+    // Preamble: everything before first card
+    const preambleEnd = (cards.length > 0 && cards[0].startY > 0) ? cards[0].startY : 0;
     
     for (let i = 0; i < cards.length; i++) {
       const card = cards[i];
-      const spaceUsedOnPage = currentEndY - pageStartY;
-      const spaceRemaining = sliceHeightPx - spaceUsedOnPage;
-      const cardHeight = card.endY - currentEndY; // includes gap between previous card end and this card end
-      const fullCardSpan = card.endY - card.startY;
+      
+      // For the very first card, always include it on page 1 with preamble
+      if (i === 0) {
+        currentEndY = card.endY;
+        continue;
+      }
       
       // Check: does this card fit on the current page?
       const cardFits = (card.endY - pageStartY) <= sliceHeightPx;
       
       if (cardFits) {
-        // Card fits — include it on current page
         currentEndY = card.endY;
       } else {
-        // Card does NOT fit on current page
-        // Finalize current page with content up to this card's start
+        // Finalize current page
         if (currentEndY > pageStartY) {
           pages.push({ startY: pageStartY, endY: currentEndY });
         }
         
-        // Start new page from this card
+        // Start new page from this card's start position
         pageStartY = card.startY;
         currentEndY = card.endY;
         
-        // If single card is taller than a full page, it gets its own page (may overflow slightly)
+        // If single card is taller than a full page, give it its own page
+        const fullCardSpan = card.endY - card.startY;
         if (fullCardSpan > sliceHeightPx) {
           pages.push({ startY: pageStartY, endY: card.endY });
           pageStartY = card.endY;
@@ -324,10 +322,10 @@ export const exportDomToPDF = async (
       }
     }
     
-    // Finalize last page — include any trailing content after last card
-    const finalEnd = Math.max(currentEndY, canvas.height);
+    // Finalize last page
+    const finalEnd = Math.min(Math.max(currentEndY, canvas.height), canvas.height);
     if (finalEnd > pageStartY) {
-      pages.push({ startY: pageStartY, endY: Math.min(finalEnd, canvas.height) });
+      pages.push({ startY: pageStartY, endY: finalEnd });
     }
     
     // Render each page slice
