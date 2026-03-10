@@ -1110,31 +1110,27 @@ const MonteCarloSimulationWrapper = ({ molecules }: { molecules: MoleculeProfile
 
 // PDF Export Wrapper
 const PDFExportWrapper = ({ molecules }: { molecules: MoleculeProfile[] }) => {
-  const [selectedMolecule, setSelectedMolecule] = useState<string>("");
-  const [result, setResult] = useState<PeakSalesResult | null>(null);
-  const [moleculeInfo, setMoleculeInfo] = useState({ 
-    name: "Custom Analysis", 
-    ta: "N/A", 
-    phase: "N/A", 
-    company: "N/A" 
-  });
+  const { sessionMolecule } = useSessionMolecule();
   
-  useEffect(() => {
-    if (selectedMolecule) {
-      const molecule = molecules.find(m => m.id === selectedMolecule);
-      if (molecule) {
-        const peakSalesResult = calculatePeakSalesIndex(molecule);
-        setResult(peakSalesResult);
-        setMoleculeInfo({
-          name: molecule.name,
-          ta: molecule.therapeuticArea,
-          phase: molecule.phase,
-          company: molecule.company
-        });
-      }
-    }
-  }, [selectedMolecule, molecules]);
+  const result = useMemo<PeakSalesResult | null>(() => {
+    if (!sessionMolecule) return null;
+    return calculatePeakSalesIndex(sessionMolecule);
+  }, [sessionMolecule]);
   
+  if (!sessionMolecule || !result) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -1144,49 +1140,29 @@ const PDFExportWrapper = ({ molecules }: { molecules: MoleculeProfile[] }) => {
             Export Peak Sales Report
           </CardTitle>
           <CardDescription>
-            Generate a comprehensive PDF report for individual molecule analysis
+            Generate a comprehensive PDF report for {sessionMolecule.name}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Label className="text-sm font-medium">Select Molecule for Report</Label>
-              <Select value={selectedMolecule} onValueChange={setSelectedMolecule}>
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Select a molecule to generate report..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-[300px]">
-                  {molecules.slice(0, 100).map((mol) => (
-                    <SelectItem key={mol.id} value={mol.id}>
-                      {mol.name} ({mol.phase}) - {mol.company}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+            <Pill className="h-4 w-4 text-primary shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {sessionMolecule.nctId} | {sessionMolecule.phase} | {sessionMolecule.company}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
       
-      {result ? (
-        <PeakSalesPDFReport 
-          result={result}
-          moleculeName={moleculeInfo.name}
-          therapeuticArea={moleculeInfo.ta}
-          phase={moleculeInfo.phase}
-          company={moleculeInfo.company}
-        />
-      ) : (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-lg font-medium">Select a Molecule</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Choose a molecule from the dropdown above to generate a comprehensive PDF report
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <PeakSalesPDFReport 
+        result={result}
+        moleculeName={sessionMolecule.name}
+        therapeuticArea={sessionMolecule.therapeuticArea}
+        phase={sessionMolecule.phase}
+        company={sessionMolecule.company}
+      />
     </div>
   );
 };
