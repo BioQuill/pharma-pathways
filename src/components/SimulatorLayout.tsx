@@ -99,6 +99,17 @@ export function SimulatorLayout({
         </Collapsible>
       )}
 
+      {/* Interpretive Narrative */}
+      {narrative && (
+        <div className="border border-border/60 bg-muted/20 rounded-lg p-4">
+          <h4 className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            What this means
+          </h4>
+          <p className="text-sm italic text-muted-foreground leading-relaxed">{narrative}</p>
+        </div>
+      )}
+
       {/* Additional content */}
       {children}
     </div>
