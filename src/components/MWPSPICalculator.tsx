@@ -111,6 +111,20 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
   const accessContribution = ((accessScore[0] / 100) * market.access).toFixed(1);
   const politicalContribution = ((politicalScore[0] / 100) * market.political).toFixed(1);
 
+  if (!sessionMolecule) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-16 text-center">
+          <Pill className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-semibold">No Molecule Selected</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Select a molecule using "Use in Simulator →" to run this model
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border-primary/20">
       <CardHeader>
@@ -123,30 +137,24 @@ export const MWPSPICalculator = ({ molecules }: MWPSPICalculatorProps) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Molecule Selection */}
+        {/* Active Molecule Display */}
         <div className="grid gap-4 md:grid-cols-4 items-end">
           <div className="space-y-2">
             <label className="text-sm font-semibold flex items-center gap-1.5">
-              <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
+              <Pill className="h-3.5 w-3.5" /> Active Molecule
             </label>
-            <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
-              <SelectTrigger>
-                <SelectValue placeholder="Manual input" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                <SelectItem value="manual">— Manual Input —</SelectItem>
-                {allMolecules.map(m => (
-                  <SelectItem key={m.id} value={m.id}>
-                    {m.name} ({m.indication})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {selectedMolecule !== "manual" && (
-              <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
-                Scores auto-populated from molecule data. Adjust sliders to fine-tune.
-              </p>
-            )}
+            <div className="flex items-center gap-2 p-2.5 rounded-md border bg-primary/5 border-primary/20">
+              <Pill className="h-4 w-4 text-primary shrink-0" />
+              <div className="min-w-0">
+                <p className="text-sm font-bold uppercase truncate">{sessionMolecule.name}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {sessionMolecule.nctId} | {sessionMolecule.phase}
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground italic">
+              TA baseline estimate — adjust sliders to fine-tune
+            </p>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold">Select Market</label>
