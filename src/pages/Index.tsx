@@ -2191,17 +2191,17 @@ const IndexInner = () => {
         {/* ═══ MOLECULES DATABASE — always visible on platform page ═══ */}
         {topNavMode === 'platform' && !selectedMolecule && (
           <div className="mt-6 space-y-4">
-            {/* 80px spacer between TA chart / model panels and molecule database */}
-            <div style={{ height: 80 }} />
+            {/* Spacer between TA chart / model panels and molecule database */}
+            <div style={{ height: 0 }} />
 
-            {/* Yellow MOLECULES DATABASE header bar */}
+            {/* Navy MOLECULES DATABASE header bar */}
             <div
-              className="w-full rounded-lg border border-[#FDE68A] px-4 flex items-center"
-              style={{ height: 40, backgroundColor: '#FEFCE8' }}
+              className="w-full rounded-lg px-4 flex items-center"
+              style={{ height: 40, backgroundColor: '#0E1D35' }}
             >
               <span
-                className="text-[13px] font-bold text-[#1e3a5f]"
-                style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}
+                className="text-[13px] font-bold text-white"
+                style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, letterSpacing: '0.05em' }}
               >
                 MOLECULES DATABASE
               </span>
