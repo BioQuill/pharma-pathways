@@ -328,7 +328,7 @@ export const exportDomToPDF = async (
       pages.push({ startY: pageStartY, endY: finalEnd });
     }
     
-    // Render each page slice
+    // Render each page slice — scale to fit content area height
     for (let p = 0; p < pages.length; p++) {
       if (p > 0) {
         doc.addPage();
@@ -350,8 +350,24 @@ export const exportDomToPDF = async (
         );
         
         const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.98);
-        const sliceImgHeight = (actualSlice * imgWidth) / canvas.width;
-        doc.addImage(sliceData, 'JPEG', margin, contentMarginTop, imgWidth, sliceImgHeight);
+        
+        // Calculate natural height at full width
+        const naturalHeight = (actualSlice * imgWidth) / canvas.width;
+        
+        // If content is taller than available area, scale down to fit
+        let renderWidth = imgWidth;
+        let renderHeight = naturalHeight;
+        let renderX = margin;
+        
+        if (naturalHeight > contentAreaHeight) {
+          const scaleFactor = contentAreaHeight / naturalHeight;
+          renderWidth = imgWidth * scaleFactor;
+          renderHeight = contentAreaHeight;
+          // Center horizontally after scaling
+          renderX = margin + (imgWidth - renderWidth) / 2;
+        }
+        
+        doc.addImage(sliceData, 'JPEG', renderX, contentMarginTop, renderWidth, renderHeight);
       }
     }
     
@@ -361,23 +377,23 @@ export const exportDomToPDF = async (
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
       
-      // Single yellow header bar — 1cm height
+      // Compact yellow header bar
       doc.setFillColor(245, 197, 24); // #F5C518
       doc.rect(0, 0, pageWidth, headerHeight, 'F');
-      doc.setFontSize(6);
+      doc.setFontSize(5.5);
       doc.setTextColor(14, 29, 53);
       doc.setFont('Helvetica', 'bold');
-      doc.text('BiOQUILL\u2122', 15, headerHeight / 2 + 1);
+      doc.text('BiOQUILL\u2122', margin + 2, headerHeight / 2 + 1);
       doc.setFont('Helvetica', 'normal');
-      doc.setFontSize(4);
-      doc.text('Know the odds. Understand the pipeline. Win the race.', pageWidth / 2, headerHeight / 2 + 1, { align: 'center' });
       doc.setFontSize(3.5);
-      doc.text('Data refreshed: 05/03/2026', pageWidth - 15, headerHeight / 2 + 1, { align: 'right' });
+      doc.text('Know the odds. Understand the pipeline. Win the race.', pageWidth / 2, headerHeight / 2 + 1, { align: 'center' });
+      doc.setFontSize(3);
+      doc.text('Data refreshed: 05/03/2026', pageWidth - margin - 2, headerHeight / 2 + 1, { align: 'right' });
       
       // Watermark at bottom
-      doc.setFontSize(6);
+      doc.setFontSize(5);
       doc.setTextColor(180, 180, 180);
-      doc.text(watermarkText, pageWidth / 2, pageHeight - 4, { align: 'center' });
+      doc.text(watermarkText, pageWidth / 2, pageHeight - 2, { align: 'center' });
     }
     
     doc.save(filename);
