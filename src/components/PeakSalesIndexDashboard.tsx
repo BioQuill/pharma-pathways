@@ -804,6 +804,15 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
     </div>
   );
 
+  const peakNarrative = (() => {
+    const ps = results.peakSalesEstimate * 1000; // convert B to M
+    const strongest = results.componentScores?.[0]?.label || "Base Market";
+    const weakest = results.componentScores?.[results.componentScores.length - 1]?.label || "Competitive";
+    if (ps > 5000) return `Blockbuster-scale peak sales potential at $${results.peakSalesEstimate}B. ${strongest} is the primary value driver. ${weakest} represents the main commercial risk to monitor.`;
+    if (ps >= 1000) return `Significant commercial opportunity with peak sales in the $${results.peakSalesEstimate}B range. ${strongest} is the key value driver. ${weakest} represents the main commercial risk.`;
+    return `Moderate commercial scale at $${results.peakSalesEstimate}B, potentially appropriate for a niche indication or specific population. Market access and pricing strategy will be critical to maximising revenue.`;
+  })();
+
   return (
     <SimulatorLayout
       badgeValue={results.compositeScore}
@@ -813,6 +822,7 @@ const PeakSalesCalculator = ({ molecules }: PeakSalesCalculatorProps) => {
       autoBaseline={true}
       chart={peakSalesContextChart}
       parameters={peakSalesParameters}
+      narrative={peakNarrative}
       secondaryStats={[
         { label: "BB Prob", value: `${results.blockbusterProbability}%` },
         { label: "Est. Peak", value: `$${results.peakSalesEstimate}B` },
