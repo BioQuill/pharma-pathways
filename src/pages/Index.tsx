@@ -1053,9 +1053,9 @@ const IndexInner = () => {
                 { id: 'lpi-3', label: 'LPI', sub: 'Launch probability' },
                 { id: 'ti-analysis', label: 'TI', sub: 'Therapeutic index' },
                 { id: 'ttm', label: 'TTM', sub: 'Time to market' },
-                { id: 'regulatory', label: 'Regulatory Timeline', sub: 'Approval pathway' },
+                { id: 'reg-timeline', label: 'Regulatory Timeline', sub: 'Approval pathway' },
                 { id: 'clinical-studies', label: 'Clinical Studies', sub: 'Trial overview' },
-                { id: 'ta-risk', label: 'TA Risk Index', sub: 'Area risk' },
+                { id: 'regulatory', label: 'TA Risk Index', sub: 'Area risk' },
               ].map(card => (
                 <button
                   key={card.id}
@@ -1078,7 +1078,7 @@ const IndexInner = () => {
                 { id: 'peak-sales', label: 'Peak Sales', sub: 'Revenue potential' },
                 { id: 'blockbuster', label: 'Blockbuster Probability', sub: 'Blockbuster odds' },
                 { id: 'pa-model1', label: 'PA Index-1', sub: 'Payer access' },
-                { id: 'pa-model2', label: 'PA Index-2', sub: 'Comparator payer' },
+                { id: 'pa-model2-stub', label: 'PA Index-2', sub: 'Comparator payer' },
                 { id: 'capm-alpha', label: 'CAPM Alpha', sub: 'Risk-adjusted return' },
                 { id: 'lpi-2', label: 'Investment Score', sub: 'Investment grade' },
                 { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario simulation' },
