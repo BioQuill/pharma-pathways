@@ -1917,23 +1917,10 @@ const IndexInner = () => {
             </Card>
           </TabsContent>
 
-          {/* PA Index-2 Stub */}
+          {/* PA Index-2 — inline calculator at top */}
           <TabsContent value="pa-model2-stub" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" />
-                  PA Index-2 — Comparative Payer Likelihood Matrix
-                </CardTitle>
-                <CardDescription>Historical approval/coverage base rates with molecule-specific comparator benchmarking</CardDescription>
-              </CardHeader>
-              <CardContent className="py-8 text-center space-y-4">
-                <p className="text-muted-foreground">Requires manual comparator input — run in simulator/calculator</p>
-                <Button onClick={() => { setActiveTab('pa-model2'); }}>
-                  Open Full Calculator →
-                </Button>
-              </CardContent>
-            </Card>
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Model2Calculator />
           </TabsContent>
           <TabsContent value="watchlist" className="space-y-6">
             <WatchlistPanel
