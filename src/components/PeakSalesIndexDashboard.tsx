@@ -880,18 +880,22 @@ const HistoricalValidation = () => {
             <CardDescription>Model calibration data from 2014-2024 launches</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+            <ChartContainer
+              config={{
+                avgScore: { label: "Avg Score", color: "hsl(var(--primary))" },
+                blockbusterRate: { label: "Blockbuster %", color: "hsl(var(--chart-2))" },
+              }}
+              className="h-[300px] w-full"
+            >
                 <BarChart data={validationByTA} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" domain={[0, 100]} />
                   <YAxis dataKey="ta" type="category" width={120} tick={{ fontSize: 11 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="avgScore" fill="hsl(var(--primary))" name="Avg Score" />
-                  <Bar dataKey="blockbusterRate" fill="hsl(var(--chart-2))" name="Blockbuster %" />
+                  <Bar dataKey="avgScore" fill="var(--color-avgScore)" name="Avg Score" />
+                  <Bar dataKey="blockbusterRate" fill="var(--color-blockbusterRate)" name="Blockbuster %" />
                 </BarChart>
-              </ResponsiveContainer>
-            </div>
+            </ChartContainer>
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
