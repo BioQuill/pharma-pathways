@@ -264,7 +264,7 @@ export const PTRSMonteCarloComparison: React.FC<PTRSMonteCarloComparisonProps> =
                   <SelectValue placeholder="Add molecule to compare..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableMolecules.slice(0, 50).map(m => (
+                  {availableMolecules.filter(m => !m.isFailed).slice(0, 200).map(m => (
                     <SelectItem key={m.id} value={m.id}>
                       {m.name} ({m.phase})
                     </SelectItem>

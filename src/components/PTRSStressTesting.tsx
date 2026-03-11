@@ -378,7 +378,7 @@ export const PTRSStressTesting: React.FC<PTRSStressTestingProps> = ({ molecules 
                   <SelectValue placeholder="Choose a molecule to stress test..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {molecules.slice(0, 50).map(m => (
+                  {molecules.filter(m => !m.isFailed).slice(0, 200).map(m => (
                     <SelectItem key={m.id} value={m.id}>
                       {m.name} ({m.phase})
                     </SelectItem>
