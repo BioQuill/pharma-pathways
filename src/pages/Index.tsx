@@ -1752,6 +1752,7 @@ const IndexInner = () => {
 
           {/* TI Analysis Tab */}
           <TabsContent value="ti-analysis" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
