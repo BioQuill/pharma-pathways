@@ -52,6 +52,7 @@ import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
 import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/CompetitiveAnalysis";
 import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
 import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
+import { getAllTACompositeIndexes } from "@/lib/taCompositeIndex";
 import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
