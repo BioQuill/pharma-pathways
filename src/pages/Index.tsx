@@ -684,13 +684,12 @@ const IndexInner = () => {
     },
   } as const;
 
-  // Strategy Hub tabs
+  // Strategy Hub tabs — Investment Score, CAPM Alpha, Monte Carlo moved to main page cards
   const strategyHubTabs = [
-    { value: 'lpi-2', label: 'Investment Score', icon: TrendingUp },
     { value: 'top-100', label: 'Top 100', icon: Target },
     { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
     { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
-    { value: 'monte-carlo-hub', label: 'Monte Carlo Simulation', icon: Activity },
+  ];
     { value: 'capm-alpha', label: 'CAPM Alpha', icon: Landmark },
   ] as const;
 
