@@ -73,14 +73,16 @@ function FactorRow({ factor }: { factor: LaunchFactor }) {
   );
 }
 
-function TACard({ taIndex }: { taIndex: TACompositeIndex }) {
+function TACard({ taIndex, isHighlighted }: { taIndex: TACompositeIndex; isHighlighted?: boolean }) {
   const criticalFactors = taIndex.factors.filter(f => f.impact === 5);
   const highFactors = taIndex.factors.filter(f => f.impact === 4);
   const otherFactors = taIndex.factors.filter(f => f.impact <= 3);
   const modifiedFactors = taIndex.factors.filter(f => f.multiplier !== 1.0);
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className={`hover:shadow-md transition-shadow ${isHighlighted ? 'border-2 border-[#F59E0B] bg-[#FEFCE8]' : ''}`}
+      style={isHighlighted ? { borderLeft: '4px solid #F59E0B' } : undefined}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
