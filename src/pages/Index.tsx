@@ -1766,6 +1766,119 @@ const IndexInner = () => {
             <LPI3Dashboard molecules={allMolecules} />
           </TabsContent>
 
+          {/* LP% — Industry Phase Success Rate Tab */}
+          <TabsContent value="lp-pct" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  LP% — Industry Phase Success Rate
+                </CardTitle>
+                <CardDescription>Historical probability of a drug advancing through each clinical phase based on industry-wide data (BIO/Norstella 2011–2024)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {simulatorMolecule ? (() => {
+                  const phase = simulatorMolecule.phase.toLowerCase();
+                  let lpPct = 12;
+                  if (phase.includes('approved')) lpPct = 100;
+                  else if (phase.includes('iii') || phase.includes('3')) lpPct = 58;
+                  else if (phase.includes('ii') || phase.includes('2')) lpPct = 29;
+                  else if (phase.includes('i') || phase.includes('1')) lpPct = 52;
+                  return (
+                    <div className="space-y-6">
+                      <div className="flex flex-col items-center gap-3 py-4">
+                        <SimulatorResultBadge value={lpPct} label="Industry Phase Success Rate" suffix="%" />
+                        <p className="text-xs text-muted-foreground text-center max-w-md">
+                          Historical likelihood of advancing from <strong>{simulatorMolecule.phase}</strong> to the next phase, across all therapeutic areas.
+                        </p>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="text-left py-2 px-3 font-semibold">Phase Transition</th>
+                              <th className="text-center py-2 px-3 font-semibold">Overall</th>
+                              <th className="text-center py-2 px-3 font-semibold">Oncology</th>
+                              <th className="text-center py-2 px-3 font-semibold">Non-Oncology</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              { phase: "Phase I → II", overall: 52, onc: 45, nonOnc: 58 },
+                              { phase: "Phase II → III", overall: 29, onc: 24, nonOnc: 34 },
+                              { phase: "Phase III → NDA", overall: 58, onc: 51, nonOnc: 64 },
+                              { phase: "NDA → Approval", overall: 85, onc: 82, nonOnc: 88 },
+                              { phase: "Phase I → Approval (cumulative)", overall: 7.9, onc: 5.3, nonOnc: 11.2 },
+                            ].map(row => (
+                              <tr key={row.phase} className="border-b hover:bg-muted/30">
+                                <td className="py-2 px-3 font-medium">{row.phase}</td>
+                                <td className="py-2 px-3 text-center">{row.overall}%</td>
+                                <td className="py-2 px-3 text-center">{row.onc}%</td>
+                                <td className="py-2 px-3 text-center">{row.nonOnc}%</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })() : (
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
+                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Composite Score — LPI + TTM Tab */}
+          <TabsContent value="composite-score" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-primary" />
+                  Composite Score — LPI + TTM
+                </CardTitle>
+                <CardDescription>Combined Launch Probability Index and Time to Market score for pipeline prioritisation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {simulatorMolecule ? (() => {
+                  const lpi = simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 50;
+                  const ttm = calculateTTMMonths(simulatorMolecule.phase, simulatorMolecule.therapeuticArea, simulatorMolecule.companyTrackRecord, simulatorMolecule.approval_status || '', simulatorMolecule.status || '', simulatorMolecule.study_title || simulatorMolecule.trialName || '');
+                  const composite = calculateCompositeScore(lpi, ttm, simulatorMolecule.therapeuticArea);
+                  return (
+                    <div className="space-y-6">
+                      <div className="flex flex-col items-center gap-3 py-4">
+                        <SimulatorResultBadge value={composite} label="Composite Score" suffix="/100" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
+                          <p className="text-xs text-muted-foreground">LPI</p>
+                          <p className="text-2xl font-bold">{lpi}%</p>
+                        </div>
+                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
+                          <p className="text-xs text-muted-foreground">TTM</p>
+                          <p className="text-2xl font-bold">{ttm !== null ? `${ttm}mo` : 'N/A'}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center">
+                        The Composite Score (0–100) blends LPI (launch probability) with TTM (time efficiency) to produce a single pipeline prioritisation signal.
+                      </p>
+                    </div>
+                  );
+                })() : (
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Select a molecule to see its composite score</p>
+                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* TI Analysis Tab */}
           <TabsContent value="ti-analysis" className="space-y-6">
             <SimulatorMoleculeBanner molecules={allMolecules} />
