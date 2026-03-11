@@ -43,7 +43,7 @@ const MonteCarloConvergenceAnalysis: React.FC<MonteCarloConvergenceAnalysisProps
   const [progress, setProgress] = useState(0);
 
   const availableMolecules = useMemo(() => {
-    return molecules.filter(m => !m.isFailed).slice(0, 30);
+    return molecules.filter(m => !m.isFailed);
   }, [molecules]);
 
   const selectedMolecule = useMemo(() => {

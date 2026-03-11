@@ -73,14 +73,16 @@ function FactorRow({ factor }: { factor: LaunchFactor }) {
   );
 }
 
-function TACard({ taIndex }: { taIndex: TACompositeIndex }) {
+function TACard({ taIndex, isHighlighted }: { taIndex: TACompositeIndex; isHighlighted?: boolean }) {
   const criticalFactors = taIndex.factors.filter(f => f.impact === 5);
   const highFactors = taIndex.factors.filter(f => f.impact === 4);
   const otherFactors = taIndex.factors.filter(f => f.impact <= 3);
   const modifiedFactors = taIndex.factors.filter(f => f.multiplier !== 1.0);
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className={`hover:shadow-md transition-shadow ${isHighlighted ? 'border-2 border-[#F59E0B] bg-[#FEFCE8]' : ''}`}
+      style={isHighlighted ? { borderLeft: '4px solid #F59E0B' } : undefined}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -177,7 +179,7 @@ function TACard({ taIndex }: { taIndex: TACompositeIndex }) {
   );
 }
 
-export function TACompositeIndexDashboard() {
+export function TACompositeIndexDashboard({ highlightTA }: { highlightTA?: string } = {}) {
   const allTAIndexes = getAllTACompositeIndexes();
   
   // Sort by composite score descending
@@ -297,7 +299,7 @@ export function TACompositeIndexDashboard() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {highPerformers.map(ta => (
-              <TACard key={ta.ta} taIndex={ta} />
+              <TACard key={ta.ta} taIndex={ta} isHighlighted={!!highlightTA && ta.ta.toUpperCase().includes(highlightTA.toUpperCase().split(' ')[0])} />
             ))}
           </div>
         </div>
@@ -312,7 +314,7 @@ export function TACompositeIndexDashboard() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {mediumPerformers.map(ta => (
-              <TACard key={ta.ta} taIndex={ta} />
+              <TACard key={ta.ta} taIndex={ta} isHighlighted={!!highlightTA && ta.ta.toUpperCase().includes(highlightTA.toUpperCase().split(' ')[0])} />
             ))}
           </div>
         </div>
@@ -327,7 +329,7 @@ export function TACompositeIndexDashboard() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {challengingTAs.map(ta => (
-              <TACard key={ta.ta} taIndex={ta} />
+              <TACard key={ta.ta} taIndex={ta} isHighlighted={!!highlightTA && ta.ta.toUpperCase().includes(highlightTA.toUpperCase().split(' ')[0])} />
             ))}
           </div>
         </div>

@@ -54,7 +54,7 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const filteredMolecules = useMemo(() => {
-    return molecules.filter(m => !m.isFailed).slice(0, 50);
+    return molecules.filter(m => !m.isFailed);
   }, [molecules]);
 
   const toggleMolecule = (id: string) => {

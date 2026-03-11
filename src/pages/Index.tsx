@@ -52,6 +52,7 @@ import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
 import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/CompetitiveAnalysis";
 import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
 import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
+import { getAllTACompositeIndexes } from "@/lib/taCompositeIndex";
 import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
@@ -114,6 +115,8 @@ import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
 import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
 import { SimulatorLayout } from "@/components/SimulatorLayout";
+import { SimulatorResultBadge } from "@/components/SimulatorResultBadge";
+import { Model2Calculator } from "@/components/Model2Calculator";
 
 // TimelinePhase interface imported from moleculesData
 
@@ -684,14 +687,11 @@ const IndexInner = () => {
     },
   } as const;
 
-  // Strategy Hub tabs
+  // Strategy Hub tabs — Investment Score, CAPM Alpha, Monte Carlo moved to main page cards
   const strategyHubTabs = [
-    { value: 'lpi-2', label: 'Investment Score', icon: TrendingUp },
     { value: 'top-100', label: 'Top 100', icon: Target },
     { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
     { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
-    { value: 'monte-carlo-hub', label: 'Monte Carlo Simulation', icon: Activity },
-    { value: 'capm-alpha', label: 'CAPM Alpha', icon: Landmark },
   ] as const;
 
   type AreaKey = keyof typeof areaConfig;
@@ -807,7 +807,7 @@ const IndexInner = () => {
           ].map(item => (
             <button
               key={item.mode}
-              onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('lpi-2'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
+              onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('top-100'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
               className={`text-sm font-bold whitespace-nowrap transition-colors px-2 py-1 ${topNavMode === item.mode ? 'text-white border-b-2 border-[#F5C518]' : 'text-white/80 hover:text-white'}`}
             >
               {item.label}
@@ -954,16 +954,16 @@ const IndexInner = () => {
         {/* 14 Model Selector Cards — 2 rows of 7 */}
         {topNavMode === 'platform' && (
           <div className="mb-6 space-y-2">
-            {/* Row 1: Stage 1 & 2 */}
+            {/* Row 1 */}
             <div className="grid grid-cols-7 gap-2">
               {[
-                { id: 'ptrs', label: 'PTRS', sub: 'Phase success' },
-                { id: 'lpi-3', label: 'LPI', sub: 'Launch probability' },
-                { id: 'ti-analysis', label: 'TI', sub: 'Therapeutic index' },
-                { id: 'ttm', label: 'TTM', sub: 'Time to market' },
-                { id: 'reg-timeline', label: 'Regulatory Timeline', sub: 'Approval pathway' },
-                { id: 'clinical-studies', label: 'Clinical Studies', sub: 'Trial overview' },
-                { id: 'regulatory', label: 'TA Risk Index', sub: 'Area risk' },
+                { id: 'ti-analysis', label: 'TI', sub: 'TD50 / ED50' },
+                { id: 'regulatory', label: 'TA Index', sub: 'Therapeutic Area Success Rate' },
+                { id: 'ptrs', label: 'PTRS', sub: 'Technical & Regulatory Success' },
+                { id: 'ttm', label: 'TTM', sub: 'Time to Market' },
+                { id: 'pa-model1', label: 'PA Index-1', sub: 'Pricing & Access Odds' },
+                { id: 'pa-model2-stub', label: 'PA Index-2', sub: 'Comparative Payer Likelihood' },
+                { id: 'lp-pct', label: 'LP%', sub: 'Industry Phase Success Rate' },
               ].map(card => (
                 <button
                   key={card.id}
@@ -980,16 +980,16 @@ const IndexInner = () => {
                 </button>
               ))}
             </div>
-            {/* Row 2: Stage 3 & 4 */}
+            {/* Row 2 */}
             <div className="grid grid-cols-7 gap-2">
               {[
-                { id: 'peak-sales', label: 'Peak Sales', sub: 'Revenue potential' },
-                { id: 'blockbuster', label: 'Blockbuster Probability', sub: 'Blockbuster odds' },
-                { id: 'pa-model1', label: 'PA Index-1', sub: 'Payer access' },
-                { id: 'pa-model2-stub', label: 'PA Index-2', sub: 'Comparator payer' },
-                { id: 'capm-alpha', label: 'CAPM Alpha', sub: 'Risk-adjusted return' },
-                { id: 'lpi-2', label: 'Investment Score', sub: 'Investment grade' },
-                { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario simulation' },
+                { id: 'lpi-3', label: 'LPI', sub: 'Launch Probability Index' },
+                { id: 'composite-score', label: 'Composite Score', sub: 'LPI + TTM' },
+                { id: 'peak-sales', label: 'Peak Sales Index', sub: 'Revenue Potential' },
+                { id: 'blockbuster', label: 'BB%', sub: '$1B Blockbuster Probability' },
+                { id: 'lpi-2', label: 'Investment Score', sub: '5-Factor Investment Model' },
+                { id: 'capm-alpha', label: 'Alpha', sub: 'Risk-Adjusted Return' },
+                { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario Simulation' },
               ].map(card => (
                 <button
                   key={card.id}
@@ -1111,7 +1111,7 @@ const IndexInner = () => {
                 <div className="flex items-center justify-between pdf-hide-buttons">
                   <div className="flex items-center gap-3">
                     <h2 className="text-2xl font-semibold">Full Due Diligence Report</h2>
-                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF} className="pdf-hide">
+                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF} className="pdf-hide" style={{ display: 'none' }}>
                       <Download className="h-4 w-4 mr-2" />
                       Download PDF
                     </Button>
@@ -1541,10 +1541,25 @@ const IndexInner = () => {
             <TTMBreakdownChart />
           </TabsContent>
 
-          {/* Regulatory Tab */}
+          {/* Regulatory / TA Risk Index Tab — with navy/gold badge */}
           <TabsContent value="regulatory" className="space-y-6">
             <SimulatorMoleculeBanner molecules={allMolecules} />
-            <TACompositeIndexDashboard />
+            {/* TA Risk Index badge for selected molecule */}
+            {simulatorMolecule && (() => {
+              const allTAIndexes = getAllTACompositeIndexes();
+              const molTA = simulatorMolecule.therapeuticArea.toUpperCase();
+              const matchedTA = allTAIndexes.find(t => t.ta.toUpperCase() === molTA) || allTAIndexes.find(t => molTA.includes(t.ta.toUpperCase().split(' ')[0]));
+              const taScore = matchedTA?.compositeScore ?? 0;
+              return (
+                <div className="flex flex-col items-center gap-3 py-4">
+                  <SimulatorResultBadge value={taScore} label="TA Risk Index Score" suffix="%" />
+                  <p className="text-xs text-muted-foreground text-center max-w-md">
+                    This is a <strong>therapeutic-area-level</strong> score for {simulatorMolecule.therapeuticArea}, not molecule-specific.
+                  </p>
+                </div>
+              );
+            })()}
+            <TACompositeIndexDashboard highlightTA={simulatorMolecule?.therapeuticArea} />
           </TabsContent>
 
           {/* PTRS Tab */}
@@ -1751,8 +1766,122 @@ const IndexInner = () => {
             <LPI3Dashboard molecules={allMolecules} />
           </TabsContent>
 
+          {/* LP% — Industry Phase Success Rate Tab */}
+          <TabsContent value="lp-pct" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  LP% — Industry Phase Success Rate
+                </CardTitle>
+                <CardDescription>Historical probability of a drug advancing through each clinical phase based on industry-wide data (BIO/Norstella 2011–2024)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {simulatorMolecule ? (() => {
+                  const phase = simulatorMolecule.phase.toLowerCase();
+                  let lpPct = 12;
+                  if (phase.includes('approved')) lpPct = 100;
+                  else if (phase.includes('iii') || phase.includes('3')) lpPct = 58;
+                  else if (phase.includes('ii') || phase.includes('2')) lpPct = 29;
+                  else if (phase.includes('i') || phase.includes('1')) lpPct = 52;
+                  return (
+                    <div className="space-y-6">
+                      <div className="flex flex-col items-center gap-3 py-4">
+                        <SimulatorResultBadge value={lpPct} label="Industry Phase Success Rate" suffix="%" />
+                        <p className="text-xs text-muted-foreground text-center max-w-md">
+                          Historical likelihood of advancing from <strong>{simulatorMolecule.phase}</strong> to the next phase, across all therapeutic areas.
+                        </p>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="text-left py-2 px-3 font-semibold">Phase Transition</th>
+                              <th className="text-center py-2 px-3 font-semibold">Overall</th>
+                              <th className="text-center py-2 px-3 font-semibold">Oncology</th>
+                              <th className="text-center py-2 px-3 font-semibold">Non-Oncology</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              { phase: "Phase I → II", overall: 52, onc: 45, nonOnc: 58 },
+                              { phase: "Phase II → III", overall: 29, onc: 24, nonOnc: 34 },
+                              { phase: "Phase III → NDA", overall: 58, onc: 51, nonOnc: 64 },
+                              { phase: "NDA → Approval", overall: 85, onc: 82, nonOnc: 88 },
+                              { phase: "Phase I → Approval (cumulative)", overall: 7.9, onc: 5.3, nonOnc: 11.2 },
+                            ].map(row => (
+                              <tr key={row.phase} className="border-b hover:bg-muted/30">
+                                <td className="py-2 px-3 font-medium">{row.phase}</td>
+                                <td className="py-2 px-3 text-center">{row.overall}%</td>
+                                <td className="py-2 px-3 text-center">{row.onc}%</td>
+                                <td className="py-2 px-3 text-center">{row.nonOnc}%</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })() : (
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
+                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Composite Score — LPI + TTM Tab */}
+          <TabsContent value="composite-score" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-primary" />
+                  Composite Score — LPI + TTM
+                </CardTitle>
+                <CardDescription>Combined Launch Probability Index and Time to Market score for pipeline prioritisation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {simulatorMolecule ? (() => {
+                  const lpi = simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 50;
+                  const ttm = calculateTTMMonths(simulatorMolecule.phase, simulatorMolecule.therapeuticArea, simulatorMolecule.companyTrackRecord, simulatorMolecule.approval_status || '', simulatorMolecule.status || '', simulatorMolecule.study_title || simulatorMolecule.trialName || '');
+                  const composite = calculateCompositeScore(lpi, ttm, simulatorMolecule.therapeuticArea);
+                  return (
+                    <div className="space-y-6">
+                      <div className="flex flex-col items-center gap-3 py-4">
+                        <SimulatorResultBadge value={composite} label="Composite Score" suffix="/100" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
+                          <p className="text-xs text-muted-foreground">LPI</p>
+                          <p className="text-2xl font-bold">{lpi}%</p>
+                        </div>
+                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
+                          <p className="text-xs text-muted-foreground">TTM</p>
+                          <p className="text-2xl font-bold">{ttm !== null ? `${ttm}mo` : 'N/A'}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center">
+                        The Composite Score (0–100) blends LPI (launch probability) with TTM (time efficiency) to produce a single pipeline prioritisation signal.
+                      </p>
+                    </div>
+                  );
+                })() : (
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Select a molecule to see its composite score</p>
+                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* TI Analysis Tab */}
           <TabsContent value="ti-analysis" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1904,23 +2033,10 @@ const IndexInner = () => {
             </Card>
           </TabsContent>
 
-          {/* PA Index-2 Stub */}
+          {/* PA Index-2 — inline calculator at top */}
           <TabsContent value="pa-model2-stub" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" />
-                  PA Index-2 — Comparative Payer Likelihood Matrix
-                </CardTitle>
-                <CardDescription>Historical approval/coverage base rates with molecule-specific comparator benchmarking</CardDescription>
-              </CardHeader>
-              <CardContent className="py-8 text-center space-y-4">
-                <p className="text-muted-foreground">Requires manual comparator input — run in simulator/calculator</p>
-                <Button onClick={() => { setActiveTab('pa-model2'); }}>
-                  Open Full Calculator →
-                </Button>
-              </CardContent>
-            </Card>
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Model2Calculator />
           </TabsContent>
           <TabsContent value="watchlist" className="space-y-6">
             <WatchlistPanel
