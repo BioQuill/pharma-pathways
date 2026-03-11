@@ -329,7 +329,7 @@ export function TACompositeIndexDashboard({ highlightTA }: { highlightTA?: strin
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {challengingTAs.map(ta => (
-              <TACard key={ta.ta} taIndex={ta} />
+              <TACard key={ta.ta} taIndex={ta} isHighlighted={!!highlightTA && ta.ta.toUpperCase().includes(highlightTA.toUpperCase().split(' ')[0])} />
             ))}
           </div>
         </div>

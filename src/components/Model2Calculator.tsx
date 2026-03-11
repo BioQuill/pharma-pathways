@@ -220,7 +220,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
       <div className="grid gap-4 md:grid-cols-4 items-end">
         <div className="space-y-2">
           <label className="text-sm font-semibold flex items-center gap-1.5">
-            <Pill className="h-3.5 w-3.5" /> Select Molecule (Optional)
+            <Pill className="h-3.5 w-3.5" /> Molecule for Simulation
           </label>
           <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
             <SelectTrigger>
