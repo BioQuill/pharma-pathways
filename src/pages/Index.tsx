@@ -115,6 +115,8 @@ import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
 import { MoleculePicker } from "@/components/MoleculePicker";
 import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
 import { SimulatorLayout } from "@/components/SimulatorLayout";
+import { SimulatorResultBadge } from "@/components/SimulatorResultBadge";
+import { Model2Calculator } from "@/components/Model2Calculator";
 
 // TimelinePhase interface imported from moleculesData
 
