@@ -1538,10 +1538,25 @@ const IndexInner = () => {
             <TTMBreakdownChart />
           </TabsContent>
 
-          {/* Regulatory Tab */}
+          {/* Regulatory / TA Risk Index Tab — with navy/gold badge */}
           <TabsContent value="regulatory" className="space-y-6">
             <SimulatorMoleculeBanner molecules={allMolecules} />
-            <TACompositeIndexDashboard />
+            {/* TA Risk Index badge for selected molecule */}
+            {simulatorMolecule && (() => {
+              const allTAIndexes = getAllTACompositeIndexes();
+              const molTA = simulatorMolecule.therapeuticArea.toUpperCase();
+              const matchedTA = allTAIndexes.find(t => t.ta.toUpperCase() === molTA) || allTAIndexes.find(t => molTA.includes(t.ta.toUpperCase().split(' ')[0]));
+              const taScore = matchedTA?.compositeScore ?? 0;
+              return (
+                <div className="flex flex-col items-center gap-3 py-4">
+                  <SimulatorResultBadge value={taScore} label="TA Risk Index Score" suffix="%" />
+                  <p className="text-xs text-muted-foreground text-center max-w-md">
+                    This is a <strong>therapeutic-area-level</strong> score for {simulatorMolecule.therapeuticArea}, not molecule-specific.
+                  </p>
+                </div>
+              );
+            })()}
+            <TACompositeIndexDashboard highlightTA={simulatorMolecule?.therapeuticArea} />
           </TabsContent>
 
           {/* PTRS Tab */}
