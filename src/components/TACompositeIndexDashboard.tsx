@@ -177,7 +177,7 @@ function TACard({ taIndex }: { taIndex: TACompositeIndex }) {
   );
 }
 
-export function TACompositeIndexDashboard() {
+export function TACompositeIndexDashboard({ highlightTA }: { highlightTA?: string } = {}) {
   const allTAIndexes = getAllTACompositeIndexes();
   
   // Sort by composite score descending
