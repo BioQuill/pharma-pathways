@@ -1110,7 +1110,7 @@ const IndexInner = () => {
                 <div className="flex items-center justify-between pdf-hide-buttons">
                   <div className="flex items-center gap-3">
                     <h2 className="text-2xl font-semibold">Full Due Diligence Report</h2>
-                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF} className="pdf-hide">
+                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF} className="pdf-hide" style={{ display: 'none' }}>
                       <Download className="h-4 w-4 mr-2" />
                       Download PDF
                     </Button>
