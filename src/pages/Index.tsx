@@ -804,7 +804,7 @@ const IndexInner = () => {
           ].map(item => (
             <button
               key={item.mode}
-              onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('lpi-2'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
+              onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('top-100'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
               className={`text-sm font-bold whitespace-nowrap transition-colors px-2 py-1 ${topNavMode === item.mode ? 'text-white border-b-2 border-[#F5C518]' : 'text-white/80 hover:text-white'}`}
             >
               {item.label}
