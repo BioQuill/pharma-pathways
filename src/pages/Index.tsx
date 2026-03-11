@@ -954,16 +954,16 @@ const IndexInner = () => {
         {/* 14 Model Selector Cards — 2 rows of 7 */}
         {topNavMode === 'platform' && (
           <div className="mb-6 space-y-2">
-            {/* Row 1: Stage 1 & 2 */}
+            {/* Row 1 */}
             <div className="grid grid-cols-7 gap-2">
               {[
-                { id: 'ptrs', label: 'PTRS', sub: 'Phase success' },
-                { id: 'lpi-3', label: 'LPI', sub: 'Launch probability' },
-                { id: 'ti-analysis', label: 'TI', sub: 'Therapeutic index' },
-                { id: 'ttm', label: 'TTM', sub: 'Time to market' },
-                { id: 'reg-timeline', label: 'Regulatory Timeline', sub: 'Approval pathway' },
-                { id: 'clinical-studies', label: 'Clinical Studies', sub: 'Trial overview' },
-                { id: 'regulatory', label: 'TA Risk Index', sub: 'Area risk' },
+                { id: 'ti-analysis', label: 'TI', sub: 'TD50 / ED50' },
+                { id: 'regulatory', label: 'TA Index', sub: 'Therapeutic Area Success Rate' },
+                { id: 'ptrs', label: 'PTRS', sub: 'Technical & Regulatory Success' },
+                { id: 'ttm', label: 'TTM', sub: 'Time to Market' },
+                { id: 'pa-model1', label: 'PA Index-1', sub: 'Pricing & Access Odds' },
+                { id: 'pa-model2-stub', label: 'PA Index-2', sub: 'Comparative Payer Likelihood' },
+                { id: 'lp-pct', label: 'LP%', sub: 'Industry Phase Success Rate' },
               ].map(card => (
                 <button
                   key={card.id}
@@ -980,16 +980,16 @@ const IndexInner = () => {
                 </button>
               ))}
             </div>
-            {/* Row 2: Stage 3 & 4 */}
+            {/* Row 2 */}
             <div className="grid grid-cols-7 gap-2">
               {[
-                { id: 'peak-sales', label: 'Peak Sales', sub: 'Revenue potential' },
-                { id: 'blockbuster', label: 'Blockbuster Probability', sub: 'Blockbuster odds' },
-                { id: 'pa-model1', label: 'PA Index-1', sub: 'Payer access' },
-                { id: 'pa-model2-stub', label: 'PA Index-2', sub: 'Comparator payer' },
-                { id: 'capm-alpha', label: 'CAPM Alpha', sub: 'Risk-adjusted return' },
-                { id: 'lpi-2', label: 'Investment Score', sub: 'Investment grade' },
-                { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario simulation' },
+                { id: 'lpi-3', label: 'LPI', sub: 'Launch Probability Index' },
+                { id: 'composite-score', label: 'Composite Score', sub: 'LPI + TTM' },
+                { id: 'peak-sales', label: 'Peak Sales Index', sub: 'Revenue Potential' },
+                { id: 'blockbuster', label: 'BB%', sub: '$1B Blockbuster Probability' },
+                { id: 'lpi-2', label: 'Investment Score', sub: '5-Factor Investment Model' },
+                { id: 'capm-alpha', label: 'Alpha', sub: 'Risk-Adjusted Return' },
+                { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario Simulation' },
               ].map(card => (
                 <button
                   key={card.id}
