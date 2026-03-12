@@ -13,6 +13,7 @@ import { getAllMolecules, mapTAToModel2Id, deriveModel2Ratios } from "@/lib/allM
 import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 
 const therapeuticAreas = [
   { id: "oncology", label: "1. Oncology & Hematology", rates: { usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 } },
