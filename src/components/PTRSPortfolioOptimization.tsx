@@ -105,7 +105,8 @@ export const PTRSPortfolioOptimization = ({ molecules }: PTRSPortfolioOptimizati
   const filteredMolecules = useMemo(() => {
     return molecules.filter(m => {
       const matchesSearch = m.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        m.company.toLowerCase().includes(searchFilter.toLowerCase());
+        m.company.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        (m.nctId && m.nctId.toLowerCase().includes(searchFilter.toLowerCase()));
       const matchesTA = taFilter === 'all' || m.therapeuticArea.toLowerCase().includes(taFilter.toLowerCase());
       return matchesSearch && matchesTA && !m.isFailed;
     });
