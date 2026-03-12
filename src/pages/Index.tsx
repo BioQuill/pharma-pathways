@@ -975,8 +975,8 @@ const IndexInner = () => {
                   }`}
                   style={{ minHeight: 48 }}
                 >
-                  <p className={`text-xs font-semibold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600 }}>{card.label}</p>
-                  <p className={`text-[10px] leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#64748b]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400 }}>{card.sub}</p>
+                  <p className={`text-xs font-bold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.label}</p>
+                  <p className={`text-[10px] font-bold leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.sub}</p>
                 </button>
               ))}
             </div>
@@ -1001,8 +1001,8 @@ const IndexInner = () => {
                   }`}
                   style={{ minHeight: 48 }}
                 >
-                  <p className={`text-xs font-semibold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600 }}>{card.label}</p>
-                  <p className={`text-[10px] leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#64748b]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400 }}>{card.sub}</p>
+                  <p className={`text-xs font-bold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.label}</p>
+                  <p className={`text-[10px] font-bold leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.sub}</p>
                 </button>
               ))}
             </div>
@@ -2298,7 +2298,7 @@ const IndexInner = () => {
 
         {/* ═══ MOLECULES DATABASE — always visible on platform page ═══ */}
         {topNavMode === 'platform' && !selectedMolecule && (
-          <div className="mt-0 space-y-4">
+          <div className="space-y-4" style={{ marginTop: '0.5cm' }}>
             {/* Navy MOLECULES DATABASE header bar */}
             <div
               className="w-full rounded-lg px-4 flex items-center"
