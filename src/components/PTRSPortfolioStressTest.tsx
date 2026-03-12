@@ -52,10 +52,18 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
   const [isRunning, setIsRunning] = useState(false);
   const [results, setResults] = useState<MoleculeStressResult[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [portfolioStressSearch, setPortfolioStressSearch] = useState('');
 
   const filteredMolecules = useMemo(() => {
-    return molecules.filter(m => !m.isFailed);
-  }, [molecules]);
+    const notFailed = molecules.filter(m => !m.isFailed);
+    if (!portfolioStressSearch.trim()) return notFailed.slice(0, 100);
+    const q = portfolioStressSearch.toLowerCase();
+    return notFailed.filter(m =>
+      m.name?.toLowerCase().includes(q) ||
+      m.nctId?.toLowerCase().includes(q) ||
+      m.company?.toLowerCase().includes(q)
+    ).slice(0, 100);
+  }, [molecules, portfolioStressSearch]);
 
   const toggleMolecule = (id: string) => {
     setSelectedMolecules(prev => 
