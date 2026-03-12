@@ -1001,8 +1001,8 @@ const IndexInner = () => {
                   }`}
                   style={{ minHeight: 48 }}
                 >
-                  <p className={`text-xs font-semibold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 600 }}>{card.label}</p>
-                  <p className={`text-[10px] leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#64748b]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400 }}>{card.sub}</p>
+                  <p className={`text-xs font-bold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.label}</p>
+                  <p className={`text-[10px] font-bold leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.sub}</p>
                 </button>
               ))}
             </div>
