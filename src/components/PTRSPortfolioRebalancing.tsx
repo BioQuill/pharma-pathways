@@ -73,7 +73,9 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
   const filteredMolecules = useMemo(() => {
     return molecules.filter(m => 
       m.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-      m.therapeuticArea.toLowerCase().includes(searchFilter.toLowerCase())
+      m.therapeuticArea.toLowerCase().includes(searchFilter.toLowerCase()) ||
+      (m.nctId && m.nctId.toLowerCase().includes(searchFilter.toLowerCase())) ||
+      m.company.toLowerCase().includes(searchFilter.toLowerCase())
     );
   }, [molecules, searchFilter]);
 
