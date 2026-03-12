@@ -53,6 +53,7 @@ export const PTRSMonteCarloComparison: React.FC<PTRSMonteCarloComparisonProps> =
   const [iterations, setIterations] = useState(10000);
   const [uncertaintyRange, setUncertaintyRange] = useState(15);
   const [activeView, setActiveView] = useState<"overlay" | "sidebyside" | "statistics">("overlay");
+  const [compareSearch, setCompareSearch] = useState('');
 
   const taBaseRates: Record<string, { pts: number; prs: number }> = {
     oncology: { pts: 12, prs: 82 },
