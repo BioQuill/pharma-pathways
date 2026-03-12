@@ -268,20 +268,34 @@ export const PTRSMonteCarloComparison: React.FC<PTRSMonteCarloComparisonProps> =
           </div>
           
           {selectedMoleculeIds.length < 5 && (
-            <div className="flex items-center gap-2">
-              <Select onValueChange={handleAddMolecule}>
-                <SelectTrigger className="w-[300px]">
-                  <SelectValue placeholder="Add molecule to compare..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableMolecules.filter(m => !m.isFailed).slice(0, 200).map(m => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.name} ({m.phase})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Plus className="h-4 w-4 text-muted-foreground" />
+            <div className="space-y-2">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by drug name, NCT ID, or sponsor..."
+                  value={compareSearch}
+                  onChange={(e) => setCompareSearch(e.target.value)}
+                  className="w-full p-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+              {compareSearch.trim() && (
+                <div className="max-h-[200px] overflow-y-auto border rounded-md bg-popover">
+                  {availableMolecules.length === 0 ? (
+                    <div className="p-3 text-sm text-muted-foreground text-center">No molecules found</div>
+                  ) : (
+                    availableMolecules.map(m => (
+                      <button
+                        key={m.id}
+                        onClick={() => { handleAddMolecule(m.id); setCompareSearch(''); }}
+                        className="w-full text-left px-3 py-2 hover:bg-muted/50 border-b border-border/30 last:border-0 text-sm"
+                      >
+                        <span className="font-bold uppercase">{m.name}</span>
+                        <span className="text-xs text-muted-foreground ml-2">{m.nctId} | {m.phase} | {m.company}</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
               <span className="text-sm text-muted-foreground">
                 {5 - selectedMoleculeIds.length} slots remaining
               </span>

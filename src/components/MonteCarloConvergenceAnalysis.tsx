@@ -219,16 +219,30 @@ const MonteCarloConvergenceAnalysis: React.FC<MonteCarloConvergenceAnalysisProps
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 p-4 bg-muted/30 rounded-lg">
             <div>
               <label className="text-sm font-medium mb-2 block">Select Molecule</label>
-              <select
-                className="w-full p-2 rounded-md border bg-background"
-                value={selectedMoleculeId}
-                onChange={(e) => setSelectedMoleculeId(e.target.value)}
-              >
-                <option value="">Select a molecule...</option>
-                {availableMolecules.map(m => (
-                  <option key={m.id} value={m.id}>{m.name} ({m.phase})</option>
-                ))}
-              </select>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by drug name, NCT ID, or sponsor..."
+                  value={convSearch || (selectedMoleculeId ? molecules.find(m => m.id === selectedMoleculeId)?.name || '' : '')}
+                  onChange={(e) => { setConvSearch(e.target.value); setConvDropdownOpen(true); }}
+                  onFocus={() => setConvDropdownOpen(true)}
+                  className="w-full p-2 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                {convDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-1 max-h-[250px] overflow-y-auto bg-popover border rounded-md shadow-lg">
+                    {availableMolecules.map(m => (
+                      <button
+                        key={m.id}
+                        onClick={() => { setSelectedMoleculeId(m.id); setConvSearch(''); setConvDropdownOpen(false); }}
+                        className="w-full text-left px-3 py-2 hover:bg-muted/50 border-b border-border/30 last:border-0 text-sm"
+                      >
+                        <span className="font-bold uppercase">{m.name}</span>
+                        <span className="text-xs text-muted-foreground ml-2">{m.nctId} | {m.phase} | {m.company}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             
             <div>

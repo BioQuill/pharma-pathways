@@ -384,20 +384,30 @@ export const PTRSStressTesting: React.FC<PTRSStressTestingProps> = ({ molecules 
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <div className="flex-1">
+            <div className="flex-1 relative">
               <Label className="text-sm mb-2 block">Select Molecule</Label>
-              <Select value={selectedMoleculeId} onValueChange={setSelectedMoleculeId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a molecule to stress test..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {molecules.filter(m => !m.isFailed).slice(0, 200).map(m => (
-                    <SelectItem key={m.id} value={m.id}>
-                      {m.name} ({m.phase})
-                    </SelectItem>
+              <input
+                type="text"
+                placeholder="Search by drug name, NCT ID, or sponsor..."
+                value={stressSearch || (selectedMoleculeId ? molecules.find(m => m.id === selectedMoleculeId)?.name || '' : '')}
+                onChange={(e) => { setStressSearch(e.target.value); setStressDropdownOpen(true); }}
+                onFocus={() => setStressDropdownOpen(true)}
+                className="w-full p-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+              {stressDropdownOpen && (
+                <div className="absolute z-50 w-full mt-1 max-h-[250px] overflow-y-auto bg-popover border rounded-md shadow-lg">
+                  {stressFilteredMolecules.map(m => (
+                    <button
+                      key={m.id}
+                      onClick={() => { setSelectedMoleculeId(m.id); setStressSearch(''); setStressDropdownOpen(false); }}
+                      className="w-full text-left px-3 py-2 hover:bg-muted/50 border-b border-border/30 last:border-0 text-sm"
+                    >
+                      <span className="font-bold uppercase">{m.name}</span>
+                      <span className="text-xs text-muted-foreground ml-2">{m.nctId} | {m.phase} | {m.company}</span>
+                    </button>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              )}
             </div>
             <div>
               <Label className="text-sm mb-2 block">Iterations</Label>

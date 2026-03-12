@@ -197,6 +197,13 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
                 <Button variant="ghost" size="sm" onClick={() => setSelectedMolecules([])}>Clear</Button>
               </div>
             </div>
+            <input
+              type="text"
+              placeholder="Search by drug name, NCT ID, or sponsor..."
+              value={portfolioStressSearch}
+              onChange={(e) => setPortfolioStressSearch(e.target.value)}
+              className="w-full p-2 mb-3 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
               {filteredMolecules.map(molecule => (
                 <Badge

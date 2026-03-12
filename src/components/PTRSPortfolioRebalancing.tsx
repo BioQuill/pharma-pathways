@@ -468,8 +468,8 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
                 <CardContent>
                   <input
                     type="text"
-                    placeholder="Search molecules..."
-                    className="w-full p-2 mb-3 text-sm border rounded-md bg-background"
+                    placeholder="Search by drug name, NCT ID, or sponsor..."
+                    className="w-full p-2 mb-3 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
                   />
