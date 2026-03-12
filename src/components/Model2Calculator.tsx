@@ -100,6 +100,14 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
   const allMolecules = useMemo(() => getAllMolecules(), []);
   const [selectedMolecule, setSelectedMolecule] = useState("manual");
   const resultRef = useRef<HTMLDivElement>(null);
+  const { sessionMolecule } = useSessionMolecule();
+
+  // Auto-populate from session molecule when it changes
+  useEffect(() => {
+    if (sessionMolecule) {
+      handleMoleculeSelect(sessionMolecule.id);
+    }
+  }, [sessionMolecule]);
 
   const [selectedTAs, setSelectedTAs] = useState<string[]>(["oncology"]);
 
