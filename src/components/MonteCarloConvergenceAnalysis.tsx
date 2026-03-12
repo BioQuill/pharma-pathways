@@ -41,10 +41,19 @@ const MonteCarloConvergenceAnalysis: React.FC<MonteCarloConvergenceAnalysisProps
   const [isRunning, setIsRunning] = useState(false);
   const [result, setResult] = useState<ConvergenceResult | null>(null);
   const [progress, setProgress] = useState(0);
+  const [convSearch, setConvSearch] = useState('');
+  const [convDropdownOpen, setConvDropdownOpen] = useState(false);
 
   const availableMolecules = useMemo(() => {
-    return molecules.filter(m => !m.isFailed);
-  }, [molecules]);
+    const notFailed = molecules.filter(m => !m.isFailed);
+    if (!convSearch.trim()) return notFailed.slice(0, 50);
+    const q = convSearch.toLowerCase();
+    return notFailed.filter(m =>
+      m.name?.toLowerCase().includes(q) ||
+      m.nctId?.toLowerCase().includes(q) ||
+      m.company?.toLowerCase().includes(q)
+    ).slice(0, 50);
+  }, [molecules, convSearch]);
 
   const selectedMolecule = useMemo(() => {
     return molecules.find(m => m.id === selectedMoleculeId);
