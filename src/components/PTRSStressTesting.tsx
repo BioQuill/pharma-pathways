@@ -154,6 +154,19 @@ export const PTRSStressTesting: React.FC<PTRSStressTestingProps> = ({ molecules 
   const [iterations, setIterations] = useState(10000);
   const [showAllScenarios, setShowAllScenarios] = useState(false);
   const [activeView, setActiveView] = useState<"impact" | "distribution" | "comparison">("impact");
+  const [stressSearch, setStressSearch] = useState('');
+  const [stressDropdownOpen, setStressDropdownOpen] = useState(false);
+
+  const stressFilteredMolecules = useMemo(() => {
+    const notFailed = molecules.filter(m => !m.isFailed);
+    if (!stressSearch.trim()) return notFailed.slice(0, 50);
+    const q = stressSearch.toLowerCase();
+    return notFailed.filter(m =>
+      m.name?.toLowerCase().includes(q) ||
+      m.nctId?.toLowerCase().includes(q) ||
+      m.company?.toLowerCase().includes(q)
+    ).slice(0, 50);
+  }, [molecules, stressSearch]);
 
   const taBaseRates: Record<string, { pts: number; prs: number }> = {
     oncology: { pts: 12, prs: 82 },
