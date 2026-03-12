@@ -206,7 +206,16 @@ export const PTRSMonteCarloComparison: React.FC<PTRSMonteCarloComparisonProps> =
     setSelectedMoleculeIds(selectedMoleculeIds.filter(id => id !== moleculeId));
   };
 
-  const availableMolecules = molecules.filter(m => !selectedMoleculeIds.includes(m.id));
+  const availableMolecules = useMemo(() => {
+    const notSelected = molecules.filter(m => !selectedMoleculeIds.includes(m.id) && !m.isFailed);
+    if (!compareSearch.trim()) return notSelected.slice(0, 50);
+    const q = compareSearch.toLowerCase();
+    return notSelected.filter(m =>
+      m.name?.toLowerCase().includes(q) ||
+      m.nctId?.toLowerCase().includes(q) ||
+      m.company?.toLowerCase().includes(q)
+    ).slice(0, 50);
+  }, [molecules, selectedMoleculeIds, compareSearch]);
 
   const handleExportPDF = async () => {
     const { exportDomToPDF } = await import('@/lib/pdfGenerator');
