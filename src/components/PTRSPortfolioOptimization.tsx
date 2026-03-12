@@ -105,7 +105,8 @@ export const PTRSPortfolioOptimization = ({ molecules }: PTRSPortfolioOptimizati
   const filteredMolecules = useMemo(() => {
     return molecules.filter(m => {
       const matchesSearch = m.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-        m.company.toLowerCase().includes(searchFilter.toLowerCase());
+        m.company.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        (m.nctId && m.nctId.toLowerCase().includes(searchFilter.toLowerCase()));
       const matchesTA = taFilter === 'all' || m.therapeuticArea.toLowerCase().includes(taFilter.toLowerCase());
       return matchesSearch && matchesTA && !m.isFailed;
     });
@@ -328,7 +329,7 @@ export const PTRSPortfolioOptimization = ({ molecules }: PTRSPortfolioOptimizati
           <CardContent className="space-y-4">
             <div className="flex gap-2">
               <Input
-                placeholder="Search molecules..."
+                placeholder="Search by drug name, NCT ID, or sponsor..."
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 className="flex-1"

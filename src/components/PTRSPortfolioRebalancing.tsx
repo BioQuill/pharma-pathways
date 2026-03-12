@@ -73,7 +73,9 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
   const filteredMolecules = useMemo(() => {
     return molecules.filter(m => 
       m.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-      m.therapeuticArea.toLowerCase().includes(searchFilter.toLowerCase())
+      m.therapeuticArea.toLowerCase().includes(searchFilter.toLowerCase()) ||
+      (m.nctId && m.nctId.toLowerCase().includes(searchFilter.toLowerCase())) ||
+      m.company.toLowerCase().includes(searchFilter.toLowerCase())
     );
   }, [molecules, searchFilter]);
 
@@ -466,8 +468,8 @@ export const PTRSPortfolioRebalancing: React.FC<PTRSPortfolioRebalancingProps> =
                 <CardContent>
                   <input
                     type="text"
-                    placeholder="Search molecules..."
-                    className="w-full p-2 mb-3 text-sm border rounded-md bg-background"
+                    placeholder="Search by drug name, NCT ID, or sponsor..."
+                    className="w-full p-2 mb-3 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
                   />

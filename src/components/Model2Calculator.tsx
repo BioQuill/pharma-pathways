@@ -13,6 +13,7 @@ import { getAllMolecules, mapTAToModel2Id, deriveModel2Ratios } from "@/lib/allM
 import { Document, Page, Text, View, generateAndDownloadPDF, formatReportDate, getScoreColor, pdfStyles, PDFWatermark } from "@/lib/pdfGenerator";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSessionMolecule } from "@/contexts/SessionMoleculeContext";
 
 const therapeuticAreas = [
   { id: "oncology", label: "1. Oncology & Hematology", rates: { usComm: 75, usMed: 80, uk: 70, germany: 55, japan: 35, china: 30, india: 25, brazil: 35 } },
@@ -99,6 +100,14 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
   const allMolecules = useMemo(() => getAllMolecules(), []);
   const [selectedMolecule, setSelectedMolecule] = useState("manual");
   const resultRef = useRef<HTMLDivElement>(null);
+  const { sessionMolecule } = useSessionMolecule();
+
+  // Auto-populate from session molecule when it changes
+  useEffect(() => {
+    if (sessionMolecule) {
+      handleMoleculeSelect(sessionMolecule.id);
+    }
+  }, [sessionMolecule]);
 
   const [selectedTAs, setSelectedTAs] = useState<string[]>(["oncology"]);
 
@@ -216,99 +225,12 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Inline 4-column selector row */}
-      <div className="grid gap-4 md:grid-cols-4 items-end">
-        <div className="space-y-2">
-          <label className="text-sm font-semibold flex items-center gap-1.5">
-            <Pill className="h-3.5 w-3.5" /> Molecule for Simulation
-          </label>
-          <Select value={selectedMolecule} onValueChange={handleMoleculeSelect}>
-            <SelectTrigger>
-              <SelectValue placeholder="Manual input" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              <SelectItem value="manual">— Manual Input —</SelectItem>
-              {allMolecules.map(m => (
-                <SelectItem key={m.id} value={m.id}>
-                  {m.name} ({m.indication})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {selectedMolecule !== "manual" && (
-            <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
-              TA and ratios auto-populated. Adjust sliders to fine-tune.
-            </p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">Select Market</label>
-          <Select value={selectedMarket} onValueChange={setSelectedMarket}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(marketLabels).map(([key, label]) => (
-                <SelectItem key={key} value={key}>{label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-semibold">Select Therapeutic Area(s) <span className="text-xs text-muted-foreground font-normal">(1–5)</span></label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" role="combobox" className="w-full justify-between h-10 font-normal">
-                <span className="truncate text-sm">
-                  {selectedTAs.length === 1
-                    ? therapeuticAreas.find(t => t.id === selectedTAs[0])?.label
-                    : `${selectedTAs.length} TAs selected`}
-                </span>
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-72 p-2 max-h-[300px] overflow-y-auto" align="start">
-              <div className="space-y-1">
-                {therapeuticAreas.map(t => (
-                  <label
-                    key={t.id}
-                    className={`flex items-center gap-2 rounded px-2 py-1.5 text-sm cursor-pointer hover:bg-muted/50 ${selectedTAs.includes(t.id) ? 'bg-primary/5' : ''}`}
-                  >
-                    <Checkbox
-                      checked={selectedTAs.includes(t.id)}
-                      onCheckedChange={() => toggleTA(t.id)}
-                      disabled={!selectedTAs.includes(t.id) && selectedTAs.length >= 5}
-                    />
-                    {t.label}
-                  </label>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          {selectedTAs.length > 1 && (
-            <div className="flex flex-wrap gap-1">
-              {selectedTAs.map(taId => {
-                const taItem = therapeuticAreas.find(t => t.id === taId);
-                return (
-                  <Badge key={taId} variant="secondary" className="text-xs gap-1">
-                    {taItem?.label}
-                    <X className="h-3 w-3 cursor-pointer" onClick={() => toggleTA(taId)} />
-                  </Badge>
-                );
-              })}
-            </div>
-          )}
-          {selectedTAs.length > 1 && (
-            <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-1.5 rounded border border-blue-200">
-              Base rates averaged across {selectedTAs.length} therapeutic areas.
-            </p>
-          )}
-        </div>
-        <Button className="bg-green-600 hover:bg-green-700 text-white font-bold h-10 gap-2" onClick={() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}>
-          <Calculator className="h-4 w-4" />
-          Calculate
-        </Button>
-      </div>
+      {/* Auto-populated info when session molecule is active */}
+      {sessionMolecule && selectedMolecule !== "manual" && (
+        <p className="text-xs text-muted-foreground bg-blue-50 dark:bg-blue-950/20 p-2 rounded border border-blue-200">
+          TA and ratios auto-populated from <strong>{sessionMolecule.name}</strong>. Adjust sliders below to fine-tune.
+        </p>
+      )}
 
       {/* Pediatric toggle + Composite Score */}
       <div className="grid gap-4 md:grid-cols-2">

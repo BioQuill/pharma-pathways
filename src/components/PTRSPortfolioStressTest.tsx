@@ -52,10 +52,18 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
   const [isRunning, setIsRunning] = useState(false);
   const [results, setResults] = useState<MoleculeStressResult[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [portfolioStressSearch, setPortfolioStressSearch] = useState('');
 
   const filteredMolecules = useMemo(() => {
-    return molecules.filter(m => !m.isFailed);
-  }, [molecules]);
+    const notFailed = molecules.filter(m => !m.isFailed);
+    if (!portfolioStressSearch.trim()) return notFailed.slice(0, 100);
+    const q = portfolioStressSearch.toLowerCase();
+    return notFailed.filter(m =>
+      m.name?.toLowerCase().includes(q) ||
+      m.nctId?.toLowerCase().includes(q) ||
+      m.company?.toLowerCase().includes(q)
+    ).slice(0, 100);
+  }, [molecules, portfolioStressSearch]);
 
   const toggleMolecule = (id: string) => {
     setSelectedMolecules(prev => 
@@ -189,6 +197,13 @@ const PTRSPortfolioStressTest: React.FC<PTRSPortfolioStressTestProps> = ({ molec
                 <Button variant="ghost" size="sm" onClick={() => setSelectedMolecules([])}>Clear</Button>
               </div>
             </div>
+            <input
+              type="text"
+              placeholder="Search by drug name, NCT ID, or sponsor..."
+              value={portfolioStressSearch}
+              onChange={(e) => setPortfolioStressSearch(e.target.value)}
+              className="w-full p-2 mb-3 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
               {filteredMolecules.map(molecule => (
                 <Badge
