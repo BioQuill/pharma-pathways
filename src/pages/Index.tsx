@@ -2298,7 +2298,7 @@ const IndexInner = () => {
 
         {/* ═══ MOLECULES DATABASE — always visible on platform page ═══ */}
         {topNavMode === 'platform' && !selectedMolecule && (
-          <div className="mt-0 space-y-4">
+          <div className="space-y-4" style={{ marginTop: '0.5cm' }}>
             {/* Navy MOLECULES DATABASE header bar */}
             <div
               className="w-full rounded-lg px-4 flex items-center"
