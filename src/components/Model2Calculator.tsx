@@ -233,7 +233,7 @@ export const Model2Calculator = ({ onStateChange }: Model2CalculatorProps) => {
       )}
 
       {/* Pediatric toggle + Composite Score */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2" style={{ maxWidth: '50%' }}>
         <Card>
           <CardContent className="pt-4 space-y-3">
             <div className="flex items-center justify-between">

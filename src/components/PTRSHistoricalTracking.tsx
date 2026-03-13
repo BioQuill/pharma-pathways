@@ -190,21 +190,31 @@ export const PTRSHistoricalTracking = ({ molecules }: PTRSHistoricalTrackingProp
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Molecule Selector */}
-        <Select value={selectedMoleculeId} onValueChange={setSelectedMoleculeId}>
-          <SelectTrigger className="w-full max-w-md">
-            <SelectValue placeholder="Select a molecule to view historical PTRS..." />
-          </SelectTrigger>
-          <SelectContent className="max-h-[300px]">
-            {molecules.slice(0, 50).map((mol) => (
-              <SelectItem key={mol.id} value={mol.id}>
-                <span className="flex items-center gap-2">
+        <div className="relative w-full max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search by name, NCT ID, condition, or sponsor..."
+            value={searchTerm}
+            onChange={(e) => { setSearchTerm(e.target.value); setShowDropdown(true); }}
+            onFocus={() => setShowDropdown(true)}
+            className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+          {showDropdown && filteredMolecules.length > 0 && (
+            <div className="absolute z-50 w-full mt-1 max-h-[250px] overflow-y-auto bg-popover border rounded-md shadow-lg">
+              {filteredMolecules.map(mol => (
+                <button
+                  key={mol.id}
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-muted/50 flex flex-col"
+                  onClick={() => { setSelectedMoleculeId(mol.id); setSearchTerm(mol.name); setShowDropdown(false); }}
+                >
                   <span className="font-medium">{mol.name}</span>
-                  <span className="text-muted-foreground text-xs">({mol.phase})</span>
-                </span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+                  <span className="text-xs text-muted-foreground">{mol.company} · {mol.nctId || ''} · {mol.indication?.substring(0, 40)}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {selectedMolecule && (
           <>
