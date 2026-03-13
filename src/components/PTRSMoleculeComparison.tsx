@@ -175,21 +175,31 @@ export const PTRSMoleculeComparison = ({ molecules }: PTRSMoleculeComparisonProp
       <CardContent className="space-y-6">
         {/* Molecule Selector */}
         <div className="flex flex-wrap gap-3 items-center">
-          <Select onValueChange={handleAddMolecule} value="">
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Add molecule to compare (max 5)..." />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {molecules.slice(0, 50).filter(m => !selectedMolecules.includes(m.id)).map((mol) => (
-                <SelectItem key={mol.id} value={mol.id}>
-                  <span className="flex items-center gap-2">
+          <div className="relative w-[320px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search by name, NCT ID, condition, or sponsor..."
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setShowDropdown(true); }}
+              onFocus={() => setShowDropdown(true)}
+              className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+            {showDropdown && filteredMolecules.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 max-h-[250px] overflow-y-auto bg-popover border rounded-md shadow-lg">
+                {filteredMolecules.map(mol => (
+                  <button
+                    key={mol.id}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-muted/50 flex flex-col"
+                    onClick={() => handleAddMolecule(mol.id)}
+                  >
                     <span className="font-medium">{mol.name}</span>
-                    <span className="text-muted-foreground text-xs">({mol.phase})</span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                    <span className="text-xs text-muted-foreground">{mol.company} · {mol.nctId || ''} · {mol.indication?.substring(0, 40)}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Selected molecules badges */}
           {selectedMolecules.map((id, idx) => {
