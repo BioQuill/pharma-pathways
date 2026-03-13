@@ -608,6 +608,8 @@ const IndexInner = () => {
   const loadIntoSimulator = _ctx.loadIntoSimulator;
   const setOnNavigateToSimulator = _ctx.setOnNavigateToSimulator;
   const simulatorMolecule = _ctx.sessionMolecule;
+  const { cart, removeFromCart, clearCart } = _ctx;
+  const [cartOpen, setCartOpen] = useState(false);
 
   // Register simulator navigation callback
   useEffect(() => {
