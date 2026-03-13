@@ -1780,20 +1780,33 @@ const IndexInner = () => {
                 <CardDescription>Historical probability of a drug advancing through each clinical phase based on industry-wide data (BIO/Norstella 2011–2024)</CardDescription>
               </CardHeader>
               <CardContent>
-                {simulatorMolecule ? (() => {
-                  const phase = simulatorMolecule.phase.toLowerCase();
-                  let lpPct = 12;
-                  if (phase.includes('approved')) lpPct = 100;
-                  else if (phase.includes('iii') || phase.includes('3')) lpPct = 58;
-                  else if (phase.includes('ii') || phase.includes('2')) lpPct = 29;
-                  else if (phase.includes('i') || phase.includes('1')) lpPct = 52;
+                {(() => {
+                  const molsToShow = cart.length > 0 ? cart : (simulatorMolecule ? [simulatorMolecule] : []);
+                  if (molsToShow.length === 0) return (
+                    <div className="py-12 text-center text-muted-foreground">
+                      <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
+                      <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                    </div>
+                  );
+                  const getLpPct = (mol: typeof simulatorMolecule) => {
+                    if (!mol) return 12;
+                    const phase = mol.phase.toLowerCase();
+                    if (phase.includes('approved')) return 100;
+                    if (phase.includes('iii') || phase.includes('3')) return 58;
+                    if (phase.includes('ii') || phase.includes('2')) return 29;
+                    if (phase.includes('i') || phase.includes('1')) return 52;
+                    return 12;
+                  };
                   return (
                     <div className="space-y-6">
-                      <div className="flex flex-col items-center gap-3 py-4">
-                        <SimulatorResultBadge value={lpPct} label="Industry Phase Success Rate" suffix="%" />
-                        <p className="text-xs text-muted-foreground text-center max-w-md">
-                          Historical likelihood of advancing from <strong>{simulatorMolecule.phase}</strong> to the next phase, across all therapeutic areas.
-                        </p>
+                      <div className={`flex flex-wrap justify-center gap-6 py-4`}>
+                        {molsToShow.map(mol => (
+                          <div key={mol.id} className="flex flex-col items-center gap-2">
+                            <p className="text-xs font-bold">{mol.name}</p>
+                            <SimulatorResultBadge value={getLpPct(mol)} label="LP%" suffix="%" />
+                            <p className="text-[10px] text-muted-foreground">{mol.phase}</p>
+                          </div>
+                        ))}
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
@@ -1825,12 +1838,7 @@ const IndexInner = () => {
                       </div>
                     </div>
                   );
-                })() : (
-                  <div className="py-12 text-center text-muted-foreground">
-                    <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
-                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
-                  </div>
-                )}
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
