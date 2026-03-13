@@ -89,6 +89,22 @@ const phaseKeys = ["preclinical", "phase1", "phase2", "phase3", "nda", "approved
 
 export const PTRSHistoricalTracking = ({ molecules }: PTRSHistoricalTrackingProps) => {
   const [selectedMoleculeId, setSelectedMoleculeId] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filteredMolecules = useMemo(() => {
+    if (!searchTerm.trim()) return [];
+    const q = searchTerm.toLowerCase();
+    return molecules
+      .filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        (m.nctId && m.nctId.toLowerCase().includes(q)) ||
+        m.company.toLowerCase().includes(q) ||
+        m.indication.toLowerCase().includes(q) ||
+        m.therapeuticArea.toLowerCase().includes(q)
+      )
+      .slice(0, 30);
+  }, [searchTerm, molecules]);
 
   const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
 
