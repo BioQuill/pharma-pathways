@@ -1847,36 +1847,46 @@ const IndexInner = () => {
                 <CardDescription>Combined Launch Probability Index and Time to Market score for pipeline prioritisation</CardDescription>
               </CardHeader>
               <CardContent>
-                {simulatorMolecule ? (() => {
-                  const lpi = simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 50;
-                  const ttm = calculateTTMMonths(simulatorMolecule.phase, simulatorMolecule.therapeuticArea, simulatorMolecule.companyTrackRecord, simulatorMolecule.approval_status || '', simulatorMolecule.status || '', simulatorMolecule.study_title || simulatorMolecule.trialName || '');
-                  const composite = calculateCompositeScore(lpi, ttm, simulatorMolecule.therapeuticArea);
+                {(() => {
+                  // Show results for all cart molecules (or just the active one)
+                  const molsToShow = cart.length > 0 ? cart : (simulatorMolecule ? [simulatorMolecule] : []);
+                  if (molsToShow.length === 0) return (
+                    <div className="py-12 text-center text-muted-foreground">
+                      <p className="text-lg font-medium">Select a molecule to see its composite score</p>
+                      <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                    </div>
+                  );
                   return (
                     <div className="space-y-6">
-                      <div className="flex flex-col items-center gap-3 py-4">
-                        <SimulatorResultBadge value={composite} label="Composite Score" suffix="/100" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
-                          <p className="text-xs text-muted-foreground">LPI</p>
-                          <p className="text-2xl font-bold">{lpi}%</p>
-                        </div>
-                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
-                          <p className="text-xs text-muted-foreground">TTM</p>
-                          <p className="text-2xl font-bold">{ttm !== null ? `${ttm}mo` : 'N/A'}</p>
-                        </div>
+                      <div className={`grid gap-6 ${molsToShow.length === 1 ? '' : molsToShow.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+                        {molsToShow.map(mol => {
+                          const lpi = mol._raw?.lpi_score ?? mol.overallScore ?? 50;
+                          const ttm = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.approval_status || '', mol.status || '', mol.study_title || mol.trialName || '');
+                          const composite = calculateCompositeScore(lpi, ttm, mol.therapeuticArea);
+                          return (
+                            <div key={mol.id} className="flex flex-col items-center gap-3 p-4 border rounded-lg">
+                              <p className="text-sm font-bold text-center">{mol.name}</p>
+                              <SimulatorResultBadge value={composite} label="Composite Score" suffix="/100" />
+                              <div className="grid grid-cols-2 gap-3 w-full">
+                                <div className="text-center p-3 bg-muted/30 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">LPI</p>
+                                  <p className="text-xl font-bold">{lpi}%</p>
+                                </div>
+                                <div className="text-center p-3 bg-muted/30 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">TTM</p>
+                                  <p className="text-xl font-bold">{ttm !== null ? `${ttm}mo` : 'N/A'}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                       <p className="text-sm text-muted-foreground text-center">
                         The Composite Score (0–100) blends LPI (launch probability) with TTM (time efficiency) to produce a single pipeline prioritisation signal.
                       </p>
                     </div>
                   );
-                })() : (
-                  <div className="py-12 text-center text-muted-foreground">
-                    <p className="text-lg font-medium">Select a molecule to see its composite score</p>
-                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
-                  </div>
-                )}
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
