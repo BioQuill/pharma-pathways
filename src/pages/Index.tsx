@@ -2303,7 +2303,7 @@ const IndexInner = () => {
           <div className="space-y-4" style={{ marginTop: '0.5cm' }}>
             {/* Navy MOLECULES DATABASE header bar */}
             <div
-              className="w-full rounded-lg px-4 flex items-center"
+              className="w-full rounded-lg px-4 flex items-center justify-between"
               style={{ height: 40, backgroundColor: '#0E1D35' }}
             >
               <span
@@ -2312,6 +2312,50 @@ const IndexInner = () => {
               >
                 MOLECULES DATABASE
               </span>
+
+              {/* Cart Tab */}
+              <div className="relative">
+                <button
+                  onClick={() => setCartOpen(!cartOpen)}
+                  className="flex items-center gap-2 px-3 py-1 rounded-md text-white hover:bg-white/10 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                  <span className="text-xs font-bold">Cart ({cart.length}/3)</span>
+                  {cart.length > 0 && (
+                    <span className="w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center" style={{ backgroundColor: '#F59E0B', color: '#0E1D35' }}>
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Cart Dropdown */}
+                {cartOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-72 bg-popover border rounded-lg shadow-xl z-50 p-3 space-y-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-bold">Simulation Cart</p>
+                      {cart.length > 0 && (
+                        <button onClick={clearCart} className="text-xs text-destructive hover:underline">Empty Cart</button>
+                      )}
+                    </div>
+                    {cart.length === 0 ? (
+                      <p className="text-xs text-muted-foreground py-3 text-center">No molecules in cart. Click "Use in Simulator →" to add.</p>
+                    ) : (
+                      cart.map((mol, idx) => (
+                        <div key={mol.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border text-sm">
+                          <div className="min-w-0">
+                            <p className="font-medium truncate">{mol.name}</p>
+                            <p className="text-xs text-muted-foreground">{mol.company} · {mol.phase}</p>
+                          </div>
+                          <button onClick={() => removeFromCart(mol.id)} className="shrink-0 ml-2 text-muted-foreground hover:text-destructive">
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                    <p className="text-[10px] text-muted-foreground text-center pt-1">All cart molecules appear in model results</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Signal Indicators Legend — right below MOLECULES DATABASE bar */}
