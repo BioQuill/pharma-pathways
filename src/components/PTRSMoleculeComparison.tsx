@@ -99,10 +99,29 @@ const calculatePTRSForMolecule = (molecule: MoleculeProfile) => {
 export const PTRSMoleculeComparison = ({ molecules }: PTRSMoleculeComparisonProps) => {
   const [selectedMolecules, setSelectedMolecules] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "radar" | "bar">("table");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filteredMolecules = useMemo(() => {
+    if (!searchTerm.trim()) return [];
+    const q = searchTerm.toLowerCase();
+    return molecules
+      .filter(m => !selectedMolecules.includes(m.id))
+      .filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        (m.nctId && m.nctId.toLowerCase().includes(q)) ||
+        m.company.toLowerCase().includes(q) ||
+        m.indication.toLowerCase().includes(q) ||
+        m.therapeuticArea.toLowerCase().includes(q)
+      )
+      .slice(0, 30);
+  }, [searchTerm, molecules, selectedMolecules]);
 
   const handleAddMolecule = (moleculeId: string) => {
     if (moleculeId && !selectedMolecules.includes(moleculeId) && selectedMolecules.length < 5) {
       setSelectedMolecules([...selectedMolecules, moleculeId]);
+      setSearchTerm("");
+      setShowDropdown(false);
     }
   };
 
