@@ -608,6 +608,8 @@ const IndexInner = () => {
   const loadIntoSimulator = _ctx.loadIntoSimulator;
   const setOnNavigateToSimulator = _ctx.setOnNavigateToSimulator;
   const simulatorMolecule = _ctx.sessionMolecule;
+  const { cart, removeFromCart, clearCart } = _ctx;
+  const [cartOpen, setCartOpen] = useState(false);
 
   // Register simulator navigation callback
   useEffect(() => {
@@ -1778,20 +1780,33 @@ const IndexInner = () => {
                 <CardDescription>Historical probability of a drug advancing through each clinical phase based on industry-wide data (BIO/Norstella 2011–2024)</CardDescription>
               </CardHeader>
               <CardContent>
-                {simulatorMolecule ? (() => {
-                  const phase = simulatorMolecule.phase.toLowerCase();
-                  let lpPct = 12;
-                  if (phase.includes('approved')) lpPct = 100;
-                  else if (phase.includes('iii') || phase.includes('3')) lpPct = 58;
-                  else if (phase.includes('ii') || phase.includes('2')) lpPct = 29;
-                  else if (phase.includes('i') || phase.includes('1')) lpPct = 52;
+                {(() => {
+                  const molsToShow = cart.length > 0 ? cart : (simulatorMolecule ? [simulatorMolecule] : []);
+                  if (molsToShow.length === 0) return (
+                    <div className="py-12 text-center text-muted-foreground">
+                      <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
+                      <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                    </div>
+                  );
+                  const getLpPct = (mol: typeof simulatorMolecule) => {
+                    if (!mol) return 12;
+                    const phase = mol.phase.toLowerCase();
+                    if (phase.includes('approved')) return 100;
+                    if (phase.includes('iii') || phase.includes('3')) return 58;
+                    if (phase.includes('ii') || phase.includes('2')) return 29;
+                    if (phase.includes('i') || phase.includes('1')) return 52;
+                    return 12;
+                  };
                   return (
                     <div className="space-y-6">
-                      <div className="flex flex-col items-center gap-3 py-4">
-                        <SimulatorResultBadge value={lpPct} label="Industry Phase Success Rate" suffix="%" />
-                        <p className="text-xs text-muted-foreground text-center max-w-md">
-                          Historical likelihood of advancing from <strong>{simulatorMolecule.phase}</strong> to the next phase, across all therapeutic areas.
-                        </p>
+                      <div className={`flex flex-wrap justify-center gap-6 py-4`}>
+                        {molsToShow.map(mol => (
+                          <div key={mol.id} className="flex flex-col items-center gap-2">
+                            <p className="text-xs font-bold">{mol.name}</p>
+                            <SimulatorResultBadge value={getLpPct(mol)} label="LP%" suffix="%" />
+                            <p className="text-[10px] text-muted-foreground">{mol.phase}</p>
+                          </div>
+                        ))}
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
@@ -1823,12 +1838,7 @@ const IndexInner = () => {
                       </div>
                     </div>
                   );
-                })() : (
-                  <div className="py-12 text-center text-muted-foreground">
-                    <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
-                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
-                  </div>
-                )}
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
@@ -1845,36 +1855,46 @@ const IndexInner = () => {
                 <CardDescription>Combined Launch Probability Index and Time to Market score for pipeline prioritisation</CardDescription>
               </CardHeader>
               <CardContent>
-                {simulatorMolecule ? (() => {
-                  const lpi = simulatorMolecule._raw?.lpi_score ?? simulatorMolecule.overallScore ?? 50;
-                  const ttm = calculateTTMMonths(simulatorMolecule.phase, simulatorMolecule.therapeuticArea, simulatorMolecule.companyTrackRecord, simulatorMolecule.approval_status || '', simulatorMolecule.status || '', simulatorMolecule.study_title || simulatorMolecule.trialName || '');
-                  const composite = calculateCompositeScore(lpi, ttm, simulatorMolecule.therapeuticArea);
+                {(() => {
+                  // Show results for all cart molecules (or just the active one)
+                  const molsToShow = cart.length > 0 ? cart : (simulatorMolecule ? [simulatorMolecule] : []);
+                  if (molsToShow.length === 0) return (
+                    <div className="py-12 text-center text-muted-foreground">
+                      <p className="text-lg font-medium">Select a molecule to see its composite score</p>
+                      <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                    </div>
+                  );
                   return (
                     <div className="space-y-6">
-                      <div className="flex flex-col items-center gap-3 py-4">
-                        <SimulatorResultBadge value={composite} label="Composite Score" suffix="/100" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
-                          <p className="text-xs text-muted-foreground">LPI</p>
-                          <p className="text-2xl font-bold">{lpi}%</p>
-                        </div>
-                        <div className="text-center p-4 bg-muted/30 rounded-lg border">
-                          <p className="text-xs text-muted-foreground">TTM</p>
-                          <p className="text-2xl font-bold">{ttm !== null ? `${ttm}mo` : 'N/A'}</p>
-                        </div>
+                      <div className={`grid gap-6 ${molsToShow.length === 1 ? '' : molsToShow.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+                        {molsToShow.map(mol => {
+                          const lpi = mol._raw?.lpi_score ?? mol.overallScore ?? 50;
+                          const ttm = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.approval_status || '', mol.status || '', mol.study_title || mol.trialName || '');
+                          const composite = calculateCompositeScore(lpi, ttm, mol.therapeuticArea);
+                          return (
+                            <div key={mol.id} className="flex flex-col items-center gap-3 p-4 border rounded-lg">
+                              <p className="text-sm font-bold text-center">{mol.name}</p>
+                              <SimulatorResultBadge value={composite} label="Composite Score" suffix="/100" />
+                              <div className="grid grid-cols-2 gap-3 w-full">
+                                <div className="text-center p-3 bg-muted/30 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">LPI</p>
+                                  <p className="text-xl font-bold">{lpi}%</p>
+                                </div>
+                                <div className="text-center p-3 bg-muted/30 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">TTM</p>
+                                  <p className="text-xl font-bold">{ttm !== null ? `${ttm}mo` : 'N/A'}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                       <p className="text-sm text-muted-foreground text-center">
                         The Composite Score (0–100) blends LPI (launch probability) with TTM (time efficiency) to produce a single pipeline prioritisation signal.
                       </p>
                     </div>
                   );
-                })() : (
-                  <div className="py-12 text-center text-muted-foreground">
-                    <p className="text-lg font-medium">Select a molecule to see its composite score</p>
-                    <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
-                  </div>
-                )}
+                })()}
               </CardContent>
             </Card>
           </TabsContent>
@@ -2301,7 +2321,7 @@ const IndexInner = () => {
           <div className="space-y-4" style={{ marginTop: '0.5cm' }}>
             {/* Navy MOLECULES DATABASE header bar */}
             <div
-              className="w-full rounded-lg px-4 flex items-center"
+              className="w-full rounded-lg px-4 flex items-center justify-between"
               style={{ height: 40, backgroundColor: '#0E1D35' }}
             >
               <span
@@ -2310,6 +2330,50 @@ const IndexInner = () => {
               >
                 MOLECULES DATABASE
               </span>
+
+              {/* Cart Tab */}
+              <div className="relative">
+                <button
+                  onClick={() => setCartOpen(!cartOpen)}
+                  className="flex items-center gap-2 px-3 py-1 rounded-md text-white hover:bg-white/10 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                  <span className="text-xs font-bold">Cart ({cart.length}/3)</span>
+                  {cart.length > 0 && (
+                    <span className="w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center" style={{ backgroundColor: '#F59E0B', color: '#0E1D35' }}>
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Cart Dropdown */}
+                {cartOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-72 bg-popover border rounded-lg shadow-xl z-50 p-3 space-y-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-bold">Simulation Cart</p>
+                      {cart.length > 0 && (
+                        <button onClick={clearCart} className="text-xs text-destructive hover:underline">Empty Cart</button>
+                      )}
+                    </div>
+                    {cart.length === 0 ? (
+                      <p className="text-xs text-muted-foreground py-3 text-center">No molecules in cart. Click "Use in Simulator →" to add.</p>
+                    ) : (
+                      cart.map((mol, idx) => (
+                        <div key={mol.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border text-sm">
+                          <div className="min-w-0">
+                            <p className="font-medium truncate">{mol.name}</p>
+                            <p className="text-xs text-muted-foreground">{mol.company} · {mol.phase}</p>
+                          </div>
+                          <button onClick={() => removeFromCart(mol.id)} className="shrink-0 ml-2 text-muted-foreground hover:text-destructive">
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                    <p className="text-[10px] text-muted-foreground text-center pt-1">All cart molecules appear in model results</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Signal Indicators Legend — right below MOLECULES DATABASE bar */}

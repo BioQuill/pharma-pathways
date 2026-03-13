@@ -5,8 +5,7 @@ import { type MoleculeProfile } from '@/lib/moleculesData';
  * SessionMoleculeContext — Single Source of Truth for the active molecule
  * across all simulator dashboards, DD Report, and export features.
  *
- * The molecule stored here is the complete MoleculeProfile with _raw fields
- * and all pre-computed scores (lpi_score, lpi_ci, etc.) attached by useMolecules.ts.
+ * Now includes a Cart (1-3 molecules) for parallel comparison across all 14 cards.
  */
 
 interface SessionMoleculeContextType {
@@ -20,6 +19,12 @@ interface SessionMoleculeContextType {
   onNavigateToSimulator?: () => void;
   setOnNavigateToSimulator: (fn: () => void) => void;
 
+  // ── Cart (1-3 molecules for parallel comparison) ──
+  cart: MoleculeProfile[];
+  addToCart: (mol: MoleculeProfile) => void;
+  removeFromCart: (molId: string) => void;
+  clearCart: () => void;
+
   // ── Backward-compatible aliases ──
   /** @deprecated Use sessionMolecule */
   simulatorMolecule: MoleculeProfile | null;
@@ -32,6 +37,10 @@ const SessionMoleculeContext = createContext<SessionMoleculeContextType>({
   setSessionMolecule: () => {},
   loadIntoSimulator: () => {},
   setOnNavigateToSimulator: () => {},
+  cart: [],
+  addToCart: () => {},
+  removeFromCart: () => {},
+  clearCart: () => {},
   // aliases
   simulatorMolecule: null,
   setSimulatorMolecule: () => {},
@@ -40,11 +49,34 @@ const SessionMoleculeContext = createContext<SessionMoleculeContextType>({
 export function SessionMoleculeProvider({ children }: { children: React.ReactNode }) {
   const [sessionMolecule, setSessionMolecule] = useState<MoleculeProfile | null>(null);
   const [navCallback, setNavCallback] = useState<(() => void) | undefined>();
+  const [cart, setCart] = useState<MoleculeProfile[]>([]);
 
   const loadIntoSimulator = useCallback((mol: MoleculeProfile) => {
     setSessionMolecule(mol);
+    // Also add to cart if not already there and under limit
+    setCart(prev => {
+      if (prev.some(m => m.id === mol.id)) return prev;
+      if (prev.length >= 3) return [...prev.slice(1), mol]; // replace oldest
+      return [...prev, mol];
+    });
     navCallback?.();
   }, [navCallback]);
+
+  const addToCart = useCallback((mol: MoleculeProfile) => {
+    setCart(prev => {
+      if (prev.some(m => m.id === mol.id)) return prev;
+      if (prev.length >= 3) return prev; // max 3
+      return [...prev, mol];
+    });
+  }, []);
+
+  const removeFromCart = useCallback((molId: string) => {
+    setCart(prev => prev.filter(m => m.id !== molId));
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setCart([]);
+  }, []);
 
   const setOnNavigateToSimulator = useCallback((fn: () => void) => {
     setNavCallback(() => fn);
@@ -57,6 +89,10 @@ export function SessionMoleculeProvider({ children }: { children: React.ReactNod
       loadIntoSimulator,
       onNavigateToSimulator: navCallback,
       setOnNavigateToSimulator,
+      cart,
+      addToCart,
+      removeFromCart,
+      clearCart,
       // Backward-compatible aliases
       simulatorMolecule: sessionMolecule,
       setSimulatorMolecule: setSessionMolecule,

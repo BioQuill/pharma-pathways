@@ -1,4 +1,4 @@
-import { Pill, X } from 'lucide-react';
+import { Pill, X, ShoppingCart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useSessionMolecule } from '@/contexts/SessionMoleculeContext';
 import { MoleculePicker } from '@/components/MoleculePicker';
@@ -11,7 +11,7 @@ interface SimulatorMoleculeBannerProps {
 }
 
 export function SimulatorMoleculeBanner({ molecules, showFields = ['sponsor', 'status', 'dates'] }: SimulatorMoleculeBannerProps) {
-  const { sessionMolecule: simulatorMolecule } = useSessionMolecule();
+  const { sessionMolecule: simulatorMolecule, cart, removeFromCart } = useSessionMolecule();
 
   return (
     <div className="p-4 rounded-lg border bg-muted/30 space-y-3">
@@ -65,6 +65,20 @@ export function SimulatorMoleculeBanner({ molecules, showFields = ['sponsor', 's
               <span className="font-semibold">{simulatorMolecule.indication}</span>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Cart molecules indicator */}
+      {cart.length > 0 && (
+        <div className="flex items-center gap-2 pt-2 border-t">
+          <ShoppingCart className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Cart:</span>
+          {cart.map(mol => (
+            <Badge key={mol.id} variant="secondary" className="gap-1 text-xs py-0.5">
+              {mol.name.substring(0, 18)}
+              <X className="h-3 w-3 cursor-pointer hover:text-destructive" onClick={() => removeFromCart(mol.id)} />
+            </Badge>
+          ))}
         </div>
       )}
     </div>
