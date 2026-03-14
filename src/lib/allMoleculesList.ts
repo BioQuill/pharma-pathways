@@ -30,9 +30,10 @@ export const mapTAToModel1Id = (ta: string): string | null => {
     "Vaccines & Preventive": "infectious",
     "Urology": "urology",
     "Pediatrics": "pediatrics",
+    "PK & Pharmacology": null as any,
     "Other": "oncology",
   };
-  return mapping[ta] || null;
+  return mapping[ta] ?? null;
 };
 
 export const mapTAToModel2Id = (ta: string): string | null => {
