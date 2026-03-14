@@ -201,9 +201,9 @@ export function MoleculeScoreCard({ moleculeName, trialName, scores, phase, indi
               {(molecule as any)._raw?.sex && (
                 <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{(molecule as any)._raw.sex}</Badge>
               )}
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                {(molecule as any)._raw?.has_results ? 'Has Results' : 'No Results'}
-              </Badge>
+              {(molecule as any)._raw?.has_results && (
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Has Results</Badge>
+              )}
             </div>
           )}
           

@@ -307,6 +307,7 @@ export const TA_MAX_TTM: Record<string, number> = {
   'PAIN & ANAESTHESIA': 108, // 9 years
   'HEMATOLOGY (NON-ONCOLOGY)': 120,       // 10 years
   'PEDIATRICS': 156,                 // 13 years
+  'PK & PHARMACOLOGY': 96,           // 8 years — short TTM, Phase 1 PK studies
   'GENERAL': 132,                    // 11 years (average)
 };
 
