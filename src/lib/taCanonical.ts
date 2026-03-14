@@ -24,6 +24,7 @@ export const CANONICAL_TAS = [
   'Pediatrics',
   'Vaccines & Preventive',
   'Urology',
+  'PK & Pharmacology',
 ] as const;
 
 export type CanonicalTA = (typeof CANONICAL_TAS)[number];
