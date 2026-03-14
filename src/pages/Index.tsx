@@ -912,30 +912,35 @@ const IndexInner = () => {
         {topNavMode === 'pricing' && <PricingContent />}
 
         {/* 6 Dashboard Tiles - slimmed to ~48px height */}
-        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && (
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && (() => {
+          const activeTrials = allMolecules.length;
+          const uniqueMolecules = new Set(allMolecules.map(m => m.name?.toLowerCase().trim())).size;
+          const recruiting = allMolecules.filter(m => (m as any)._raw?.status === 'RECRUITING').length;
+          const notRecruiting = allMolecules.filter(m => (m as any)._raw?.status === 'ACTIVE_NOT_RECRUITING').length;
+          return (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Active Trials</p>
-                  <p className="text-lg font-bold text-[#0E1D35]">14,000</p>
+                  <p className="text-lg font-bold text-[#0E1D35]">{activeTrials.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Molecules</p>
-                  <p className="text-lg font-bold text-[#0E1D35]">9,754</p>
+                  <p className="text-lg font-bold text-[#0E1D35]">{uniqueMolecules.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Recruiting</p>
-                  <p className="text-lg font-bold text-[hsl(142,76%,36%)]">8,023</p>
+                  <p className="text-lg font-bold text-[hsl(142,76%,36%)]">{recruiting.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Not Recruiting</p>
-                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">4,612</p>
+                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">{notRecruiting.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
@@ -947,11 +952,12 @@ const IndexInner = () => {
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Success Rate</p>
-                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">12.4%</p>
+                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">11.4%</p>
                 </CardContent>
               </Card>
             </div>
-        )}
+          );
+        })()}
 
         {/* 14 Model Selector Cards — 2 rows of 7 */}
         {topNavMode === 'platform' && (

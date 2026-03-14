@@ -83,6 +83,7 @@ export function canonicalizeTA(raw: string): string {
   if (lower.includes('pediatr') || lower.includes('child')) return 'Pediatrics';
   if (lower.includes('vaccin') || lower.includes('virol') || lower.includes('prevent')) return 'Vaccines & Preventive';
   if (lower.includes('urol') || lower.includes('prostat')) return 'Urology';
+  if (lower.includes('pharmacokinetic') || lower.includes('pharmacolog') || lower === 'pk' || lower.includes('pk ') || lower.includes('bioavailab') || lower.includes('bioequiv')) return 'PK & Pharmacology';
   if (lower.includes('dental') || lower.includes('oral health')) return 'Other';
 
   return 'Other';

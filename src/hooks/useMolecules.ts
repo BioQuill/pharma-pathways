@@ -239,7 +239,7 @@ function transformMolecule(raw: any, index: number): MoleculeProfile {
       start_date: raw.start_date,
       completion_date: raw.completion_date,
       last_updated: raw.last_updated,
-      study_url: raw.study_url,
+      study_url: raw.study_url || `https://clinicaltrials.gov/study/${raw.nct_id}`,
       brief_summary: raw.brief_summary,
       nct_id: raw.nct_id,
       conditions: raw.conditions,
