@@ -17,7 +17,7 @@ const DATA_URL =
 
 // Session-level cache so we never re-fetch
 let cachedMolecules: MoleculeProfile[] | null = null;
-let fetchPromise: Promise<MoleculeProfile[]> | null = null;
+// fetchPromise removed — replaced by rawFetchPromise + chunked hydration
 
 // TA normalisation — delegate to central canonical mapper
 const TA_CANONICAL: Record<string, string> = {};
