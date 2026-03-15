@@ -88,6 +88,7 @@ import { Top100BlockbusterDrugs } from "@/components/Top100BlockbusterDrugs";
 import { Top50SmallCapFirms } from "@/components/Top50SmallCapFirms";
 import { PricingAccessDashboard } from "@/components/PricingAccessDashboard";
 import { PayersLandscape } from "@/components/PayersLandscape";
+import PrimaryOutcomeCard from "@/components/PrimaryOutcomeCard";
 import { PAModel1Dashboard } from "@/components/PAModel1Dashboard";
 import { PAModel2Dashboard } from "@/components/PAModel2Dashboard";
 import { ModelsDecisionFramework } from "@/components/ModelsDecisionFramework";
@@ -1370,6 +1371,16 @@ const IndexInner = () => {
                     </CardContent>
                   </Card>
                 </div>
+
+                {/* 6b. Primary Outcome Measures — lazy-loaded from outcomes JSON */}
+                {activeMolecule.nctId && (
+                  <div className="dd-model-card">
+                    <PrimaryOutcomeCard
+                      nctId={activeMolecule.nctId}
+                      primaryDrug={activeMolecule.name}
+                    />
+                  </div>
+                )}
 
                 {/* ═══ STAGE 3 — IS IT WORTH THE RACE? ═══ */}
                 <div className="dd-stage-divider">STAGE 3 — IS IT WORTH THE RACE?</div>
