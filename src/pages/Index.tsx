@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { FixedSizeList as VirtualList } from "react-window";
 
 import { calculatePTRS } from "@/lib/ptrsEngine";
 
