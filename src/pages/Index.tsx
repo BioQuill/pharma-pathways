@@ -1372,6 +1372,16 @@ const IndexInner = () => {
                   </Card>
                 </div>
 
+                {/* 6b. Primary Outcome Measures — lazy-loaded from outcomes JSON */}
+                {activeMolecule.nctId && (
+                  <div className="dd-model-card">
+                    <PrimaryOutcomeCard
+                      nctId={activeMolecule.nctId}
+                      primaryDrug={activeMolecule.name}
+                    />
+                  </div>
+                )}
+
                 {/* ═══ STAGE 3 — IS IT WORTH THE RACE? ═══ */}
                 <div className="dd-stage-divider">STAGE 3 — IS IT WORTH THE RACE?</div>
 
