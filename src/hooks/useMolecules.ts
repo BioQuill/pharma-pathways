@@ -286,50 +286,95 @@ function deduplicateMolecules(molecules: MoleculeProfile[]): MoleculeProfile[] {
   return Object.values(map);
 }
 
-async function doFetch(): Promise<MoleculeProfile[]> {
+const CHUNK_SIZE = 2000;
+
+// Store raw list for chunked hydration
+let cachedRawList: any[] | null = null;
+let rawFetchPromise: Promise<any[]> | null = null;
+
+async function doFetchRaw(): Promise<any[]> {
   const res = await fetch(DATA_URL);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
-  const rawList: any[] = json.molecules ?? json.data?.molecules ?? (Array.isArray(json) ? json : []);
-  const allMolecules = rawList.map((m, i) => transformMolecule(m, i));
-  return allMolecules; // One card per NCT — no deduplication
+  return json.molecules ?? json.data?.molecules ?? (Array.isArray(json) ? json : []);
 }
 
 export function useMolecules() {
   const [molecules, setMolecules] = useState<MoleculeProfile[]>(cachedMolecules || []);
   const [loading, setLoading] = useState(!cachedMolecules);
   const [error, setError] = useState<string | null>(null);
+  const [totalRows, setTotalRows] = useState<number>(cachedMolecules?.length ?? 0);
+  const [fullyLoaded, setFullyLoaded] = useState(!!cachedMolecules);
   const mounted = useRef(true);
 
   useEffect(() => {
     mounted.current = true;
+
+    // Already fully hydrated from a previous mount
     if (cachedMolecules) {
       setMolecules(cachedMolecules);
+      setTotalRows(cachedMolecules.length);
       setLoading(false);
+      setFullyLoaded(true);
       return;
     }
-    if (!fetchPromise) {
-      fetchPromise = doFetch();
+
+    if (!rawFetchPromise) {
+      rawFetchPromise = doFetchRaw();
     }
-    fetchPromise
-      .then(data => {
-        cachedMolecules = data;
-        if (mounted.current) {
-          setMolecules(data);
-          setLoading(false);
+
+    rawFetchPromise
+      .then(rawList => {
+        cachedRawList = rawList;
+        if (!mounted.current) return;
+
+        setTotalRows(rawList.length);
+
+        // Hydrate first chunk immediately
+        const firstChunk = rawList.slice(0, CHUNK_SIZE).map((m, i) => transformMolecule(m, i));
+        setMolecules(firstChunk);
+        setLoading(false);
+
+        // Hydrate remaining chunks in background
+        let offset = CHUNK_SIZE;
+        const hydrateNext = () => {
+          if (!mounted.current || offset >= rawList.length) {
+            // All done — cache the full array
+            if (mounted.current) {
+              setMolecules(prev => {
+                cachedMolecules = prev;
+                return prev;
+              });
+              setFullyLoaded(true);
+            }
+            return;
+          }
+          const end = Math.min(offset + CHUNK_SIZE, rawList.length);
+          const chunk = rawList.slice(offset, end).map((m, i) => transformMolecule(m, offset + i));
+          offset = end;
+          setMolecules(prev => [...prev, ...chunk]);
+          setTimeout(hydrateNext, 100);
+        };
+
+        if (rawList.length > CHUNK_SIZE) {
+          setTimeout(hydrateNext, 100);
+        } else {
+          cachedMolecules = firstChunk;
+          setFullyLoaded(true);
         }
       })
       .catch(err => {
-        fetchPromise = null;
+        rawFetchPromise = null;
         if (mounted.current) {
           setError(err.message || 'Failed to load molecules');
           setLoading(false);
         }
       });
+
     return () => { mounted.current = false; };
   }, []);
 
-  return { molecules, loading, error };
+  return { molecules, loading, error, totalRows, fullyLoaded };
 }
 
 /**
