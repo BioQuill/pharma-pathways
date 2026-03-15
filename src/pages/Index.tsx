@@ -918,30 +918,31 @@ const IndexInner = () => {
           const uniqueMolecules = new Set(allMolecules.map(m => m.name?.toLowerCase().trim())).size;
           const recruiting = allMolecules.filter(m => (m as any)._raw?.status === 'RECRUITING').length;
           const notRecruiting = allMolecules.filter(m => (m as any)._raw?.status === 'ACTIVE_NOT_RECRUITING').length;
+          const shimmer = !fullyLoaded ? 'animate-pulse' : '';
           return (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Active Trials</p>
-                  <p className="text-lg font-bold text-[#0E1D35]">{activeTrials.toLocaleString()}</p>
+                  <p className={`text-lg font-bold text-[#0E1D35] ${shimmer}`}>{activeTrials.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Molecules</p>
-                  <p className="text-lg font-bold text-[#0E1D35]">{uniqueMolecules.toLocaleString()}</p>
+                  <p className={`text-lg font-bold text-[#0E1D35] ${shimmer}`}>{uniqueMolecules.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Recruiting</p>
-                  <p className="text-lg font-bold text-[hsl(142,76%,36%)]">{recruiting.toLocaleString()}</p>
+                  <p className={`text-lg font-bold text-[hsl(142,76%,36%)] ${shimmer}`}>{recruiting.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-1.5 px-3 text-center">
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Not Recruiting</p>
-                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">{notRecruiting.toLocaleString()}</p>
+                  <p className={`text-lg font-bold text-[hsl(45,93%,47%)] ${shimmer}`}>{notRecruiting.toLocaleString()}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white shadow-sm">
