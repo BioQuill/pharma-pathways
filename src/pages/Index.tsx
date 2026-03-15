@@ -2410,8 +2410,13 @@ const IndexInner = () => {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  Showing {allMolecules.length.toLocaleString()} trials · One card per NCT ID
+                  Showing {allMolecules.length.toLocaleString()}{totalRows > allMolecules.length ? ` of ${totalRows.toLocaleString()}` : ''} trials · One card per NCT ID
                 </p>
+                {!fullyLoaded && totalRows > 0 && (
+                  <p className="text-xs text-muted-foreground animate-pulse">
+                    Loading {allMolecules.length.toLocaleString()} of {totalRows.toLocaleString()}...
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
