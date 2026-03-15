@@ -1,0 +1,259 @@
+{
+  "version": "1.0",
+  "updated": "2026-03-15",
+  "currency": "USD",
+  "data_coverage": {
+    "total_trials": 28432,
+    "unique_molecules": 17495,
+    "therapeutic_areas": 21,
+    "data_source": "ClinicalTrials.gov",
+    "filters": "Industry-sponsored, Phase 1-4, 2015+, Recruiting/Active/Completed/Not Yet Recruiting"
+  },
+  "tiers": [
+    {
+      "id": "molecule_1",
+      "name": "1 Molecule",
+      "subtitle": "Report & Monitoring",
+      "price_annual": 5000,
+      "billing": "annual",
+      "discount_pct": null,
+      "original_price": null,
+      "scope": {
+        "molecules": 1,
+        "trial_range": "1–163 trials per molecule",
+        "ta_access": "any",
+        "description": "Single molecule of your choice. Includes all associated trials. Most molecules: 1–5 trials. Established assets: 100+ trials."
+      },
+      "features": [
+        "Full compounded due diligence report (print & export)",
+        "Molecule Score Card & Composite Score",
+        "LPI-3 launch probability analysis + extended",
+        "Investment Score Assessment",
+        "Pricing & Access Index (Model 1 + Model 2 + Triangulation)",
+        "Monte Carlo peak sales simulation",
+        "Market & Regulatory analysis (10 markets)",
+        "PTRS Technical & Regulatory Success",
+        "CAPM Alpha Signals",
+        "TTM Time-to-Market estimate",
+        "1-year trial status monitoring & alerts"
+      ],
+      "cta": "Purchase Report",
+      "sales_model": "self_serve"
+    },
+    {
+      "id": "basket_5",
+      "name": "5 Molecules",
+      "subtitle": "Custom Basket",
+      "price_annual": 18000,
+      "billing": "annual",
+      "discount_pct": 28,
+      "original_price": 25000,
+      "scope": {
+        "molecules": 5,
+        "trial_range": "all trials per molecule",
+        "ta_access": "any",
+        "description": "Up to 5 molecules from any TAs. Mix freely. Per-molecule cost: $3,600 vs $5,000 standalone."
+      },
+      "features": [
+        "Everything in 1 Molecule x 5",
+        "Mix molecules from any TAs",
+        "Side-by-side molecule comparison (head-to-head)",
+        "Monte Carlo comparative simulation (up to 5 molecules)",
+        "Portfolio-level analytics & risk correlation",
+        "Cross-molecule competitive positioning",
+        "1-year monitoring for all 5 molecules",
+        "Quarterly automated portfolio briefing"
+      ],
+      "cta": "Build Your Basket",
+      "sales_model": "self_serve",
+      "note": "Cart supports up to 5 molecules. Add any combination before checkout."
+    },
+    {
+      "id": "ta_1",
+      "name": "1 Therapeutic Area",
+      "subtitle": "TA Report & Monitoring",
+      "price_annual": 45000,
+      "billing": "annual",
+      "discount_pct": null,
+      "original_price": null,
+      "scope": {
+        "molecules": "all_in_ta",
+        "molecule_range": {
+          "min": 33,
+          "max": 5876,
+          "note": "Range from Pediatrics (33) to Oncology & Hematology (5,876)"
+        },
+        "ta_access": 1,
+        "description": "All molecules in 1 therapeutic area. Flat price regardless of TA size."
+      },
+      "ta_molecule_counts": {
+        "Oncology & Hematology": 5876,
+        "PK & Pharmacology": 5094,
+        "Endocrinology & Metabolism": 1143,
+        "Respiratory & Pulmonary": 1123,
+        "Cardiovascular": 850,
+        "Neurology": 771,
+        "Infectious Disease": 681,
+        "Immunology & Inflammation": 676,
+        "Dermatology": 656,
+        "Gastroenterology & Hepatology": 397,
+        "Rare Disease & Orphan": 369,
+        "Nephrology & Renal": 361,
+        "Ophthalmology": 347,
+        "Psychiatry & Mental Health": 343,
+        "Musculoskeletal & Rheumatology": 318,
+        "Hematology (non-oncology)": 294,
+        "Women's Health": 142,
+        "Pain & Anaesthesia": 127,
+        "Urology": 93,
+        "Vaccines & Preventive": 61,
+        "Pediatrics": 33
+      },
+      "features": [
+        "Full DD reports for every molecule in the TA",
+        "TA Composite Index analytics",
+        "Head-to-head molecule comparison tools",
+        "Pipeline trend & white-space gap analysis",
+        "M&A and in-licensing target identification",
+        "Competitive intelligence sweep across TA",
+        "Phase progression tracking (Ph1 → Ph2 → Ph3)",
+        "1-year live monitoring & automated alerts"
+      ],
+      "cta": "Select TA",
+      "sales_model": "self_serve"
+    },
+    {
+      "id": "ta_3",
+      "name": "3 Therapeutic Areas",
+      "subtitle": "Multi-Area Coverage",
+      "price_annual": 110000,
+      "billing": "annual",
+      "discount_pct": 19,
+      "original_price": 135000,
+      "scope": {
+        "molecules": "all_in_3_tas",
+        "ta_access": 3,
+        "description": "All molecules across 3 TAs of choice. Example: Oncology (5,876) + Endocrinology (1,143) + Cardiovascular (850) = 7,869 molecules."
+      },
+      "features": [
+        "Everything in 1 TA x 3",
+        "Cross-TA portfolio analytics",
+        "Cross-TA molecule comparison & benchmarking",
+        "TA vs TA pipeline benchmarking",
+        "Strategic portfolio optimisation",
+        "Quarterly automated strategy briefings",
+        "Limited API access (read-only, 1,000 calls/day)"
+      ],
+      "cta": "Contact Sales",
+      "sales_model": "sales_assisted"
+    },
+    {
+      "id": "ta_5",
+      "name": "5 Therapeutic Areas",
+      "subtitle": "Extended Coverage",
+      "price_annual": 160000,
+      "billing": "annual",
+      "discount_pct": 29,
+      "original_price": 225000,
+      "scope": {
+        "molecules": "all_in_5_tas",
+        "ta_access": 5,
+        "description": "All molecules across 5 TAs. Five large TAs can cover 10,000+ molecules — majority of a focused pharma or fund's investment universe."
+      },
+      "features": [
+        "Everything in 3 TAs + 2 more",
+        "Advanced portfolio optimisation suite",
+        "Full cross-TA comparison & correlation",
+        "Custom scoring configurations",
+        "White-label reporting option",
+        "Monthly automated strategy briefings",
+        "Full API access (unlimited calls)"
+      ],
+      "cta": "Contact Sales",
+      "sales_model": "sales_assisted"
+    },
+    {
+      "id": "full",
+      "name": "FULL ACCESS",
+      "subtitle": "All 20 TAs — Enterprise",
+      "price_annual": 300000,
+      "billing": "annual",
+      "discount_pct": null,
+      "original_price": null,
+      "scope": {
+        "molecules": 17495,
+        "trials": 28432,
+        "ta_access": "all_20",
+        "description": "Every molecule in the global industry-sponsored pipeline. 28,432 trials. Per-molecule cost ~$17. Equivalent analyst headcount: $750K–$3M/year."
+      },
+      "features": [
+        "All 20 therapeutic areas — unlimited access",
+        "Unlimited molecule access & DD reports",
+        "Full molecule comparison across all TAs",
+        "Enterprise portfolio dashboard",
+        "Custom scoring & model configurations",
+        "White-label reporting",
+        "SSO & team management",
+        "Dedicated account manager",
+        "Quarterly model calibration consultations",
+        "Priority support & SLA"
+      ],
+      "cta": "Contact Sales",
+      "sales_model": "enterprise",
+      "note": "Starting price. Final contract based on user count, API volume, and custom configuration."
+    }
+  ],
+  "free_trial": {
+    "id": "free_trial",
+    "name": "Free Trial",
+    "price_annual": 0,
+    "molecules": 3,
+    "duration_days": 14,
+    "requires_cc": false,
+    "features": [
+      "3 molecules of your choice",
+      "All 13 models",
+      "Full DD Report for each",
+      "14-day access"
+    ],
+    "cta": "Start Free Trial"
+  },
+  "per_report_ladder": [
+    {
+      "tier": "1 Molecule",
+      "price": 5000,
+      "molecules": 1,
+      "cost_per_report": 5000
+    },
+    {
+      "tier": "5 Molecule Basket",
+      "price": 18000,
+      "molecules": 5,
+      "cost_per_report": 3600
+    },
+    {
+      "tier": "1 TA (avg 850 molecules)",
+      "price": 45000,
+      "molecules": 850,
+      "cost_per_report": 53
+    },
+    {
+      "tier": "3 TAs (avg 2,500 molecules)",
+      "price": 110000,
+      "molecules": 2500,
+      "cost_per_report": 44
+    },
+    {
+      "tier": "5 TAs (avg 5,000 molecules)",
+      "price": 160000,
+      "molecules": 5000,
+      "cost_per_report": 32
+    },
+    {
+      "tier": "Full Access",
+      "price": 300000,
+      "molecules": 17495,
+      "cost_per_report": 17
+    }
+  ]
+}
