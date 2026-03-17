@@ -611,6 +611,8 @@ const IndexInner = () => {
   const simulatorMolecule = _ctx.sessionMolecule;
   const { cart, removeFromCart, clearCart } = _ctx;
   const [cartOpen, setCartOpen] = useState(false);
+  const [moleculeListScrollTop, setMoleculeListScrollTop] = useState(0);
+  const moleculeListScrollRef = useRef<HTMLDivElement>(null);
 
   // Register simulator navigation callback
   useEffect(() => {
