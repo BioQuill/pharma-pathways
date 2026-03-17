@@ -2659,9 +2659,9 @@ const IndexInner = () => {
 
               return (
                 <div
-                  ref={scrollContainerRef}
+                  ref={moleculeListScrollRef}
                   style={{ height: VIEWPORT_HEIGHT, overflow: 'auto' }}
-                  onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop)}
+                  onScroll={(e) => setMoleculeListScrollTop((e.target as HTMLDivElement).scrollTop)}
                 >
                   <div style={{ height: totalHeight, position: 'relative' }}>
                     <div style={{ position: 'absolute', top: topSpacer, left: 0, right: 0 }}>
