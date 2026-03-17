@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-// @ts-ignore - react-window types
-import { FixedSizeList as VirtualList } from "react-window";
 
 import { calculatePTRS } from "@/lib/ptrsEngine";
 
@@ -613,6 +611,8 @@ const IndexInner = () => {
   const simulatorMolecule = _ctx.sessionMolecule;
   const { cart, removeFromCart, clearCart } = _ctx;
   const [cartOpen, setCartOpen] = useState(false);
+  const [moleculeListScrollTop, setMoleculeListScrollTop] = useState(0);
+  const moleculeListScrollRef = useRef<HTMLDivElement>(null);
 
   // Register simulator navigation callback
   useEffect(() => {
@@ -2513,9 +2513,19 @@ const IndexInner = () => {
                   return sortOrder === 'asc' ? -comparison : comparison;
                 });
 
-              const ROW_HEIGHT = 180; // px per card including gap
+              const ROW_HEIGHT = 180;
+              const BUFFER = 10;
+              const VIEWPORT_HEIGHT = 720;
 
-              const renderRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+              const startIndex = Math.max(0, Math.floor(moleculeListScrollTop / ROW_HEIGHT) - BUFFER);
+              const endIndex = Math.min(
+                sortedMolecules.length,
+                Math.ceil((moleculeListScrollTop + VIEWPORT_HEIGHT) / ROW_HEIGHT) + BUFFER
+              );
+              const totalHeight = sortedMolecules.length * ROW_HEIGHT;
+              const topSpacer = startIndex * ROW_HEIGHT;
+
+              const renderRow = (index: number) => {
                 const molecule = sortedMolecules[index];
                 if (!molecule) return null;
                 const lpi3Score = molecule._raw?.lpi_score ?? molecule.overallScore ?? 50;
@@ -2544,7 +2554,7 @@ const IndexInner = () => {
                 const mfg = getManufacturingCapability(molecule.company);
 
                 return (
-                  <div style={{ ...style, paddingBottom: 8 }}>
+                  <div key={molecule.id} style={{ height: ROW_HEIGHT, paddingBottom: 8 }}>
                     <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full" onClick={() => { setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
                       <CardContent className="p-5">
                         <div className="flex items-start gap-4">
@@ -2648,15 +2658,17 @@ const IndexInner = () => {
               };
 
               return (
-                <VirtualList
-                  height={720}
-                  itemCount={sortedMolecules.length}
-                  itemSize={ROW_HEIGHT}
-                  width="100%"
-                  overscanCount={10}
+                <div
+                  ref={moleculeListScrollRef}
+                  style={{ height: VIEWPORT_HEIGHT, overflow: 'auto' }}
+                  onScroll={(e) => setMoleculeListScrollTop((e.target as HTMLDivElement).scrollTop)}
                 >
-                  {renderRow}
-                </VirtualList>
+                  <div style={{ height: totalHeight, position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: topSpacer, left: 0, right: 0 }}>
+                      {sortedMolecules.slice(startIndex, endIndex).map((_, i) => renderRow(startIndex + i))}
+                    </div>
+                  </div>
+                </div>
               );
             })()}
           </div>
