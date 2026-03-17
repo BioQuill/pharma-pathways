@@ -1,7 +1,4 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-// @ts-ignore
-import * as ReactWindow from "react-window";
-const VirtualList = (ReactWindow as any).FixedSizeList || (ReactWindow as any).default?.FixedSizeList;
 
 import { calculatePTRS } from "@/lib/ptrsEngine";
 
