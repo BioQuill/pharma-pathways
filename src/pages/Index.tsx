@@ -2555,7 +2555,7 @@ const IndexInner = () => {
                 const mfg = getManufacturingCapability(molecule.company);
 
                 return (
-                  <div style={{ ...style, paddingBottom: 8 }}>
+                  <div key={molecule.id} style={{ height: ROW_HEIGHT, paddingBottom: 8 }}>
                     <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full" onClick={() => { setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
                       <CardContent className="p-5">
                         <div className="flex items-start gap-4">
