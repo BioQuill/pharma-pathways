@@ -2526,7 +2526,7 @@ const IndexInner = () => {
               const topSpacer = startIndex * ROW_HEIGHT;
               const bottomSpacer = Math.max(0, (sortedMolecules.length - endIndex) * ROW_HEIGHT);
 
-              const renderRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+              const renderRow = (index: number) => {
                 const molecule = sortedMolecules[index];
                 if (!molecule) return null;
                 const lpi3Score = molecule._raw?.lpi_score ?? molecule.overallScore ?? 50;
