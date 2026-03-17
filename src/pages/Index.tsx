@@ -2512,6 +2512,19 @@ const IndexInner = () => {
                 });
 
               const ROW_HEIGHT = 180; // px per card including gap
+              const BUFFER = 10;
+              const VIEWPORT_HEIGHT = 720;
+              const scrollContainerRef = useRef<HTMLDivElement>(null);
+              const [scrollTop, setScrollTop] = useState(0);
+
+              const startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - BUFFER);
+              const endIndex = Math.min(
+                sortedMolecules.length,
+                Math.ceil((scrollTop + VIEWPORT_HEIGHT) / ROW_HEIGHT) + BUFFER
+              );
+              const totalHeight = sortedMolecules.length * ROW_HEIGHT;
+              const topSpacer = startIndex * ROW_HEIGHT;
+              const bottomSpacer = Math.max(0, (sortedMolecules.length - endIndex) * ROW_HEIGHT);
 
               const renderRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
                 const molecule = sortedMolecules[index];
