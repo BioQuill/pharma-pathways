@@ -2659,15 +2659,17 @@ const IndexInner = () => {
               };
 
               return (
-                <VirtualList
-                  height={720}
-                  itemCount={sortedMolecules.length}
-                  itemSize={ROW_HEIGHT}
-                  width="100%"
-                  overscanCount={10}
+                <div
+                  ref={scrollContainerRef}
+                  style={{ height: VIEWPORT_HEIGHT, overflow: 'auto' }}
+                  onScroll={(e) => setScrollTop((e.target as HTMLDivElement).scrollTop)}
                 >
-                  {renderRow}
-                </VirtualList>
+                  <div style={{ height: totalHeight, position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: topSpacer, left: 0, right: 0 }}>
+                      {sortedMolecules.slice(startIndex, endIndex).map((_, i) => renderRow(startIndex + i))}
+                    </div>
+                  </div>
+                </div>
               );
             })()}
           </div>
