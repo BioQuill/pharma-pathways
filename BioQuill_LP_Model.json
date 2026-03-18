@@ -1,0 +1,693 @@
+{
+  "version": "1.0",
+  "updated": "2026-03",
+  "description": "LP% model \u2014 industry phase success rates. Two outputs: phase_lp (TA-agnostic) and ta_lp (TA-adjusted).",
+  "source": "BIO/Citeline Industry Analysis 2023, Wong et al. Biostatistics 2019, Thomas et al. 2016",
+  "industry_wide_transitions": {
+    "phase1_to_phase2": 0.52,
+    "phase2_to_phase3": 0.31,
+    "phase3_to_approval": 0.58,
+    "approval_to_launch": 0.87
+  },
+  "phase_lp": {
+    "description": "LP% by current phase only \u2014 industry-wide, TA-agnostic",
+    "values": {
+      "PHASE1": 0.0813,
+      "PHASE1|PHASE2": 0.1564,
+      "PHASE2": 0.1564,
+      "PHASE2|PHASE3": 0.5046,
+      "PHASE3": 0.5046,
+      "COMPLETED_PH3": 0.87,
+      "APPROVED": 0.87,
+      "PK & Pharmacology": null
+    }
+  },
+  "ta_specific_transitions": {
+    "Oncology & Hematology": {
+      "transitions": {
+        "p1p2": 0.56,
+        "p2p3": 0.28,
+        "p3a": 0.54,
+        "al": 0.87
+      },
+      "notes": "Lower Ph2\u2192Ph3 and Ph3\u2192approval vs average due to high attrition in solid tumours",
+      "lp_by_phase": {
+        "PHASE1": 0.0737,
+        "PHASE1|PHASE2": 0.1315,
+        "PHASE2": 0.1315,
+        "PHASE2|PHASE3": 0.4698,
+        "PHASE3": 0.4698,
+        "COMPLETED_PH3": 0.87,
+        "APPROVED": 0.87,
+        "PK & Pharmacology": null
+      }
+    },
+    "Hematology (non-oncology)": {
+      "transitions": {
+        "p1p2": 0.58,
+        "p2p3": 0.35,
+        "p3a": 0.62,
+        "al": 0.9
+      },
+      "notes": "Higher \u2014 smaller indications, strong unmet need, orphan pathways common",
+      "lp_by_phase": {
+        "PHASE1": 0.1133,
+        "PHASE1|PHASE2": 0.1953,
+        "PHASE2": 0.1953,
+        "PHASE2|PHASE3": 0.558,
+        "PHASE3": 0.558,
+        "COMPLETED_PH3": 0.9,
+        "APPROVED": 0.9,
+        "PK & Pharmacology": null
+      }
+    },
+    "Rare Disease & Orphan": {
+      "transitions": {
+        "p1p2": 0.62,
+        "p2p3": 0.4,
+        "p3a": 0.68,
+        "al": 0.92
+      },
+      "notes": "Highest \u2014 orphan designation, accelerated pathways, small trials accepted",
+      "lp_by_phase": {
+        "PHASE1": 0.1551,
+        "PHASE1|PHASE2": 0.2502,
+        "PHASE2": 0.2502,
+        "PHASE2|PHASE3": 0.6256,
+        "PHASE3": 0.6256,
+        "COMPLETED_PH3": 0.92,
+        "APPROVED": 0.92,
+        "PK & Pharmacology": null
+      }
+    },
+    "Immunology & Inflammation": {
+      "transitions": {
+        "p1p2": 0.55,
+        "p2p3": 0.33,
+        "p3a": 0.6,
+        "al": 0.88
+      },
+      "notes": "Above average \u2014 validated targets, established endpoints",
+      "lp_by_phase": {
+        "PHASE1": 0.0958,
+        "PHASE1|PHASE2": 0.1742,
+        "PHASE2": 0.1742,
+        "PHASE2|PHASE3": 0.528,
+        "PHASE3": 0.528,
+        "COMPLETED_PH3": 0.88,
+        "APPROVED": 0.88,
+        "PK & Pharmacology": null
+      }
+    },
+    "Endocrinology & Metabolism": {
+      "transitions": {
+        "p1p2": 0.54,
+        "p2p3": 0.34,
+        "p3a": 0.62,
+        "al": 0.88
+      },
+      "notes": "GLP-1 class pulling rates up significantly in recent years",
+      "lp_by_phase": {
+        "PHASE1": 0.1002,
+        "PHASE1|PHASE2": 0.1855,
+        "PHASE2": 0.1855,
+        "PHASE2|PHASE3": 0.5456,
+        "PHASE3": 0.5456,
+        "COMPLETED_PH3": 0.88,
+        "APPROVED": 0.88,
+        "PK & Pharmacology": null
+      }
+    },
+    "Cardiovascular": {
+      "transitions": {
+        "p1p2": 0.5,
+        "p2p3": 0.3,
+        "p3a": 0.56,
+        "al": 0.87
+      },
+      "notes": "Large outcome trials required, high cost, moderate success",
+      "lp_by_phase": {
+        "PHASE1": 0.0731,
+        "PHASE1|PHASE2": 0.1462,
+        "PHASE2": 0.1462,
+        "PHASE2|PHASE3": 0.4872,
+        "PHASE3": 0.4872,
+        "COMPLETED_PH3": 0.87,
+        "APPROVED": 0.87,
+        "PK & Pharmacology": null
+      }
+    },
+    "Neurology": {
+      "transitions": {
+        "p1p2": 0.48,
+        "p2p3": 0.24,
+        "p3a": 0.5,
+        "al": 0.85
+      },
+      "notes": "Lowest \u2014 CNS penetration, endpoint definition, placebo effects",
+      "lp_by_phase": {
+        "PHASE1": 0.049,
+        "PHASE1|PHASE2": 0.102,
+        "PHASE2": 0.102,
+        "PHASE2|PHASE3": 0.425,
+        "PHASE3": 0.425,
+        "COMPLETED_PH3": 0.85,
+        "APPROVED": 0.85,
+        "PK & Pharmacology": null
+      }
+    },
+    "Respiratory & Pulmonary": {
+      "transitions": {
+        "p1p2": 0.54,
+        "p2p3": 0.33,
+        "p3a": 0.6,
+        "al": 0.88
+      },
+      "notes": "Improving \u2014 biologic class raising bar",
+      "lp_by_phase": {
+        "PHASE1": 0.0941,
+        "PHASE1|PHASE2": 0.1742,
+        "PHASE2": 0.1742,
+        "PHASE2|PHASE3": 0.528,
+        "PHASE3": 0.528,
+        "COMPLETED_PH3": 0.88,
+        "APPROVED": 0.88,
+        "PK & Pharmacology": null
+      }
+    },
+    "Infectious Disease": {
+      "transitions": {
+        "p1p2": 0.58,
+        "p2p3": 0.38,
+        "p3a": 0.65,
+        "al": 0.9
+      },
+      "notes": "Higher \u2014 clear endpoints, unmet need, accelerated pathways",
+      "lp_by_phase": {
+        "PHASE1": 0.1289,
+        "PHASE1|PHASE2": 0.2223,
+        "PHASE2": 0.2223,
+        "PHASE2|PHASE3": 0.585,
+        "PHASE3": 0.585,
+        "COMPLETED_PH3": 0.9,
+        "APPROVED": 0.9,
+        "PK & Pharmacology": null
+      }
+    },
+    "Gastroenterology & Hepatology": {
+      "transitions": {
+        "p1p2": 0.52,
+        "p2p3": 0.3,
+        "p3a": 0.56,
+        "al": 0.87
+      },
+      "notes": "NASH/MASH failures pulling rates down historically",
+      "lp_by_phase": {
+        "PHASE1": 0.076,
+        "PHASE1|PHASE2": 0.1462,
+        "PHASE2": 0.1462,
+        "PHASE2|PHASE3": 0.4872,
+        "PHASE3": 0.4872,
+        "COMPLETED_PH3": 0.87,
+        "APPROVED": 0.87,
+        "PK & Pharmacology": null
+      }
+    },
+    "Nephrology & Renal": {
+      "transitions": {
+        "p1p2": 0.52,
+        "p2p3": 0.31,
+        "p3a": 0.58,
+        "al": 0.87
+      },
+      "notes": "Average \u2014 endpoint evolution improving recently",
+      "lp_by_phase": {
+        "PHASE1": 0.0813,
+        "PHASE1|PHASE2": 0.1564,
+        "PHASE2": 0.1564,
+        "PHASE2|PHASE3": 0.5046,
+        "PHASE3": 0.5046,
+        "COMPLETED_PH3": 0.87,
+        "APPROVED": 0.87,
+        "PK & Pharmacology": null
+      }
+    },
+    "Psychiatry & Mental Health": {
+      "transitions": {
+        "p1p2": 0.5,
+        "p2p3": 0.26,
+        "p3a": 0.52,
+        "al": 0.85
+      },
+      "notes": "High placebo response, endpoint challenges, below average",
+      "lp_by_phase": {
+        "PHASE1": 0.0575,
+        "PHASE1|PHASE2": 0.1149,
+        "PHASE2": 0.1149,
+        "PHASE2|PHASE3": 0.442,
+        "PHASE3": 0.442,
+        "COMPLETED_PH3": 0.85,
+        "APPROVED": 0.85,
+        "PK & Pharmacology": null
+      }
+    },
+    "Dermatology": {
+      "transitions": {
+        "p1p2": 0.56,
+        "p2p3": 0.36,
+        "p3a": 0.64,
+        "al": 0.9
+      },
+      "notes": "Above average \u2014 clear endpoints, patient-reported outcomes well established",
+      "lp_by_phase": {
+        "PHASE1": 0.1161,
+        "PHASE1|PHASE2": 0.2074,
+        "PHASE2": 0.2074,
+        "PHASE2|PHASE3": 0.576,
+        "PHASE3": 0.576,
+        "COMPLETED_PH3": 0.9,
+        "APPROVED": 0.9,
+        "PK & Pharmacology": null
+      }
+    },
+    "Musculoskeletal & Rheumatology": {
+      "transitions": {
+        "p1p2": 0.54,
+        "p2p3": 0.33,
+        "p3a": 0.6,
+        "al": 0.88
+      },
+      "notes": "Validated targets (JAK, IL), above average",
+      "lp_by_phase": {
+        "PHASE1": 0.0941,
+        "PHASE1|PHASE2": 0.1742,
+        "PHASE2": 0.1742,
+        "PHASE2|PHASE3": 0.528,
+        "PHASE3": 0.528,
+        "COMPLETED_PH3": 0.88,
+        "APPROVED": 0.88,
+        "PK & Pharmacology": null
+      }
+    },
+    "Ophthalmology": {
+      "transitions": {
+        "p1p2": 0.55,
+        "p2p3": 0.34,
+        "p3a": 0.61,
+        "al": 0.89
+      },
+      "notes": "Above average \u2014 VEGF class well validated, clear endpoints",
+      "lp_by_phase": {
+        "PHASE1": 0.1015,
+        "PHASE1|PHASE2": 0.1846,
+        "PHASE2": 0.1846,
+        "PHASE2|PHASE3": 0.5429,
+        "PHASE3": 0.5429,
+        "COMPLETED_PH3": 0.89,
+        "APPROVED": 0.89,
+        "PK & Pharmacology": null
+      }
+    },
+    "Women's Health": {
+      "transitions": {
+        "p1p2": 0.52,
+        "p2p3": 0.31,
+        "p3a": 0.58,
+        "al": 0.87
+      },
+      "notes": "Average \u2014 historically underfunded, improving",
+      "lp_by_phase": {
+        "PHASE1": 0.0813,
+        "PHASE1|PHASE2": 0.1564,
+        "PHASE2": 0.1564,
+        "PHASE2|PHASE3": 0.5046,
+        "PHASE3": 0.5046,
+        "COMPLETED_PH3": 0.87,
+        "APPROVED": 0.87,
+        "PK & Pharmacology": null
+      }
+    },
+    "Pain & Anaesthesia": {
+      "transitions": {
+        "p1p2": 0.48,
+        "p2p3": 0.26,
+        "p3a": 0.52,
+        "al": 0.85
+      },
+      "notes": "Below average \u2014 regulatory scrutiny, endpoint challenges",
+      "lp_by_phase": {
+        "PHASE1": 0.0552,
+        "PHASE1|PHASE2": 0.1149,
+        "PHASE2": 0.1149,
+        "PHASE2|PHASE3": 0.442,
+        "PHASE3": 0.442,
+        "COMPLETED_PH3": 0.85,
+        "APPROVED": 0.85,
+        "PK & Pharmacology": null
+      }
+    },
+    "Pediatrics": {
+      "transitions": {
+        "p1p2": 0.58,
+        "p2p3": 0.38,
+        "p3a": 0.65,
+        "al": 0.9
+      },
+      "notes": "Higher \u2014 often extensions of approved adult drugs, regulatory incentives",
+      "lp_by_phase": {
+        "PHASE1": 0.1289,
+        "PHASE1|PHASE2": 0.2223,
+        "PHASE2": 0.2223,
+        "PHASE2|PHASE3": 0.585,
+        "PHASE3": 0.585,
+        "COMPLETED_PH3": 0.9,
+        "APPROVED": 0.9,
+        "PK & Pharmacology": null
+      }
+    },
+    "Vaccines & Preventive": {
+      "transitions": {
+        "p1p2": 0.6,
+        "p2p3": 0.4,
+        "p3a": 0.68,
+        "al": 0.92
+      },
+      "notes": "Among highest \u2014 clear immunogenicity endpoints, public health mandate",
+      "lp_by_phase": {
+        "PHASE1": 0.1501,
+        "PHASE1|PHASE2": 0.2502,
+        "PHASE2": 0.2502,
+        "PHASE2|PHASE3": 0.6256,
+        "PHASE3": 0.6256,
+        "COMPLETED_PH3": 0.92,
+        "APPROVED": 0.92,
+        "PK & Pharmacology": null
+      }
+    },
+    "Urology": {
+      "transitions": {
+        "p1p2": 0.52,
+        "p2p3": 0.31,
+        "p3a": 0.58,
+        "al": 0.87
+      },
+      "notes": "Average \u2014 limited recent innovation outside oncology overlap",
+      "lp_by_phase": {
+        "PHASE1": 0.0813,
+        "PHASE1|PHASE2": 0.1564,
+        "PHASE2": 0.1564,
+        "PHASE2|PHASE3": 0.5046,
+        "PHASE3": 0.5046,
+        "COMPLETED_PH3": 0.87,
+        "APPROVED": 0.87,
+        "PK & Pharmacology": null
+      }
+    },
+    "PK & Pharmacology": {
+      "transitions": {
+        "p1p2": null,
+        "p2p3": null,
+        "p3a": null,
+        "al": null
+      },
+      "notes": "N/A \u2014 healthy volunteer studies, no approval pathway",
+      "lp_by_phase": {
+        "PHASE1": null,
+        "PHASE1|PHASE2": null,
+        "PHASE2": null,
+        "PHASE2|PHASE3": null,
+        "PHASE3": null,
+        "COMPLETED_PH3": null,
+        "APPROVED": null,
+        "PK & Pharmacology": null
+      }
+    }
+  },
+  "card_display": {
+    "card_title": "LP%",
+    "card_subtitle": "Industry Phase Success Rate",
+    "three_outputs": [
+      {
+        "id": "phase_lp",
+        "label": "LP% \u2014 Industry Phase Success Rate",
+        "description": "Probability of reaching commercial launch for a molecule at this development phase \u2014 industry-wide average across all therapeutic areas.",
+        "example": "Phase 1 (all TAs): 8.1%",
+        "source_field": "phase_lp.values[molecule.phase]"
+      },
+      {
+        "id": "ta_lp",
+        "label": "LP% \u2014 Industry TA Success Rate",
+        "description": "Probability of reaching commercial launch for a molecule at this phase within this specific therapeutic area \u2014 TA-calibrated industry average.",
+        "example": "Phase 1 \u00b7 Oncology: 7.4%",
+        "source_field": "ta_specific_transitions[molecule.ta].lp_by_phase[molecule.phase]"
+      },
+      {
+        "id": "phase_x_ta_delta",
+        "label": "\u0394 LP%",
+        "sublabel": "vs Industry Delta",
+        "description": "Difference between the TA-specific success rate and the industry-wide phase average. Shows whether this TA is structurally easier or harder than the industry average for this phase.",
+        "calculation": "ta_lp - phase_lp (delta, not multiplication)",
+        "unit": "percentage points (pp)",
+        "example": "Oncology Phase 1: 7.4% - 8.1% = -0.8pp",
+        "statistical_note": "Delta is the correct third metric \u2014 TA LP% and Phase LP% are not independent probabilities and should not be multiplied. The delta shows TA-specific structural deviation from industry average.",
+        "interpretation": {
+          "positive": "This TA outperforms the industry phase average \u2014 structural tailwind. Example: Rare Disease Phase 1 +7.4pp means rare disease molecules historically launch at nearly double the industry Phase 1 rate.",
+          "negative": "This TA underperforms the industry phase average \u2014 structural headwind. Example: Neurology Phase 1 -3.2pp means neurology molecules face significantly harder path than industry average.",
+          "zero": "This TA performs in line with the industry phase average \u2014 no structural advantage or disadvantage.",
+          "na": "Not applicable for PK & Pharmacology trials."
+        },
+        "label_unicode": "\u0394 LP%",
+        "label_display": "\u0394 LP%",
+        "inline_description": "How much this TA deviates from industry average",
+        "what_this_means": {
+          "positive": "This TA outperforms the industry phase average \u2014 structural tailwind for molecules in this area.",
+          "negative": "This TA underperforms the industry phase average \u2014 structural headwind to account for.",
+          "zero": "This TA performs in line with the industry phase average."
+        }
+      }
+    ],
+    "what_this_means_logic": {
+      "all_positive": "Both phase and TA success rates are above industry average \u2014 structurally favourable pipeline position.",
+      "ta_below_phase": "This TA underperforms the industry phase average ({delta}pp below). Structural headwind \u2014 TA-specific challenges apply.",
+      "ta_above_phase": "This TA outperforms the industry phase average (+{delta}pp above). Structural tailwind \u2014 TA-specific advantages apply.",
+      "na": "LP% is not applicable for PK & Pharmacology trials \u2014 healthy volunteer studies have no defined approval pathway."
+    },
+    "na_condition": "therapeutic_area === 'PK & Pharmacology'"
+  },
+  "delta_lp": {
+    "description": "\u0394 LP% = TA LP% minus Phase LP%. Positive = TA outperforms industry average. Negative = TA underperforms. Unit: decimal (multiply by 100 for pp display).",
+    "data": {
+      "Oncology & Hematology": {
+        "PHASE1": -0.0076,
+        "PHASE1|PHASE2": -0.0249,
+        "PHASE2": -0.0249,
+        "PHASE2|PHASE3": -0.0348,
+        "PHASE3": -0.0348,
+        "COMPLETED_PH3": 0.0,
+        "APPROVED": 0.0,
+        "PK & Pharmacology": null
+      },
+      "Hematology (non-oncology)": {
+        "PHASE1": 0.032,
+        "PHASE1|PHASE2": 0.0389,
+        "PHASE2": 0.0389,
+        "PHASE2|PHASE3": 0.0534,
+        "PHASE3": 0.0534,
+        "COMPLETED_PH3": 0.03,
+        "APPROVED": 0.03,
+        "PK & Pharmacology": null
+      },
+      "Rare Disease & Orphan": {
+        "PHASE1": 0.0738,
+        "PHASE1|PHASE2": 0.0938,
+        "PHASE2": 0.0938,
+        "PHASE2|PHASE3": 0.121,
+        "PHASE3": 0.121,
+        "COMPLETED_PH3": 0.05,
+        "APPROVED": 0.05,
+        "PK & Pharmacology": null
+      },
+      "Immunology & Inflammation": {
+        "PHASE1": 0.0145,
+        "PHASE1|PHASE2": 0.0178,
+        "PHASE2": 0.0178,
+        "PHASE2|PHASE3": 0.0234,
+        "PHASE3": 0.0234,
+        "COMPLETED_PH3": 0.01,
+        "APPROVED": 0.01,
+        "PK & Pharmacology": null
+      },
+      "Endocrinology & Metabolism": {
+        "PHASE1": 0.0189,
+        "PHASE1|PHASE2": 0.0291,
+        "PHASE2": 0.0291,
+        "PHASE2|PHASE3": 0.041,
+        "PHASE3": 0.041,
+        "COMPLETED_PH3": 0.01,
+        "APPROVED": 0.01,
+        "PK & Pharmacology": null
+      },
+      "Cardiovascular": {
+        "PHASE1": -0.0082,
+        "PHASE1|PHASE2": -0.0102,
+        "PHASE2": -0.0102,
+        "PHASE2|PHASE3": -0.0174,
+        "PHASE3": -0.0174,
+        "COMPLETED_PH3": 0.0,
+        "APPROVED": 0.0,
+        "PK & Pharmacology": null
+      },
+      "Neurology": {
+        "PHASE1": -0.0323,
+        "PHASE1|PHASE2": -0.0544,
+        "PHASE2": -0.0544,
+        "PHASE2|PHASE3": -0.0796,
+        "PHASE3": -0.0796,
+        "COMPLETED_PH3": -0.02,
+        "APPROVED": -0.02,
+        "PK & Pharmacology": null
+      },
+      "Respiratory & Pulmonary": {
+        "PHASE1": 0.0128,
+        "PHASE1|PHASE2": 0.0178,
+        "PHASE2": 0.0178,
+        "PHASE2|PHASE3": 0.0234,
+        "PHASE3": 0.0234,
+        "COMPLETED_PH3": 0.01,
+        "APPROVED": 0.01,
+        "PK & Pharmacology": null
+      },
+      "Infectious Disease": {
+        "PHASE1": 0.0476,
+        "PHASE1|PHASE2": 0.0659,
+        "PHASE2": 0.0659,
+        "PHASE2|PHASE3": 0.0804,
+        "PHASE3": 0.0804,
+        "COMPLETED_PH3": 0.03,
+        "APPROVED": 0.03,
+        "PK & Pharmacology": null
+      },
+      "Gastroenterology & Hepatology": {
+        "PHASE1": -0.0053,
+        "PHASE1|PHASE2": -0.0102,
+        "PHASE2": -0.0102,
+        "PHASE2|PHASE3": -0.0174,
+        "PHASE3": -0.0174,
+        "COMPLETED_PH3": 0.0,
+        "APPROVED": 0.0,
+        "PK & Pharmacology": null
+      },
+      "Nephrology & Renal": {
+        "PHASE1": 0.0,
+        "PHASE1|PHASE2": 0.0,
+        "PHASE2": 0.0,
+        "PHASE2|PHASE3": 0.0,
+        "PHASE3": 0.0,
+        "COMPLETED_PH3": 0.0,
+        "APPROVED": 0.0,
+        "PK & Pharmacology": null
+      },
+      "Psychiatry & Mental Health": {
+        "PHASE1": -0.0238,
+        "PHASE1|PHASE2": -0.0415,
+        "PHASE2": -0.0415,
+        "PHASE2|PHASE3": -0.0626,
+        "PHASE3": -0.0626,
+        "COMPLETED_PH3": -0.02,
+        "APPROVED": -0.02,
+        "PK & Pharmacology": null
+      },
+      "Dermatology": {
+        "PHASE1": 0.0348,
+        "PHASE1|PHASE2": 0.051,
+        "PHASE2": 0.051,
+        "PHASE2|PHASE3": 0.0714,
+        "PHASE3": 0.0714,
+        "COMPLETED_PH3": 0.03,
+        "APPROVED": 0.03,
+        "PK & Pharmacology": null
+      },
+      "Musculoskeletal & Rheumatology": {
+        "PHASE1": 0.0128,
+        "PHASE1|PHASE2": 0.0178,
+        "PHASE2": 0.0178,
+        "PHASE2|PHASE3": 0.0234,
+        "PHASE3": 0.0234,
+        "COMPLETED_PH3": 0.01,
+        "APPROVED": 0.01,
+        "PK & Pharmacology": null
+      },
+      "Ophthalmology": {
+        "PHASE1": 0.0202,
+        "PHASE1|PHASE2": 0.0282,
+        "PHASE2": 0.0282,
+        "PHASE2|PHASE3": 0.0383,
+        "PHASE3": 0.0383,
+        "COMPLETED_PH3": 0.02,
+        "APPROVED": 0.02,
+        "PK & Pharmacology": null
+      },
+      "Women's Health": {
+        "PHASE1": 0.0,
+        "PHASE1|PHASE2": 0.0,
+        "PHASE2": 0.0,
+        "PHASE2|PHASE3": 0.0,
+        "PHASE3": 0.0,
+        "COMPLETED_PH3": 0.0,
+        "APPROVED": 0.0,
+        "PK & Pharmacology": null
+      },
+      "Pain & Anaesthesia": {
+        "PHASE1": -0.0261,
+        "PHASE1|PHASE2": -0.0415,
+        "PHASE2": -0.0415,
+        "PHASE2|PHASE3": -0.0626,
+        "PHASE3": -0.0626,
+        "COMPLETED_PH3": -0.02,
+        "APPROVED": -0.02,
+        "PK & Pharmacology": null
+      },
+      "Pediatrics": {
+        "PHASE1": 0.0476,
+        "PHASE1|PHASE2": 0.0659,
+        "PHASE2": 0.0659,
+        "PHASE2|PHASE3": 0.0804,
+        "PHASE3": 0.0804,
+        "COMPLETED_PH3": 0.03,
+        "APPROVED": 0.03,
+        "PK & Pharmacology": null
+      },
+      "Vaccines & Preventive": {
+        "PHASE1": 0.0688,
+        "PHASE1|PHASE2": 0.0938,
+        "PHASE2": 0.0938,
+        "PHASE2|PHASE3": 0.121,
+        "PHASE3": 0.121,
+        "COMPLETED_PH3": 0.05,
+        "APPROVED": 0.05,
+        "PK & Pharmacology": null
+      },
+      "Urology": {
+        "PHASE1": 0.0,
+        "PHASE1|PHASE2": 0.0,
+        "PHASE2": 0.0,
+        "PHASE2|PHASE3": 0.0,
+        "PHASE3": 0.0,
+        "COMPLETED_PH3": 0.0,
+        "APPROVED": 0.0,
+        "PK & Pharmacology": null
+      },
+      "PK & Pharmacology": {
+        "PHASE1": null,
+        "PHASE1|PHASE2": null,
+        "PHASE2": null,
+        "PHASE2|PHASE3": null,
+        "PHASE3": null,
+        "COMPLETED_PH3": null,
+        "APPROVED": null,
+        "PK & Pharmacology": null
+      }
+    },
+    "label": "\u0394 LP%"
+  }
+}
