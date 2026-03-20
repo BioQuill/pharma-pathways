@@ -92,7 +92,7 @@ const MODEL_CARDS_ROW2 = [
   { id: "monte-carlo-hub", label: "Monte Carlo", sub: "Scenario Simulation" },
 ];
 
-// ─── Waitlist Modal (Fix 14: mailto on submit) ───
+// ─── Waitlist Modal ───
 function WaitlistModal({ open, onOpenChange, context }: { open: boolean; onOpenChange: (v: boolean) => void; context: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", org: "", role: "", interest: "" });
@@ -175,7 +175,7 @@ function ScoreBadge({ score, label }: { score: number; label: string }) {
   );
 }
 
-// ─── Model Card (Two-State) — Fix 8: CTA redesign ───
+// ─── Model Card (Two-State) ───
 function ModelCard({ card, expanded, onExpand, onCollapse, onWaitlist }: {
   card: { id: string; label: string; sub: string };
   expanded: boolean;
@@ -210,12 +210,12 @@ function ModelCard({ card, expanded, onExpand, onCollapse, onWaitlist }: {
               window.location.href = `mailto:office@bioquill.net?subject=${encodeURIComponent(`Free Sample Report Request — ${card.label} — ${showcase.molecule}`)}&body=${encodeURIComponent(`I am interested in seeing the Full Intelligence Profile sample for ${card.label} using ${showcase.molecule} as the showcase molecule.\n\nModel: ${card.label} — ${card.sub}\nShowcase molecule: ${showcase.molecule}\nContext: ${showcase.context}`)}`;
               setEmailSent(true);
             }}>
-              Redeem Free Sample — {showcase.molecule}
+              Free Sample
             </Button>
             <Button size="sm" variant="outline" className="text-xs border-[#1e3a5f] text-[#1e3a5f]" onClick={() => {
               document.getElementById("cart")?.scrollIntoView({ behavior: "smooth" });
             }}>
-              Run on your molecule / TA →
+              Your Molecule
             </Button>
           </div>
         )}
@@ -237,8 +237,8 @@ function ModelCard({ card, expanded, onExpand, onCollapse, onWaitlist }: {
   );
 }
 
-// ─── TA Configurator (Fix 11) ───
-function TAConfigurator({ onWaitlist }: { onWaitlist: (ctx: string) => void }) {
+// ─── TA Configurator ───
+function TAConfigurator({ onAddToCart }: { onAddToCart: (ta: string, phases: string[], price: number, trials: number) => void }) {
   const [selectedTA, setSelectedTA] = useState("");
   const [phases, setPhases] = useState<string[]>(["all"]);
 
@@ -313,8 +313,8 @@ function TAConfigurator({ onWaitlist }: { onWaitlist: (ctx: string) => void }) {
         <li>• 1-year live monitoring & automated alerts</li>
       </ul>
 
-      {selectedTA ? (
-        <Button className="w-full font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => onWaitlist(`You requested access to: 1 TA — ${selectedTA} ${phaseLabel} — $${result?.price.toLocaleString()}/year`)}>Request Access</Button>
+      {selectedTA && result ? (
+        <Button className="w-full font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => onAddToCart(selectedTA, phases, result.price, result.trials)}>Add to Cart</Button>
       ) : (
         <Button className="w-full font-bold" disabled>Select a TA to continue</Button>
       )}
@@ -322,120 +322,8 @@ function TAConfigurator({ onWaitlist }: { onWaitlist: (ctx: string) => void }) {
   );
 }
 
-// ─── Shopping Cart (Fix 13) ───
+// ─── Cart types ───
 type CartItem = { type: "molecule"; name: string; price: number } | { type: "ta"; ta: string; phases: string; price: number; trials: number };
-
-function ShoppingCart({ openWaitlist }: { openWaitlist: (ctx: string) => void }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [molInput, setMolInput] = useState("");
-  const [cartTA, setCartTA] = useState("");
-  const [cartPhases, setCartPhases] = useState<string[]>(["all"]);
-
-  const toggleCartPhase = (p: string) => {
-    if (p === "all") { setCartPhases(["all"]); return; }
-    let next = cartPhases.filter(x => x !== "all");
-    if (next.includes(p)) next = next.filter(x => x !== p);
-    else next.push(p);
-    if (next.length === 0) next = ["all"];
-    setCartPhases(next);
-  };
-
-  const addMolecule = () => {
-    if (!molInput.trim()) return;
-    setItems(prev => [...prev, { type: "molecule", name: molInput.trim(), price: 5000 }]);
-    setMolInput("");
-  };
-
-  const addTA = () => {
-    if (!cartTA) return;
-    const result = calculatePrice(cartTA, cartPhases);
-    if (!result) return;
-    const phaseLabel = cartPhases.includes("all") ? "All Phases" : cartPhases.map(p => `Phase ${p}`).join(" + ");
-    setItems(prev => [...prev, { type: "ta", ta: cartTA, phases: phaseLabel, price: result.price, trials: result.trials }]);
-    setCartTA("");
-    setCartPhases(["all"]);
-  };
-
-  const removeItem = (idx: number) => setItems(prev => prev.filter((_, i) => i !== idx));
-  const total = items.reduce((s, it) => s + it.price, 0);
-
-  const handleRequestPackage = () => {
-    const lines = items.map((it, i) => {
-      if (it.type === "molecule") return `${i + 1}. 💊 ${it.name} — All phases — $${it.price.toLocaleString()}/yr`;
-      return `${i + 1}. 🧬 ${it.ta} — ${it.phases} — $${it.price.toLocaleString()}/yr`;
-    }).join("\n");
-    const body = `Package Request:\n\n${lines}\n\nTotal: $${total.toLocaleString()} / year`;
-    window.location.href = `mailto:office@bioquill.net?subject=${encodeURIComponent(`BioQuill Package Request — $${total.toLocaleString()}/yr`)}&body=${encodeURIComponent(body)}`;
-    openWaitlist(`Package request: $${total.toLocaleString()}/yr — ${items.length} items`);
-  };
-
-  return (
-    <div id="cart" className="border-[2.5px] border-[#1e3a5f] rounded-xl p-8 bg-white">
-      <h3 className="text-xl font-bold text-[#1e3a5f] mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>Your Intelligence Package</h3>
-      <p className="text-sm text-muted-foreground mb-6">Combine molecules and TAs — build exactly the coverage you need.</p>
-
-      {/* Add Molecule */}
-      <div className="mb-4">
-        <Label className="text-xs font-semibold text-[#1e3a5f]">Add a Molecule — $5,000/yr each</Label>
-        <div className="flex gap-2 mt-1">
-          <Input placeholder="Add a molecule..." value={molInput} onChange={e => setMolInput(e.target.value)} onKeyDown={e => e.key === "Enter" && addMolecule()} className="flex-1" />
-          <Button size="sm" onClick={addMolecule} className="text-[#1e3a5f] font-bold" style={{ backgroundColor: "#F59E0B" }}><Plus className="h-4 w-4 mr-1" /> Add</Button>
-        </div>
-      </div>
-
-      {/* Add TA */}
-      <div className="mb-6">
-        <Label className="text-xs font-semibold text-[#1e3a5f]">Add a Therapeutic Area</Label>
-        <Select value={cartTA} onValueChange={setCartTA}>
-          <SelectTrigger className="mt-1"><SelectValue placeholder="Select a therapeutic area" /></SelectTrigger>
-          <SelectContent>
-            {TA_ORDER.map(ta => (
-              <SelectItem key={ta} value={ta}>{ta} — {TA_MATRIX[ta].total.toLocaleString()} trials</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <div className="flex gap-1 mt-2">
-          {[{ key: "all", label: "All" }, { key: "1", label: "Phase 1" }, { key: "2", label: "Phase 2" }, { key: "3", label: "Phase 3" }].map(p => (
-            <button
-              key={p.key}
-              onClick={() => toggleCartPhase(p.key)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md border transition-colors ${cartPhases.includes(p.key) ? "bg-[#1e3a5f] text-white border-[#1e3a5f]" : "bg-white text-[#1e3a5f] border-[#1e3a5f]/30 hover:border-[#1e3a5f]"}`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-        {cartTA && (
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-sm text-muted-foreground">{calculatePrice(cartTA, cartPhases)?.trials.toLocaleString()} profiles · ${calculatePrice(cartTA, cartPhases)?.price.toLocaleString()}/yr</span>
-            <Button size="sm" onClick={addTA} className="text-[#1e3a5f] font-bold" style={{ backgroundColor: "#F59E0B" }}>Add to Package</Button>
-          </div>
-        )}
-      </div>
-
-      {/* Cart Items */}
-      {items.length === 0 ? (
-        <p className="text-center text-muted-foreground italic text-sm py-6">Your package is empty — add molecules or therapeutic areas above.</p>
-      ) : (
-        <div className="mb-4">
-          {items.map((it, i) => (
-            <div key={i} className={`flex items-center justify-between py-3 px-4 border-l-[3px] border-l-[#1e3a5f] ${i % 2 === 0 ? "bg-[#F8F9FA]" : "bg-white"}`}>
-              <span className="text-sm text-[#1e3a5f]">
-                {it.type === "molecule" ? `💊 ${it.name} — All phases — $${it.price.toLocaleString()}/yr` : `🧬 ${it.ta} — ${it.phases} — $${it.price.toLocaleString()}/yr`}
-              </span>
-              <button onClick={() => removeItem(i)} className="text-muted-foreground hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
-            </div>
-          ))}
-          <div className="border-t-2 border-[#1e3a5f] pt-4 mt-2 flex items-center justify-between">
-            <span className="text-lg font-bold text-[#1e3a5f]">Total: ${total.toLocaleString()} / year</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">Billed annually. Access granted within 2 business days of payment confirmation.</p>
-          <Button className="w-full mt-4 font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={handleRequestPackage}>Request This Package →</Button>
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ═══════════════════════════════════════
 // LANDING PAGE
@@ -447,6 +335,7 @@ export default function LandingPage() {
   const [waitlistContext, setWaitlistContext] = useState("");
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const openWaitlist = useCallback((ctx: string) => {
     setWaitlistContext(ctx);
@@ -458,16 +347,35 @@ export default function LandingPage() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // ─── Live stats (Fix 4) ───
+  const addMoleculeToCart = (name: string) => {
+    if (!name.trim()) return;
+    setCartItems(prev => [...prev, { type: "molecule", name: name.trim(), price: 5000 }]);
+  };
+
+  const addTAToCart = (ta: string, phases: string[], price: number, trials: number) => {
+    const phaseLabel = phases.includes("all") ? "All Phases" : phases.map(p => `Phase ${p}`).join(" + ");
+    setCartItems(prev => [...prev, { type: "ta", ta, phases: phaseLabel, price, trials }]);
+  };
+
+  const removeCartItem = (idx: number) => setCartItems(prev => prev.filter((_, i) => i !== idx));
+  const cartTotal = cartItems.reduce((s, it) => s + it.price, 0);
+
+  const handlePurchaseRequest = () => {
+    const lines = cartItems.map((it, i) => {
+      if (it.type === "molecule") return `${i + 1}. 💊 ${it.name} — All phases — $${it.price.toLocaleString()}/yr`;
+      return `${i + 1}. 🧬 ${it.ta} — ${it.phases} — $${it.price.toLocaleString()}/yr`;
+    }).join("\n");
+    const body = `Package Request:\n\n${lines}\n\nTotal: $${cartTotal.toLocaleString()} / year`;
+    window.location.href = `mailto:office@bioquill.net?subject=${encodeURIComponent(`BioQuill Package Request — $${cartTotal.toLocaleString()}/yr`)}&body=${encodeURIComponent(body)}`;
+    openWaitlist(`Package request: $${cartTotal.toLocaleString()}/yr — ${cartItems.length} items`);
+  };
+
+  // ─── Live stats ───
   const activeTrials = allMolecules.length;
   const uniqueMolecules = new Set(allMolecules.map(m => m.name?.toLowerCase().trim())).size;
   const shimmer = !fullyLoaded ? "animate-pulse" : "";
 
-  // Phase counts from raw data
   const phase1Count = allMolecules.filter(m => {
-    const p = ((m as any)._raw?.status ? (m as any).phase : m.phase) || "";
-    const rawPhase = (m as any)._raw ? "" : "";
-    // Use the raw nct phase info if available
     return /phase\s*1/i.test(m.phase) || /phase\s*i($|\s|\/)/i.test(m.phase);
   }).length;
   const phase2Count = allMolecules.filter(m => {
@@ -478,19 +386,11 @@ export default function LandingPage() {
   }).length;
   const pkCount = allMolecules.filter(m => m.therapeuticArea === "PK & Pharmacology").length;
 
-  // TA table data (Fix 15)
-  const taCountMap: Record<string, number> = {};
-  allMolecules.forEach(m => {
-    const ta = m.therapeuticArea || "Other";
-    taCountMap[ta] = (taCountMap[ta] || 0) + 1;
-  });
-  const taSorted = Object.entries(taCountMap).sort((a, b) => b[1] - a[1]);
-
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "Manrope, Inter, sans-serif" }}>
       <WaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} context={waitlistContext} />
 
-      {/* ═══ SECTION A: STICKY HEADER (Fix 1: removed Enter Platform) ═══ */}
+      {/* ═══ STICKY HEADER ═══ */}
       <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 48, backgroundColor: "#F5C518", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center shrink-0">
@@ -510,7 +410,7 @@ export default function LandingPage() {
               <button key={s} onClick={() => scrollTo(s)} className="text-sm font-semibold text-[#1A1A1A]/80 hover:text-[#1A1A1A] capitalize">{s}</button>
             ))}
             <span className="text-xs text-[#1A1A1A]/60 whitespace-nowrap" style={{ background: "rgba(255,255,255,0.35)", borderRadius: 20, padding: "3px 10px" }}>Data refreshed: 05/03/2026</span>
-            <Button size="sm" className="font-bold text-xs text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => openWaitlist("")}>Request Access</Button>
+            <Button size="sm" className="font-bold text-xs text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => scrollTo("pricing")}>Request Access</Button>
           </div>
 
           {/* Mobile hamburger */}
@@ -521,7 +421,7 @@ export default function LandingPage() {
             {["about", "models", "pricing", "contact"].map(s => (
               <button key={s} onClick={() => scrollTo(s)} className="block text-sm font-semibold text-[#1A1A1A] capitalize w-full text-left">{s}</button>
             ))}
-            <Button size="sm" className="w-full font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => openWaitlist("")}>Request Access</Button>
+            <Button size="sm" className="w-full font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => scrollTo("pricing")}>Request Access</Button>
           </div>
         )}
       </header>
@@ -530,23 +430,22 @@ export default function LandingPage() {
 
       {/* ═══ SECTION B: LIVE PLATFORM PREVIEW ═══ */}
       <section id="models">
-        {/* Fix 3: Probabilistic thinking paragraph */}
+        {/* Probabilistic thinking paragraph — displayed in 3 rows */}
         <div className="py-6 px-4" style={{ backgroundColor: "#F8F9FA" }}>
           <p className="text-[#1e3a5f] text-center text-base leading-relaxed max-w-[700px] mx-auto" style={{ fontFamily: "Manrope, sans-serif", fontWeight: 400 }}>
             Probabilistic thinking is estimating how likely different outcomes are by using logic and mathematical reasoning. In a world shaped by countless interacting variables, it helps us identify the scenarios that are most likely to unfold. When we understand those probabilities, our decisions become sharper, more accurate, and far more effective.
           </p>
         </div>
 
-        {/* Sub-headline (Fix 2: no buttons) */}
-        <div className="bg-white py-6 px-4">
-          <p className="text-[#1e3a5f] text-center text-lg md:text-xl leading-relaxed max-w-[700px] mx-auto" style={{ fontFamily: "Manrope, sans-serif", fontWeight: 400 }}>
-            13 proprietary models. 21,739 industry-sponsored trial profiles. 20 therapeutic areas. Every asset scored on launch probability, time to market, regulatory pathway, competitive position, and market access.
-          </p>
-        </div>
-
-        {/* 6 Stat Cards (Fix 4: phase breakdown) */}
-        <div className="container mx-auto px-4 mb-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {/* 7 Stat Cards (with new "14 PROPRIETARY MODELS" card first) — Fix 12: 2cm (~32px) gap from text */}
+        <div className="container mx-auto px-4 mb-4 mt-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            <Card className="bg-white shadow-sm">
+              <CardContent className="py-1.5 px-3 text-center">
+                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Proprietary Models</p>
+                <p className="text-lg font-bold text-[#1e3a5f]">14</p>
+              </CardContent>
+            </Card>
             {[
               { label: "Active Trials", value: activeTrials.toLocaleString(), color: "#0E1D35" },
               { label: "Molecules", value: uniqueMolecules.toLocaleString(), color: "#0E1D35" },
@@ -579,41 +478,22 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* TA Distribution Card with table (Fix 15) */}
+        {/* TA Distribution Card — pie chart only, no table */}
         {!loading && allMolecules.length > 0 && (
-          <div className="container mx-auto px-4 mb-4">
+          <div className="container mx-auto px-4 mb-2">
             <InteractiveOverlay onClick={() => openWaitlist("You requested access to: Pipeline Explorer")}>
               <div className="p-3 border rounded-lg bg-muted/30">
                 <div className="flex items-center mb-2">
                   <Badge className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full font-semibold">Molecules by Therapeutic Area</Badge>
                 </div>
                 <MoleculeDistributionChart molecules={allMolecules} />
-                {/* TA Table */}
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-[#1e3a5f] text-white">
-                        <th className="text-left py-2 px-3 font-semibold">Therapeutic Area</th>
-                        <th className="text-right py-2 px-3 font-semibold">Trial Profiles</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {taSorted.map(([ta, count], i) => (
-                        <tr key={ta} className={i % 2 === 0 ? "bg-white" : "bg-[#F8F9FA]"}>
-                          <td className="py-1.5 px-3 text-[#1e3a5f]">{ta}</td>
-                          <td className="py-1.5 px-3 text-right text-[#1e3a5f] font-medium">{count.toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
               </div>
             </InteractiveOverlay>
           </div>
         )}
 
-        {/* Search Bar (Fix 5: updated placeholder) */}
-        <div className="container mx-auto px-4 mb-8">
+        {/* Search Bar — ~1cm (10px) distance from pie chart */}
+        <div className="container mx-auto px-4 mb-8 mt-2">
           <InteractiveOverlay onClick={() => openWaitlist("Request access to search the full pipeline")}>
             <div className="relative w-full max-w-md mx-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
@@ -629,12 +509,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ SECTION C: PHILOSOPHY (Fix 6: 32px spacing, Fix 7: updated H2, removed anchor) ═══ */}
+      {/* ═══ SECTION C: PHILOSOPHY ═══ */}
       <section id="about" className="bg-white pt-8 pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">WHY BIOQUILL</p>
           <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] leading-tight font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>
-            In the race to market, the best decision<br className="hidden md:block" /> is made by those who use probabilistic thinking.
+            The best decisions<br className="hidden md:block" /> are made by those who think in probabilities.
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
@@ -652,7 +532,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ SECTION D: WHO IT'S FOR (Fix 6: 32px spacing) ═══ */}
+      {/* ═══ SECTION D: WHO IT'S FOR ═══ */}
       <section className="pt-8 pb-8 px-4" style={{ backgroundColor: "#F8F9FA" }}>
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">WHO USES BIOQUILL</p>
@@ -674,47 +554,73 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ SECTION E: PRICING (Fix 6, 10, 11, 12, 13) ═══ */}
+      {/* ═══ SECTION E: PRICING ═══ */}
       <section id="pricing" className="bg-white pt-8 pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">PRICING</p>
-          <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>From Single Molecule to Full Pipeline</h2>
-          <p className="text-muted-foreground text-lg mb-8">Configure your scope. Pay for what you need.</p>
+          <p className="text-muted-foreground text-lg mb-8">Configure per your scope. Pay for what you need: single molecules, full therapeutic area or the full pipeline.</p>
+
+          {/* Cart at top of pricing */}
+          <div id="cart" className="border-[2.5px] border-[#1e3a5f] rounded-xl p-6 bg-white mb-6">
+            <h3 className="text-lg font-bold text-[#1e3a5f] mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>🛒 Your Cart</h3>
+            {cartItems.length === 0 ? (
+              <p className="text-center text-muted-foreground italic text-sm py-4">Your cart is empty — add molecules or therapeutic areas below.</p>
+            ) : (
+              <div>
+                {cartItems.map((it, i) => (
+                  <div key={i} className={`flex items-center justify-between py-2 px-4 border-l-[3px] border-l-[#1e3a5f] ${i % 2 === 0 ? "bg-[#F8F9FA]" : "bg-white"}`}>
+                    <span className="text-sm text-[#1e3a5f]">
+                      {it.type === "molecule" ? `💊 ${it.name} — All phases — $${it.price.toLocaleString()}/yr` : `🧬 ${it.ta} — ${it.phases} — $${it.price.toLocaleString()}/yr`}
+                    </span>
+                    <button onClick={() => removeCartItem(i)} className="text-muted-foreground hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+                  </div>
+                ))}
+                <div className="border-t-2 border-[#1e3a5f] pt-3 mt-2 flex items-center justify-between">
+                  <span className="text-lg font-bold text-[#1e3a5f]">Total: ${cartTotal.toLocaleString()} / year</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Billed annually. Access granted within 2 business days of payment confirmation.</p>
+                <Button className="w-full mt-3 font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={handlePurchaseRequest}>Purchase & Request Access</Button>
+              </div>
+            )}
+          </div>
 
           <div className="grid md:grid-cols-3 gap-6 mb-6">
-            {/* 1 Molecule (Fix 10: Full Intelligence Profile) */}
+            {/* 1 Molecule */}
             <div className="border-[2.5px] border-[#1e3a5f] rounded-xl p-8">
               <h3 className="text-xl font-bold text-[#1e3a5f] mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>1 Molecule</h3>
               <p className="text-3xl font-bold text-[#1e3a5f] mb-1">$5,000 <span className="text-sm font-normal text-muted-foreground">/ year</span></p>
               <p className="text-sm text-muted-foreground mb-6">1 molecule — all development phases</p>
               <ul className="space-y-2 text-sm text-muted-foreground mb-8">
                 <li>• Full Intelligence Profile</li>
-                <li>• All 13 models</li>
+                <li>• All 14 models</li>
                 <li>• 1-year monitoring & alerts</li>
               </ul>
-              <Button className="w-full font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => openWaitlist("You requested access to: 1 Molecule Plan")}>Request Access</Button>
+              <MoleculeAddToCart onAdd={addMoleculeToCart} />
             </div>
 
-            {/* 1 TA — Live Configurator (Fix 11) */}
-            <TAConfigurator onWaitlist={openWaitlist} />
+            {/* 1 TA — Live Configurator */}
+            <TAConfigurator onAddToCart={addTAToCart} />
 
-            {/* Full Access (Fix 12: Strategy Hub) */}
+            {/* Full Access */}
             <div className="border-[2.5px] border-[#1e3a5f] rounded-xl p-8 relative">
               <Badge className="absolute -top-3 left-6 bg-[#1e3a5f] text-white font-bold">Enterprise</Badge>
               <h3 className="text-xl font-bold text-[#1e3a5f] mb-1" style={{ fontFamily: "Manrope, sans-serif" }}>Full Access</h3>
-              <p className="text-3xl font-bold text-[#1e3a5f] mb-1">$300,000 <span className="text-sm font-normal text-muted-foreground">/ year</span></p>
-              <p className="text-sm text-muted-foreground mb-6">21,739 trial profiles — all 20 TAs — all phases</p>
+              <p className="text-3xl font-bold text-[#1e3a5f] mb-1">$250,000 <span className="text-sm font-normal text-muted-foreground">/ year</span></p>
+              <p className="text-sm text-muted-foreground mb-6">ALL trial profiles — ALL 20 TAs — ALL phases</p>
               <ul className="space-y-2 text-sm text-muted-foreground mb-8">
                 <li>• Complete global pipeline coverage</li>
                 <li>• Dedicated account manager</li>
                 <li>• Custom scoring configurations</li>
                 <li>• Access to Strategy Hub — scenario planning and portfolio optimisation</li>
               </ul>
-              <Button className="w-full font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => openWaitlist("You requested access to: Full Access — Enterprise")}>Contact Sales</Button>
+              <Button className="w-full font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => {
+                setCartItems(prev => [...prev, { type: "molecule", name: "Full Access — Enterprise", price: 250000 }]);
+                document.getElementById("cart")?.scrollIntoView({ behavior: "smooth" });
+              }}>Add to Cart</Button>
             </div>
           </div>
 
-          {/* Feature Comparison Table (Fix 10, 12) */}
+          {/* Feature Comparison Table */}
           <div className="overflow-x-auto mb-6">
             <table className="w-full text-sm border-collapse">
               <thead>
@@ -728,7 +634,7 @@ export default function LandingPage() {
               <tbody>
                 {[
                   ["Full Intelligence Profile", "✓", "✓", "✓"],
-                  ["All 13 models", "✓", "✓", "✓"],
+                  ["All 14 models", "✓", "✓", "✓"],
                   ["1-year monitoring & alerts", "✓", "✓", "✓"],
                   ["TA Composite Index analytics", "—", "✓", "✓"],
                   ["Head-to-head molecule comparison", "—", "✓", "✓"],
@@ -748,10 +654,6 @@ export default function LandingPage() {
             </table>
           </div>
 
-          {/* Shopping Cart (Fix 13) */}
-          <ShoppingCart openWaitlist={openWaitlist} />
-
-          {/* Fix 9: scroll to #pricing */}
           <p className="text-center mt-6">
             <button onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })} className="text-[#F59E0B] font-semibold text-sm hover:underline inline-flex items-center gap-1">
               See full pricing details → <ChevronRight className="h-3 w-3" />
@@ -776,7 +678,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ SECTION G: REQUEST ACCESS FORM (Fix 14: mailto) ═══ */}
+      {/* ═══ SECTION G: REQUEST ACCESS FORM ═══ */}
       <section id="contact" className="pt-8 pb-8 px-4" style={{ backgroundColor: "#F8F9FA" }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">EARLY ACCESS</p>
@@ -786,12 +688,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ═══ SECTION H: FOOTER (Fix 16: no Platform links, reduced height, no duplicate logo) ═══ */}
-      <footer className="px-4 pt-8 pb-5" style={{ backgroundColor: "#0f2744" }}>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 mb-6">
-          {/* Left */}
+      {/* ═══ SECTION H: FOOTER ═══ */}
+      <footer className="px-4 pt-4 pb-3" style={{ backgroundColor: "#0f2744" }}>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 mb-4">
           <div>
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center overflow-hidden">
                 <img src={bioquillEmblem} alt="BioQuill" className="w-6 h-6 object-cover rounded-full" />
               </div>
@@ -800,7 +701,6 @@ export default function LandingPage() {
             <p className="text-[#F59E0B] italic text-sm mb-2">"Know the odds. Understand the pipeline. Win the race."</p>
             <a href="mailto:office@bioquill.net" className="text-white/70 text-sm hover:text-white inline-flex items-center gap-1"><Mail className="h-3 w-3" /> office@bioquill.net</a>
           </div>
-          {/* Right — Data + About */}
           <div className="grid grid-cols-2 gap-6">
             <div>
               <p className="text-white/50 uppercase text-xs tracking-wider mb-2">Data</p>
@@ -809,12 +709,12 @@ export default function LandingPage() {
             </div>
             <div>
               <p className="text-white/50 uppercase text-xs tracking-wider mb-2">About BioQuill</p>
-              <p className="text-white/70 text-sm leading-relaxed">BioQuill is a pharmaceutical pipeline intelligence platform — 13 proprietary models, 21,739 trial profiles, 20 therapeutic areas. Built for the teams running the race.</p>
+              <p className="text-white/70 text-sm leading-relaxed">BioQuill is a pharmaceutical pipeline intelligence platform — 14 proprietary models, 28,432 trial profiles, 17,497 unique molecules, 20 therapeutic areas. Built for teams that win the race.</p>
             </div>
           </div>
         </div>
-        <div className="max-w-6xl mx-auto border-t border-[#1e3a5f] pt-4">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-3">
+        <div className="max-w-6xl mx-auto border-t border-[#1e3a5f] pt-3">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-2">
             <p className="text-white/50 text-xs">© 2026 BioQuill. All rights reserved.</p>
             <div className="flex gap-4 text-white/50 text-xs">
               <span className="hover:text-white/70 cursor-pointer">Privacy Policy</span>
@@ -828,7 +728,20 @@ export default function LandingPage() {
   );
 }
 
-// ─── Standalone Contact Form (Fix 14: mailto on submit) ───
+// ─── Molecule Add to Cart (inline in pricing card) ───
+function MoleculeAddToCart({ onAdd }: { onAdd: (name: string) => void }) {
+  const [molName, setMolName] = useState("");
+  return (
+    <div>
+      <div className="flex gap-2">
+        <Input placeholder="Molecule name..." value={molName} onChange={e => setMolName(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { onAdd(molName); setMolName(""); } }} className="flex-1 text-sm" />
+        <Button size="sm" className="text-[#1e3a5f] font-bold" style={{ backgroundColor: "#F59E0B" }} onClick={() => { onAdd(molName); setMolName(""); }}>Add to Cart</Button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Standalone Contact Form ───
 function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", org: "", role: "", interest: "" });
