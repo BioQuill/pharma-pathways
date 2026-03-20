@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "description": "E2 Dropout Risk Cross-Check \u2014 compares E2 trial-specific signal against Drop badge phase baseline",
+  "drop_badge_source": "Phase + sponsor tier \u2014 historical phase transition rates",
+  "e2_source": "Trial-specific signals \u2014 endpoint type, design, enrollment velocity, expedited pathway",
+  "flag_types": {
+    "consistent": "E2 and Drop within 1 point \u2014 signals agree",
+    "e2_higher": "E2 > Drop by 2+ points \u2014 hidden risk not captured by phase baseline",
+    "e2_lower": "E2 < Drop by 2+ points \u2014 trial-specific factors reduce risk below baseline"
+  },
+  "platform_display": {
+    "molecule_card": "E2 badge shown next to Drop badge: 'Drop 2/5 | E2 \ud83d\udfe1'",
+    "conflict_flag": "\u26a0\ufe0f shown when flag = e2_higher or e2_lower",
+    "gantt_chart": "E2 score modifies bar opacity \u2014 score 4-5 = faded bars with warning icon",
+    "full_intelligence_profile": "Cross-check narrative in Pipeline Intelligence Summary card"
+  },
+  "cross_check_logic": "\n    Cross-check E2 vs Drop badge.\n    Returns: agreement level, narrative, flag type\n    ",
+  "drop_badge_map": {
+    "PHASE1": {
+      "big_pharma": 2,
+      "large_biotech": 2,
+      "mid_biotech": 3,
+      "academic": 4
+    },
+    "PHASE1|PHASE2": {
+      "big_pharma": 2,
+      "large_biotech": 2,
+      "mid_biotech": 3,
+      "academic": 4
+    },
+    "PHASE2": {
+      "big_pharma": 3,
+      "large_biotech": 3,
+      "mid_biotech": 4,
+      "academic": 4
+    },
+    "PHASE2|PHASE3": {
+      "big_pharma": 2,
+      "large_biotech": 2,
+      "mid_biotech": 3,
+      "academic": 3
+    },
+    "PHASE3": {
+      "big_pharma": 1,
+      "large_biotech": 2,
+      "mid_biotech": 2,
+      "academic": 3
+    }
+  }
+}
