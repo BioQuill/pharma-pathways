@@ -394,13 +394,13 @@ export default function LandingPage() {
       <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 48, backgroundColor: "#F5C518", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }}>
         <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center shrink-0">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
-              <img src={bioquillEmblem} alt="BioQuill emblem" className="w-8 h-8 object-cover rounded-full" />
+            <div className="w-[60px] h-[60px] rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
+              <img src={bioquillEmblem} alt="BioQuill emblem" className="w-12 h-12 object-cover rounded-full" />
             </div>
-            <span className="ml-2 text-[16px] font-bold text-[#1A1A1A] tracking-tight">BiOQUILL</span>
+            <span className="ml-2 text-[21px] font-bold text-[#1A1A1A] tracking-tight">BiOQUILL</span>
             <div className="hidden md:flex items-center gap-3 ml-4">
-              <div style={{ width: 1, height: 20, background: "rgba(26,26,26,0.25)" }} />
-              <span className="text-[13px] font-bold text-[#1A1A1A] whitespace-nowrap">Know the odds. Understand the pipeline. Win the race.</span>
+              <div style={{ width: 1, height: 24, background: "rgba(26,26,26,0.25)" }} />
+              <span className="text-[17px] font-bold text-[#1A1A1A] whitespace-nowrap">Know the odds. Understand the pipeline. Win the race.</span>
             </div>
           </div>
 
