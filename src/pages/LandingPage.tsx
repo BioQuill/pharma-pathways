@@ -513,7 +513,7 @@ export default function LandingPage() {
       <section id="about" className="bg-white pt-8 pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">WHY BIOQUILL</p>
-          <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] leading-tight font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] leading-tight font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>
             The best decisions<br className="hidden md:block" /> are made by those who think in probabilities.
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
