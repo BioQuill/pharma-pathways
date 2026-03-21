@@ -558,7 +558,7 @@ export default function LandingPage() {
       <section id="pricing" className="bg-white pt-8 pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">PRICING</p>
-          <p className="text-muted-foreground text-lg mb-8">Configure per your scope. Pay for what you need: single molecules, full therapeutic area or the full pipeline.</p>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] font-bold mb-8" style={{ fontFamily: "Manrope, sans-serif" }}>Configure per your scope. Pay for what you need: single molecules, full therapeutic area or the full pipeline.</h2>
 
           {/* Cart at top of pricing */}
           <div id="cart" className="border-[2.5px] border-[#1e3a5f] rounded-xl p-6 bg-white mb-6">
