@@ -595,7 +595,7 @@ export default function LandingPage() {
                 <li>• All 14 models</li>
                 <li>• 1-year monitoring & alerts</li>
               </ul>
-              <MoleculeAddToCart onAdd={addMoleculeToCart} />
+              <MoleculeAddToCart onAdd={addMoleculeToCart} molecules={allMolecules} />
             </div>
 
             {/* 1 TA — Live Configurator */}
