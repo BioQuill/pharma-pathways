@@ -513,7 +513,7 @@ export default function LandingPage() {
       <section id="about" className="bg-white pt-8 pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">WHY BIOQUILL</p>
-          <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] leading-tight font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] leading-tight font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>
             The best decisions<br className="hidden md:block" /> are made by those who think in probabilities.
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -536,7 +536,7 @@ export default function LandingPage() {
       <section className="pt-8 pb-8 px-4" style={{ backgroundColor: "#F8F9FA" }}>
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">WHO USES BIOQUILL</p>
-          <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>Built for the Teams Running the Race</h2>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>Built for the Teams Running the Race</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {[
               { icon: "🏦", title: "Biotech Investors & Funds", text: "VCs, hedge funds, and family offices tracking pipeline assets before they become expensive. Phase 1 signals, Phase 3 conviction, portfolio-level risk." },
@@ -558,7 +558,7 @@ export default function LandingPage() {
       <section id="pricing" className="bg-white pt-8 pb-8 px-4">
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">PRICING</p>
-          <p className="text-muted-foreground text-lg mb-8">Configure per your scope. Pay for what you need: single molecules, full therapeutic area or the full pipeline.</p>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] font-bold mb-8" style={{ fontFamily: "Manrope, sans-serif" }}>Configure per your scope. Pay for what you need: single molecules, full therapeutic area or the full pipeline.</h2>
 
           {/* Cart at top of pricing */}
           <div id="cart" className="border-[2.5px] border-[#1e3a5f] rounded-xl p-6 bg-white mb-6">
@@ -595,7 +595,7 @@ export default function LandingPage() {
                 <li>• All 14 models</li>
                 <li>• 1-year monitoring & alerts</li>
               </ul>
-              <MoleculeAddToCart onAdd={addMoleculeToCart} />
+              <MoleculeAddToCart onAdd={addMoleculeToCart} molecules={allMolecules} />
             </div>
 
             {/* 1 TA — Live Configurator */}
@@ -666,7 +666,7 @@ export default function LandingPage() {
       <section id="demo" className="pt-8 pb-8 px-4" style={{ backgroundColor: "#1e3a5f" }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">PLATFORM DEMO</p>
-          <h2 className="text-white text-3xl md:text-[40px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>See BioQuill in Action</h2>
+          <h2 className="text-white text-2xl md:text-[28px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>See BioQuill in Action</h2>
           <p className="text-white/70 text-lg mb-10">Watch how BioQuill scores a molecule from search to full due diligence report in under 3 minutes.</p>
           <div className="max-w-[800px] mx-auto aspect-video rounded-xl border-2 border-[#1e3a5f] flex flex-col items-center justify-center" style={{ backgroundColor: "#0f2744" }}>
             <div className="w-20 h-20 rounded-full border-2 border-[#F59E0B] flex items-center justify-center mb-4">
@@ -682,7 +682,7 @@ export default function LandingPage() {
       <section id="contact" className="pt-8 pb-8 px-4" style={{ backgroundColor: "#F8F9FA" }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">EARLY ACCESS</p>
-          <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>Join the Pipeline Intelligence Revolution</h2>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>Join the Pipeline Intelligence Revolution</h2>
           <p className="text-muted-foreground mb-10">BioQuill is currently in early access. Request access to be among the first teams to score the global pipeline.</p>
           <ContactForm />
         </div>
@@ -728,15 +728,54 @@ export default function LandingPage() {
   );
 }
 
-// ─── Molecule Add to Cart (inline in pricing card) ───
-function MoleculeAddToCart({ onAdd }: { onAdd: (name: string) => void }) {
-  const [molName, setMolName] = useState("");
+// ─── Molecule Add to Cart (searchable from master dataset) ───
+function MoleculeAddToCart({ onAdd, molecules }: { onAdd: (name: string) => void; molecules: { name: string; nctId?: string; phase?: string }[] }) {
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const results = query.length >= 3
+    ? molecules.filter(m => {
+        const q = query.toLowerCase();
+        return m.name?.toLowerCase().includes(q) || m.nctId?.toLowerCase().includes(q) || (m as any).company?.toLowerCase().includes(q);
+      }).slice(0, 5)
+    : [];
+
+  const noResults = query.length >= 3 && results.length === 0;
+
   return (
-    <div>
+    <div ref={containerRef} className="relative">
       <div className="flex gap-2">
-        <Input placeholder="Molecule name..." value={molName} onChange={e => setMolName(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { onAdd(molName); setMolName(""); } }} className="flex-1 text-sm" />
-        <Button size="sm" className="text-[#1e3a5f] font-bold" style={{ backgroundColor: "#F59E0B" }} onClick={() => { onAdd(molName); setMolName(""); }}>Add to Cart</Button>
+        <Input
+          placeholder="Search molecule..."
+          value={selected || query}
+          onChange={e => { setQuery(e.target.value); setSelected(""); setIsOpen(true); }}
+          onFocus={() => { if (query.length >= 3) setIsOpen(true); }}
+          className="flex-1 text-sm"
+        />
+        <Button size="sm" className="text-[#1e3a5f] font-bold" style={{ backgroundColor: "#F59E0B" }} disabled={!selected} onClick={() => { onAdd(selected); setSelected(""); setQuery(""); }}>Add to Cart</Button>
       </div>
+      {isOpen && (results.length > 0 || noResults) && (
+        <div className="absolute z-50 w-full mt-1 max-h-[200px] overflow-y-auto bg-white border border-[#1e3a5f]/20 rounded-md shadow-lg">
+          {noResults ? (
+            <p className="p-3 text-sm text-muted-foreground text-center">No results found</p>
+          ) : results.map((m, i) => (
+            <button key={`${m.nctId}-${i}`} className="w-full text-left px-3 py-2 hover:bg-[#F8F9FA] border-b border-border/30 last:border-0" onClick={() => { setSelected(m.name); setQuery(""); setIsOpen(false); }}>
+              <span className="text-sm font-bold text-[#1e3a5f]">{m.name}</span>
+              <span className="text-xs text-muted-foreground ml-2">{m.nctId} · {m.phase}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
