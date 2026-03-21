@@ -666,7 +666,7 @@ export default function LandingPage() {
       <section id="demo" className="pt-8 pb-8 px-4" style={{ backgroundColor: "#1e3a5f" }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">PLATFORM DEMO</p>
-          <h2 className="text-white text-3xl md:text-[40px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>See BioQuill in Action</h2>
+          <h2 className="text-white text-2xl md:text-[28px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>See BioQuill in Action</h2>
           <p className="text-white/70 text-lg mb-10">Watch how BioQuill scores a molecule from search to full due diligence report in under 3 minutes.</p>
           <div className="max-w-[800px] mx-auto aspect-video rounded-xl border-2 border-[#1e3a5f] flex flex-col items-center justify-center" style={{ backgroundColor: "#0f2744" }}>
             <div className="w-20 h-20 rounded-full border-2 border-[#F59E0B] flex items-center justify-center mb-4">
