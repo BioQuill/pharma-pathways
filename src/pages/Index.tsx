@@ -56,6 +56,7 @@ import { getAllTACompositeIndexes } from "@/lib/taCompositeIndex";
 import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
+import LPPercentCard from "@/components/LPPercentCard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
 // LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)d (H1)
@@ -1790,77 +1791,7 @@ const IndexInner = () => {
 
           {/* LP% — Industry Phase Success Rate Tab */}
           <TabsContent value="lp-pct" className="space-y-6">
-            <SimulatorMoleculeBanner molecules={allMolecules} />
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                  LP% — Industry Phase Success Rate
-                </CardTitle>
-                <CardDescription>Historical probability of a drug advancing through each clinical phase based on industry-wide data (BIO/Norstella 2011–2024)</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {(() => {
-                  const molsToShow = cart.length > 0 ? cart : (simulatorMolecule ? [simulatorMolecule] : []);
-                  if (molsToShow.length === 0) return (
-                    <div className="py-12 text-center text-muted-foreground">
-                      <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
-                      <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
-                    </div>
-                  );
-                  const getLpPct = (mol: typeof simulatorMolecule) => {
-                    if (!mol) return 12;
-                    const phase = mol.phase.toLowerCase();
-                    if (phase.includes('approved')) return 100;
-                    if (phase.includes('iii') || phase.includes('3')) return 58;
-                    if (phase.includes('ii') || phase.includes('2')) return 29;
-                    if (phase.includes('i') || phase.includes('1')) return 52;
-                    return 12;
-                  };
-                  return (
-                    <div className="space-y-6">
-                      <div className={`flex flex-wrap justify-center gap-6 py-4`}>
-                        {molsToShow.map(mol => (
-                          <div key={mol.id} className="flex flex-col items-center gap-2">
-                            <p className="text-xs font-bold">{mol.name}</p>
-                            <SimulatorResultBadge value={getLpPct(mol)} label="LP%" suffix="%" />
-                            <p className="text-[10px] text-muted-foreground">{mol.phase}</p>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b">
-                              <th className="text-left py-2 px-3 font-semibold">Phase Transition</th>
-                              <th className="text-center py-2 px-3 font-semibold">Overall</th>
-                              <th className="text-center py-2 px-3 font-semibold">Oncology</th>
-                              <th className="text-center py-2 px-3 font-semibold">Non-Oncology</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {[
-                              { phase: "Phase I → II", overall: 52, onc: 45, nonOnc: 58 },
-                              { phase: "Phase II → III", overall: 29, onc: 24, nonOnc: 34 },
-                              { phase: "Phase III → NDA", overall: 58, onc: 51, nonOnc: 64 },
-                              { phase: "NDA → Approval", overall: 85, onc: 82, nonOnc: 88 },
-                              { phase: "Phase I → Approval (cumulative)", overall: 7.9, onc: 5.3, nonOnc: 11.2 },
-                            ].map(row => (
-                              <tr key={row.phase} className="border-b hover:bg-muted/30">
-                                <td className="py-2 px-3 font-medium">{row.phase}</td>
-                                <td className="py-2 px-3 text-center">{row.overall}%</td>
-                                <td className="py-2 px-3 text-center">{row.onc}%</td>
-                                <td className="py-2 px-3 text-center">{row.nonOnc}%</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </CardContent>
-            </Card>
+            <LPPercentCard molecules={allMolecules} />
           </TabsContent>
 
           {/* Composite Score — LPI + TTM Tab */}
