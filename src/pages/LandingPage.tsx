@@ -682,7 +682,7 @@ export default function LandingPage() {
       <section id="contact" className="pt-8 pb-8 px-4" style={{ backgroundColor: "#F8F9FA" }}>
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">EARLY ACCESS</p>
-          <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>Join the Pipeline Intelligence Revolution</h2>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>Join the Pipeline Intelligence Revolution</h2>
           <p className="text-muted-foreground mb-10">BioQuill is currently in early access. Request access to be among the first teams to score the global pipeline.</p>
           <ContactForm />
         </div>
