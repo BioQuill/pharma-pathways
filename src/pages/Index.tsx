@@ -56,6 +56,7 @@ import { getAllTACompositeIndexes } from "@/lib/taCompositeIndex";
 import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
 import { LPI3Dashboard } from "@/components/LPI3Dashboard";
 import { LPI2Dashboard } from "@/components/LPI2Dashboard";
+import LPPercentCard from "@/components/LPPercentCard";
 import { LPI3ReportCard } from "@/components/LPI3ReportCard";
 import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
 // LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)d (H1)
