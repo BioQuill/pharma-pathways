@@ -728,15 +728,54 @@ export default function LandingPage() {
   );
 }
 
-// ─── Molecule Add to Cart (inline in pricing card) ───
-function MoleculeAddToCart({ onAdd }: { onAdd: (name: string) => void }) {
-  const [molName, setMolName] = useState("");
+// ─── Molecule Add to Cart (searchable from master dataset) ───
+function MoleculeAddToCart({ onAdd, molecules }: { onAdd: (name: string) => void; molecules: { name: string; nctId?: string; phase?: string }[] }) {
+  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const results = query.length >= 3
+    ? molecules.filter(m => {
+        const q = query.toLowerCase();
+        return m.name?.toLowerCase().includes(q) || m.nctId?.toLowerCase().includes(q) || (m as any).company?.toLowerCase().includes(q);
+      }).slice(0, 5)
+    : [];
+
+  const noResults = query.length >= 3 && results.length === 0;
+
   return (
-    <div>
+    <div ref={containerRef} className="relative">
       <div className="flex gap-2">
-        <Input placeholder="Molecule name..." value={molName} onChange={e => setMolName(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { onAdd(molName); setMolName(""); } }} className="flex-1 text-sm" />
-        <Button size="sm" className="text-[#1e3a5f] font-bold" style={{ backgroundColor: "#F59E0B" }} onClick={() => { onAdd(molName); setMolName(""); }}>Add to Cart</Button>
+        <Input
+          placeholder="Search molecule..."
+          value={selected || query}
+          onChange={e => { setQuery(e.target.value); setSelected(""); setIsOpen(true); }}
+          onFocus={() => { if (query.length >= 3) setIsOpen(true); }}
+          className="flex-1 text-sm"
+        />
+        <Button size="sm" className="text-[#1e3a5f] font-bold" style={{ backgroundColor: "#F59E0B" }} disabled={!selected} onClick={() => { onAdd(selected); setSelected(""); setQuery(""); }}>Add to Cart</Button>
       </div>
+      {isOpen && (results.length > 0 || noResults) && (
+        <div className="absolute z-50 w-full mt-1 max-h-[200px] overflow-y-auto bg-white border border-[#1e3a5f]/20 rounded-md shadow-lg">
+          {noResults ? (
+            <p className="p-3 text-sm text-muted-foreground text-center">No results found</p>
+          ) : results.map((m, i) => (
+            <button key={`${m.nctId}-${i}`} className="w-full text-left px-3 py-2 hover:bg-[#F8F9FA] border-b border-border/30 last:border-0" onClick={() => { setSelected(m.name); setQuery(""); setIsOpen(false); }}>
+              <span className="text-sm font-bold text-[#1e3a5f]">{m.name}</span>
+              <span className="text-xs text-muted-foreground ml-2">{m.nctId} · {m.phase}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
