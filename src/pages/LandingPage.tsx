@@ -668,11 +668,14 @@ export default function LandingPage() {
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">PLATFORM DEMO</p>
           <h2 className="text-white text-2xl md:text-[28px] font-bold mb-3" style={{ fontFamily: "Manrope, sans-serif" }}>See BioQuill in Action</h2>
           <p className="text-white/70 text-lg mb-10">Watch how BioQuill scores a molecule from search to full due diligence report in under 3 minutes.</p>
-          <div className="max-w-[800px] mx-auto aspect-video rounded-xl border-2 border-[#1e3a5f] flex flex-col items-center justify-center" style={{ backgroundColor: "#0f2744" }}>
-            <div className="w-20 h-20 rounded-full border-2 border-[#F59E0B] flex items-center justify-center mb-4">
-              <Play className="h-8 w-8 text-[#F59E0B] ml-1" />
-            </div>
-            <p className="text-white text-base" style={{ fontFamily: "Manrope, sans-serif", fontWeight: 400 }}>Platform Demo Video — Coming Soon</p>
+          <div style={{ position: 'relative', padding: '56.25% 0 0 0', borderRadius: '12px', overflow: 'hidden', maxWidth: '800px', margin: '0 auto' }}>
+            <iframe
+              src="https://player.vimeo.com/video/1175699094?badge=0&autopause=0&player_id=0&app_id=58479"
+              frameBorder="0"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+              title="BioQuill Platform Demo"
+            />
           </div>
           <Button className="mt-8 font-bold text-[#1e3a5f]" style={{ backgroundColor: "#F59E0B" }} onClick={() => openWaitlist("You requested early access after viewing demo section")}>Request Early Access</Button>
         </div>
