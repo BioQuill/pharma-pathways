@@ -536,7 +536,7 @@ export default function LandingPage() {
       <section className="pt-8 pb-8 px-4" style={{ backgroundColor: "#F8F9FA" }}>
         <div className="max-w-6xl mx-auto">
           <p className="text-[#F59E0B] text-xs font-bold uppercase tracking-[0.2em] mb-4">WHO USES BIOQUILL</p>
-          <h2 className="text-[#1e3a5f] text-3xl md:text-[40px] font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>Built for the Teams Running the Race</h2>
+          <h2 className="text-[#1e3a5f] text-2xl md:text-[28px] font-bold mb-12" style={{ fontFamily: "Manrope, sans-serif" }}>Built for the Teams Running the Race</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {[
               { icon: "🏦", title: "Biotech Investors & Funds", text: "VCs, hedge funds, and family offices tracking pipeline assets before they become expensive. Phase 1 signals, Phase 3 conviction, portfolio-level risk." },
