@@ -30,11 +30,19 @@ export default function OrderForm() {
         ta_category: selected.ta_category || null,
         pk_flag: selected.pk_flag || 0
       };
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch("http://localhost:3000/api/orders", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+})
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  })
+  .catch(err => {
+    console.error("Order request failed", err);
+    throw err;
+  });
       if (!res.ok) throw new Error("Order failed");
       setMessage("Order placed. Check your email for access instructions.");
       setEmail("");
