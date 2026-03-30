@@ -19,7 +19,7 @@ export default function TrialSelect({ onSelect }: { onSelect: (t: Trial | null) 
     const controller = new AbortController();
     if (q.length < 2) { setItems([]); return; }
     setLoading(true);
-    fetch(`/api/trials?q=${encodeURIComponent(q)}`, { signal: controller.signal })
+   fetch(`http://localhost:3000/api/trials?q=${encodeURIComponent(q)}`)
       .then(r => r.json())
       .then((data) => setItems(data))
       .catch(() => setItems([]))
