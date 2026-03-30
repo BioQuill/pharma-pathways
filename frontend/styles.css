@@ -1,0 +1,27 @@
+:root{
+  --navy:#0b2545;
+  --gold:#d4af37;
+  --bg:#f7f8fb;
+  --card:#fff;
+  --muted:#6b7280;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+.app-container{min-height:100vh;background:linear-gradient(180deg,var(--bg),#eef2f7);color:var(--navy);padding:28px}
+.hero{margin-bottom:20px}
+.hero h1{margin:0;font-size:22px}
+.subtitle{margin:6px 0 0;color:var(--muted)}
+.main-content{max-width:900px;margin-top:12px}
+.card{background:var(--card);border-radius:8px;padding:16px;box-shadow:0 6px 18px rgba(11,37,69,0.06);border:1px solid rgba(11,37,69,0.06)}
+label{display:block;margin-bottom:6px;font-weight:600}
+input[type="text"],input[type="email"],button{font-size:14px}
+input[type="text"],input[type="email"]{width:100%;padding:8px;border:1px solid #e6e9ef;border-radius:6px}
+button{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:10px 14px;cursor:pointer}
+button:disabled{opacity:0.6;cursor:not-allowed}
+.trial-select ul{list-style:none;padding:0;margin:8px 0 0}
+.trial-select li{margin-bottom:8px}
+.trial-select button{width:100%;text-align:left;padding:10px;border-radius:6px;border:1px solid #eef2f7;background:#fff}
+.muted{color:var(--muted);font-size:13px}
+.selected-summary{margin-top:8px;padding:10px;border-radius:6px;border:1px solid #eef2f7;background:#fff}
+.footer{margin-top:28px;color:var(--muted)}
