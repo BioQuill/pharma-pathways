@@ -1,7 +1,0 @@
-[
-  {"id":"DB00001","name":"Aspirin","aliases":["acetylsalicylic acid"],"ta":"Cardiology"},
-  {"id":"DB00002","name":"Metformin","aliases":[],"ta":"Endocrinology"},
-  {"id":"DB00003","name":"Pembrolizumab","aliases":["Keytruda"],"ta":"Oncology"},
-  {"id":"DB00004","name":"Semaglutide","aliases":["Ozempic"],"ta":"Endocrinology"},
-  {"id":"DB00005","name":"Dexamethasone","aliases":[],"ta":"Immunology"}
-]

@@ -1,0 +1,2761 @@
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+
+import { calculatePTRS } from "@/lib/ptrsEngine";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend, ResponsiveContainer } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { 
+  Calendar, 
+  Globe, 
+  TrendingUp, 
+  Search,
+  BarChart3,
+  Download,
+  Pill,
+  ArrowUpDown,
+  X,
+  Brain,
+  Target,
+  ExternalLink,
+  Info,
+  ShieldCheck,
+  AlertTriangle,
+  Activity,
+  Star,
+  LayoutDashboard,
+  Building2,
+  DollarSign,
+  Landmark
+} from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import bioquillLogo from "@/assets/bioquill-logo-new.jpg";
+import topBarLogo from "@/assets/top-bar-logo.png";
+import topBarImage from "@/assets/bioquill-top-bar.png";
+import bioquillEmblem from "@/assets/bioquill-emblem.png";
+import bioquillFullLogo from "@/assets/bioquill-full-logo.png";
+import { generateAndDownloadPDF, Document, Page, Text, View, StyleSheet } from "@/lib/pdfGenerator";
+import { MoleculeScoreCard } from "@/components/MoleculeScoreCard";
+import { MarketAnalysisTable } from "@/components/MarketAnalysisTable";
+import { MarketHeatMap } from "@/components/MarketHeatMap";
+import { RegulatoryTimelineChart } from "@/components/RegulatoryTimelineChart";
+import { RegulatoryPathwayCalculator } from "@/components/RegulatoryPathwayCalculator";
+import { TrialFailureAnalysis } from "@/components/TrialFailureAnalysis";
+import { RetrospectiveTimeline } from "@/components/RetrospectiveTimeline";
+import { PatentTimeline, type PatentInfo } from "@/components/PatentTimeline";
+import { CompetitiveAnalysis, type CompetitiveLandscape } from "@/components/CompetitiveAnalysis";
+import { LaunchFactorsCard } from "@/components/LaunchFactorsCard";
+import { TACompositeIndexDashboard } from "@/components/TACompositeIndexDashboard";
+import { getAllTACompositeIndexes } from "@/lib/taCompositeIndex";
+import { TTMBreakdownChart } from "@/components/TTMBreakdownChart";
+import { LPI3Dashboard } from "@/components/LPI3Dashboard";
+import { LPI2Dashboard } from "@/components/LPI2Dashboard";
+import { LPI3ReportCard } from "@/components/LPI3ReportCard";
+import { LPIExtendedReportCard } from "@/components/LPIExtendedReportCard";
+// LPICalibrationCard removed — single LPI source via LPI3ReportCard (H1)d (H1)
+import { InvestmentScoreReportCard } from "@/components/InvestmentScoreReportCard";
+import { PTRSReportCard } from "@/components/PTRSReportCard";
+import { CAPMReportCard } from "@/components/CAPMReportCard";
+import { PAIndexReportCard } from "@/components/PAIndexReportCard";
+import { MonteCarloReportCard } from "@/components/MonteCarloReportCard";
+import { PeakSalesIndexDashboard } from "@/components/PeakSalesIndexDashboard";
+import { PTRSMoleculeComparison } from "@/components/PTRSMoleculeComparison";
+import { PTRSHistoricalTracking } from "@/components/PTRSHistoricalTracking";
+import { PTRSAlertSystem } from "@/components/PTRSAlertSystem";
+import { PTRSMonteCarloIntegration } from "@/components/PTRSMonteCarloIntegration";
+import { PTRSMonteCarloComparison } from "@/components/PTRSMonteCarloComparison";
+import { PTRSStressTesting } from "@/components/PTRSStressTesting";
+import PTRSPortfolioStressTest from "@/components/PTRSPortfolioStressTest";
+import MonteCarloConvergenceAnalysis from "@/components/MonteCarloConvergenceAnalysis";
+import PTRSPortfolioOptimization from "@/components/PTRSPortfolioOptimization";
+import PTRSCustomScenarioBuilder from "@/components/PTRSCustomScenarioBuilder";
+import { PTRSPortfolioRebalancing } from "@/components/PTRSPortfolioRebalancing";
+import PTRSRebalancingHistory from "@/components/PTRSRebalancingHistory";
+import { TAMarketOverview } from "@/components/TAMarketOverview";
+// LPI score now comes from pre-computed molecule.overallScore (computeLPI) — Single Source of Truth
+// MoleculeExportPanel removed — replaced by inline molecule/NCT search selector
+import { getTherapeuticIndexForMolecule, getTherapeuticIndexColor, getTherapeuticIndexBgColor } from "@/lib/therapeuticIndex";
+import { useWatchlist } from "@/hooks/useWatchlist";
+import { WatchlistPanel } from "@/components/WatchlistPanel";
+import { PortfolioDashboard } from "@/components/PortfolioDashboard";
+import { Top100BlockbusterDrugs } from "@/components/Top100BlockbusterDrugs";
+import { Top50SmallCapFirms } from "@/components/Top50SmallCapFirms";
+import { PricingAccessDashboard } from "@/components/PricingAccessDashboard";
+import { PayersLandscape } from "@/components/PayersLandscape";
+import PrimaryOutcomeCard from "@/components/PrimaryOutcomeCard";
+import { PAModel1Dashboard } from "@/components/PAModel1Dashboard";
+import { PAModel2Dashboard } from "@/components/PAModel2Dashboard";
+import { ModelsDecisionFramework } from "@/components/ModelsDecisionFramework";
+import { PAModelComparisonMode } from "@/components/PAModelComparisonMode";
+import { PABatchComparison } from "@/components/PABatchComparison";
+import { 
+  calculateProbabilityScores,
+  generateMarketProjections, 
+  calculateOverallScore,
+  calculateTTMMonths,
+  calculateCompositeScore,
+  type ProbabilityScores,
+  type MarketData
+} from "@/lib/scoring";
+import { generateLaunchFactors, type LaunchFactors } from "@/lib/launchFactors";
+import { getManufacturingCapability } from "@/lib/manufacturingCapability";
+import { type MoleculeProfile, type TherapeuticIndex } from "@/lib/moleculesData";
+import { useMolecules } from "@/hooks/useMolecules";
+import { MoleculeDistributionChart } from "@/components/MoleculeDistributionChart";
+import { MethodologyContent } from "@/components/MethodologyContent";
+import { PricingContent } from "@/components/PricingContent";
+import { ModelsContent } from "@/components/ModelsContent";
+import { SessionMoleculeProvider, useSessionMolecule } from "@/contexts/SessionMoleculeContext";
+import { SimulatorMoleculeBanner } from "@/components/SimulatorMoleculeBanner";
+import { MoleculePicker } from "@/components/MoleculePicker";
+import { CAPMAlphaSignals } from "@/components/CAPMAlphaSignals";
+import { SimulatorLayout } from "@/components/SimulatorLayout";
+import { SimulatorResultBadge } from "@/components/SimulatorResultBadge";
+import { Model2Calculator } from "@/components/Model2Calculator";
+
+// TimelinePhase interface imported from moleculesData
+
+// BioQuill vs Traditional Due Diligence Comparison Chart
+const DueDiligenceComparisonChart = () => {
+  const comparisonData = [
+    { metric: "Time to Complete Analysis", bioquill: 2, traditional: 45, unit: "days", savings: "96%" },
+    { metric: "Cost per Molecule Report", bioquill: 500, traditional: 15000, unit: "$", savings: "97%" },
+    { metric: "Data Sources Analyzed", bioquill: 85, traditional: 12, unit: "sources", improvement: "7x" },
+    { metric: "Portfolio Coverage", bioquill: 500, traditional: 15, unit: "molecules", improvement: "33x" },
+    { metric: "Update Frequency", bioquill: 1, traditional: 90, unit: "days", savings: "99%" },
+    { metric: "Accuracy Rate", bioquill: 94, traditional: 78, unit: "%", improvement: "+16%" },
+  ];
+
+  const chartData = [
+    { category: "Time (days)", BioQuill: 2, Traditional: 45 },
+    { category: "Cost ($K)", BioQuill: 0.5, Traditional: 15 },
+    { category: "Data Sources", BioQuill: 85, Traditional: 12 },
+    { category: "Molecules", BioQuill: 500, Traditional: 15 },
+  ];
+
+  return (
+    <Card className="border-primary/20">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-primary" />
+          BioQuill vs Traditional Due Diligence
+        </CardTitle>
+        <CardDescription>Time, cost, and coverage advantages of AI-powered analysis</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Summary Cards */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 rounded-lg p-4 text-center">
+            <p className="text-3xl font-bold text-green-600">96%</p>
+            <p className="text-sm text-green-700 dark:text-green-400">Time Savings</p>
+            <p className="text-xs text-muted-foreground mt-1">2 days vs 45 days</p>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 rounded-lg p-4 text-center">
+            <p className="text-3xl font-bold text-blue-600">97%</p>
+            <p className="text-sm text-blue-700 dark:text-blue-400">Cost Reduction</p>
+            <p className="text-xs text-muted-foreground mt-1">$500 vs $15,000</p>
+          </div>
+          <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 rounded-lg p-4 text-center">
+            <p className="text-3xl font-bold text-purple-600">33x</p>
+            <p className="text-sm text-purple-700 dark:text-purple-400">More Coverage</p>
+            <p className="text-xs text-muted-foreground mt-1">500 vs 15 molecules</p>
+          </div>
+        </div>
+
+        {/* Comparison Chart */}
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} layout="vertical" margin={{ left: 80, right: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+              <XAxis type="number" />
+              <YAxis type="category" dataKey="category" tick={{ fontSize: 12 }} width={75} />
+              <ChartTooltip 
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-popover border rounded-lg shadow-lg p-3 text-sm">
+                        <p className="font-medium">{payload[0]?.payload?.category}</p>
+                        {payload.map((entry: any, index: number) => (
+                          <p key={index} style={{ color: entry.color }}>
+                            {entry.name}: {entry.value}
+                          </p>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend />
+              <Bar dataKey="BioQuill" fill="hsl(142, 71%, 45%)" radius={[0, 4, 4, 0]} name="BioQuill" />
+              <Bar dataKey="Traditional" fill="hsl(0, 0%, 70%)" radius={[0, 4, 4, 0]} name="Traditional" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Detailed Comparison Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="text-left p-3 font-medium">Metric</th>
+                <th className="text-center p-3 font-medium text-green-600">BioQuill</th>
+                <th className="text-center p-3 font-medium text-muted-foreground">Traditional</th>
+                <th className="text-center p-3 font-medium text-primary">Advantage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonData.map((row, idx) => (
+                <tr key={idx} className="border-b hover:bg-muted/30">
+                  <td className="p-3">{row.metric}</td>
+                  <td className="text-center p-3 font-semibold text-green-600">
+                    {row.unit === "$" ? `$${row.bioquill.toLocaleString()}` : row.bioquill}{row.unit !== "$" && row.unit !== "%" ? ` ${row.unit}` : row.unit === "%" ? "%" : ""}
+                  </td>
+                  <td className="text-center p-3 text-muted-foreground">
+                    {row.unit === "$" ? `$${row.traditional.toLocaleString()}` : row.traditional}{row.unit !== "$" && row.unit !== "%" ? ` ${row.unit}` : row.unit === "%" ? "%" : ""}
+                  </td>
+                  <td className="text-center p-3">
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                      {row.savings || row.improvement}
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// PTRS Calculator Component
+const PTRSCalculator = ({ molecules }: { molecules: MoleculeProfile[] }) => {
+  const _ptrsCtx = useSessionMolecule();
+  const simulatorMolecule = _ptrsCtx.sessionMolecule;
+  const [calculationMode, setCalculationMode] = useState<"ta" | "molecule">("ta");
+  const [selectedMoleculeId, setSelectedMoleculeId] = useState<string>("");
+  const [therapeuticArea, setTherapeuticArea] = useState("oncology");
+  const [currentPhase, setCurrentPhase] = useState("phase2");
+  const [mechanismNovelty, setMechanismNovelty] = useState([50]);
+  const [endpointClarity, setEndpointClarity] = useState([70]);
+  const [priorTrialData, setPriorTrialData] = useState([60]);
+  const [sponsorExperience, setSponsorExperience] = useState([65]);
+  const [regulatoryPrecedent, setRegulatoryPrecedent] = useState([75]);
+  const [safetyProfile, setSafetyProfile] = useState([70]);
+  const ptrsReportRef = useRef<HTMLDivElement>(null);
+  const [userAdjusted, setUserAdjusted] = useState(false);
+
+  // Auto-select simulator molecule when context changes
+  useEffect(() => {
+    if (simulatorMolecule && simulatorMolecule.id !== selectedMoleculeId) {
+      setCalculationMode("molecule");
+      handleMoleculeSelect(simulatorMolecule.id);
+    }
+  }, [simulatorMolecule]);
+
+  // PTRS engine imported from centralized module
+
+  // Get TA key from molecule's therapeutic area
+  const getTAKey = (ta: string): string => {
+    const taLower = ta.toLowerCase();
+    if (taLower.includes("oncology") || taLower.includes("hematology")) return "oncology";
+    if (taLower.includes("cns") || taLower.includes("neurology")) return "cns";
+    if (taLower.includes("cardio")) return "cardiovascular";
+    if (taLower.includes("infectious")) return "infectious";
+    if (taLower.includes("immun")) return "immunology";
+    if (taLower.includes("metabol") || taLower.includes("endocr") || taLower.includes("diabetes") || taLower.includes("obesity")) return "metabolic";
+    if (taLower.includes("rare") || taLower.includes("orphan")) return "rareDisease";
+    if (taLower.includes("derma")) return "dermatology";
+    if (taLower.includes("respir") || taLower.includes("pulmon")) return "respiratory";
+    if (taLower.includes("psych") || taLower.includes("mental")) return "psychiatry";
+    if (taLower.includes("ophthalm")) return "ophthalmology";
+    if (taLower.includes("gastro") || taLower.includes("hepato")) return "gastroenterology";
+    if (taLower.includes("nephro") || taLower.includes("renal")) return "nephrology";
+    if (taLower.includes("musculo") || taLower.includes("orthop")) return "musculoskeletal";
+    if (taLower.includes("vaccin")) return "vaccines";
+    if (taLower.includes("women") || taLower.includes("reprod")) return "womensHealth";
+    if (taLower.includes("pain") || taLower.includes("anesth")) return "pain";
+    if (taLower.includes("pediatr")) return "pediatrics";
+    if (taLower.includes("urolog")) return "urology";
+    return "other";
+  };
+
+  // Get phase key from molecule's phase
+  const getPhaseKey = (phase: string): string => {
+    const phaseLower = phase.toLowerCase();
+    if (phaseLower.includes("preclinical")) return "phase1";
+    if (phaseLower.includes("phase i") && !phaseLower.includes("ii") && !phaseLower.includes("iii")) return "phase1";
+    if (phaseLower.includes("phase ii") && !phaseLower.includes("iii")) return "phase2";
+    if (phaseLower.includes("phase iii") || phaseLower.includes("phase 3")) return "phase3";
+    if (phaseLower.includes("nda") || phaseLower.includes("bla") || phaseLower.includes("filed")) return "phase3";
+    if (phaseLower.includes("approved")) return "phase3";
+    return "phase2";
+  };
+
+  // When a molecule is selected, update parameters based on molecule data
+  const handleMoleculeSelect = (moleculeId: string) => {
+    setSelectedMoleculeId(moleculeId);
+    const molecule = molecules.find(m => m.id === moleculeId);
+    if (molecule) {
+      const taKey = getTAKey(molecule.therapeuticArea);
+      const phaseKey = getPhaseKey(molecule.phase);
+      setTherapeuticArea(taKey);
+      setCurrentPhase(phaseKey);
+      
+      // Adjust sliders based on molecule scores
+      if (molecule.scores) {
+        setMechanismNovelty([Math.round(molecule.scores.meetingEndpoints * 100)]);
+        setEndpointClarity([Math.round(molecule.scores.approval * 100)]);
+        setPriorTrialData([Math.round(molecule.scores.nextPhase * 100)]);
+        setSponsorExperience([molecule.companyTrackRecord === 'fast' ? 80 : molecule.companyTrackRecord === 'average' ? 60 : 45]);
+        setRegulatoryPrecedent([Math.round(molecule.scores.regulatoryPathway.accelerated * 100)]);
+        setSafetyProfile([Math.round((1 - molecule.scores.dropoutRanking / 5) * 100)]);
+      }
+    }
+  };
+
+  // Use centralized PTRS engine
+  const ptrsResult = calculatePTRS(therapeuticArea, currentPhase, {
+    mechanismNovelty: mechanismNovelty[0],
+    endpointClarity: endpointClarity[0],
+    priorTrialData: priorTrialData[0],
+    sponsorExperience: sponsorExperience[0],
+    regulatoryPrecedent: regulatoryPrecedent[0],
+    safetyProfile: safetyProfile[0],
+  });
+
+  const pts = ptrsResult.pts_pct;
+  const prs = ptrsResult.prs_pct;
+  const ptrs = ptrsResult.ptrs_pct;
+
+  const selectedMolecule = molecules.find(m => m.id === selectedMoleculeId);
+
+  // TA display names (expanded to match calibration data)
+  const taDisplayNames: Record<string, string> = {
+    oncology: "Oncology & Hematology",
+    cns: "Neurology",
+    cardiovascular: "Cardiovascular",
+    infectious: "Infectious Disease",
+    immunology: "Immunology & Inflammation",
+    metabolic: "Endocrinology & Metabolism",
+    rareDisease: "Rare Disease & Orphan",
+    dermatology: "Dermatology",
+    respiratory: "Respiratory & Pulmonary",
+    psychiatry: "Psychiatry & Mental Health",
+    ophthalmology: "Ophthalmology",
+    gastroenterology: "Gastroenterology & Hepatology",
+    nephrology: "Nephrology & Renal",
+    musculoskeletal: "Musculoskeletal & Rheumatology",
+    vaccines: "Vaccines & Preventive",
+    womensHealth: "Women's Health",
+    pain: "Pain & Anaesthesia",
+    pediatrics: "Pediatrics",
+    urology: "Urology",
+    other: "Other",
+  };
+
+  // Phase display names
+  const phaseDisplayNames: Record<string, string> = {
+    phase1: "Phase I",
+    phase2: "Phase II",
+    phase3: "Phase III",
+  };
+
+  // Handle PDF download
+  const handleDownloadPTRSPDF = async () => {
+    if (!ptrsReportRef.current) return;
+    
+    // Show PDF header temporarily
+    const pdfHeader = ptrsReportRef.current.querySelector('.ptrs-pdf-header');
+    if (pdfHeader) {
+      (pdfHeader as HTMLElement).style.display = 'block';
+    }
+    
+    // Hide download button temporarily
+    const hideButtons = ptrsReportRef.current.querySelectorAll('.ptrs-pdf-hide');
+    hideButtons.forEach(btn => {
+      (btn as HTMLElement).style.display = 'none';
+    });
+    
+    const filename = selectedMolecule 
+      ? `PTRS_Analysis_${selectedMolecule.name.replace(/\s+/g, '_')}.pdf`
+      : `PTRS_Analysis_${taDisplayNames[therapeuticArea]}_${phaseDisplayNames[currentPhase]}.pdf`;
+    
+    try {
+      const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+      // Set an ID on the element for exportDomToPDF
+      ptrsReportRef.current.id = 'ptrs-report-content';
+      await exportDomToPDF('ptrs-report-content', filename, { orientation: 'portrait' });
+    } finally {
+      // Restore hidden elements
+      if (pdfHeader) {
+        (pdfHeader as HTMLElement).style.display = 'none';
+      }
+      hideButtons.forEach(btn => {
+        (btn as HTMLElement).style.display = '';
+      });
+    }
+  };
+
+  // Wrap slider setters to track user adjustment
+  const handleSliderChange = (setter: (v: number[]) => void) => (v: number[]) => {
+    setUserAdjusted(true);
+    setter(v);
+  };
+
+  const ptrsContextChart = (
+    <div className="space-y-3">
+      <h4 className="text-sm font-semibold">Phase Transition Funnel</h4>
+      <div className="grid gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-20 text-xs text-right font-medium text-blue-600">PTS</div>
+          <div className="flex-1 h-6 bg-blue-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-500 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${pts}%` }}>
+              <span className="text-[10px] font-bold text-white">{pts}%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-20 text-xs text-right font-medium text-green-600">PRS</div>
+          <div className="flex-1 h-6 bg-green-100 rounded-full overflow-hidden">
+            <div className="h-full bg-green-500 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${prs}%` }}>
+              <span className="text-[10px] font-bold text-white">{prs}%</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-20 text-xs text-right font-medium text-purple-600">PTRS</div>
+          <div className="flex-1 h-6 bg-purple-100 rounded-full overflow-hidden">
+            <div className="h-full bg-purple-500 rounded-full transition-all flex items-center justify-end pr-2" style={{ width: `${Math.min(ptrs * 3, 100)}%` }}>
+              <span className="text-[10px] font-bold text-white">{ptrs}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground mt-2">
+        <strong>Formula:</strong> PTRS = PTS × PRS = {pts}% × {prs}% = <strong>{ptrs}%</strong>
+      </p>
+    </div>
+  );
+
+  const ptrsParameters = (
+    <div className="space-y-6" ref={ptrsReportRef}>
+      {/* Calculation Mode Toggle */}
+      <div className="flex items-center justify-between gap-4 p-4 bg-muted/50 rounded-lg border">
+        <div className="flex items-center gap-4">
+          <Label className="font-medium">Calculate for:</Label>
+          <div className="flex gap-2">
+            <Button variant={calculationMode === "ta" ? "default" : "outline"} size="sm" onClick={() => setCalculationMode("ta")}>Therapeutic Area</Button>
+            <Button variant={calculationMode === "molecule" ? "default" : "outline"} size="sm" onClick={() => setCalculationMode("molecule")}>Specific Molecule</Button>
+          </div>
+        </div>
+        <Button variant="export" size="sm" onClick={handleDownloadPTRSPDF} className="ptrs-pdf-hide gap-2">
+          <Download className="h-4 w-4" />
+          Export PDF
+        </Button>
+      </div>
+
+      {calculationMode === "molecule" && (
+        <div className="space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/20">
+          <MoleculePicker molecules={molecules} value={selectedMolecule || null} onChange={(mol) => { if (mol) handleMoleculeSelect(mol.id); else { setSelectedMoleculeId(''); } }} label="Select a Molecule" />
+        </div>
+      )}
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Therapeutic Area</Label>
+              <Select value={therapeuticArea} onValueChange={setTherapeuticArea} disabled={calculationMode === "molecule" && !!selectedMoleculeId}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="oncology">Oncology</SelectItem>
+                  <SelectItem value="cns">CNS/Neurology</SelectItem>
+                  <SelectItem value="cardiovascular">Cardiovascular</SelectItem>
+                  <SelectItem value="infectious">Infectious Disease</SelectItem>
+                  <SelectItem value="immunology">Immunology</SelectItem>
+                  <SelectItem value="metabolic">Metabolic/Endocrine</SelectItem>
+                  <SelectItem value="rareDisease">Rare Disease</SelectItem>
+                  <SelectItem value="dermatology">Dermatology</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Current Phase</Label>
+              <Select value={currentPhase} onValueChange={setCurrentPhase} disabled={calculationMode === "molecule" && !!selectedMoleculeId}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="preclinical">Preclinical</SelectItem>
+                  <SelectItem value="phase1">Phase I</SelectItem>
+                  <SelectItem value="phase2">Phase II</SelectItem>
+                  <SelectItem value="phase3">Phase III</SelectItem>
+                  <SelectItem value="nda">NDA/BLA Filed</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <h4 className="font-medium text-sm text-muted-foreground">Technical Success Factors (PTS)</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm"><span>Mechanism Novelty</span><span className="font-medium">{mechanismNovelty[0]}%</span></div>
+              <Slider value={mechanismNovelty} onValueChange={handleSliderChange(setMechanismNovelty)} max={100} step={5} />
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm"><span>Endpoint Clarity</span><span className="font-medium">{endpointClarity[0]}%</span></div>
+              <Slider value={endpointClarity} onValueChange={handleSliderChange(setEndpointClarity)} max={100} step={5} />
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm"><span>Prior Trial Data Quality</span><span className="font-medium">{priorTrialData[0]}%</span></div>
+              <Slider value={priorTrialData} onValueChange={handleSliderChange(setPriorTrialData)} max={100} step={5} />
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-2">
+            <h4 className="font-medium text-sm text-muted-foreground">Regulatory Success Factors (PRS)</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm"><span>Sponsor Experience</span><span className="font-medium">{sponsorExperience[0]}%</span></div>
+              <Slider value={sponsorExperience} onValueChange={handleSliderChange(setSponsorExperience)} max={100} step={5} />
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm"><span>Regulatory Precedent</span><span className="font-medium">{regulatoryPrecedent[0]}%</span></div>
+              <Slider value={regulatoryPrecedent} onValueChange={handleSliderChange(setRegulatoryPrecedent)} max={100} step={5} />
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm"><span>Safety Profile</span><span className="font-medium">{safetyProfile[0]}%</span></div>
+              <Slider value={safetyProfile} onValueChange={handleSliderChange(setSafetyProfile)} max={100} step={5} />
+            </div>
+          </div>
+        </div>
+
+        {/* Detailed Results */}
+        <div className="space-y-4">
+          {calculationMode === "molecule" && selectedMolecule && (
+            <div className="p-3 bg-primary/10 rounded-lg border border-primary/20 mb-4">
+              <p className="text-sm font-medium flex items-center gap-2">
+                <Pill className="h-4 w-4" />
+                Calculating PTRS for: <span className="text-primary">{selectedMolecule.name}</span>
+              </p>
+            </div>
+          )}
+          <div className="bg-muted/30 rounded-lg p-4 border">
+            <h4 className="text-sm font-semibold mb-3">Input Parameters Summary</h4>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="flex justify-between"><span className="text-muted-foreground">Therapeutic Area:</span><span className="font-medium">{taDisplayNames[therapeuticArea]}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Current Phase:</span><span className="font-medium">{phaseDisplayNames[currentPhase]}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Mechanism Novelty:</span><span className="font-medium">{mechanismNovelty[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Endpoint Clarity:</span><span className="font-medium">{endpointClarity[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Prior Trial Data:</span><span className="font-medium">{priorTrialData[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Sponsor Experience:</span><span className="font-medium">{sponsorExperience[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Regulatory Precedent:</span><span className="font-medium">{regulatoryPrecedent[0]}%</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Safety Profile:</span><span className="font-medium">{safetyProfile[0]}%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const ptrsNarrative = (() => {
+    const ptrsDec = ptrsResult.ptrs;
+    const ptsDec = ptrsResult.pts;
+    const prsDec = ptrsResult.prs;
+    const ta = taDisplayNames[therapeuticArea] || therapeuticArea;
+    const ph = phaseDisplayNames[currentPhase] || currentPhase;
+    const stronger = prs > pts ? "stronger" : "weaker";
+    if (ptrsDec >= 0.50) {
+      return `Technical and regulatory success probability (${ptrs}%) is above average for ${ta} ${ph} assets. Regulatory confidence (PRS ${prs}%) is ${stronger} than technical confidence (PTS ${pts}%), suggesting ${prs > pts ? "the regulatory pathway is well-established" : "clinical endpoints carry more risk"}.`;
+    }
+    const driver = pts < prs ? "PTS" : "PRS";
+    const driverPct = pts < prs ? pts : prs;
+    return `At ${ptrs}%, combined success probability reflects ${pts < 50 ? "high technical uncertainty" : "regulatory complexity"} for this indication. The ${driver} component at ${driverPct}% is the primary risk driver.`;
+  })();
+
+  return (
+    <SimulatorLayout
+      badgeValue={ptrs}
+      badgeLabel="PTRS Score"
+      principle={`${phaseDisplayNames[currentPhase] || 'Phase II'} molecules in ${taDisplayNames[therapeuticArea] || therapeuticArea} have a historical combined PTS × PRS success rate of ${ptrs}%.`}
+      autoBaseline={!!simulatorMolecule && !userAdjusted}
+      chart={ptrsContextChart}
+      parameters={ptrsParameters}
+      narrative={ptrsNarrative}
+      secondaryStats={[
+        { label: "PTS", value: `${pts}%` },
+        { label: "PRS", value: `${prs}%` },
+      ]}
+    />
+  );
+};
+const IndexInner = () => {
+  const { molecules: allMolecules, loading: moleculesLoading, error: moleculesError, totalRows, fullyLoaded } = useMolecules();
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedMolecule, setSelectedMolecule] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'lpi' | 'ttm' | 'composite' | 'company' | 'ta' | 'ti' | 'ptrs'>('lpi');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [phaseFilter, setPhaseFilter] = useState<string>('all');
+  const [recordTypeFilter, setRecordTypeFilter] = useState<'drugs' | 'devices' | 'all'>('drugs');
+  const reportRef = useRef<HTMLDivElement>(null);
+  const _ctx = useSessionMolecule();
+  const loadIntoSimulator = _ctx.loadIntoSimulator;
+  const setOnNavigateToSimulator = _ctx.setOnNavigateToSimulator;
+  const simulatorMolecule = _ctx.sessionMolecule;
+  const { cart, removeFromCart, clearCart } = _ctx;
+  const [cartOpen, setCartOpen] = useState(false);
+  const [moleculeListScrollTop, setMoleculeListScrollTop] = useState(0);
+  const moleculeListScrollRef = useRef<HTMLDivElement>(null);
+
+  // Register simulator navigation callback
+  useEffect(() => {
+    setOnNavigateToSimulator(() => {
+      setTopNavMode('platform');
+      setActiveTab('ptrs');
+      setSelectedMolecule(null);
+    });
+  }, [setOnNavigateToSimulator]);
+
+   // Top nav mode: 'platform', 'strategy-hub', 'models', 'methodology', or 'pricing'
+  const [topNavMode, setTopNavMode] = useState<'platform' | 'strategy-hub' | 'models' | 'methodology' | 'pricing'>('platform');
+
+  // 7-Area navigation configuration for Platform
+  const areaConfig = {
+    pipeline: {
+      label: 'PIPELINE',
+      tabs: [
+        { value: 'overview', label: 'Molecules Database', icon: BarChart3 },
+        { value: 'lpi-3', label: 'LPI', icon: TrendingUp },
+        { value: 'ti-analysis', label: 'TI', icon: ShieldCheck },
+      ]
+    },
+    approval: {
+      label: 'APPROVAL',
+      tabs: [
+        { value: 'ptrs', label: 'PTRS', icon: TrendingUp },
+        { value: 'ttm', label: 'TTM', icon: Calendar },
+        { value: 'regulatory', label: 'TA Risk Index', icon: Globe },
+      ]
+    },
+    pricingAccess: {
+      label: 'PRICING & ACCESS',
+      tabs: [
+        { value: 'pricing-access', label: 'Markets Overview', icon: DollarSign },
+        { value: 'pa-model1', label: 'PA Index-1 & Model 1', icon: DollarSign },
+        { value: 'pa-model2', label: 'PA Index-2 & Model 2', icon: BarChart3 },
+        { value: 'pa-framework', label: 'Models Decision Framework', icon: Target },
+        { value: 'pa-comparison', label: 'Combined Comparison', icon: Activity },
+        { value: 'pa-batch', label: 'Batch Comparison', icon: Building2 },
+        { value: 'payers', label: 'Payers', icon: Landmark },
+        { value: 'watchlist', label: 'Watchlist', icon: Star },
+      ]
+    },
+    launchCommercial: {
+      label: 'LAUNCH & COMMERCIAL',
+      tabs: [
+        { value: 'peak-sales', label: 'Peak Sales Index', icon: TrendingUp },
+        { value: 'portfolio', label: 'Portfolio', icon: LayoutDashboard },
+      ]
+    },
+    lcm: {
+      label: 'LCM',
+      tabs: [
+        { value: 'lcm-patent-cliff', label: 'Patent Cliff', icon: AlertTriangle },
+        { value: 'lcm-exclusivity', label: 'Exclusivity', icon: ShieldCheck },
+        { value: 'lcm-generic', label: 'Generic/Biosimilar', icon: Pill },
+        { value: 'lcm-label-expansion', label: 'Label Expansion', icon: Target },
+        { value: 'lcm-formulations', label: 'Formulations', icon: Pill },
+        { value: 'lcm-indication', label: 'Indication Expansions', icon: TrendingUp },
+        { value: 'lcm-rwe', label: 'RWE', icon: BarChart3 },
+        { value: 'lcm-safety', label: 'Post-market Safety', icon: AlertTriangle },
+        { value: 'lcm-phase4', label: 'Phase 4', icon: Activity },
+      ]
+    },
+    news: {
+      label: 'NEWS',
+      tabs: [
+        { value: 'news-regulatory', label: 'Regulatory', icon: Globe },
+        { value: 'news-trials', label: 'Trials', icon: Activity },
+        { value: 'news-bdl', label: 'BD&L', icon: Building2 },
+        { value: 'news-press', label: 'Press Release', icon: ExternalLink },
+        { value: 'news-sec', label: 'SEC 8-K Alerts', icon: AlertTriangle },
+        { value: 'news-pipeline', label: 'Pipeline Updates', icon: TrendingUp },
+        { value: 'news-kol', label: 'KOL Publications', icon: Brain },
+      ]
+    },
+  } as const;
+
+  // Strategy Hub tabs — Investment Score, CAPM Alpha, Monte Carlo moved to main page cards
+  const strategyHubTabs = [
+    { value: 'top-100', label: 'Top 100', icon: Target },
+    { value: 'top-50-smallcap', label: 'Top 100 Small Cap', icon: Building2 },
+    { value: 'ta-market', label: 'TA Market Overview', icon: Globe },
+  ] as const;
+
+  type AreaKey = keyof typeof areaConfig;
+
+  const getAreaForTab = (tab: string): AreaKey => {
+    for (const [key, area] of Object.entries(areaConfig)) {
+      if (area.tabs.some((t: any) => t.value === tab)) return key as AreaKey;
+    }
+    return 'pipeline';
+  };
+
+  const isStrategyHubTab = (tab: string) => strategyHubTabs.some(t => t.value === tab);
+
+  const currentArea = getAreaForTab(activeTab);
+  
+  // Watchlist hook for persistent molecule tracking
+  const { 
+    watchlist, 
+    addToWatchlist, 
+    removeFromWatchlist, 
+    isInWatchlist, 
+    updateNotes, 
+    clearWatchlist 
+  } = useWatchlist();
+
+  const handleDownloadPDF = async () => {
+    if (!reportRef.current || !activeMolecule) return;
+    
+    // Hide action buttons temporarily
+    const hideButtons = reportRef.current.querySelectorAll('.pdf-hide');
+    hideButtons.forEach(btn => {
+      (btn as HTMLElement).style.display = 'none';
+    });
+    
+    try {
+      const { exportDomToPDF } = await import('@/lib/pdfGenerator');
+      reportRef.current.id = 'due-diligence-report-content';
+      await exportDomToPDF('due-diligence-report-content', `${activeMolecule.name.replace(/\s+/g, '_')}_Due_Diligence_Report.pdf`, { orientation: 'portrait' });
+    } finally {
+      hideButtons.forEach(btn => {
+        (btn as HTMLElement).style.display = '';
+      });
+    }
+  };
+
+  // DD Report molecule: prefer locally-selected (Full Analysis click), fallback to session molecule
+  const activeMolecule = allMolecules.find(m => m.id === selectedMolecule) || simulatorMolecule;
+
+  if (moleculesLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-lg font-semibold text-foreground">Loading molecules from ClinicalTrials.gov...</p>
+          <p className="text-sm text-muted-foreground">Parsing ~12,635 real clinical trial records</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (moleculesError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4 max-w-md">
+          <div className="text-4xl">⚠️</div>
+          <p className="text-lg font-semibold text-foreground">Unable to load molecule database.</p>
+          <p className="text-sm text-muted-foreground">Please refresh or check your connection.</p>
+          <p className="text-xs text-destructive">{moleculesError}</p>
+          <button onClick={() => window.location.reload()} className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90">
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* BioQuill Yellow Branding Bar */}
+      <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 48, backgroundColor: '#F5C518', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }}>
+        <div className="flex items-center justify-between h-full px-0">
+          {/* Left: Logo circle + wordmark + tagline */}
+          <div className="flex items-center shrink-0 pl-2">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
+              <img src={bioquillEmblem} alt="BiOQUILL emblem" className="w-10 h-10 object-cover rounded-full" />
+            </div>
+            <span className="ml-2 text-[18px] font-bold text-[#1A1A1A] tracking-tight">BiOQUILL</span>
+            {/* Separator + Tagline */}
+            <div className="hidden md:flex items-center gap-3 ml-5">
+              <div style={{ width: 1, height: 22, background: 'rgba(26,26,26,0.25)' }} />
+              <span className="text-[16px] font-bold text-[#1A1A1A] whitespace-nowrap">Know the odds. Understand the pipeline. Win the race.</span>
+            </div>
+          </div>
+
+          {/* Right: Data refreshed pill */}
+          <div className="flex items-center pr-6 shrink-0">
+            <span className="text-xs text-[#1A1A1A]/75 whitespace-nowrap" style={{ background: 'rgba(255,255,255,0.35)', borderRadius: 20, padding: '4px 12px' }}>
+              Data refreshed: 05/03/2026
+            </span>
+          </div>
+        </div>
+      </header>
+
+      {/* Navy Navigation Bar */}
+      <nav className="fixed left-0 right-0 z-40 flex items-center justify-center" style={{ top: 48, height: 44, backgroundColor: '#0E1D35' }}>
+        <div className="flex items-center gap-6">
+          {[
+            { label: 'Platform', mode: 'platform' as const },
+            { label: 'Models', mode: 'models' as const },
+            { label: 'Methodology', mode: 'methodology' as const },
+            { label: 'Strategy Hub', mode: 'strategy-hub' as const },
+            { label: 'Pricing', mode: 'pricing' as const },
+          ].map(item => (
+            <button
+              key={item.mode}
+              onClick={() => { setTopNavMode(item.mode); if (item.mode === 'strategy-hub') setActiveTab('top-100'); if (item.mode === 'platform' && isStrategyHubTab(activeTab)) setActiveTab('overview'); }}
+              className={`text-sm font-bold whitespace-nowrap transition-colors px-2 py-1 ${topNavMode === item.mode ? 'text-white border-b-2 border-[#F5C518]' : 'text-white/80 hover:text-white'}`}
+            >
+              {item.label}
+            </button>
+          ))}
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="text-sm font-bold text-white/80 hover:text-white transition-colors flex items-center gap-1.5 px-2 py-1">
+                <Search className="h-3.5 w-3.5" /> Search
+                {(searchQuery || phaseFilter !== 'all' || recordTypeFilter !== 'drugs') && (
+                  <Badge variant="secondary" className="h-5 px-1.5 text-xs bg-white/20 text-white">
+                    {[searchQuery ? '1' : '', phaseFilter !== 'all' ? '1' : '', recordTypeFilter !== 'drugs' ? '1' : ''].filter(Boolean).length}
+                  </Badge>
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" align="end">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Search molecules</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Name, company, or therapeutic area..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    {searchQuery && (
+                      <button 
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Phase filter</label>
+                  <div className="flex flex-wrap gap-1">
+                    {['all', 'Phase I', 'Phase II', 'Phase III', 'Approved'].map((phase) => (
+                      <Button
+                        key={phase}
+                        variant={phaseFilter === phase ? 'default' : 'outline'}
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => setPhaseFilter(phase)}
+                      >
+                        {phase === 'all' ? 'All' : phase.replace('Phase ', 'P')}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Record type</label>
+                  <div className="flex flex-wrap gap-1">
+                    {(['drugs', 'devices', 'all'] as const).map((rt) => (
+                      <Button
+                        key={rt}
+                        variant={recordTypeFilter === rt ? 'default' : 'outline'}
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={() => setRecordTypeFilter(rt)}
+                      >
+                        {rt === 'drugs' ? 'Drugs only' : rt === 'devices' ? 'Devices only' : 'All'}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                {(searchQuery || phaseFilter !== 'all' || recordTypeFilter !== 'drugs') && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full text-muted-foreground"
+                    onClick={() => { setSearchQuery(''); setPhaseFilter('all'); setRecordTypeFilter('drugs'); }}
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </nav>
+
+      {/* Spacer for both fixed bars (48 + 44 = 92px) */}
+      <div style={{ height: 92 }} />
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        {/* Models Content */}
+        {topNavMode === 'models' && <ModelsContent />}
+
+        {/* Methodology Content */}
+        {topNavMode === 'methodology' && <MethodologyContent />}
+        
+        {/* Pricing Content */}
+        {topNavMode === 'pricing' && <PricingContent />}
+
+        {/* 6 Dashboard Tiles - slimmed to ~48px height */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && (() => {
+          const activeTrials = allMolecules.length;
+          const uniqueMolecules = new Set(allMolecules.map(m => m.name?.toLowerCase().trim())).size;
+          const recruiting = allMolecules.filter(m => (m as any)._raw?.status === 'RECRUITING').length;
+          const notRecruiting = allMolecules.filter(m => (m as any)._raw?.status === 'ACTIVE_NOT_RECRUITING').length;
+          const shimmer = !fullyLoaded ? 'animate-pulse' : '';
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+              <Card className="bg-white shadow-sm">
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Active Trials</p>
+                  <p className={`text-lg font-bold text-[#0E1D35] ${shimmer}`}>{activeTrials.toLocaleString()}</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Molecules</p>
+                  <p className={`text-lg font-bold text-[#0E1D35] ${shimmer}`}>{uniqueMolecules.toLocaleString()}</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Recruiting</p>
+                  <p className={`text-lg font-bold text-[hsl(142,76%,36%)] ${shimmer}`}>{recruiting.toLocaleString()}</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Not Recruiting</p>
+                  <p className={`text-lg font-bold text-[hsl(45,93%,47%)] ${shimmer}`}>{notRecruiting.toLocaleString()}</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Avg Approval</p>
+                  <p className="text-lg font-bold text-[hsl(142,76%,36%)]">8.3y</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white shadow-sm">
+                <CardContent className="py-1.5 px-3 text-center">
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Success Rate</p>
+                  <p className="text-lg font-bold text-[hsl(45,93%,47%)]">11.4%</p>
+                </CardContent>
+              </Card>
+            </div>
+          );
+        })()}
+
+        {/* 14 Model Selector Cards — 2 rows of 7 */}
+        {topNavMode === 'platform' && (
+          <div className="mb-6 space-y-2">
+            {/* Row 1 */}
+            <div className="grid grid-cols-7 gap-2">
+              {[
+                { id: 'ti-analysis', label: 'TI', sub: 'TD50 / ED50' },
+                { id: 'regulatory', label: 'TA Index', sub: 'Therapeutic Area Success Rate' },
+                { id: 'ptrs', label: 'PTRS', sub: 'Technical & Regulatory Success' },
+                { id: 'ttm', label: 'TTM', sub: 'Time to Market' },
+                { id: 'pa-model1', label: 'PA Index-1', sub: 'Pricing & Access Odds' },
+                { id: 'pa-model2-stub', label: 'PA Index-2', sub: 'Comparative Payer Likelihood' },
+                { id: 'lp-pct', label: 'LP%', sub: 'Industry Phase Success Rate' },
+              ].map(card => (
+                <button
+                  key={card.id}
+                  onClick={() => setActiveTab(activeTab === card.id ? 'overview' : card.id)}
+                  className={`rounded-lg px-2 py-2 text-center transition-all duration-150 cursor-pointer border ${
+                    activeTab === card.id
+                      ? 'bg-[#1e3a5f] text-white border-2 border-[#F59E0B] shadow-md'
+                      : 'bg-[#EFF6FF] border-[#BFDBFE] hover:bg-[#FEFCE8] hover:border-[#FDE68A] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                  }`}
+                  style={{ minHeight: 48 }}
+                >
+                  <p className={`text-xs font-bold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.label}</p>
+                  <p className={`text-[10px] font-bold leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.sub}</p>
+                </button>
+              ))}
+            </div>
+            {/* Row 2 */}
+            <div className="grid grid-cols-7 gap-2">
+              {[
+                { id: 'lpi-3', label: 'LPI', sub: 'Launch Probability Index' },
+                { id: 'composite-score', label: 'Composite Score', sub: 'LPI + TTM' },
+                { id: 'peak-sales', label: 'Peak Sales Index', sub: 'Revenue Potential' },
+                { id: 'blockbuster', label: 'BB%', sub: '$1B Blockbuster Probability' },
+                { id: 'lpi-2', label: 'Investment Score', sub: '5-Factor Investment Model' },
+                { id: 'capm-alpha', label: 'Alpha', sub: 'Risk-Adjusted Return' },
+                { id: 'monte-carlo-hub', label: 'Monte Carlo', sub: 'Scenario Simulation' },
+              ].map(card => (
+                <button
+                  key={card.id}
+                  onClick={() => setActiveTab(activeTab === card.id ? 'overview' : card.id)}
+                  className={`rounded-lg px-2 py-2 text-center transition-all duration-150 cursor-pointer border ${
+                    activeTab === card.id
+                      ? 'bg-[#1e3a5f] text-white border-2 border-[#F59E0B] shadow-md'
+                      : 'bg-[#EFF6FF] border-[#BFDBFE] hover:bg-[#FEFCE8] hover:border-[#FDE68A] hover:shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                  }`}
+                  style={{ minHeight: 48 }}
+                >
+                  <p className={`text-xs font-bold leading-tight ${activeTab === card.id ? 'text-white' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.label}</p>
+                  <p className={`text-[10px] font-bold leading-tight mt-0.5 ${activeTab === card.id ? 'text-white/70' : 'text-[#1e3a5f]'}`} style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700 }}>{card.sub}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Main Tabs - only show for platform/strategy-hub */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <Tabs value={activeTab} onValueChange={(val) => { setActiveTab(val); if (isStrategyHubTab(val)) setTopNavMode('strategy-hub'); else if (!isStrategyHubTab(val)) setTopNavMode('platform'); }} className="space-y-6">
+          <div className="-mx-4 px-0">
+            {topNavMode === 'strategy-hub' ? (
+              <>
+                {/* Strategy Hub Sub-tabs */}
+                <div className="w-full bg-[#0E1D35] py-2">
+                  <div className="container mx-auto px-4 text-center">
+                    <span className="text-white text-xs tracking-wider uppercase font-bold">Strategy Hub</span>
+                  </div>
+                </div>
+                <TabsList className="w-full justify-center bg-[#2B3D5B] border-0 rounded-none h-11 px-4">
+                  {strategyHubTabs.map(tab => {
+                    const Icon = tab.icon;
+                    return (
+                      <TabsTrigger key={tab.value} value={tab.value} className="gap-2 text-white/80 font-bold data-[state=active]:bg-white/15 data-[state=active]:text-white hover:text-white/90">
+                        <Icon className="h-4 w-4" />
+                        {tab.label}
+                      </TabsTrigger>
+                    );
+                  })}
+                </TabsList>
+              </>
+            ) : null}
+          </div>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-6">
+            {!selectedMolecule ? (
+              <div className="space-y-4">
+                {/* Molecule Distribution Chart — compact with TAs flanking pie */}
+                <div className="mb-2 p-3 border rounded-lg bg-muted/30">
+                  <div className="flex items-center mb-2">
+                    <Badge className="bg-blue-600 text-white text-sm px-4 py-1 rounded-full font-semibold">Molecules by Therapeutic Area</Badge>
+                  </div>
+                  <MoleculeDistributionChart molecules={allMolecules} />
+                </div>
+
+                {/* Search input — below pie chart, with dark blue thick border */}
+                <div className="relative w-full max-w-md mx-auto mt-6">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+                  <input
+                    type="text"
+                    placeholder="Type molecule name or NCT ID..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-9 py-2 text-[13px] rounded-lg bg-[#f0fdf4] placeholder:text-[#64748b] placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 400, border: '2.5px solid #0E1D35' }}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+
+
+              </div>
+            ) : activeMolecule ? (
+              <div className="space-y-6" ref={reportRef}>
+                {/* PDF header handled by jsPDF overlay in exportDomToPDF — no HTML header needed */}
+                
+                {/* Approval Status Banner */}
+                {(() => {
+                  const status = (activeMolecule as any)._raw?.approval_status;
+                  if (status?.startsWith('APPROVED_')) {
+                    return (
+                      <div className="p-4 rounded-lg bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30">
+                        <p className="font-semibold text-[hsl(142,76%,36%)]">✓ APPROVED MOLECULE — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Scores shown below reflect retrospective performance and serve as benchmark comparators for active pipeline molecules in this therapeutic area and mechanism class.</p>
+                        <p className="text-xs text-muted-foreground mt-1">TTM = Actual time from Phase I to approval · PTRS = Historical · LPI = 100% · BQ Score = Benchmark reference</p>
+                      </div>
+                    );
+                  }
+                  if (status === 'LIKELY_IN_REVIEW') {
+                    return (
+                      <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                        <p className="font-semibold text-blue-600">⏳ LIKELY IN REGULATORY REVIEW — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">Phase III completed within the past 12 months. Based on typical submission timelines, NDA/MAA filing is probable.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Regulatory TTM remaining: Estimated 0–6 months · PTRS regulatory component: 82–90%</p>
+                      </div>
+                    );
+                  }
+                  if (status === 'RECENTLY_COMPLETED_PH3' || status === 'COMPLETED_PH3') {
+                    return (
+                      <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                        <p className="font-semibold text-amber-600">ℹ PHASE 3 COMPLETED — {activeMolecule.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">This molecule has completed Phase III trials. Regulatory submission status is uncertain based on publicly available data.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Data source: ClinicalTrials.gov · Last refreshed: 05/03/2026</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+                
+                {/* Action buttons - visible on screen, hidden in PDF */}
+                <div className="flex items-center justify-between pdf-hide-buttons">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-2xl font-semibold">Full Due Diligence Report</h2>
+                    <Button variant="secondary" size="sm" onClick={handleDownloadPDF} className="pdf-hide" style={{ display: 'none' }}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </div>
+                  <Button variant="outline" onClick={() => setSelectedMolecule(null)} className="pdf-hide">
+                    ← Back to Overview
+                  </Button>
+                </div>
+
+                {/* Trial-specific disclaimer */}
+                <p className="text-sm italic text-muted-foreground">
+                  This report reflects {activeMolecule.nctId || 'N/A'} — {activeMolecule.phase} | {(activeMolecule as any)._raw?.conditions || activeMolecule.indication} | {(activeMolecule as any)._raw?.age_group || 'All ages'} | {(activeMolecule as any)._raw?.sex || 'All'}. All model outputs are specific to this trial design and patient population.
+                </p>
+                
+                {activeMolecule.isFailed && activeMolecule.trialName && (
+                  <TrialFailureAnalysis
+                    moleculeName={activeMolecule.name}
+                    trialName={activeMolecule.trialName}
+                    phase={activeMolecule.phase}
+                  />
+                )}
+                
+                {/* Molecule Score Card — always first */}
+                <div className="dd-model-card">
+                  <MoleculeScoreCard
+                    moleculeName={activeMolecule.name}
+                    trialName={activeMolecule.trialName}
+                    scores={activeMolecule.scores}
+                    phase={activeMolecule.phase}
+                    indication={activeMolecule.indication}
+                    therapeuticArea={activeMolecule.therapeuticArea}
+                    overallScore={activeMolecule.overallScore}
+                    nctId={activeMolecule.nctId}
+                    marketData={activeMolecule.marketData}
+                    companyTrackRecord={activeMolecule.companyTrackRecord}
+                    company={activeMolecule.company}
+                    molecule={activeMolecule}
+                  />
+                </div>
+
+                {/* ═══ STAGE 1 — CAN IT SUCCEED? ═══ */}
+                <div className="dd-stage-divider">STAGE 1 — CAN IT SUCCEED?</div>
+
+                {/* 1. PTRS Analysis */}
+                <div className="dd-model-card">
+                  <PTRSReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* 2. LPI Analysis */}
+                <div className="dd-model-card">
+                  <LPI3ReportCard molecule={activeMolecule} />
+                </div>
+
+                {/* LPI Extended Data */}
+                <div className="dd-model-card">
+                  <LPIExtendedReportCard molecule={activeMolecule} />
+                </div>
+
+                {/* 3. Therapeutic Index Analysis */}
+                <div className="dd-model-card">
+                  {(() => {
+                    const ti = getTherapeuticIndexForMolecule(activeMolecule);
+                    const tiColor = getTherapeuticIndexColor(ti.classification);
+                    const tiBgColor = getTherapeuticIndexBgColor(ti.classification);
+                    
+                    return (
+                      <Card className="border-l-4 border-l-chart-4">
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2 dd-section-header">
+                            <ShieldCheck className="h-5 w-5" />
+                            Therapeutic Index (TI) Analysis
+                          </CardTitle>
+                          <CardDescription>
+                            Safety margin assessment based on TD50/ED50 ratio
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="flex flex-col items-center justify-center p-6 rounded-lg bg-muted/50 dd-sub-card">
+                              <div className={`text-5xl font-bold dd-data-value ${tiColor}`}>
+                                {ti.value.toFixed(1)}
+                              </div>
+                              <div className="mt-2 text-sm text-muted-foreground dd-data-label">Therapeutic Index</div>
+                              <Badge className={`mt-2 ${tiBgColor} text-white`}>
+                                {ti.classification === 'narrow' ? 'Narrow TI' : ti.classification === 'moderate' ? 'Moderate TI' : 'Wide TI'}
+                              </Badge>
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <h4 className="font-semibold flex items-center gap-2 dd-sub-header">
+                                <Activity className="h-4 w-4" />
+                                Dose-Response Parameters
+                              </h4>
+                              <div className="space-y-3">
+                                <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
+                                  <div>
+                                    <span className="text-sm font-medium">ED50</span>
+                                    <p className="text-xs text-muted-foreground">Effective Dose 50%</p>
+                                  </div>
+                                  <span className="text-lg font-semibold text-[hsl(142,76%,36%)] dd-data-value-sm">{ti.ed50} units</span>
+                                </div>
+                                <div className="flex justify-between items-center p-3 rounded-md bg-muted/30">
+                                  <div>
+                                    <span className="text-sm font-medium">TD50</span>
+                                    <p className="text-xs text-muted-foreground">Toxic Dose 50%</p>
+                                  </div>
+                                  <span className="text-lg font-semibold text-[hsl(0,72%,51%)] dd-data-value-sm">{ti.td50} units</span>
+                                </div>
+                                <div className="flex justify-between items-center p-3 rounded-md bg-primary/10 border border-primary/20">
+                                  <div>
+                                    <span className="text-sm font-medium">Safety Margin</span>
+                                    <p className="text-xs text-muted-foreground">TD50 ÷ ED50</p>
+                                  </div>
+                                  <span className={`text-lg font-bold dd-data-value-sm ${tiColor}`}>{ti.value.toFixed(1)}x</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <h4 className="font-semibold flex items-center gap-2 dd-sub-header">
+                                {ti.monitoringRequired ? <AlertTriangle className="h-4 w-4 text-[hsl(45,93%,47%)]" /> : <ShieldCheck className="h-4 w-4 text-[hsl(142,76%,36%)]" />}
+                                Safety Assessment
+                              </h4>
+                              
+                              <div className={`p-4 rounded-md ${ti.monitoringRequired ? 'bg-[hsl(45,93%,47%)]/10 border border-[hsl(45,93%,47%)]/30' : 'bg-[hsl(142,76%,36%)]/10 border border-[hsl(142,76%,36%)]/30'}`}>
+                                <div className="flex items-start gap-2">
+                                  {ti.monitoringRequired ? (
+                                    <AlertTriangle className="h-5 w-5 text-[hsl(45,93%,47%)] mt-0.5 shrink-0" />
+                                  ) : (
+                                    <ShieldCheck className="h-5 w-5 text-[hsl(142,76%,36%)] mt-0.5 shrink-0" />
+                                  )}
+                                  <div>
+                                    <p className="font-medium text-sm">
+                                      {ti.monitoringRequired ? 'Monitoring Required' : 'Standard Monitoring Sufficient'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      {ti.monitoringRequired 
+                                        ? 'Drug level monitoring, dose adjustments, and regular safety assessments recommended'
+                                        : 'Routine clinical monitoring as per standard protocols'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="p-4 rounded-md bg-muted/30">
+                                <p className="text-sm font-medium mb-1">Clinical Notes</p>
+                                <p className="text-sm text-muted-foreground">{ti.notes}</p>
+                              </div>
+                              
+                              <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t dd-caption">
+                                <p className="font-medium">TI Classification:</p>
+                                <div className="flex gap-4">
+                                  <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-[hsl(0,72%,51%)]"></span>
+                                    Narrow (&lt;2)
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-[hsl(45,93%,47%)]"></span>
+                                    Moderate (2-10)
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <span className="w-2 h-2 rounded-full bg-[hsl(142,76%,36%)]"></span>
+                                    Wide (&gt;10)
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })()}
+                </div>
+
+                {/* ═══ STAGE 2 — HOW LONG WILL IT TAKE? ═══ */}
+                <div className="dd-stage-divider">STAGE 2 — HOW LONG WILL IT TAKE?</div>
+
+                {/* 5. Regulatory Approval Timeline */}
+                <div className="dd-model-card">
+                  <RegulatoryTimelineChart />
+                </div>
+
+                {/* Regulatory Pathway Calculator — interactive, hidden in PDF */}
+                <div className="pdf-interactive-hide">
+                  <RegulatoryPathwayCalculator />
+                </div>
+                <p className="pdf-interactive-replacement">Interactive regulatory pathway modelling available at bioquill.com</p>
+
+                {/* 6. Clinical Studies Summary — hidden in PDF export */}
+                <div className="dd-model-card pdf-interactive-hide">
+                  <Card className="border-l-4 border-l-primary">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 dd-section-header">
+                        <Search className="h-5 w-5" />
+                        Clinical Studies Summary
+                      </CardTitle>
+                      <CardDescription>
+                        View all registered clinical trials for {activeMolecule.name}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {/* Interactive buttons — hidden in PDF */}
+                        <div className="flex flex-wrap gap-3 pdf-interactive-hide">
+                          <a
+                            href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Table&limit=25&sort=StudyFirstPostDate`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            View All Trials Table
+                          </a>
+                          <a
+                            href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(activeMolecule.clinicalTrialsSearchTerm || activeMolecule.name.split(' ')[0])}&viewType=Map`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
+                          >
+                            <Globe className="h-4 w-4" />
+                            View Trials Map
+                          </a>
+                        </div>
+                        <p className="pdf-interactive-replacement">Full trial data: ClinicalTrials.gov — {activeMolecule.nctId || 'N/A'}</p>
+                        {activeMolecule.trialName && (
+                          <p className="text-sm text-muted-foreground">
+                            Primary trial program: <span className="font-semibold">{activeMolecule.trialName}</span>
+                            {activeMolecule.nctId && (
+                              <> • NCT ID: <a 
+                                href={`https://clinicaltrials.gov/study/${activeMolecule.nctId}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline"
+                              >
+                                {activeMolecule.nctId}
+                              </a></>
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* 6b. Primary Outcome Measures — lazy-loaded from outcomes JSON */}
+                {activeMolecule.nctId && (
+                  <div className="dd-model-card">
+                    <PrimaryOutcomeCard
+                      nctId={activeMolecule.nctId}
+                      primaryDrug={activeMolecule.name}
+                    />
+                  </div>
+                )}
+
+                {/* ═══ STAGE 3 — IS IT WORTH THE RACE? ═══ */}
+                <div className="dd-stage-divider">STAGE 3 — IS IT WORTH THE RACE?</div>
+
+                {/* 7. Peak Sales Composite Index — via Launch Factors */}
+                {activeMolecule.launchFactors && (
+                  <div className="dd-model-card">
+                    <LaunchFactorsCard
+                      factors={activeMolecule.launchFactors}
+                      moleculeName={activeMolecule.name}
+                      therapeuticArea={activeMolecule.therapeuticArea}
+                      company={activeMolecule.company}
+                    />
+                  </div>
+                )}
+
+                {/* 8. Global Revenue Heat Map — reduced to 80% in PDF */}
+                <div className="dd-model-card dd-heatmap-container">
+                  <MarketHeatMap marketData={activeMolecule.marketData} />
+                </div>
+
+                {/* 9. Global Market Analysis */}
+                <div className="dd-model-card">
+                  <MarketAnalysisTable 
+                    marketData={activeMolecule.marketData} 
+                    approvalStatus={(activeMolecule as any)._raw?.approval_status}
+                  />
+                </div>
+
+                {/* ═══ STAGE 4 — HOW TO WIN IT? ═══ */}
+                <div className="dd-stage-divider">STAGE 4 — HOW TO WIN IT?</div>
+
+                {/* 10. CAPM Alpha Signals */}
+                <div className="dd-model-card">
+                  <CAPMReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* 11. Investment Score Analysis */}
+                <div className="dd-model-card">
+                  <InvestmentScoreReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    indication: activeMolecule.indication,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* 12. PA Index Summary */}
+                <div className="dd-model-card">
+                  <PAIndexReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                  }} />
+                </div>
+
+                {/* 13. Monte Carlo Stress Test */}
+                <div className="dd-model-card">
+                  <MonteCarloReportCard molecule={{
+                    id: activeMolecule.id,
+                    name: activeMolecule.name,
+                    phase: activeMolecule.phase,
+                    therapeuticArea: activeMolecule.therapeuticArea,
+                    company: activeMolecule.company,
+                    companyTrackRecord: activeMolecule.companyTrackRecord,
+                  }} />
+                </div>
+
+                {/* Optional sections */}
+                {activeMolecule.patents && activeMolecule.patents.length > 0 && (
+                  <div className="dd-model-card">
+                    <PatentTimeline
+                      moleculeName={activeMolecule.name}
+                      patents={activeMolecule.patents}
+                      regulatoryExclusivity={activeMolecule.regulatoryExclusivity}
+                    />
+                  </div>
+                )}
+                
+                {activeMolecule.competitiveLandscape && (
+                  <div className="dd-model-card">
+                    <CompetitiveAnalysis
+                      moleculeName={activeMolecule.name}
+                      landscape={activeMolecule.competitiveLandscape}
+                    />
+                  </div>
+                )}
+
+                {activeMolecule.hasRetrospective && activeMolecule.retrospectivePhases && (
+                  <div className="dd-model-card">
+                    <RetrospectiveTimeline
+                      moleculeName={activeMolecule.name}
+                      indication={activeMolecule.indication}
+                      sponsor={activeMolecule.company}
+                      phases={activeMolecule.retrospectivePhases}
+                    />
+                  </div>
+                )}
+
+                {/* ═══ REFERENCE ═══ */}
+                <div className="dd-stage-divider">REFERENCE</div>
+
+                {/* 14. Metric Definitions — always last */}
+                <div className="dd-model-card">
+                  <Card className="border-t-4 border-t-muted">
+                    <CardHeader>
+                      <CardTitle className="text-lg dd-section-header">Metric Definitions</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-primary dd-sub-header">LPI% (Launch Probability Index)</h4>
+                          <p className="text-sm text-muted-foreground">
+                            LPI (Launch Probability Index) estimates the probability this molecule will reach commercial launch, given its current phase, therapeutic area maturity, regulatory pathway designation, and access profile. LPI is NOT purely phase-dependent. A Phase I orphan drug in a consecrated therapeutic area may score higher than a Phase III drug in a novel indication with HTA uncertainty.
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 italic dd-caption">Source: BioQuill scoring model v1.0 | Benchmarked against GLP-1 class retrospective validation</p>
+                          <div className="flex items-center gap-4 text-xs mt-2">
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> &gt;75%: High launch probability</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> 50-75%: Moderate</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> &lt;30%: Very low</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-primary dd-sub-header">Est. TTM (Time To Market)</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Modelled estimate of months from current development stage to first regulatory approval. TTM = Clinical TTM + Regulatory TTM + Access TTM. Based on TA-median benchmarks from 319 approved drugs (FDA + EMA, 2000–2025). All values are estimates with ±6–18 months uncertainty range.
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 italic dd-caption">Source: BioQuill benchmark dataset · "With Results" CTG subset</p>
+                          <div className="flex items-center gap-4 text-xs mt-2">
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Fast (low months)</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> Average</span>
+                            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Slow (high months)</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="pt-4 border-t">
+                        <h4 className="font-semibold text-primary mb-2 dd-sub-header">BQ Pipeline Score (Composite)</h4>
+                        <p className="text-sm text-muted-foreground">
+                          The BQ Pipeline Score (0–100) is a composite signal reflecting the estimated strategic attractiveness of a molecule from a development and market access perspective. It is NOT a financial return model, clinical efficacy prediction, or regulatory guarantee. It IS a relative signal for pipeline prioritisation and screening.
+                        </p>
+                        <div className="mt-3 p-3 bg-muted/30 rounded-lg text-xs space-y-1">
+                          <p className="font-semibold">Race to Market Rank:</p>
+                          <p>🥇 <span className="font-bold" style={{color:'hsl(45,90%,40%)'}}>Rank 1 (67–100)</span> — Highest conviction; Phase III+ with favourable regulatory pathway</p>
+                          <p>🥈 <span className="font-bold" style={{color:'hsl(0,0%,55%)'}}>Rank 2 (34–66)</span> — Medium conviction; warrants full due diligence</p>
+                          <p>🥉 <span className="font-bold" style={{color:'hsl(30,60%,35%)'}}>Rank 3 (0–33)</span> — Monitor; revisit at next data cycle</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            ) : null}
+          </TabsContent>
+
+          {/* Molecules Tab - merged into overview */}
+
+          {/* TA Market Overview Tab */}
+          <TabsContent value="ta-market" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <TAMarketOverview molecules={allMolecules} />
+          </TabsContent>
+
+          {/* TTM Tab */}
+          <TabsContent value="ttm" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <TTMBreakdownChart />
+          </TabsContent>
+
+          {/* Regulatory / TA Risk Index Tab — with navy/gold badge */}
+          <TabsContent value="regulatory" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            {/* TA Risk Index badge for selected molecule */}
+            {simulatorMolecule && (() => {
+              const allTAIndexes = getAllTACompositeIndexes();
+              const molTA = simulatorMolecule.therapeuticArea.toUpperCase();
+              const matchedTA = allTAIndexes.find(t => t.ta.toUpperCase() === molTA) || allTAIndexes.find(t => molTA.includes(t.ta.toUpperCase().split(' ')[0]));
+              const taScore = matchedTA?.compositeScore ?? 0;
+              return (
+                <div className="flex flex-col items-center gap-3 py-4">
+                  <SimulatorResultBadge value={taScore} label="TA Risk Index Score" suffix="%" />
+                  <p className="text-xs text-muted-foreground text-center max-w-md">
+                    This is a <strong>therapeutic-area-level</strong> score for {simulatorMolecule.therapeuticArea}, not molecule-specific.
+                  </p>
+                </div>
+              );
+            })()}
+            <TACompositeIndexDashboard highlightTA={simulatorMolecule?.therapeuticArea} />
+          </TabsContent>
+
+          {/* PTRS Tab */}
+          <TabsContent value="ptrs" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PTRSCalculator molecules={allMolecules} />
+
+            {/* PTRS Molecule Comparison */}
+            <PTRSMoleculeComparison molecules={allMolecules} />
+
+            {/* PTRS Historical Tracking */}
+            <PTRSHistoricalTracking molecules={allMolecules} />
+
+            {/* PTRS Alert System */}
+            <PTRSAlertSystem molecules={allMolecules} />
+
+            {/* Historical PTRS Trend Lines */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">PTRS Trends Over Time (2014-2024)</CardTitle>
+                <CardDescription>Historical success rate trends by therapeutic area</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer
+                  config={{
+                    oncology: { label: "Oncology", color: "hsl(0, 84%, 60%)" },
+                    cns: { label: "CNS/Neurology", color: "hsl(217, 91%, 60%)" },
+                    cardiovascular: { label: "Cardiovascular", color: "hsl(142, 71%, 45%)" },
+                    infectious: { label: "Infectious", color: "hsl(45, 93%, 47%)" },
+                    immunology: { label: "Immunology", color: "hsl(271, 81%, 56%)" },
+                    rareDisease: { label: "Rare Disease", color: "hsl(340, 82%, 52%)" },
+                  }}
+                  className="h-[400px]"
+                >
+                  <LineChart
+                    data={[
+                      { year: "2014", oncology: 5.1, cns: 6.8, cardiovascular: 9.2, infectious: 16.8, immunology: 10.5, rareDisease: 15.2 },
+                      { year: "2015", oncology: 5.4, cns: 6.5, cardiovascular: 9.0, infectious: 17.2, immunology: 10.8, rareDisease: 16.1 },
+                      { year: "2016", oncology: 5.8, cns: 6.2, cardiovascular: 8.8, infectious: 17.5, immunology: 11.2, rareDisease: 17.3 },
+                      { year: "2017", oncology: 6.2, cns: 5.9, cardiovascular: 8.5, infectious: 16.9, immunology: 11.5, rareDisease: 18.5 },
+                      { year: "2018", oncology: 7.1, cns: 5.5, cardiovascular: 8.2, infectious: 16.5, immunology: 12.0, rareDisease: 19.2 },
+                      { year: "2019", oncology: 7.8, cns: 5.8, cardiovascular: 8.0, infectious: 15.8, immunology: 12.4, rareDisease: 20.1 },
+                      { year: "2020", oncology: 8.2, cns: 6.0, cardiovascular: 7.8, infectious: 18.5, immunology: 12.8, rareDisease: 20.8 },
+                      { year: "2021", oncology: 8.5, cns: 6.3, cardiovascular: 7.6, infectious: 19.2, immunology: 13.1, rareDisease: 21.5 },
+                      { year: "2022", oncology: 8.8, cns: 6.5, cardiovascular: 7.5, infectious: 18.8, immunology: 13.5, rareDisease: 22.0 },
+                      { year: "2023", oncology: 9.2, cns: 6.8, cardiovascular: 7.4, infectious: 18.2, immunology: 14.0, rareDisease: 22.5 },
+                      { year: "2024", oncology: 9.5, cns: 7.0, cardiovascular: 7.3, infectious: 17.8, immunology: 14.5, rareDisease: 23.0 },
+                    ]}
+                    margin={{ left: 20, right: 30, top: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+                    <YAxis domain={[0, 25]} tickFormatter={(v) => `${v}%`} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Legend />
+                    <Line type="monotone" dataKey="oncology" stroke="var(--color-oncology)" strokeWidth={2} dot={{ r: 3 }} name="Oncology" />
+                    <Line type="monotone" dataKey="cns" stroke="var(--color-cns)" strokeWidth={2} dot={{ r: 3 }} name="CNS/Neurology" />
+                    <Line type="monotone" dataKey="cardiovascular" stroke="var(--color-cardiovascular)" strokeWidth={2} dot={{ r: 3 }} name="Cardiovascular" />
+                    <Line type="monotone" dataKey="infectious" stroke="var(--color-infectious)" strokeWidth={2} dot={{ r: 3 }} name="Infectious" />
+                    <Line type="monotone" dataKey="immunology" stroke="var(--color-immunology)" strokeWidth={2} dot={{ r: 3 }} name="Immunology" />
+                    <Line type="monotone" dataKey="rareDisease" stroke="var(--color-rareDisease)" strokeWidth={2} dot={{ r: 3 }} name="Rare Disease" />
+                  </LineChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+
+            {/* Historical PTRS Charts */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Success Rates by Therapeutic Area */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Historical PTRS by Therapeutic Area</CardTitle>
+                  <CardDescription>Average success rates across therapeutic areas (2014-2024)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer
+                    config={{
+                      pts: { label: "PTS", color: "hsl(217, 91%, 60%)" },
+                      prs: { label: "PRS", color: "hsl(142, 71%, 45%)" },
+                      ptrs: { label: "PTRS", color: "hsl(271, 81%, 56%)" },
+                    }}
+                    className="h-[350px]"
+                  >
+                    <BarChart
+                      data={[
+                        { ta: "Oncology", pts: 5.3, prs: 85, ptrs: 4.5 },
+                        { ta: "CNS", pts: 6.2, prs: 82, ptrs: 5.1 },
+                        { ta: "Cardiovascular", pts: 8.4, prs: 88, ptrs: 7.4 },
+                        { ta: "Infectious", pts: 15.6, prs: 90, ptrs: 14.0 },
+                        { ta: "Immunology", pts: 11.2, prs: 86, ptrs: 9.6 },
+                        { ta: "Metabolic", pts: 9.8, prs: 87, ptrs: 8.5 },
+                        { ta: "Rare Disease", pts: 17.4, prs: 92, ptrs: 16.0 },
+                        { ta: "Dermatology", pts: 12.3, prs: 89, ptrs: 10.9 },
+                      ]}
+                      layout="vertical"
+                      margin={{ left: 80, right: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                      <XAxis type="number" domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                      <YAxis dataKey="ta" type="category" width={75} tick={{ fontSize: 12 }} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="ptrs" fill="var(--color-ptrs)" radius={4} name="PTRS %" />
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+
+              {/* Success Rates by Development Phase */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Phase Transition Success Rates</CardTitle>
+                  <CardDescription>Historical probability of advancing to next phase</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer
+                    config={{
+                      overall: { label: "Overall", color: "hsl(217, 91%, 60%)" },
+                      oncology: { label: "Oncology", color: "hsl(0, 84%, 60%)" },
+                      nonOncology: { label: "Non-Oncology", color: "hsl(142, 71%, 45%)" },
+                    }}
+                    className="h-[350px]"
+                  >
+                    <BarChart
+                      data={[
+                        { phase: "Phase I → II", overall: 52, oncology: 45, nonOncology: 58 },
+                        { phase: "Phase II → III", overall: 29, oncology: 24, nonOncology: 34 },
+                        { phase: "Phase III → NDA", overall: 58, oncology: 51, nonOncology: 64 },
+                        { phase: "NDA → Approval", overall: 85, oncology: 82, nonOncology: 88 },
+                      ]}
+                      margin={{ left: 20, right: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis dataKey="phase" tick={{ fontSize: 11 }} />
+                      <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Bar dataKey="overall" fill="var(--color-overall)" radius={4} name="Overall %" />
+                      <Bar dataKey="oncology" fill="var(--color-oncology)" radius={4} name="Oncology %" />
+                      <Bar dataKey="nonOncology" fill="var(--color-nonOncology)" radius={4} name="Non-Oncology %" />
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Cumulative PTRS Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Cumulative PTRS from Phase I to Approval</CardTitle>
+                <CardDescription>Overall likelihood of success from initial clinical trials to market approval</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4 font-semibold">Therapeutic Area</th>
+                        <th className="text-center py-3 px-4 font-semibold">Phase I</th>
+                        <th className="text-center py-3 px-4 font-semibold">Phase II</th>
+                        <th className="text-center py-3 px-4 font-semibold">Phase III</th>
+                        <th className="text-center py-3 px-4 font-semibold">NDA/BLA</th>
+                        <th className="text-center py-3 px-4 font-semibold">Cumulative PTRS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { ta: "Oncology", p1: 63, p2: 32, p3: 51, nda: 82, ptrs: 8.6 },
+                        { ta: "Hematology", p1: 68, p2: 38, p3: 55, nda: 85, ptrs: 12.1 },
+                        { ta: "Infectious Disease", p1: 72, p2: 42, p3: 64, nda: 90, ptrs: 17.4 },
+                        { ta: "Cardiovascular", p1: 65, p2: 35, p3: 58, nda: 88, ptrs: 11.6 },
+                        { ta: "CNS/Neurology", p1: 59, p2: 28, p3: 48, nda: 82, ptrs: 6.6 },
+                        { ta: "Immunology", p1: 66, p2: 36, p3: 56, nda: 86, ptrs: 11.5 },
+                        { ta: "Metabolic/Endocrine", p1: 64, p2: 34, p3: 54, nda: 87, ptrs: 10.2 },
+                        { ta: "Rare Disease", p1: 74, p2: 45, p3: 68, nda: 92, ptrs: 21.0 },
+                      ].map((row) => (
+                        <tr key={row.ta} className="border-b hover:bg-muted/50">
+                          <td className="py-3 px-4 font-medium">{row.ta}</td>
+                          <td className="text-center py-3 px-4">{row.p1}%</td>
+                          <td className="text-center py-3 px-4">{row.p2}%</td>
+                          <td className="text-center py-3 px-4">{row.p3}%</td>
+                          <td className="text-center py-3 px-4">{row.nda}%</td>
+                          <td className="text-center py-3 px-4">
+                            <Badge variant={row.ptrs >= 15 ? "default" : row.ptrs >= 10 ? "secondary" : "outline"}>
+                              {row.ptrs}%
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* LPI-2 Tab - 5-Factor Investment Model */}
+          <TabsContent value="lpi-2" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <LPI2Dashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* LPI-3 Tab - ML Model */}
+          <TabsContent value="lpi-3" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <LPI3Dashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* LP% — Industry Phase Success Rate Tab */}
+          <TabsContent value="lp-pct" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  LP% — Industry Phase Success Rate
+                </CardTitle>
+                <CardDescription>Historical probability of a drug advancing through each clinical phase based on industry-wide data (BIO/Norstella 2011–2024)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {(() => {
+                  const molsToShow = cart.length > 0 ? cart : (simulatorMolecule ? [simulatorMolecule] : []);
+                  if (molsToShow.length === 0) return (
+                    <div className="py-12 text-center text-muted-foreground">
+                      <p className="text-lg font-medium">Select a molecule to see its phase success rate</p>
+                      <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                    </div>
+                  );
+                  const getLpPct = (mol: typeof simulatorMolecule) => {
+                    if (!mol) return 12;
+                    const phase = mol.phase.toLowerCase();
+                    if (phase.includes('approved')) return 100;
+                    if (phase.includes('iii') || phase.includes('3')) return 58;
+                    if (phase.includes('ii') || phase.includes('2')) return 29;
+                    if (phase.includes('i') || phase.includes('1')) return 52;
+                    return 12;
+                  };
+                  return (
+                    <div className="space-y-6">
+                      <div className={`flex flex-wrap justify-center gap-6 py-4`}>
+                        {molsToShow.map(mol => (
+                          <div key={mol.id} className="flex flex-col items-center gap-2">
+                            <p className="text-xs font-bold">{mol.name}</p>
+                            <SimulatorResultBadge value={getLpPct(mol)} label="LP%" suffix="%" />
+                            <p className="text-[10px] text-muted-foreground">{mol.phase}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="text-left py-2 px-3 font-semibold">Phase Transition</th>
+                              <th className="text-center py-2 px-3 font-semibold">Overall</th>
+                              <th className="text-center py-2 px-3 font-semibold">Oncology</th>
+                              <th className="text-center py-2 px-3 font-semibold">Non-Oncology</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[
+                              { phase: "Phase I → II", overall: 52, onc: 45, nonOnc: 58 },
+                              { phase: "Phase II → III", overall: 29, onc: 24, nonOnc: 34 },
+                              { phase: "Phase III → NDA", overall: 58, onc: 51, nonOnc: 64 },
+                              { phase: "NDA → Approval", overall: 85, onc: 82, nonOnc: 88 },
+                              { phase: "Phase I → Approval (cumulative)", overall: 7.9, onc: 5.3, nonOnc: 11.2 },
+                            ].map(row => (
+                              <tr key={row.phase} className="border-b hover:bg-muted/30">
+                                <td className="py-2 px-3 font-medium">{row.phase}</td>
+                                <td className="py-2 px-3 text-center">{row.overall}%</td>
+                                <td className="py-2 px-3 text-center">{row.onc}%</td>
+                                <td className="py-2 px-3 text-center">{row.nonOnc}%</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Composite Score — LPI + TTM Tab */}
+          <TabsContent value="composite-score" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-primary" />
+                  Composite Score — LPI + TTM
+                </CardTitle>
+                <CardDescription>Combined Launch Probability Index and Time to Market score for pipeline prioritisation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {(() => {
+                  // Show results for all cart molecules (or just the active one)
+                  const molsToShow = cart.length > 0 ? cart : (simulatorMolecule ? [simulatorMolecule] : []);
+                  if (molsToShow.length === 0) return (
+                    <div className="py-12 text-center text-muted-foreground">
+                      <p className="text-lg font-medium">Select a molecule to see its composite score</p>
+                      <p className="text-sm mt-2">Use "Use in Simulator →" on any molecule card, or search above.</p>
+                    </div>
+                  );
+                  return (
+                    <div className="space-y-6">
+                      <div className={`grid gap-6 ${molsToShow.length === 1 ? '' : molsToShow.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'}`}>
+                        {molsToShow.map(mol => {
+                          const lpi = mol._raw?.lpi_score ?? mol.overallScore ?? 50;
+                          const ttm = calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.approval_status || '', mol.status || '', mol.study_title || mol.trialName || '');
+                          const composite = calculateCompositeScore(lpi, ttm, mol.therapeuticArea);
+                          return (
+                            <div key={mol.id} className="flex flex-col items-center gap-3 p-4 border rounded-lg">
+                              <p className="text-sm font-bold text-center">{mol.name}</p>
+                              <SimulatorResultBadge value={composite} label="Composite Score" suffix="/100" />
+                              <div className="grid grid-cols-2 gap-3 w-full">
+                                <div className="text-center p-3 bg-muted/30 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">LPI</p>
+                                  <p className="text-xl font-bold">{lpi}%</p>
+                                </div>
+                                <div className="text-center p-3 bg-muted/30 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">TTM</p>
+                                  <p className="text-xl font-bold">{ttm !== null ? `${ttm}mo` : 'N/A'}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <p className="text-sm text-muted-foreground text-center">
+                        The Composite Score (0–100) blends LPI (launch probability) with TTM (time efficiency) to produce a single pipeline prioritisation signal.
+                      </p>
+                    </div>
+                  );
+                })()}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* TI Analysis Tab */}
+          <TabsContent value="ti-analysis" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5" />
+                  Therapeutic Index (TI) — Pipeline Overview
+                </CardTitle>
+                <CardDescription>
+                  Safety margin assessment (TD50/ED50) across all pipeline molecules. Higher TI = wider safety margin.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* Classification legend */}
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]" /><span>Narrow (&lt;2)</span></div>
+                    <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]" /><span>Moderate (2–10)</span></div>
+                    <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]" /><span>Wide (&gt;10)</span></div>
+                  </div>
+                  {/* TI table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left py-2 px-3 font-semibold">Drug</th>
+                          <th className="text-left py-2 px-3 font-semibold">Sponsor</th>
+                          <th className="text-left py-2 px-3 font-semibold">TA</th>
+                          <th className="text-left py-2 px-3 font-semibold">Phase</th>
+                          <th className="text-center py-2 px-3 font-semibold">TI Value</th>
+                          <th className="text-center py-2 px-3 font-semibold">Classification</th>
+                          <th className="text-center py-2 px-3 font-semibold">Monitoring</th>
+                          <th className="text-left py-2 px-3 font-semibold">Notes</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allMolecules.slice(0, 100).map((mol, idx) => {
+                          const ti = getTherapeuticIndexForMolecule(mol);
+                          const tiColor = getTherapeuticIndexColor(ti.classification);
+                          const tiBgColor = getTherapeuticIndexBgColor(ti.classification);
+                          return (
+                            <tr key={idx} className="border-b border-border/50 hover:bg-muted/30">
+                              <td className="py-2 px-3 font-medium uppercase">{mol.name}</td>
+                              <td className="py-2 px-3">{mol.company || '—'}</td>
+                              <td className="py-2 px-3 text-xs">{mol.therapeuticArea}</td>
+                              <td className="py-2 px-3">{mol.phase}</td>
+                              <td className="py-2 px-3 text-center">
+                                <span className={`font-bold ${tiColor}`}>{ti.value.toFixed(1)}</span>
+                              </td>
+                              <td className="py-2 px-3 text-center">
+                                <Badge className={`${tiBgColor} text-white text-xs`}>
+                                  {ti.classification === 'narrow' ? 'Narrow' : ti.classification === 'moderate' ? 'Moderate' : 'Wide'}
+                                </Badge>
+                              </td>
+                              <td className="py-2 px-3 text-center">
+                                {ti.monitoringRequired ? (
+                                  <AlertTriangle className="h-4 w-4 text-[hsl(45,93%,47%)] inline" />
+                                ) : (
+                                  <ShieldCheck className="h-4 w-4 text-[hsl(142,76%,36%)] inline" />
+                                )}
+                              </td>
+                              <td className="py-2 px-3 text-xs text-muted-foreground">{ti.notes}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Peak Sales Index Tab */}
+          <TabsContent value="peak-sales" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PeakSalesIndexDashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* Blockbuster Probability Tab */}
+          <TabsContent value="blockbuster" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            {simulatorMolecule ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    $1B Blockbuster Probability
+                  </CardTitle>
+                  <CardDescription>Probability of achieving $1B+ peak annual sales via logistic regression on composite Peak Sales Score</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <PeakSalesIndexDashboard molecules={allMolecules} />
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-dashed">
+                <CardContent className="py-16 text-center space-y-3">
+                  <p className="text-lg font-semibold text-muted-foreground">Select a molecule below to run this model</p>
+                  <Button variant="outline" onClick={() => setActiveTab('overview')}>← Go to Pipeline</Button>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          {/* Regulatory Timeline Stub */}
+          <TabsContent value="reg-timeline" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-primary" />
+                  Regulatory Timeline
+                </CardTitle>
+                <CardDescription>Approval pathway modelling and regulatory milestone tracking</CardDescription>
+              </CardHeader>
+              <CardContent className="py-8 text-center space-y-4">
+                <p className="text-muted-foreground">Requires manual comparator input — run in simulator/calculator</p>
+                <Button onClick={() => { setActiveTab('overview'); setTimeout(() => { setSelectedMolecule(simulatorMolecule?.id || null); }, 100); }}>
+                  Open Full Calculator →
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Clinical Studies Stub */}
+          <TabsContent value="clinical-studies" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Search className="h-5 w-5 text-primary" />
+                  Clinical Studies
+                </CardTitle>
+                <CardDescription>Trial overview and ClinicalTrials.gov integration</CardDescription>
+              </CardHeader>
+              <CardContent className="py-8 text-center space-y-4">
+                <p className="text-muted-foreground">Requires manual comparator input — run in simulator/calculator</p>
+                {simulatorMolecule ? (
+                  <a
+                    href={`https://clinicaltrials.gov/search?term=${encodeURIComponent(simulatorMolecule.name.split(' ')[0])}&viewType=Table`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Open Full Calculator →
+                  </a>
+                ) : (
+                  <Button variant="outline" onClick={() => setActiveTab('overview')}>← Select a molecule first</Button>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* PA Index-2 — inline calculator at top */}
+          <TabsContent value="pa-model2-stub" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <Model2Calculator />
+          </TabsContent>
+          <TabsContent value="watchlist" className="space-y-6">
+            <WatchlistPanel
+              watchlist={watchlist}
+              molecules={allMolecules}
+              onRemove={removeFromWatchlist}
+              onUpdateNotes={updateNotes}
+              onViewMolecule={(id) => {
+                setSelectedMolecule(id);
+                setActiveTab("overview");
+              }}
+              onClear={clearWatchlist}
+            />
+          </TabsContent>
+
+          {/* Portfolio Dashboard Tab */}
+          <TabsContent value="portfolio" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PortfolioDashboard 
+              molecules={allMolecules} 
+              watchlistIds={watchlist.map(w => w.moleculeId)}
+            />
+          </TabsContent>
+
+          {/* Top 100 Blockbuster Drugs Tab */}
+          <TabsContent value="top-100" className="space-y-6">
+            <Top100BlockbusterDrugs 
+              molecules={allMolecules}
+              onViewMolecule={(id) => {
+                setSelectedMolecule(id);
+                setActiveTab("overview");
+              }}
+            />
+          </TabsContent>
+
+          {/* Top 50 Small Cap Firms Tab */}
+          <TabsContent value="top-50-smallcap" className="space-y-6">
+            <Top50SmallCapFirms />
+          </TabsContent>
+
+          {/* Monte Carlo Simulation Hub Tab */}
+          <TabsContent value="monte-carlo-hub" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
+              <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Activity className="h-5 w-5 text-primary" /> Monte Carlo Simulation Engine</h2>
+              <p className="text-sm text-muted-foreground">Cross-model uncertainty analysis: PTRS → LPI → PA Index → Peak Sales → BB Prob. Outputs P5 / P50 / P95 on each model + final composite.</p>
+            </div>
+
+            {/* Monte Carlo PTRS Simulation */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Monte Carlo PTRS Simulation
+                </CardTitle>
+                <CardDescription>Probability distributions for success outcomes with configurable uncertainty</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloIntegration />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Comparison */}
+            <Card className="border-l-4 border-l-blue-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-blue-500" />
+                  Monte Carlo Distribution Comparison
+                </CardTitle>
+                <CardDescription>Compare PTRS probability distributions across multiple molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSMonteCarloComparison molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Stress Testing */}
+            <Card className="border-l-4 border-l-destructive">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  Monte Carlo Stress Testing
+                </CardTitle>
+                <CardDescription>Simulate extreme scenarios and assess PTRS resilience</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSStressTesting molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Stress Test */}
+            <Card className="border-l-4 border-l-orange-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-orange-500" />
+                  Portfolio Stress Test
+                </CardTitle>
+                <CardDescription>Run all stress scenarios across your watchlist to identify vulnerable molecules</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioStressTest molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Monte Carlo Convergence Analysis */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-purple-500" />
+                  Monte Carlo Convergence Analysis
+                </CardTitle>
+                <CardDescription>Analyze simulation accuracy and find optimal iteration settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MonteCarloConvergenceAnalysis molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Optimization */}
+            <Card className="border-l-4 border-l-green-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                  Portfolio Optimization
+                </CardTitle>
+                <CardDescription>Optimize molecule mix to minimize vulnerability while maximizing expected returns</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioOptimization molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Portfolio Rebalancing Tool */}
+            <Card className="border-l-4 border-l-teal-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-teal-500" />
+                  Portfolio Rebalancing
+                </CardTitle>
+                <CardDescription>Suggest weight adjustments when market conditions or PTRS scores change over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSPortfolioRebalancing molecules={allMolecules} />
+              </CardContent>
+            </Card>
+
+            {/* Rebalancing History */}
+            <PTRSRebalancingHistory molecules={allMolecules} />
+
+            {/* Custom Scenario Builder */}
+            <Card className="border-l-4 border-l-indigo-500">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-indigo-500" />
+                  Custom Scenario Builder
+                </CardTitle>
+                <CardDescription>Define custom stress scenarios with adjustable impact parameters for each PTRS factor</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PTRSCustomScenarioBuilder molecules={allMolecules} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* CAPM Alpha Signals Tab */}
+          <TabsContent value="capm-alpha" className="space-y-6">
+            <div className="mb-4 p-4 rounded-lg bg-muted/50 border">
+              <h2 className="text-lg font-bold flex items-center gap-2 mb-1"><Landmark className="h-5 w-5 text-primary" /> CAPM Alpha Signals</h2>
+              <p className="text-sm text-muted-foreground">Risk-adjusted performance vs historical benchmarks (α₁) and current pipeline competition (α₂), with divergence tracking (Δα).</p>
+            </div>
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <CAPMAlphaSignals molecules={allMolecules} />
+          </TabsContent>
+
+          {/* Pricing & Access Markets Overview Tab */}
+          <TabsContent value="pricing-access" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PricingAccessDashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* PA Model 1 Tab */}
+          <TabsContent value="pa-model1" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PAModel1Dashboard molecules={allMolecules} />
+          </TabsContent>
+
+          {/* PA Model 2 Tab */}
+          <TabsContent value="pa-model2" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PAModel2Dashboard />
+          </TabsContent>
+
+          {/* PA Decision Framework Tab */}
+          <TabsContent value="pa-framework" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <ModelsDecisionFramework />
+          </TabsContent>
+
+          {/* PA Combined Comparison Tab */}
+          <TabsContent value="pa-comparison" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PAModelComparisonMode />
+          </TabsContent>
+
+          {/* PA Batch Comparison Tab */}
+          <TabsContent value="pa-batch" className="space-y-6">
+            <SimulatorMoleculeBanner molecules={allMolecules} />
+            <PABatchComparison />
+          </TabsContent>
+
+          {/* Payers Tab */}
+          <TabsContent value="payers" className="space-y-6">
+            <PayersLandscape />
+          </TabsContent>
+
+          {/* LCM Placeholder Tabs */}
+          {['lcm-patent-cliff', 'lcm-exclusivity', 'lcm-generic', 'lcm-label-expansion', 'lcm-formulations', 'lcm-indication', 'lcm-rwe', 'lcm-safety', 'lcm-phase4'].map(tabVal => (
+            <TabsContent key={tabVal} value={tabVal} className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-primary" />
+                    {tabVal.replace('lcm-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </CardTitle>
+                  <CardDescription>Life Cycle Management module — coming soon</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Module under development</p>
+                    <p className="text-sm mt-2">This LCM intelligence module will be available in a future update.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          ))}
+
+          {/* NEWS Placeholder Tabs */}
+          {['news-regulatory', 'news-trials', 'news-bdl', 'news-press', 'news-sec', 'news-pipeline', 'news-kol'].map(tabVal => (
+            <TabsContent key={tabVal} value={tabVal} className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Globe className="h-5 w-5 text-primary" />
+                    {tabVal.replace('news-', '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </CardTitle>
+                  <CardDescription>News & intelligence feed — coming soon</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="py-12 text-center text-muted-foreground">
+                    <p className="text-lg font-medium">Module under development</p>
+                    <p className="text-sm mt-2">This news intelligence feed will be available in a future update.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          ))}
+        </Tabs>}
+
+
+        {/* ═══ MOLECULES DATABASE — always visible on platform page ═══ */}
+        {topNavMode === 'platform' && !selectedMolecule && (
+          <div className="space-y-4" style={{ marginTop: '0.5cm' }}>
+            {/* Navy MOLECULES DATABASE header bar */}
+            <div
+              className="w-full rounded-lg px-4 flex items-center justify-between"
+              style={{ height: 40, backgroundColor: '#0E1D35' }}
+            >
+              <span
+                className="text-[13px] font-bold text-white"
+                style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, letterSpacing: '0.05em' }}
+              >
+                MOLECULES DATABASE
+              </span>
+
+              {/* Cart Tab */}
+              <div className="relative">
+                <button
+                  onClick={() => setCartOpen(!cartOpen)}
+                  className="flex items-center gap-2 px-3 py-1 rounded-md text-white hover:bg-white/10 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                  <span className="text-xs font-bold">Cart ({cart.length}/3)</span>
+                  {cart.length > 0 && (
+                    <span className="w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center" style={{ backgroundColor: '#F59E0B', color: '#0E1D35' }}>
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Cart Dropdown */}
+                {cartOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-72 bg-popover border rounded-lg shadow-xl z-50 p-3 space-y-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-bold">Simulation Cart</p>
+                      {cart.length > 0 && (
+                        <button onClick={clearCart} className="text-xs text-destructive hover:underline">Empty Cart</button>
+                      )}
+                    </div>
+                    {cart.length === 0 ? (
+                      <p className="text-xs text-muted-foreground py-3 text-center">No molecules in cart. Click "Use in Simulator →" to add.</p>
+                    ) : (
+                      cart.map((mol, idx) => (
+                        <div key={mol.id} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border text-sm">
+                          <div className="min-w-0">
+                            <p className="font-medium truncate">{mol.name}</p>
+                            <p className="text-xs text-muted-foreground">{mol.company} · {mol.phase}</p>
+                          </div>
+                          <button onClick={() => removeFromCart(mol.id)} className="shrink-0 ml-2 text-muted-foreground hover:text-destructive">
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                    <p className="text-[10px] text-muted-foreground text-center pt-1">All cart molecules appear in model results</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Signal Indicators Legend — right below MOLECULES DATABASE bar */}
+            <div className="p-3 rounded-lg bg-muted/50 border">
+              <div className="flex items-center flex-wrap gap-x-6 gap-y-1 text-xs">
+                <span className="font-semibold text-sm">Signal indicators:</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(142,76%,36%)]"></span> Above benchmark</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(45,93%,47%)]"></span> At benchmark</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-[hsl(0,72%,51%)]"></span> Below benchmark</span>
+                <span className="text-muted-foreground">Thresholds are TA-specific — hover any metric for details</span>
+              </div>
+            </div>
+
+            {/* Header with Sort Icons */}
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Showing {allMolecules.length.toLocaleString()}{totalRows > allMolecules.length ? ` of ${totalRows.toLocaleString()}` : ''} trials · One card per NCT ID
+                </p>
+                {!fullyLoaded && totalRows > 0 && (
+                  <p className="text-xs text-muted-foreground animate-pulse">
+                    Loading {allMolecules.length.toLocaleString()} of {totalRows.toLocaleString()}...
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                {[
+                  { key: 'lpi', label: 'LPI%' },
+                  { key: 'ttm', label: 'TTM' },
+                  { key: 'composite', label: 'Score' },
+                  { key: 'ti', label: 'TI' },
+                  { key: 'ptrs', label: 'PTRS' },
+                  { key: 'company', label: 'Sponsor' },
+                  { key: 'ta', label: 'TA' },
+                ].map(({ key, label }) => (
+                  <Button
+                    key={key}
+                    variant={sortBy === key ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-9 px-3 text-base font-bold text-black"
+                    onClick={() => {
+                      if (sortBy === key) {
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                      } else {
+                        setSortBy(key as typeof sortBy);
+                        setSortOrder(key === 'company' || key === 'ta' ? 'asc' : 'desc');
+                      }
+                    }}
+                  >
+                    {label}
+                    {sortBy === key && (
+                      <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Molecule Cards — Virtualised */}
+            {(() => {
+              const sortedMolecules = allMolecules
+                .filter((mol) => {
+                  const query = searchQuery.toLowerCase();
+                  const matchesSearch = !query || 
+                    mol.name.toLowerCase().includes(query) ||
+                    mol.company.toLowerCase().includes(query) ||
+                    mol.therapeuticArea.toLowerCase().includes(query) ||
+                    mol.indication.toLowerCase().includes(query) ||
+                    (mol.nctId && mol.nctId.toLowerCase().includes(query)) ||
+                    (mol.trialName && mol.trialName.toLowerCase().includes(query));
+                  const matchesPhase = phaseFilter === 'all' || mol.phase.includes(phaseFilter);
+                  const isDevice = mol.name.startsWith('DEVICE:');
+                  const matchesRecordType = recordTypeFilter === 'all' || (recordTypeFilter === 'drugs' ? !isDevice : isDevice);
+                  return matchesSearch && matchesPhase && matchesRecordType;
+                })
+                .slice()
+                .sort((a, b) => {
+                  const getTTM = (mol: typeof a) => calculateTTMMonths(mol.phase, mol.therapeuticArea, mol.companyTrackRecord, mol.approval_status || '', mol.status || '', mol.study_title || mol.trialName || '') ?? 999;
+                  const getComposite = (mol: typeof a) => {
+                    const ttm = getTTM(mol);
+                    return calculateCompositeScore(mol.overallScore, ttm === 999 ? null : ttm, mol.therapeuticArea);
+                  };
+                  const getTI = (mol: typeof a) => getTherapeuticIndexForMolecule(mol).value;
+                  let comparison = 0;
+                  switch (sortBy) {
+                    case 'lpi':
+                      comparison = b.overallScore - a.overallScore;
+                      break;
+                    case 'ttm':
+                      comparison = getTTM(a) - getTTM(b);
+                      break;
+                    case 'composite':
+                      comparison = getComposite(b) - getComposite(a);
+                      break;
+                    case 'ti':
+                      comparison = getTI(b) - getTI(a);
+                      break;
+                    case 'company':
+                      comparison = a.company.localeCompare(b.company);
+                      break;
+                    case 'ta':
+                      comparison = a.therapeuticArea.localeCompare(b.therapeuticArea);
+                      break;
+                    case 'ptrs': {
+                      const getPTRS = (mol: typeof a) => {
+                        const p = mol.phase.toLowerCase();
+                        if (p.includes('approved')) return 95;
+                        if (p.includes('iii') || p.includes('3')) return 55;
+                        if (p.includes('ii') || p.includes('2')) return 30;
+                        return 15;
+                      };
+                      comparison = getPTRS(b) - getPTRS(a);
+                      break;
+                    }
+                  }
+                  return sortOrder === 'asc' ? -comparison : comparison;
+                });
+
+              const ROW_HEIGHT = 180;
+              const BUFFER = 10;
+              const VIEWPORT_HEIGHT = 720;
+
+              const startIndex = Math.max(0, Math.floor(moleculeListScrollTop / ROW_HEIGHT) - BUFFER);
+              const endIndex = Math.min(
+                sortedMolecules.length,
+                Math.ceil((moleculeListScrollTop + VIEWPORT_HEIGHT) / ROW_HEIGHT) + BUFFER
+              );
+              const totalHeight = sortedMolecules.length * ROW_HEIGHT;
+              const topSpacer = startIndex * ROW_HEIGHT;
+
+              const renderRow = (index: number) => {
+                const molecule = sortedMolecules[index];
+                if (!molecule) return null;
+                const lpi3Score = molecule._raw?.lpi_score ?? molecule.overallScore ?? 50;
+                const ttm = calculateTTMMonths(molecule.phase, molecule.therapeuticArea, molecule.companyTrackRecord, molecule.approval_status || '', molecule.status || '', molecule.study_title || molecule.trialName || '');
+                const compositeScore = calculateCompositeScore(lpi3Score, ttm, molecule.therapeuticArea);
+                const ti = molecule.therapeuticIndex || getTherapeuticIndexForMolecule(molecule);
+                const dropoutRanking = molecule.scores.dropoutRanking;
+
+                const getDotColor = (value: number, thresholds: [number, number]) => {
+                  if (value >= thresholds[1]) return 'bg-[hsl(142,76%,36%)]';
+                  if (value >= thresholds[0]) return 'bg-[hsl(45,93%,47%)]';
+                  return 'bg-[hsl(0,72%,51%)]';
+                };
+
+                const lpiDot = getDotColor(lpi3Score, [34, 67]);
+                const ttmEfficiency = ttm !== null ? Math.max(0, Math.min(100, 100 - ((ttm - 1) * (100 / 99)))) : 50;
+                const ttmDot = ttm !== null ? getDotColor(ttmEfficiency, [34, 67]) : 'bg-muted-foreground';
+                const scoreDot = getDotColor(compositeScore, [34, 67]);
+                const tiDot = ti.classification === 'wide' ? 'bg-[hsl(142,76%,36%)]' : ti.classification === 'moderate' ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+                const dropoutDot = dropoutRanking <= 2 ? 'bg-[hsl(142,76%,36%)]' : dropoutRanking === 3 ? 'bg-[hsl(45,93%,47%)]' : 'bg-[hsl(0,72%,51%)]';
+
+                const medalRank = compositeScore >= 67 ? 1 : compositeScore >= 34 ? 2 : 3;
+                const medalBg = medalRank === 1 ? 'bg-[hsl(45,90%,50%)]' : medalRank === 2 ? 'bg-[hsl(0,0%,75%)]' : 'bg-[hsl(30,60%,45%)]';
+                const medalBorder = medalRank === 1 ? 'border-[hsl(45,90%,40%)]' : medalRank === 2 ? 'border-[hsl(0,0%,65%)]' : 'border-[hsl(30,60%,35%)]';
+
+                const mfg = getManufacturingCapability(molecule.company);
+
+                return (
+                  <div key={molecule.id} style={{ height: ROW_HEIGHT, paddingBottom: 8 }}>
+                    <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full" onClick={() => { setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
+                      <CardContent className="p-5">
+                        <div className="flex items-start gap-4">
+                          {/* Left: Text rows */}
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-lg font-bold uppercase tracking-wide text-[hsl(217,60%,25%)]">{molecule.name}</h3>
+                              {molecule.name.startsWith('DEVICE:') && (
+                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-muted text-muted-foreground">DEVICE</Badge>
+                              )}
+                            </div>
+                            {(() => {
+                              const status = (molecule as any)._raw?.approval_status;
+                              if (!status || status === 'ACTIVE_PIPELINE') return null;
+                              const badgeConfig: Record<string, { color: string; text: string }> = {
+                                'APPROVED_2024': { color: 'bg-[hsl(142,76%,36%)] text-white', text: '✓ APPROVED' },
+                                'LIKELY_IN_REVIEW': { color: 'bg-blue-500 text-white', text: '⏳ In Review' },
+                                'RECENTLY_COMPLETED_PH3': { color: 'bg-amber-500 text-white', text: 'Completed Ph3' },
+                                'COMPLETED_PH3': { color: 'bg-slate-400 text-white', text: 'Completed Ph3' },
+                                'COMPLETED_PH2': { color: 'bg-gray-300 text-gray-700', text: 'Completed Ph2' },
+                              };
+                              const cfg = badgeConfig[status] || badgeConfig['COMPLETED_PH3'];
+                              return <Badge className={`text-[10px] px-1.5 py-0 ${cfg.color}`}>{cfg.text}</Badge>;
+                            })()}
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="font-bold text-[hsl(142,60%,25%)]">{molecule.company}</span>
+                              {mfg?.ticker && (
+                                <a href={`https://finance.yahoo.com/quote/${mfg.ticker}`} target="_blank" rel="noopener noreferrer"
+                                  className="font-bold text-[hsl(0,70%,35%)] hover:text-[hsl(0,70%,25%)] transition-colors"
+                                  onClick={(e) => e.stopPropagation()} title="View on Yahoo Finance">
+                                  ({mfg.ticker})
+                                </a>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {molecule.nctId && <span>{molecule.nctId} | </span>}
+                              <span className="font-medium">{molecule.phase}</span>
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {molecule.indication} | {molecule.therapeuticArea}
+                            </p>
+                            {molecule.trialName && (
+                              <p className="text-xs text-muted-foreground italic line-clamp-1" title={molecule.trialName}>
+                                {molecule.trialName}
+                              </p>
+                            )}
+                            {((molecule as any)._raw?.start_date || (molecule as any)._raw?.completion_date || (molecule as any)._raw?.status) && (
+                              <p className="text-xs text-muted-foreground">
+                                {(molecule as any)._raw.start_date && <span>{(molecule as any)._raw.start_date}</span>}
+                                {(molecule as any)._raw.completion_date && <span> | {(molecule as any)._raw.completion_date}</span>}
+                                {(molecule as any)._raw.status && <span> | <span className="font-medium">{(molecule as any)._raw.status}</span></span>}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Middle: Signal Dots + Verdict */}
+                          <div className="flex flex-col items-start shrink-0">
+                            <div className="flex items-center gap-1.5 -ml-2">
+                              <div className={`flex flex-col items-center justify-center rounded-full ${lpiDot} text-black`} style={{ width: 62, height: 62 }} title={`LPI: ${lpi3Score}%`}>
+                                <span className="text-[11px] font-bold leading-none">LPI</span>
+                                <span className="text-sm font-bold leading-none">{lpi3Score}%</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${ttmDot} text-black`} style={{ width: 62, height: 62 }} title={`TTM: ${ttm !== null ? ttm + 'mo' : 'N/A'}`}>
+                                <span className="text-[11px] font-bold leading-none">TTM</span>
+                                <span className="text-sm font-bold leading-none">{ttm !== null ? `${ttm}mo` : 'N/A'}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${scoreDot} text-black`} style={{ width: 62, height: 62 }} title={`Score: ${compositeScore}`}>
+                                <span className="text-[11px] font-bold leading-none">Score</span>
+                                <span className="text-sm font-bold leading-none">{compositeScore}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${tiDot} text-black`} style={{ width: 62, height: 62 }} title={`TI: ${ti.value.toFixed(1)} (${ti.classification})`}>
+                                <span className="text-[11px] font-bold leading-none">TI</span>
+                                <span className="text-sm font-bold leading-none">{ti.value.toFixed(1)}</span>
+                              </div>
+                              <div className={`flex flex-col items-center justify-center rounded-full ${dropoutDot} text-black`} style={{ width: 62, height: 62 }} title={`Dropout: ${dropoutRanking}/5`}>
+                                <span className="text-[11px] font-bold leading-none">Drop</span>
+                                <span className="text-sm font-bold leading-none">{dropoutRanking}/5</span>
+                              </div>
+                            </div>
+                            <div className="mt-1" title={`Race to Market Rank ${medalRank}`}>
+                              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${medalBg} border-2 ${medalBorder} shadow-md animate-medal-spin`}>
+                                <span className="text-primary font-bold text-lg">{medalRank}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right: Action buttons */}
+                          <div className="shrink-0 flex flex-col gap-1">
+                            <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); setSelectedMolecule(molecule.id); setActiveTab('overview'); }}>
+                              Full Analysis →
+                            </Button>
+                            <Button size="sm" variant="secondary" className="text-xs" onClick={(e) => { e.stopPropagation(); loadIntoSimulator(molecule); }}>
+                              Use in Simulator →
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              };
+
+              return (
+                <div
+                  ref={moleculeListScrollRef}
+                  style={{ height: VIEWPORT_HEIGHT, overflow: 'auto' }}
+                  onScroll={(e) => setMoleculeListScrollTop((e.target as HTMLDivElement).scrollTop)}
+                >
+                  <div style={{ height: totalHeight, position: 'relative' }}>
+                    <div style={{ position: 'absolute', top: topSpacer, left: 0, right: 0 }}>
+                      {sortedMolecules.slice(startIndex, endIndex).map((_, i) => renderRow(startIndex + i))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* Data Sources - Bottom of page */}
+        {(topNavMode === 'platform' || topNavMode === 'strategy-hub') && <div className="mt-8">
+          <Tabs defaultValue="trial-databases" className="w-full">
+            <TabsList className="w-full justify-start h-10 bg-[#E8C84A] rounded-none p-0">
+              <TabsTrigger 
+                value="trial-databases" 
+                className="h-10 px-6 rounded-none data-[state=active]:bg-[#C6A809] data-[state=active]:text-foreground text-foreground/80 font-semibold"
+              >
+                Trial Databases
+              </TabsTrigger>
+              <TabsTrigger 
+                value="regulatory-sources" 
+                className="h-10 px-6 rounded-none data-[state=active]:bg-[#C6A809] data-[state=active]:text-foreground text-foreground/80 font-semibold"
+              >
+                Regulatory Sources
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="trial-databases" className="mt-0 bg-[#FFF8DC] p-4 border border-t-0 border-[#E8C84A]">
+              <div className="flex flex-col gap-2">
+                <a href="https://clinicaltrials.gov" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇺🇸</span>
+                  <span className="font-medium">ClinicalTrials.gov</span>
+                  <Badge variant="secondary" className="text-xs">Primary</Badge>
+                  <span className="text-muted-foreground text-xs">— U.S. National Library of Medicine</span>
+                </a>
+                <a href="https://trialsearch.who.int" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🌐</span>
+                  <span className="font-medium">WHO ICTRP</span>
+                  <Badge variant="outline" className="text-xs">12 Registries</Badge>
+                  <span className="text-muted-foreground text-xs">— International Clinical Trials Registry Platform</span>
+                </a>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="regulatory-sources" className="mt-0 bg-[#FFF8DC] p-4 border border-t-0 border-[#E8C84A]">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <a href="https://www.fda.gov/drugs/nda-and-bla-approvals/nda-and-bla-calendar-year-approvals" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇺🇸</span><span className="font-medium">FDA Approvals</span><Badge variant="outline" className="text-xs">NDA/BLA</Badge>
+                </a>
+                <a href="https://www.ema.europa.eu/en/medicines/national-registers-authorised-medicines#human-medicines-13110" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇪🇺</span><span className="font-medium">EMA Registers</span><Badge variant="outline" className="text-xs">National</Badge>
+                </a>
+                <a href="https://ec.europa.eu/health/documents/community-register/html/reg_hum_act.htm?sort=a" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇪🇺</span><span className="font-medium">EU Community Register</span><Badge variant="outline" className="text-xs">Human Medicines</Badge>
+                </a>
+                <a href="https://www.nmpa.gov.cn/yaopin/index.html" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇨🇳</span><span className="font-medium">NMPA China</span><Badge variant="outline" className="text-xs">Drug Registry</Badge>
+                </a>
+                <a href="https://www.pmda.go.jp/english/review-services/reviews/approved-information/drugs/0002.html" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇯🇵</span><span className="font-medium">PMDA Japan</span><Badge variant="outline" className="text-xs">Approvals</Badge>
+                </a>
+                <a href="https://products.mhra.gov.uk/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇬🇧</span><span className="font-medium">MHRA UK</span><Badge variant="outline" className="text-xs">Products</Badge>
+                </a>
+                <a href="https://health-products.canada.ca/dpd-bdpp/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇨🇦</span><span className="font-medium">Health Canada</span><Badge variant="outline" className="text-xs">DPD</Badge>
+                </a>
+                <a href="https://consultas.anvisa.gov.br/#/medicamentos/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors">
+                  <span className="text-base">🇧🇷</span><span className="font-medium">ANVISA Brazil</span><Badge variant="outline" className="text-xs">Registry</Badge>
+                </a>
+              </div>
+              <div className="text-xs text-muted-foreground mt-3 text-right">Last sync: Feb 24, 2026</div>
+            </TabsContent>
+          </Tabs>
+        </div>}
+
+        {/* Data Freshness Statement */}
+        <div className="mt-4 py-3 px-4 bg-[#FFD700]/10 border border-[#FFD700]/30 rounded-lg text-center">
+          <p className="text-sm text-muted-foreground italic">
+            "BioQuill intelligence refreshes every Monday — reflecting the latest trial registrations, regulatory decisions, and market access updates from the prior week."
+          </p>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+const Index = () => (
+  <SessionMoleculeProvider>
+    <IndexInner />
+  </SessionMoleculeProvider>
+);
+
+export default Index;
